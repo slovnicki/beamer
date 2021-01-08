@@ -1,16 +1,18 @@
-import 'package:beamer/beamer.dart';
 import 'package:flutter/widgets.dart';
 
-class Beamer extends InheritedWidget {
+import 'beamer_router_delegate.dart';
+
+class Beamer extends StatelessWidget {
   Beamer({
     this.routerDelegate,
-    @required Widget child,
-  }) : super(child: child);
+    @required this.child,
+  });
 
   final BeamerRouterDelegate routerDelegate;
+  final Widget child;
 
   static BeamerRouterDelegate of(BuildContext context) {
-    final Beamer beamer = context.dependOnInheritedWidgetOfExactType<Beamer>();
+    final Beamer beamer = context.findAncestorWidgetOfExactType<Beamer>();
     if (beamer != null && beamer.routerDelegate != null) {
       return beamer.routerDelegate;
     }
@@ -18,5 +20,5 @@ class Beamer extends InheritedWidget {
   }
 
   @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;
+  Widget build(BuildContext context) => child;
 }
