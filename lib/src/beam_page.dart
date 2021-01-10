@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 class BeamPage extends Page {
   final String pathBlueprint;
@@ -12,19 +12,9 @@ class BeamPage extends Page {
 
   @override
   Route createRoute(BuildContext context) {
-    return PageRouteBuilder(
+    return MaterialPageRoute(
       settings: this,
-      pageBuilder: (context, animation, animation2) => this.page,
-      transitionsBuilder: (context, animation, animation2, widget) {
-        return SlideTransition(
-          position:
-              animation.drive(Tween(begin: Offset(0, 1), end: Offset(0, 0))),
-          child: FadeTransition(
-            opacity: animation.drive(Tween(begin: 0.0, end: 1.0)),
-            child: widget,
-          ),
-        );
-      },
+      builder: (context) => page,
     );
   }
 }
