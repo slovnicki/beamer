@@ -6,9 +6,6 @@ import 'package:example/second_screen.dart';
 
 class HomeLocation extends BeamLocation {
   @override
-  BeamLocation get popLocation => null;
-
-  @override
   List<Page> get pages => [
         BeamPage(
           pathBlueprint: this.pathBlueprint,
@@ -21,9 +18,6 @@ class HomeLocation extends BeamLocation {
 }
 
 class FirstLocation extends BeamLocation {
-  @override
-  BeamLocation get popLocation => HomeLocation();
-
   @override
   List<Page> get pages => [
         BeamPage(
