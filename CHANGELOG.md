@@ -1,6 +1,10 @@
+# 0.1.1
+
+- **Remove** widgets from export barrel
+
 # 0.1.0+1
 
-- add more to pub description
+- **Add** more to pub description
 
 # 0.1.0
 
