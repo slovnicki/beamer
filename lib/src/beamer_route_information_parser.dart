@@ -15,10 +15,6 @@ class BeamerRouteInformationParser
   SynchronousFuture<BeamLocation> parseRouteInformation(
       RouteInformation routeInformation) {
     final uri = Uri.parse(routeInformation.location);
-    // print('Inside parseRouteInformation...');
-    // print('path ' + uri.path);
-    // print('pathSegments ' + uri.pathSegments.toString());
-    // print('... done with parseRouteInformation');
     return SynchronousFuture(_chooseBeamLocation(uri));
   }
 
@@ -28,34 +24,22 @@ class BeamerRouteInformationParser
   }
 
   BeamLocation _chooseBeamLocation(Uri uri) {
-    // print('Inside _chooseBeamLocation...');
-    // print('choosing from ${this.beamLocations.toString()}');
     for (var beamLocation in this.beamLocations) {
-      //print(
-      //    'trying to match ${beamLocation.pathBlueprint} with ${uri.path} => ${beamLocation.pathBlueprint == uri.path}');
-      // try to match if path is identical to pathBlueprint
       if (beamLocation.pathBlueprint == uri.path) {
-        //print('Done(1) with _chooseBeamLocation... with ${beamLocation.path}');
         beamLocation.queryParameters = uri.queryParameters;
         return beamLocation..prepare();
       }
-      // try to match by ignoring the pathBlueprint's dummy values
       final List<String> beamLocationPathSegments =
           Uri.parse(beamLocation.pathBlueprint).pathSegments;
       Map<String, String> pathParameters = {};
-      //print('checking for dummy with $beamLocationPathSegments');
       bool checksPassed = false;
       for (int i = 0; i < uri.pathSegments.length; i++) {
         if (beamLocationPathSegments.length < i + 1) {
-          //print(beamLocation.path + ' is definitely not');
           checksPassed = false;
           break;
         }
-        //print(
-        //    'checking ${beamLocationPathSegments[i]} and ${uri.pathSegments[i]}');
         if (uri.pathSegments[i] != beamLocationPathSegments[i] &&
             beamLocationPathSegments[i][0] != ':') {
-          //print(beamLocation.path + ' is definitely not');
           checksPassed = false;
           break;
         } else {
@@ -67,13 +51,11 @@ class BeamerRouteInformationParser
         }
       }
       if (checksPassed) {
-        //print('Done(2) with _chooseBeamLocation... with ${beamLocation.path}');
         beamLocation.pathParameters = pathParameters;
         beamLocation.queryParameters = uri.queryParameters;
         return beamLocation..prepare();
       }
     }
-    //print('Done(3) with _chooseBeamLocation... with null');
     return null;
   }
 }

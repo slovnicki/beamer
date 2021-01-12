@@ -41,24 +41,19 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
 
   @override
   Widget build(BuildContext context) {
-    print('building ${_currentLocation.uri}');
     return Navigator(
       key: navigatorKey,
       pages: _pages,
       onPopPage: (route, result) {
-        print('entering onPopPage');
         if (!route.didPop(result)) {
           return false;
         }
-        print('onPopPage didPop');
         if (_currentLocation.popLocation != null) {
           this.beamTo(_currentLocation.popLocation);
-          print('onPopPage didBeam');
           return true;
         }
         if (_currentLocation.popToPrevious && _previousLocation != null) {
           this.beamTo(_previousLocation);
-          print('beamTo previous: ' + _previousLocation.pathBlueprint);
           return true;
         }
         _pages.removeAt(_pages.length - 1);

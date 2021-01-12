@@ -40,7 +40,6 @@ abstract class BeamLocation {
       pathSegments.removeWhere((segment) => segment[0] == ':');
       this._path = '/' + pathSegments.join('/');
     }
-    print('trying to make path for ${this.pathBlueprint}');
     pathParameters.forEach((key, value) {
       int index = pathSegments.indexWhere(
           (segment) => segment[0] == ':' && segment.substring(1) == key);
