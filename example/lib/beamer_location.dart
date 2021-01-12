@@ -40,13 +40,14 @@ class SecondLocation extends BeamLocation {
         BeamPage(
           identifier: this.uri,
           page: SecondScreen(
+            name: this.pathParameters['name'] ?? 'no name',
             text: this.queryParameters['text'] ?? 'no text',
           ),
         ),
       ];
 
   @override
-  String get pathBlueprint => '/second-screen/:something';
+  String get pathBlueprint => '/second-screen/:name';
 
   @override
   BeamLocation get popLocation => HomeLocation();
