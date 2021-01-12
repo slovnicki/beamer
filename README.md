@@ -2,7 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/beamer.svg)](https://pub.dev/packages/beamer)
 
-Handle your application routing, syncronize it with browser URL and more. `Beamer` uses the power of Navigator 2.0 features and implements all the underlying logic for you.
+Handle your application routing, synchronize it with browser URL and more. `Beamer` uses the power of Navigator 2.0 features and implements all the underlying logic for you.
 
 ## Table of Contents
 
