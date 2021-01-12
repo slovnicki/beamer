@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class BeamPage extends Page {
-  final String pathBlueprint;
+  final String identifier;
   final Widget page;
 
   BeamPage({
-    @required String pathBlueprint,
+    @required String identifier,
     @required this.page,
-  })  : pathBlueprint = pathBlueprint,
-        super(key: ValueKey(pathBlueprint));
+  })  : identifier = identifier,
+        super(key: ValueKey(identifier));
 
   @override
   Route createRoute(BuildContext context) {
