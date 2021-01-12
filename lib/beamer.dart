@@ -1,7 +1,5 @@
 library beamer;
 
-export 'package:flutter/widgets.dart';
-
 export 'src/beam_page.dart';
 export 'src/beam_location.dart';
 export 'src/beamer_route_information_parser.dart';
