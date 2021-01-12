@@ -8,7 +8,7 @@ class HomeLocation extends BeamLocation {
   @override
   List<Page> get pages => [
         BeamPage(
-          pathBlueprint: this.pathBlueprint,
+          pathBlueprint: this.uri,
           page: HomeScreen(),
         ),
       ];
@@ -21,7 +21,7 @@ class FirstLocation extends BeamLocation {
   @override
   List<Page> get pages => [
         BeamPage(
-          pathBlueprint: this.pathBlueprint,
+          pathBlueprint: this.uri,
           page: FirstScreen(),
         ),
       ];
@@ -38,7 +38,7 @@ class SecondLocation extends BeamLocation {
           page: HomeScreen(),
         ),
         BeamPage(
-          pathBlueprint: this.pathBlueprint,
+          pathBlueprint: this.uri,
           page: SecondScreen(
             text: this.queryParameters['text'] ?? 'no text',
           ),
