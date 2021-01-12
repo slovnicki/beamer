@@ -10,7 +10,6 @@ abstract class BeamLocation {
 
   Map<String, String> queryParameters = {};
   Map<String, String> pathParameters = {};
-  bool placeOnExistingStack = false;
   String _path;
   String _query;
 

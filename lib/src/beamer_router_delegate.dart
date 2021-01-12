@@ -36,12 +36,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     if (_removeLast) {
       currentPages.removeAt(currentPages.length - 1);
     }
-    return (_currentLocation.placeOnExistingStack && _previousLocation != null)
-        ? [
-            ..._previousLocation.pages,
-            ...currentPages,
-          ]
-        : currentPages;
+    return currentPages;
   }
 
   @override
@@ -53,12 +48,6 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     return Navigator(
       key: navigatorKey,
       pages: _createPages(),
-      // (_currentLocation.placeOnExistingStack && _previousLocation != null)
-      //     ? [
-      //         ..._previousLocation.pages,
-      //         ..._currentLocation.pages,
-      //       ]
-      //     : _currentLocation.pages,
       onPopPage: (route, result) {
         print('entering onPopPage');
         if (!route.didPop(result)) {
