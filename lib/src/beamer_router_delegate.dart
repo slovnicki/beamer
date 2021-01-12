@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:beamer/src/beam_location.dart';
@@ -6,21 +7,19 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<BeamLocation> {
   BeamerRouterDelegate({
     @required BeamLocation initialLocation,
-  })  : navigatorKey = GlobalKey<NavigatorState>(),
+  })  : _navigatorKey = GlobalKey<NavigatorState>(),
         _currentLocation = initialLocation..prepare(),
-        _previousLocation = null;
+        _previousLocation = null {
+    _pages = _currentLocation.pages;
+  }
 
-  final GlobalKey<NavigatorState> navigatorKey;
+  final GlobalKey<NavigatorState> _navigatorKey;
   BeamLocation _currentLocation;
+  List<Page> _pages;
   BeamLocation _previousLocation;
-  List<int> _removePagesAt = [];
-  bool _removeLast = false;
 
   void beamTo(BeamLocation location) {
-    _previousLocation = _currentLocation;
-    _currentLocation = location..prepare();
-    _removePagesAt = [];
-    _removeLast = false;
+    _update(location);
     notifyListeners();
   }
 
@@ -28,26 +27,24 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     this.beamTo(_previousLocation);
   }
 
-  List<Page> _createPages() {
-    List<Page> currentPages = _currentLocation.pages;
-    for (int index in _removePagesAt) {
-      currentPages.removeAt(index);
-    }
-    if (_removeLast) {
-      currentPages.removeAt(currentPages.length - 1);
-    }
-    return currentPages;
-  }
-
   @override
   BeamLocation get currentConfiguration => _currentLocation;
+
+  @override
+  GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
+
+  void _update(BeamLocation location) {
+    _previousLocation = _currentLocation;
+    _currentLocation = location..prepare();
+    _pages = _currentLocation.pages;
+  }
 
   @override
   Widget build(BuildContext context) {
     print('building ${_currentLocation.uri}');
     return Navigator(
       key: navigatorKey,
-      pages: _createPages(),
+      pages: _pages,
       onPopPage: (route, result) {
         print('entering onPopPage');
         if (!route.didPop(result)) {
@@ -64,14 +61,15 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
           print('beamTo previous: ' + _previousLocation.pathBlueprint);
           return true;
         }
-        this._removeLast = true;
+        _pages.removeAt(_pages.length - 1);
         return true;
       },
     );
   }
 
   @override
-  Future<void> setNewRoutePath(BeamLocation location) async {
-    _currentLocation = location..prepare();
+  SynchronousFuture<void> setNewRoutePath(BeamLocation location) {
+    _update(location);
+    return SynchronousFuture(null);
   }
 }

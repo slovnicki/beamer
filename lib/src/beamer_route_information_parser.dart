@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:beamer/src/beam_location.dart';
@@ -11,14 +12,14 @@ class BeamerRouteInformationParser
   List<BeamLocation> beamLocations;
 
   @override
-  Future<BeamLocation> parseRouteInformation(
-      RouteInformation routeInformation) async {
+  SynchronousFuture<BeamLocation> parseRouteInformation(
+      RouteInformation routeInformation) {
     final uri = Uri.parse(routeInformation.location);
     // print('Inside parseRouteInformation...');
     // print('path ' + uri.path);
     // print('pathSegments ' + uri.pathSegments.toString());
     // print('... done with parseRouteInformation');
-    return _chooseBeamLocation(uri);
+    return SynchronousFuture(_chooseBeamLocation(uri));
   }
 
   @override
