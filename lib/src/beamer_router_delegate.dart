@@ -24,6 +24,10 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     notifyListeners();
   }
 
+  void beamBack() {
+    this.beamTo(_previousLocation);
+  }
+
   List<Page> _createPages() {
     List<Page> currentPages = _currentLocation.pages;
     for (int index in _removePagesAt) {
