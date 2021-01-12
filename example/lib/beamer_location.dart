@@ -47,4 +47,7 @@ class SecondLocation extends BeamLocation {
 
   @override
   String get pathBlueprint => '/second-screen/:something';
+
+  @override
+  BeamLocation get popLocation => HomeLocation();
 }
