@@ -13,44 +13,44 @@ abstract class BeamLocation {
   String _path;
   String _query;
 
-  String get uri => (this._path ?? pathBlueprint) + (this._query ?? '');
+  String get uri => (_path ?? pathBlueprint) + (_query ?? '');
 
   /// Recreates the [uri] for this [BeamLocation]
   /// considering current value of [pathParameters] and [queryParameters].
   ///
   /// Calls [executeBefore].
   void prepare() {
-    this._makePath();
-    this._makeQuery();
-    this.executeBefore.call();
+    _makePath();
+    _makeQuery();
+    executeBefore.call();
   }
 
   void _makeQuery() {
-    if (this.queryParameters.length == 0) {
-      this._query = '';
+    if (queryParameters.isEmpty) {
+      _query = '';
     }
-    String result = '?';
-    this.queryParameters.forEach((key, value) {
+    var result = '?';
+    queryParameters.forEach((key, value) {
       result += key + '=' + value + '&';
     });
-    this._query = result.substring(0, result.length - 1);
+    _query = result.substring(0, result.length - 1);
   }
 
   void _makePath() {
-    List<String> pathSegments = Uri.parse(this.pathBlueprint).pathSegments;
+    var pathSegments = Uri.parse(pathBlueprint).pathSegments;
     pathSegments = List.from(pathSegments);
-    if (this.pathParameters.length == 0) {
+    if (pathParameters.isEmpty) {
       pathSegments.removeWhere((segment) => segment[0] == ':');
-      this._path = '/' + pathSegments.join('/');
+      _path = '/' + pathSegments.join('/');
     }
     pathParameters.forEach((key, value) {
-      int index = pathSegments.indexWhere(
+      var index = pathSegments.indexWhere(
           (segment) => segment[0] == ':' && segment.substring(1) == key);
       if (index != -1) {
         pathSegments[index] = value;
       }
     });
-    this._path = '/' + pathSegments.join('/');
+    _path = '/' + pathSegments.join('/');
   }
 
   String get pathBlueprint;

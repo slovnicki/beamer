@@ -32,11 +32,11 @@ class BeamerRouteInformationParser
         beamLocation.queryParameters = uri.queryParameters;
         return beamLocation..prepare();
       }
-      final List<String> beamLocationPathSegments =
+      final beamLocationPathSegments =
           Uri.parse(beamLocation.pathBlueprint).pathSegments;
-      Map<String, String> pathParameters = {};
-      bool checksPassed = false;
-      for (int i = 0; i < uri.pathSegments.length; i++) {
+      var pathParameters = {};
+      var checksPassed = false;
+      for (var i = 0; i < uri.pathSegments.length; i++) {
         if (beamLocationPathSegments.length < i + 1) {
           checksPassed = false;
           break;

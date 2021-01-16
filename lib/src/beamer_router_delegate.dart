@@ -35,7 +35,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
 
   /// Beams to previous location.
   void beamBack() {
-    this.beamTo(_previousLocation);
+    beamTo(_previousLocation);
   }
 
   @override
@@ -85,8 +85,8 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
       if (location.pages.length != _pages.length) {
         continue;
       }
-      bool found = true;
-      for (int i = 0; i < location.pages.length; i++) {
+      var found = true;
+      for (var i = 0; i < location.pages.length; i++) {
         if (location.pages[i] != _pages[i]) {
           found = false;
           break;

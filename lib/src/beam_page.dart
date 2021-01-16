@@ -24,6 +24,6 @@ class BeamPage extends Page {
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        other is BeamPage && this.identifier == other.identifier;
+        other is BeamPage && identifier == other.identifier;
   }
 }

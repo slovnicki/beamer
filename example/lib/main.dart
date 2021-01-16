@@ -62,7 +62,7 @@ class SecondScreen extends StatelessWidget {
         title: Text('Second Screen'),
       ),
       body: Center(
-        child: Text(this.name + ', ' + this.text),
+        child: Text(name + ', ' + text),
       ),
     );
   }
@@ -73,7 +73,7 @@ class HomeLocation extends BeamLocation {
   @override
   List<Page> get pages => [
         BeamPage(
-          identifier: this.uri,
+          identifier: uri,
           page: HomeScreen(),
         ),
       ];
@@ -86,7 +86,7 @@ class FirstLocation extends BeamLocation {
   @override
   List<Page> get pages => [
         BeamPage(
-          identifier: this.uri,
+          identifier: uri,
           page: FirstScreen(),
         ),
       ];
@@ -103,10 +103,10 @@ class SecondLocation extends BeamLocation {
           page: HomeScreen(),
         ),
         BeamPage(
-          identifier: this.uri,
+          identifier: uri,
           page: SecondScreen(
-            name: this.pathParameters['name'] ?? 'no name',
-            text: this.queryParameters['text'] ?? 'no text',
+            name: pathParameters['name'] ?? 'no name',
+            text: queryParameters['text'] ?? 'no text',
           ),
         ),
       ];
