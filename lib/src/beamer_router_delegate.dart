@@ -53,14 +53,6 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
         if (!route.didPop(result)) {
           return false;
         }
-        if (_currentLocation.popLocation != null) {
-          this.beamTo(_currentLocation.popLocation);
-          return true;
-        }
-        if (_currentLocation.popToPrevious && _previousLocation != null) {
-          this.beamTo(_previousLocation);
-          return true;
-        }
         _pages.removeAt(_pages.length - 1);
         return true;
       },

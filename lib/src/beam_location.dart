@@ -56,7 +56,5 @@ abstract class BeamLocation {
 
   String get pathBlueprint;
   List<Page> get pages;
-  BeamLocation get popLocation => null;
-  bool get popToPrevious => false;
   void Function() executeBefore = () => {};
 }
