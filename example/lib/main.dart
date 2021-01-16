@@ -73,7 +73,7 @@ class HomeLocation extends BeamLocation {
   @override
   List<Page> get pages => [
         BeamPage(
-          identifier: uri,
+          key: ValueKey(uri),
           page: HomeScreen(),
         ),
       ];
@@ -86,7 +86,7 @@ class FirstLocation extends BeamLocation {
   @override
   List<Page> get pages => [
         BeamPage(
-          identifier: uri,
+          key: ValueKey(uri),
           page: FirstScreen(),
         ),
       ];
@@ -99,11 +99,11 @@ class SecondLocation extends BeamLocation {
   @override
   List<Page> get pages => [
         BeamPage(
-          identifier: HomeLocation().pathBlueprint,
+          key: ValueKey(HomeLocation().pathBlueprint),
           page: HomeScreen(),
         ),
         BeamPage(
-          identifier: uri,
+          key: ValueKey(uri),
           page: SecondScreen(
             name: pathParameters['name'] ?? 'no name',
             text: queryParameters['text'] ?? 'no text',

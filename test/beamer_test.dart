@@ -7,7 +7,7 @@ class Location1 extends BeamLocation {
   @override
   List<Page> get pages => [
         BeamPage(
-          identifier: 'l1',
+          key: ValueKey('l1'),
           page: Container(),
         )
       ];
@@ -20,7 +20,7 @@ class Location2 extends BeamLocation {
   @override
   List<Page> get pages => [
         BeamPage(
-          identifier: 'l2',
+          key: ValueKey('l2'),
           page: Container(),
         )
       ];

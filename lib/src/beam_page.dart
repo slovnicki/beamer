@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 
 class BeamPage extends Page {
-  final String identifier;
   final Widget page;
 
   BeamPage({
-    @required String identifier,
+    Key key,
     @required this.page,
-  })  : identifier = identifier,
-        super(key: ValueKey(identifier));
+  }) : super(key: key);
 
   @override
   Route createRoute(BuildContext context) {
@@ -23,7 +21,6 @@ class BeamPage extends Page {
 
   @override
   bool operator ==(Object other) {
-    return identical(this, other) ||
-        other is BeamPage && identifier == other.identifier;
+    return identical(this, other) || other is BeamPage && key == other.key;
   }
 }
