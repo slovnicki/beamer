@@ -1,3 +1,7 @@
+# 0.1.2
+
+- **Add** dartdoc and tests
+
 # 0.1.1
 
 - **Remove** widgets from export barrel
