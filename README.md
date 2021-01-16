@@ -20,31 +20,26 @@ Handle your application routing, synchronize it with browser URL and more. `Beam
 The key concept of Beamer is a `BeamLocation` which represents a stack of one or more pages. You will be extending `BeamLocation` to define your app's locations to which you can then _beam to_ using
 
 ```dart
-Beamer.of(context).beamTo(MyLocation())
+context.beamTo(MyLocation())
 ```
 
-You can think of it as _teleporting_ / _beaming_ to another place in your app. Similar to `Navigator.of(context).pushNamed('/my-route')`, but Beamer is not limited to a single page push. You can create an arbitrary stack of pages that await you when you beam there.
+You can think of it as _teleporting_ / _beaming_ to another place in your app. Similar to `Navigator.of(context).pushNamed('/my-route')`, but Beamer is not limited to a single page, nor to a push _per se_. You can create an arbitrary stack of pages that gets build when you beam there.
 
 ## Usage
 
-In order to use Beamer, your `MaterialApp` has to be created with `.router` named constructor to which you need to give `routeInformationParser` and `routerDelegate`. Beamer has you covered there as it provides those implementations for you; `BeamerRouteInformationParser` and `BeamerRouterDelegate`.
-
-As you can see, you need to specify your `BeamLocation`s here, which we cover shortly.
+In order to use Beamer on your entire app, you must wrap `MaterialApp` with `Beamer` to which you pass your `BeamLocation`s.
 
 ```dart
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routeInformationParser: BeamerRouteInformationParser(
-        beamLocations: [
-          HomeLocation(),
-          SecondLocation(),
-        ],
-      ),
-      routerDelegate: BeamerRouterDelegate(
-        initialLocation: HomeLocation(),
-      ),
+    return Beamer(
+      initialLocation: HomeLocation(),
+      beamLocations: [
+        HomeLocation(),
+        SecondLocation(),
+      ],
+      app: MaterialApp(),
     );
   }
 }
@@ -57,7 +52,7 @@ class HomeLocation extends BeamLocation {
   @override
   List<Page> get pages => [
         BeamPage(
-          identifier: this.uri,
+          identifier: uri,
           page: HomeScreen(),
         ),
       ];
@@ -74,10 +69,10 @@ class SecondLocation extends BeamLocation {
           page: HomeScreen(),
         ),
         BeamPage(
-          identifier: this.uri,
+          identifier: uri,
           page: SecondScreen(
-            name: this.pathParameters['name'] ?? 'no name',
-            text: this.queryParameters['text'] ?? 'no text',
+            name: pathParameters['name'] ?? 'no name',
+            text: queryParameters['text'] ?? 'no text',
           ),
         ),
       ];
@@ -93,20 +88,20 @@ As we can see, `BeamLocation` can take query and path parameters from URI. (the 
 
 `HomeScreen` and `SecondScreen` are arbitrary `Widgets` that represent your app screens / pages.
 
-`BeamPage` is a convenience `Page` that creates `MaterialPageRoute`, but you can use your own `Page` implementation instead. The `identifier` is important for `Navigator` to optimize its rebuilds.
+`BeamPage` creates `MaterialPageRoute`, but you can extends `BeamPage` and override `createRoute` to make your own implementation instead. The `key` is important for `Navigator` to optimize its rebuilds.
 
-With this setup, now we can use, for example, `Beamer.of(context).beamTo(SecondLocation())` to go to a place in our application where the page stack of `[HomeScreen, SecondScreen]` will be built.
+With this setup, now we can use, for example, `context.beamTo(SecondLocation())` to go to a place in our application where the page stack of `[HomeScreen, SecondScreen]` will be built.
 
 ## Examples
 
-### Basic
+### URL Sync
 
 See [Example](https://pub.dev/packages/beamer/example) for full application code for this example.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example.gif" alt="example" style="margin-right:16px;margin-left:16px">
 
-### Advanced
+### Deep Location
 
 Coming soon...
 
