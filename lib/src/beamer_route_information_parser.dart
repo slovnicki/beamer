@@ -34,7 +34,7 @@ class BeamerRouteInformationParser
       }
       final beamLocationPathSegments =
           Uri.parse(beamLocation.pathBlueprint).pathSegments;
-      var pathParameters = {};
+      var pathParameters = <String, String>{};
       var checksPassed = false;
       for (var i = 0; i < uri.pathSegments.length; i++) {
         if (beamLocationPathSegments.length < i + 1) {
