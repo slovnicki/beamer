@@ -14,12 +14,12 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             RaisedButton(
-              onPressed: () => Beamer.of(context).beamTo(FirstLocation()),
+              onPressed: () => context.beamTo(FirstLocation()),
               child: Text('go to first location'),
             ),
             SizedBox(height: 16.0),
             RaisedButton(
-              onPressed: () => Beamer.of(context).beamTo(SecondLocation()),
+              onPressed: () => context.beamTo(SecondLocation()),
               child: Text('go to second location'),
             ),
           ],
@@ -38,7 +38,7 @@ class FirstScreen extends StatelessWidget {
       ),
       body: Center(
         child: RaisedButton(
-          onPressed: () => Beamer.of(context).beamTo(SecondLocation()),
+          onPressed: () => context.beamTo(SecondLocation()),
           child: Text('go to second location'),
         ),
       ),
@@ -119,17 +119,14 @@ class SecondLocation extends BeamLocation {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routeInformationParser: BeamerRouteInformationParser(
-        beamLocations: [
-          HomeLocation(),
-          FirstLocation(),
-          SecondLocation(),
-        ],
-      ),
-      routerDelegate: BeamerRouterDelegate(
-        initialLocation: HomeLocation(),
-      ),
+    return Beamer(
+      initialLocation: HomeLocation(),
+      beamLocations: [
+        HomeLocation(),
+        FirstLocation(),
+        SecondLocation(),
+      ],
+      app: MaterialApp(),
     );
   }
 }

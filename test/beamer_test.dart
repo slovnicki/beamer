@@ -32,7 +32,11 @@ class Location2 extends BeamLocation {
 void main() {
   final location1 = Location1();
   final location2 = Location2();
-  final router = BeamerRouterDelegate(initialLocation: location1);
+  final router =
+      BeamerRouterDelegate(initialLocation: location1, beamLocations: [
+    location1,
+    location2,
+  ]);
   final parser = BeamerRouteInformationParser(beamLocations: [
     location1,
     location2,

@@ -13,8 +13,7 @@ abstract class BeamLocation {
   String _path;
   String _query;
 
-  String get uri => this._path + this._query;
-  String get path => this._path;
+  String get uri => (this._path ?? pathBlueprint) + (this._query ?? '');
 
   /// Recreates the [uri] for this [BeamLocation]
   /// considering current value of [pathParameters] and [queryParameters].

@@ -17,4 +17,13 @@ class BeamPage extends Page {
       builder: (context) => page,
     );
   }
+
+  @override
+  int get hashCode => super.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is BeamPage && this.identifier == other.identifier;
+  }
 }

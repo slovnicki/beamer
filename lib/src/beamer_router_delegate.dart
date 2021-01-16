@@ -1,3 +1,4 @@
+import 'package:beamer/beamer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -7,13 +8,18 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<BeamLocation> {
   BeamerRouterDelegate({
     @required BeamLocation initialLocation,
+    @required List<BeamLocation> beamLocations,
   })  : _navigatorKey = GlobalKey<NavigatorState>(),
+        _beamLocations = beamLocations,
         _currentLocation = initialLocation..prepare(),
-        _previousLocation = null {
-    _pages = _currentLocation.pages;
-  }
+        _pages = initialLocation.pages,
+        _previousLocation = null;
 
   final GlobalKey<NavigatorState> _navigatorKey;
+
+  /// A [List] of all available [BeamLocation]s in the [Router]'s scope.
+  final List<BeamLocation> _beamLocations;
+
   BeamLocation _currentLocation;
   List<Page> _pages;
   BeamLocation _previousLocation;
@@ -54,6 +60,12 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
           return false;
         }
         _pages.removeAt(_pages.length - 1);
+        final location = _matchPages(context);
+        if (location != null) {
+          _previousLocation = _currentLocation;
+          _currentLocation = location..prepare();
+          notifyListeners();
+        }
         return true;
       },
     );
@@ -63,5 +75,27 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   SynchronousFuture<void> setNewRoutePath(BeamLocation location) {
     _update(location);
     return SynchronousFuture(null);
+  }
+
+  /// Finds the [BeamLocation] that has the same stack of pages as current.
+  /// Used in [Navigator.onPopPage] to determine whether the pop resulted
+  /// in "implicit beam" to a known location for which the URL can be updated.
+  BeamLocation _matchPages(BuildContext context) {
+    for (var location in _beamLocations) {
+      if (location.pages.length != _pages.length) {
+        continue;
+      }
+      bool found = true;
+      for (int i = 0; i < location.pages.length; i++) {
+        if (location.pages[i] != _pages[i]) {
+          found = false;
+          break;
+        }
+      }
+      if (found == true) {
+        return location;
+      }
+    }
+    return null;
   }
 }
