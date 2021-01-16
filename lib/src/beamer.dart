@@ -11,6 +11,12 @@ class Beamer extends StatelessWidget {
   final BeamerRouterDelegate routerDelegate;
   final Widget child;
 
+  /// Used mainly to obtain the closest instance of [BeamerRouterDelegate]
+  /// with whose methods we then control the navigation.
+  ///
+  /// ```dart
+  /// Beamer.of(context).beamTo(MyLocation())
+  /// ```
   static BeamerRouterDelegate of(BuildContext context) {
     final Beamer beamer = context.findAncestorWidgetOfExactType<Beamer>();
     if (beamer != null && beamer.routerDelegate != null) {

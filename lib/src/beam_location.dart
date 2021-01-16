@@ -16,6 +16,10 @@ abstract class BeamLocation {
   String get uri => this._path + this._query;
   String get path => this._path;
 
+  /// Recreates the [uri] for this [BeamLocation]
+  /// considering current value of [pathParameters] and [queryParameters].
+  ///
+  /// Calls [executeBefore].
   void prepare() {
     this._makePath();
     this._makeQuery();

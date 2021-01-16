@@ -18,11 +18,16 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   List<Page> _pages;
   BeamLocation _previousLocation;
 
+  /// Updates the [currentConfiguration]
+  /// and rebuilds the [Navigator] to contain the [location.pages] stack of pages.
+  ///
+  /// Also remembers the previous location so we can beam back.
   void beamTo(BeamLocation location) {
     _update(location);
     notifyListeners();
   }
 
+  /// Beams to previous location.
   void beamBack() {
     this.beamTo(_previousLocation);
   }

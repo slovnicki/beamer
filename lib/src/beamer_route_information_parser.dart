@@ -9,6 +9,7 @@ class BeamerRouteInformationParser
     @required this.beamLocations,
   });
 
+  /// A [List] of all available [BeamLocation]s in the [Router]'s scope.
   List<BeamLocation> beamLocations;
 
   @override
@@ -23,6 +24,8 @@ class BeamerRouteInformationParser
     return RouteInformation(location: location.uri);
   }
 
+  /// Traverse the [beamLocations] and return the one whose [pathBlueprint]
+  /// matches the [uri], ignoring potential concrete path parameters
   BeamLocation _chooseBeamLocation(Uri uri) {
     for (var beamLocation in this.beamLocations) {
       if (beamLocation.pathBlueprint == uri.path) {
