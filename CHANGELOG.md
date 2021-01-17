@@ -6,7 +6,7 @@
 - **Remove** `BeamLocation.popLocation`
 - **Add** "backwards parse" of URI
 - **Format** pedantically
-- **Update** README with new praqctices and deep location example
+- **Update** README with new practices and deep location example
 
 # 0.1.2
 
