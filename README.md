@@ -99,11 +99,12 @@ With this setup, now we can use, for example, `context.beamTo(SecondLocation())`
 See [Example](https://pub.dev/packages/beamer/example) for full application code for this example.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example.gif" alt="example" style="margin-right:16px;margin-left:16px">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-url-sync.gif" alt="example-url-sync" style="margin-right:16px;margin-left:16px">
 
 ### Deep Location
 
-Coming soon...
+<p align="center">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-deep-location.gif" alt="example-deep-location" width="420" style="margin-right:16px;margin-left:16px">
 
 ## Contributing
 
