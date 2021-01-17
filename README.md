@@ -11,8 +11,8 @@ Handle your application routing, synchronize it with browser URL and more. `Beam
 - [Key Concepts](#key-concepts)
 - [Usage](#usage)
 - [Examples](#examples)
-    - [Basic](#basic)
-    - [Advanced](#advanced)
+    - [URL Sync](#url-sync)
+    - [Deep Location](#deep-location)
 - [Contributing](#contributing)
 
 ## Key Concepts
