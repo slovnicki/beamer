@@ -17,6 +17,13 @@ class Location1 extends BeamLocation {
 }
 
 class Location2 extends BeamLocation {
+  Location2() : super();
+
+  Location2.withParameters({
+    Map<String, String> path,
+    Map<String, String> query,
+  }) : super.withParameters(pathParameters: path, queryParameters: query);
+
   @override
   List<Page> get pages => [
         BeamPage(
@@ -47,6 +54,15 @@ void main() {
     location2.queryParameters = {'q': 'xxx'};
     location2.prepare();
     expect(location2.uri, '/l2/42?q=xxx');
+  });
+
+  test('BeamLocation can create valid URI while using named constructor', () {
+    final location2WithParameters = Location2.withParameters(
+      path: {'id': '42'},
+      query: {'q': 'xxx'},
+    );
+    location2WithParameters.prepare();
+    expect(location2WithParameters.uri, '/l2/42?q=xxx');
   });
 
   test('initialLocation is set', () {
