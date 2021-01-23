@@ -17,6 +17,7 @@ Handle your application routing, synchronize it with browser URL and more. `Beam
 - [Usage](#usage)
   - [Using Beamer Around Entire App](#using-beamer-around-entire-app)
   - [Using Beamer Deeper in Widget Tree](#using-beamer-deeper-in-widget-tree) (WIP)
+  - [General Notes](#general-notes)
 - [Contributing](#contributing)
 
 ## Key Concepts
@@ -80,7 +81,7 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-An example of above `BeamLocation`s would be:
+An example of above book example's `BeamLocation`s would be:
 
 ```dart
 class HomeLocation extends BeamLocation {
