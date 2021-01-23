@@ -16,6 +16,10 @@ class Beamer extends StatelessWidget {
   final List<BeamLocation> beamLocations;
   final MaterialApp app;
 
+  static BeamerRouterDelegate of(BuildContext context) {
+    return Router.of(context).routerDelegate as BeamerRouterDelegate;
+  }
+
   @override
   Widget build(BuildContext context) {
     return app != null
