@@ -1,3 +1,10 @@
+# 0.3.0
+
+- **Add** `Beamer.of(context)` for convenience
+- **Add** recreation of "official" books example
+- **Update** README
+- **Cleanup**
+
 # 0.2.0
 
 - **BREAKING:** Beamer must be placed in a `Widget` tree
