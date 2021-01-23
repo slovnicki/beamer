@@ -10,60 +10,77 @@ class HomeScreen extends StatelessWidget {
         title: Text('Home Screen'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            RaisedButton(
-              onPressed: () => context.beamTo(FirstLocation()),
-              child: Text('go to first location'),
-            ),
-            SizedBox(height: 16.0),
-            RaisedButton(
-              onPressed: () => context.beamTo(SecondLocation()),
-              child: Text('go to second location'),
-            ),
-          ],
+        child: RaisedButton(
+          onPressed: () => context.beamTo(BooksLocation()),
+          child: Text('Go to books location'),
         ),
       ),
     );
   }
 }
 
-class FirstScreen extends StatelessWidget {
+const List<Map<String, String>> books = [
+  {
+    'id': '1',
+    'title': 'Stranger in a Strange Land',
+    'author': 'Robert A. Heinlein',
+  },
+  {
+    'id': '2',
+    'title': 'Foundation',
+    'author': 'Isaac Asimov',
+  },
+  {
+    'id': '3',
+    'title': 'Fahrenheit 451',
+    'author': 'Ray Bradbury',
+  },
+];
+
+class BooksScreen extends StatelessWidget {
+  BooksScreen({this.titleQuery = ''});
+
+  final String titleQuery;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('First Screen'),
+        title: Text('Books'),
       ),
-      body: Center(
-        child: RaisedButton(
-          onPressed: () => context.beamTo(SecondLocation()),
-          child: Text('go to second location'),
-        ),
+      body: ListView(
+        children: books
+            .where((book) =>
+                book['title'].toLowerCase().contains(titleQuery.toLowerCase()))
+            .map((book) => ListTile(
+                  title: Text(book['title']),
+                  subtitle: Text(book['author']),
+                  onTap: () => Beamer.of(context).beamTo(
+                    BooksLocation.withParameters(
+                      path: {'id': book['id']},
+                    ),
+                  ),
+                ))
+            .toList(),
       ),
     );
   }
 }
 
-class SecondScreen extends StatelessWidget {
-  final String name;
-  final String text;
-
-  SecondScreen({
-    this.name,
-    this.text,
+class BookDetailsScreen extends StatelessWidget {
+  BookDetailsScreen({
+    this.book,
   });
 
+  final Map<String, String> book;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Second Screen'),
+        title: Text(book['title']),
       ),
-      body: Center(
-        child: Text(name + ', ' + text),
-      ),
+      body: Text('Author: ${book['author']}'),
     );
   }
 }
@@ -73,7 +90,7 @@ class HomeLocation extends BeamLocation {
   @override
   List<Page> get pages => [
         BeamPage(
-          key: ValueKey(uri),
+          key: ValueKey('home'),
           page: HomeScreen(),
         ),
       ];
@@ -82,37 +99,35 @@ class HomeLocation extends BeamLocation {
   String get pathBlueprint => '/';
 }
 
-class FirstLocation extends BeamLocation {
-  @override
-  List<Page> get pages => [
-        BeamPage(
-          key: ValueKey(uri),
-          page: FirstScreen(),
-        ),
-      ];
+class BooksLocation extends BeamLocation {
+  BooksLocation() : super();
+
+  BooksLocation.withParameters({
+    Map<String, String> path,
+    Map<String, String> query,
+  }) : super.withParameters(path: path, query: query);
 
   @override
-  String get pathBlueprint => '/first-screen';
-}
-
-class SecondLocation extends BeamLocation {
-  @override
   List<Page> get pages => [
+        ...HomeLocation().pages,
         BeamPage(
-          key: ValueKey(HomeLocation().pathBlueprint),
-          page: HomeScreen(),
-        ),
-        BeamPage(
-          key: ValueKey(uri),
-          page: SecondScreen(
-            name: pathParameters['name'] ?? 'no name',
-            text: queryParameters['text'] ?? 'no text',
+          key: ValueKey('books-${queryParameters['title'] ?? ''}'),
+          page: BooksScreen(
+            titleQuery: queryParameters['title'] ?? '',
           ),
         ),
+        if (pathParameters.containsKey('id'))
+          BeamPage(
+            key: ValueKey('book-${pathParameters['id']}'),
+            page: BookDetailsScreen(
+              book: books
+                  .firstWhere((book) => book['id'] == pathParameters['id']),
+            ),
+          ),
       ];
 
   @override
-  String get pathBlueprint => '/second-screen/:name';
+  String get pathBlueprint => '/books/:id';
 }
 
 // APP
@@ -123,8 +138,7 @@ class MyApp extends StatelessWidget {
       initialLocation: HomeLocation(),
       beamLocations: [
         HomeLocation(),
-        FirstLocation(),
-        SecondLocation(),
+        BooksLocation(),
       ],
       app: MaterialApp(),
     );
