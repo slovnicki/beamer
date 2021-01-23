@@ -2,11 +2,12 @@ import 'package:flutter/widgets.dart';
 
 abstract class BeamLocation {
   BeamLocation();
+
   BeamLocation.withParameters({
-    this.pathParameters,
-    this.queryParameters,
-  });
-  BeamLocation.without({int pageId});
+    Map<String, String> path,
+    Map<String, String> query,
+  })  : pathParameters = path ?? {},
+        queryParameters = query ?? {};
 
   Map<String, String> queryParameters = {};
   Map<String, String> pathParameters = {};
