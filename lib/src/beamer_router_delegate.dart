@@ -60,7 +60,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
           return false;
         }
         _pages.removeAt(_pages.length - 1);
-        final location = _matchPages(context);
+        final location = _matchPages();
         if (location != null) {
           _previousLocation = _currentLocation;
           _currentLocation = location..prepare();
@@ -80,7 +80,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   /// Finds the [BeamLocation] that has the same stack of pages as current.
   /// Used in [Navigator.onPopPage] to determine whether the pop resulted
   /// in "implicit beam" to a known location for which the URL can be updated.
-  BeamLocation _matchPages(BuildContext context) {
+  BeamLocation _matchPages() {
     for (var location in _beamLocations) {
       if (location.pages.length != _pages.length) {
         continue;
