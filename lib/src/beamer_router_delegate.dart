@@ -78,11 +78,21 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   }
 
   /// Finds the [BeamLocation] that has the same stack of pages as current.
+  ///
   /// Used in [Navigator.onPopPage] to determine whether the pop resulted
   /// in "implicit beam" to a known location for which the URL can be updated.
+  ///
+  /// For this comparison, parameters are ignored as they can influence pages
+  /// lists that use collection-if on parameters. Until a better solution.
   BeamLocation _matchPages() {
     for (var location in _beamLocations) {
+      final pathParameters = location.pathParameters;
+      location.pathParameters = {};
+      final queryParameters = location.queryParameters;
+      location.queryParameters = {};
       if (location.pages.length != _pages.length) {
+        location.pathParameters = pathParameters;
+        location.pathParameters = queryParameters;
         continue;
       }
       var found = true;
@@ -92,10 +102,13 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
           break;
         }
       }
+      location.pathParameters = pathParameters;
+      location.pathParameters = queryParameters;
       if (found == true) {
         return location;
       }
     }
+
     return null;
   }
 }
