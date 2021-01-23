@@ -39,15 +39,19 @@ class Location2 extends BeamLocation {
 void main() {
   final location1 = Location1();
   final location2 = Location2();
-  final router =
-      BeamerRouterDelegate(initialLocation: location1, beamLocations: [
-    location1,
-    location2,
-  ]);
-  final parser = BeamerRouteInformationParser(beamLocations: [
-    location1,
-    location2,
-  ]);
+  final router = BeamerRouterDelegate(
+    initialLocation: location1,
+    beamLocations: [
+      location1,
+      location2,
+    ],
+  );
+  final parser = BeamerRouteInformationParser(
+    beamLocations: [
+      location1,
+      location2,
+    ],
+  );
 
   test('BeamLocation can create valid URI', () {
     location2.pathParameters = {'id': '42'};
@@ -98,6 +102,12 @@ void main() {
     routeInformation = RouteInformation(location: '/l2/123?q=xxx');
     location = await parser.parseRouteInformation(routeInformation);
     expect(location, isA<Location2>());
+  });
+
+  test('Unknown URI yields NotFound location', () async {
+    var routeInformation = RouteInformation(location: '/x');
+    var location = await parser.parseRouteInformation(routeInformation);
+    expect(location, isA<NotFound>());
   });
 
   test('BeamLocation carries URL parameters', () async {

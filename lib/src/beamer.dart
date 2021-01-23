@@ -9,11 +9,13 @@ class Beamer extends StatelessWidget {
   Beamer({
     @required this.initialLocation,
     @required this.beamLocations,
+    this.notFoundPage,
     this.app,
   });
 
   final BeamLocation initialLocation;
   final List<BeamLocation> beamLocations;
+  final Widget notFoundPage;
   final MaterialApp app;
 
   static BeamerRouterDelegate of(BuildContext context) {
@@ -29,6 +31,7 @@ class Beamer extends StatelessWidget {
             routerDelegate: BeamerRouterDelegate(
               initialLocation: initialLocation,
               beamLocations: beamLocations,
+              notFoundPage: notFoundPage,
             ),
             key: app.key,
             scaffoldMessengerKey: app.scaffoldMessengerKey,

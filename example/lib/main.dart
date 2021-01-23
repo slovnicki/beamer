@@ -140,6 +140,7 @@ class MyApp extends StatelessWidget {
         HomeLocation(),
         BooksLocation(),
       ],
+      notFoundPage: Scaffold(body: Center(child: Text('Not found'))),
       app: MaterialApp(),
     );
   }

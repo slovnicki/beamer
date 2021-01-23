@@ -58,3 +58,11 @@ abstract class BeamLocation {
   List<Page> get pages;
   void Function() executeBefore = () => {};
 }
+
+class NotFound extends BeamLocation {
+  @override
+  List<Page> get pages => [];
+
+  @override
+  String get pathBlueprint => '404';
+}

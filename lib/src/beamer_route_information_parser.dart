@@ -59,6 +59,6 @@ class BeamerRouteInformationParser
         return beamLocation..prepare();
       }
     }
-    return null;
+    return NotFound();
   }
 }

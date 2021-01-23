@@ -9,16 +9,19 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   BeamerRouterDelegate({
     @required BeamLocation initialLocation,
     @required List<BeamLocation> beamLocations,
+    Widget notFoundPage,
   })  : _navigatorKey = GlobalKey<NavigatorState>(),
         _beamLocations = beamLocations,
         _currentLocation = initialLocation..prepare(),
         _pages = initialLocation.pages,
-        _previousLocation = null;
+        _previousLocation = null,
+        notFoundPage = notFoundPage ?? Container();
 
   final GlobalKey<NavigatorState> _navigatorKey;
 
   /// A [List] of all available [BeamLocation]s in the [Router]'s scope.
   final List<BeamLocation> _beamLocations;
+  final notFoundPage;
 
   BeamLocation _currentLocation;
   List<Page> _pages;
@@ -54,7 +57,9 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   Widget build(BuildContext context) {
     return Navigator(
       key: navigatorKey,
-      pages: _pages,
+      pages: currentConfiguration is NotFound
+          ? [BeamPage(page: notFoundPage)]
+          : _pages,
       onPopPage: (route, result) {
         if (!route.didPop(result)) {
           return false;
