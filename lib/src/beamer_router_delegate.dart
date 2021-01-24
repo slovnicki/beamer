@@ -13,9 +13,10 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   })  : _navigatorKey = GlobalKey<NavigatorState>(),
         _beamLocations = beamLocations,
         _currentLocation = initialLocation..prepare(),
-        _pages = initialLocation.pages,
         _previousLocation = null,
-        notFoundPage = notFoundPage ?? Container();
+        notFoundPage = notFoundPage ?? Container() {
+    _currentPages = _currentLocation.pages;
+  }
 
   final GlobalKey<NavigatorState> _navigatorKey;
 
@@ -24,7 +25,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   final notFoundPage;
 
   BeamLocation _currentLocation;
-  List<Page> _pages;
+  List<Page> _currentPages;
   BeamLocation _previousLocation;
 
   /// Updates the [currentConfiguration]
@@ -50,7 +51,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   void _update(BeamLocation location) {
     _previousLocation = _currentLocation;
     _currentLocation = location..prepare();
-    _pages = _currentLocation.pages;
+    _currentPages = _currentLocation.pages;
   }
 
   @override
@@ -59,12 +60,12 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
       key: navigatorKey,
       pages: currentConfiguration is NotFound
           ? [BeamPage(page: notFoundPage)]
-          : _pages,
+          : _currentPages,
       onPopPage: (route, result) {
         if (!route.didPop(result)) {
           return false;
         }
-        _pages.removeAt(_pages.length - 1);
+        _currentPages.removeAt(_currentPages.length - 1);
         final location = _matchPages();
         if (location != null) {
           _previousLocation = _currentLocation;
@@ -95,14 +96,14 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
       location.pathParameters = {};
       final queryParameters = location.queryParameters;
       location.queryParameters = {};
-      if (location.pages.length != _pages.length) {
+      if (location.pages.length != _currentPages.length) {
         location.pathParameters = pathParameters;
         location.pathParameters = queryParameters;
         continue;
       }
       var found = true;
       for (var i = 0; i < location.pages.length; i++) {
-        if (location.pages[i] != _pages[i]) {
+        if (location.pages[i] != _currentPages[i]) {
           found = false;
           break;
         }
