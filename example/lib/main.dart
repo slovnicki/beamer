@@ -69,9 +69,10 @@ class BooksScreen extends StatelessWidget {
 
 class BookDetailsScreen extends StatelessWidget {
   BookDetailsScreen({
-    this.book,
-  });
+    this.bookId,
+  }) : book = books.firstWhere((book) => book['id'] == bookId);
 
+  final String bookId;
   final Map<String, String> book;
 
   @override
@@ -120,8 +121,7 @@ class BooksLocation extends BeamLocation {
           BeamPage(
             key: ValueKey('book-${pathParameters['id']}'),
             page: BookDetailsScreen(
-              book: books
-                  .firstWhere((book) => book['id'] == pathParameters['id']),
+              bookId: pathParameters['id'],
             ),
           ),
       ];
