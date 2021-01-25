@@ -25,7 +25,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   final notFoundPage;
 
   BeamLocation _currentLocation;
-  List<Page> _currentPages;
+  List<BeamPage> _currentPages;
   BeamLocation _previousLocation;
 
   /// Updates the [currentConfiguration]
@@ -65,8 +65,9 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
         if (!route.didPop(result)) {
           return false;
         }
-        _currentPages.removeAt(_currentPages.length - 1);
-        final location = _matchPages();
+        final keepPathParameters = _currentPages.last.keepPathParametersOnPop;
+        _currentPages.removeLast();
+        final location = _matchPages(keepPathParameters);
         if (location != null) {
           _previousLocation = _currentLocation;
           _currentLocation = location..prepare();
@@ -90,15 +91,14 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   ///
   /// For this comparison, parameters are ignored as they can influence pages
   /// lists that use collection-if on parameters. Until a better solution.
-  BeamLocation _matchPages() {
+  BeamLocation _matchPages(bool keepPathParameters) {
     for (var location in _beamLocations) {
-      final pathParameters = location.pathParameters;
-      location.pathParameters = {};
-      final queryParameters = location.queryParameters;
-      location.queryParameters = {};
+      if (keepPathParameters) {
+        location.pathParameters = _currentLocation.pathParameters;
+      } else {
+        location.pathParameters = {};
+      }
       if (location.pages.length != _currentPages.length) {
-        location.pathParameters = pathParameters;
-        location.pathParameters = queryParameters;
         continue;
       }
       var found = true;
@@ -108,8 +108,6 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
           break;
         }
       }
-      location.pathParameters = pathParameters;
-      location.pathParameters = queryParameters;
       if (found == true) {
         return location;
       }
