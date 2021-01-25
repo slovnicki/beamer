@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-<a href="https://www.buymeacoffee.com/slovnicki"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 32px" ></a>
+<a href="https://www.buymeacoffee.com/slovnicki" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 108px !important;" ></a>
 </p>
 
 Handle your application routing, synchronize it with browser URL and more. `Beamer` uses the power of Navigator 2.0 features and implements all the underlying logic for you.
@@ -164,6 +164,5 @@ If you notice any bugs not present in issues, please file a new issue. If you ar
 - if you wish to solve an existing issue, please let us know in issue comments first
 - if you have another enhancement in mind, create an issue for it first so we can discuss your idea
 
-Also, you can buy me a coffee to speed up the development.
+Also, you can <a href="https://www.buymeacoffee.com/slovnicki" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 20px !important;width: 72px !important;" ></a> to speed up the development.
 
-<a href="https://www.buymeacoffee.com/slovnicki"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 32px" ></a>
