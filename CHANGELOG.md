@@ -1,3 +1,7 @@
+# 0.4.1+1
+
+- **Add** some more badges
+
 # 0.4.1
 
 - **Update** example not to access state (books) from `BeamLocation`

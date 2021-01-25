@@ -1,6 +1,6 @@
 name: beamer
 description: Route through page stacks and URLs using the Navigator 2.0 features effortlessly
-version: 0.4.1
+version: 0.4.1+1
 homepage: https://github.com/slovnicki/beamer
 repository: https://github.com/slovnicki/beamer
 
