@@ -1,3 +1,7 @@
+# 0.4.1
+
+- **Update** example not to access state (books) from `BeamLocation`
+
 # 0.4.0
 
 - **BREAKING:** `BeamLocation.pages` must be `List<BeamPage>` instead of `List<Page>`
