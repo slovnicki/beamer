@@ -86,7 +86,7 @@ An example of above book example's `BeamLocation`s would be:
 ```dart
 class HomeLocation extends BeamLocation {
   @override
-  List<Page> get pages => [
+  List<BeamPage> get pages => [
         BeamPage(
           key: ValueKey('home'),
           page: HomeScreen(),
@@ -106,7 +106,7 @@ class BooksLocation extends BeamLocation {
   }) : super.withParameters(path: path, query: query);
 
   @override
-  List<Page> get pages => [
+  List<BeamPage> get pages => [
         ...HomeLocation().pages,
         BeamPage(
           key: ValueKey('books-${queryParameters['title'] ?? ''}'),
