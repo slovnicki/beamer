@@ -1,3 +1,11 @@
+# 0.4.0
+
+- **BREAKING:** `BeamLocation.pages` must be `List<BeamPage>` instead of `List<Page>`
+- **Add** `keepPathParametersOnPop` to `BeamPage`
+- **Fix** `_currentPages` to `BeamLocation` parsing when page stack is beyond URI path parameter
+- **Update** README
+- **Cleanup**
+
 # 0.3.0
 
 - **Add** `Beamer.of(context)` for convenience
