@@ -5,7 +5,7 @@ import 'package:beamer/beamer.dart';
 
 class Location1 extends BeamLocation {
   @override
-  List<Page> get pages => [
+  List<BeamPage> get pages => [
         BeamPage(
           key: ValueKey('l1'),
           page: Container(),
@@ -25,7 +25,7 @@ class Location2 extends BeamLocation {
   }) : super.withParameters(path: path, query: query);
 
   @override
-  List<Page> get pages => [
+  List<BeamPage> get pages => [
         BeamPage(
           key: ValueKey('l2'),
           page: Container(),

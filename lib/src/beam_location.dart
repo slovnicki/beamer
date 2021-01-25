@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:beamer/src/beam_page.dart';
 
 abstract class BeamLocation {
   BeamLocation();
@@ -55,13 +55,13 @@ abstract class BeamLocation {
   }
 
   String get pathBlueprint;
-  List<Page> get pages;
+  List<BeamPage> get pages;
   void Function() executeBefore = () => {};
 }
 
 class NotFound extends BeamLocation {
   @override
-  List<Page> get pages => [];
+  List<BeamPage> get pages => [];
 
   @override
   String get pathBlueprint => '404';
