@@ -1,8 +1,21 @@
 # Beamer
 
-[![pub package](https://img.shields.io/pub/v/beamer.svg)](https://pub.dev/packages/beamer)
-![tests](https://github.com/slovnicki/beamer/workflows/tests/badge.svg)
-[![style](https://dart-lang.github.io/linter/lints/style-pedantic.svg)](https://github.com/google/pedantic)
+<p align="center">
+<a href="https://pub.dev/packages/beamer"><img src="https://img.shields.io/pub/v/beamer.svg" alt="pub"></a>
+<a href="https://github.com/slovnicki/beamer/blob/master/.github/workflows/test.yml"><img src="https://github.com/slovnicki/beamer/workflows/tests/badge.svg" alt="test"></a>
+<a href="https://github.com/google/pedantic"><img src="https://dart-lang.github.io/linter/lints/style-pedantic.svg" alt="style"></a>
+</p>
+
+<p align="center">
+<a href="https://github.com/slovnicki/beamer/commits/master"><img src="https://img.shields.io/github/commit-activity/m/slovnicki/beamer?style=flat-square" alt="GitHub commit activity"></a>
+<a href="https://github.com/slovnicki/beamer/issues"><img src="https://img.shields.io/github/issues-raw/slovnicki/beamer" alt="GitHub open issues"></a>
+<a href="https://github.com/slovnicki/beamer/issues?q=is%3Aissue+is%3Aclosed"><img src="https://img.shields.io/github/issues-closed-raw/slovnicki/beamer" alt="GitHub closed issues"></a>
+<a href="https://github.com/slovnicki/beamer/blob/master/LICENSE"><img src="https://img.shields.io/github/license/slovnicki/beamer" alt="Licence"></a>
+</p>
+
+<p align="center">
+<a href="https://www.buymeacoffee.com/slovnicki"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 32px" ></a>
+</p>
 
 Handle your application routing, synchronize it with browser URL and more. `Beamer` uses the power of Navigator 2.0 features and implements all the underlying logic for you.
 
@@ -150,3 +163,7 @@ If you notice any bugs not present in issues, please file a new issue. If you ar
 
 - if you wish to solve an existing issue, please let us know in issue comments first
 - if you have another enhancement in mind, create an issue for it first so we can discuss your idea
+
+Also, you can buy me a coffee to speed up the development.
+
+<a href="https://www.buymeacoffee.com/slovnicki"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 32px" ></a>
