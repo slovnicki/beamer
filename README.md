@@ -75,20 +75,31 @@ Coming soon...
 
 ### Using Beamer Around Entire App
 
-In order to use Beamer on your entire app, you must wrap `MaterialApp` with `Beamer` to which you pass your `BeamLocation`s. Optionally, if you're using Beamer in Flutter web, you may pass `notFoundPage` which will be shown when URI coming from browser is not among the ones you defined in your `BeamLocation`s.
+In order to use Beamer on your entire app, you must (as per [official documentation](https://api.flutter.dev/flutter/widgets/Router-class.html)) construct your `*App` widget with `.router` constructor to which (along with all your regular `*App` attributes) you provide
+
+- `routerDelegate` that controls (re)building of `Navigator` pages and
+- `routeInformationParser` that decides which URI corresponds to which `Router` state/configuration, in our case - `BeamLocation`.
+
+Here you can just use the Beamer implementation of those - `BeamerRouterDelegate` and `BeamerRouteInformationParser`, to which you pass your `BeamLocation`s. Optional `notFoundPage` will be shown when URI coming from browser is not among the ones you defined in your `BeamLocation`s.
 
 ```dart
 class MyApp extends StatelessWidget {
+  final BeamLocation initialLocation = HomeLocation();
+  final List<BeamLocation> beamLocations = [
+    HomeLocation(),
+    BooksLocation(),
+  ];
   @override
   Widget build(BuildContext context) {
-    return Beamer(
-      initialLocation: HomeLocation(),
-      beamLocations: [
-        HomeLocation(),
-        BooksLocation(),
-      ],
-      notFoundPage: Scaffold(body: Center(child: Text('Not found'))),
-      app: MaterialApp(),
+    return MaterialApp.router(
+      routerDelegate: BeamerRouterDelegate(
+        initialLocation: initialLocation,
+        beamLocations: beamLocations,
+        notFoundPage: Scaffold(body: Center(child: Text('Not found'))),
+      ),
+      routeInformationParser: BeamerRouteInformationParser(
+        beamLocations: beamLocations,
+      ),
     );
   }
 }
