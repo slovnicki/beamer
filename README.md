@@ -122,12 +122,12 @@ class HomeLocation extends BeamLocation {
 }
 
 class BooksLocation extends BeamLocation {
-  BooksLocation() : super();
+  BooksLocation();
 
   BooksLocation.withParameters({
     Map<String, String> path,
     Map<String, String> query,
-  }) : super.withParameters(path: path, query: query);
+  }) : super(pathParameters: path, queryParameters: query);
 
   @override
   List<BeamPage> get pages => [

@@ -22,7 +22,7 @@ class Location2 extends BeamLocation {
   Location2.withParameters({
     Map<String, String> path,
     Map<String, String> query,
-  }) : super.withParameters(path: path, query: query);
+  }) : super(pathParameters: path, queryParameters: query);
 
   @override
   List<BeamPage> get pages => [
