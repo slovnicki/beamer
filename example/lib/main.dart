@@ -120,13 +120,46 @@ class BookDetailsScreen extends StatelessWidget {
         title: Text(book['title']),
       ),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () => Beamer.of(context).updateCurrentLocation(
-            path: '/books/:bookId/genres',
-            data: {'book': book},
-          ),
-          child: Text('See genres'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+              onPressed: () => Beamer.of(context).updateCurrentLocation(
+                path: '/books/:bookId/genres',
+                data: {'book': book},
+              ),
+              child: Text('See genres'),
+            ),
+            ElevatedButton(
+              onPressed: () => Beamer.of(context).updateCurrentLocation(
+                path: '/books/:bookId/buy',
+                data: {'book': book},
+              ),
+              child: Text('Buy'),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+}
+
+class BuyScreen extends StatelessWidget {
+  BuyScreen({
+    this.book,
+  });
+
+  final Map<String, String> book;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Buy Book'),
+      ),
+      body: Center(
+        child:
+            Text('${book['author']}: ${book['title']}\nbuying in progress...'),
       ),
     );
   }
@@ -267,7 +300,7 @@ class HomeLocation extends BeamLocation {
       ];
 
   @override
-  String get pathBlueprint => '/';
+  List<String> get pathBlueprints => ['/'];
 }
 
 class BooksLocation extends BeamLocation {
@@ -302,6 +335,14 @@ class BooksLocation extends BeamLocation {
               bookId: pathParameters['bookId'],
             ),
           ),
+        if (pathSegments.contains('buy'))
+          BeamPage(
+            pathSegment: 'buy',
+            key: ValueKey('book-${pathParameters['bookId']}-buy'),
+            page: BuyScreen(
+              book: data['book'],
+            ),
+          ),
         if (pathSegments.contains('genres'))
           BeamPage(
             pathSegment: 'genres',
@@ -321,7 +362,10 @@ class BooksLocation extends BeamLocation {
       ];
 
   @override
-  String get pathBlueprint => '/books/:bookId/genres/:genreId';
+  List<String> get pathBlueprints => [
+        '/books/:bookId/genres/:genreId',
+        '/books/:bookId/buy',
+      ];
 }
 
 class ArticlesLocation extends BeamLocation {
@@ -357,7 +401,7 @@ class ArticlesLocation extends BeamLocation {
       ];
 
   @override
-  String get pathBlueprint => '/articles/:articleId';
+  List<String> get pathBlueprints => ['/articles/:articleId'];
 }
 
 // APP

@@ -26,7 +26,7 @@ class Location1 extends BeamLocation {
       ];
 
   @override
-  String get pathBlueprint => '/l1';
+  List<String> get pathBlueprints => ['/l1'];
 }
 
 class Location2 extends BeamLocation {
@@ -52,7 +52,7 @@ class Location2 extends BeamLocation {
       ];
 
   @override
-  String get pathBlueprint => '/l2/:id';
+  List<String> get pathBlueprints => ['/l2/:id'];
 }
 
 void main() {

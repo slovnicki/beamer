@@ -28,37 +28,40 @@ class BeamerRouteInformationParser
   /// matches the [uri], ignoring potential concrete path parameters
   BeamLocation _chooseBeamLocation(Uri uri) {
     for (var beamLocation in _beamLocations) {
-      if (beamLocation.pathBlueprint == uri.path) {
-        beamLocation.pathSegments = uri.pathSegments;
-        beamLocation.queryParameters = uri.queryParameters;
-        return beamLocation..prepare();
-      }
-      final beamLocationPathBlueprintSegments =
-          Uri.parse(beamLocation.pathBlueprint).pathSegments;
-      if (uri.pathSegments.length > beamLocationPathBlueprintSegments.length) {
-        continue;
-      }
-      var pathSegments = <String>[];
-      var pathParameters = <String, String>{};
-      var checksPassed = true;
-      for (var i = 0; i < uri.pathSegments.length; i++) {
-        if (uri.pathSegments[i] != beamLocationPathBlueprintSegments[i] &&
-            beamLocationPathBlueprintSegments[i][0] != ':') {
-          checksPassed = false;
-          break;
-        } else if (beamLocationPathBlueprintSegments[i][0] == ':') {
-          pathParameters[beamLocationPathBlueprintSegments[i].substring(1)] =
-              uri.pathSegments[i];
-          pathSegments.add(beamLocationPathBlueprintSegments[i]);
-        } else {
-          pathSegments.add(uri.pathSegments[i]);
+      for (var pathBlueprint in beamLocation.pathBlueprints) {
+        if (pathBlueprint == uri.path) {
+          beamLocation.pathSegments = uri.pathSegments;
+          beamLocation.queryParameters = uri.queryParameters;
+          return beamLocation..prepare();
         }
-      }
-      if (checksPassed) {
-        beamLocation.pathSegments = pathSegments;
-        beamLocation.pathParameters = pathParameters;
-        beamLocation.queryParameters = uri.queryParameters;
-        return beamLocation..prepare();
+        final beamLocationPathBlueprintSegments =
+            Uri.parse(pathBlueprint).pathSegments;
+        if (uri.pathSegments.length >
+            beamLocationPathBlueprintSegments.length) {
+          continue;
+        }
+        var pathSegments = <String>[];
+        var pathParameters = <String, String>{};
+        var checksPassed = true;
+        for (var i = 0; i < uri.pathSegments.length; i++) {
+          if (uri.pathSegments[i] != beamLocationPathBlueprintSegments[i] &&
+              beamLocationPathBlueprintSegments[i][0] != ':') {
+            checksPassed = false;
+            break;
+          } else if (beamLocationPathBlueprintSegments[i][0] == ':') {
+            pathParameters[beamLocationPathBlueprintSegments[i].substring(1)] =
+                uri.pathSegments[i];
+            pathSegments.add(beamLocationPathBlueprintSegments[i]);
+          } else {
+            pathSegments.add(uri.pathSegments[i]);
+          }
+        }
+        if (checksPassed) {
+          beamLocation.pathSegments = pathSegments;
+          beamLocation.pathParameters = pathParameters;
+          beamLocation.queryParameters = uri.queryParameters;
+          return beamLocation..prepare();
+        }
       }
     }
     return NotFound();

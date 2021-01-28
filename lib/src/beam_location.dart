@@ -22,7 +22,7 @@ abstract class BeamLocation {
   /// whether there is a browser.
   ///
   /// For example: '/books/:id'
-  String get pathBlueprint;
+  List<String> get pathBlueprints;
 
   /// The list of pages to be built by the [Navigator] when this [BeamLocation]
   /// is beamed to or internally inferred.
@@ -50,7 +50,7 @@ abstract class BeamLocation {
   /// Complete URI of this [BeamLocation], with path and query parameters.
   ///
   /// If the [BeamLocation] hasn't been used yet, [uri] will be [pathBlueprint].
-  String get uri => (_path ?? pathBlueprint) + _query;
+  String get uri => (_path ?? '') + _query;
 
   String _path;
   String _query;
@@ -88,5 +88,5 @@ class NotFound extends BeamLocation {
   List<BeamPage> get pages => [];
 
   @override
-  String get pathBlueprint => '404';
+  List<String> get pathBlueprints => ['404'];
 }
