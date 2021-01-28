@@ -32,7 +32,7 @@ class Beamer extends StatelessWidget {
           routerDelegate: routerDelegate ??
               BeamerRouterDelegate(
                 initialLocation: initialLocation,
-                beamLocations: beamLocations,
+                notFoundPage: notFoundPage,
               ),
           routeInformationParser: BeamerRouteInformationParser(
             beamLocations: beamLocations,

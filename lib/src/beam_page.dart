@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 class BeamPage extends Page {
   BeamPage({
     Key key,
+    @required this.pathSegment,
     @required this.page,
-    this.keepPathParametersOnPop = false,
   }) : super(key: key);
 
   final Widget page;
-  final bool keepPathParametersOnPop;
+  final String pathSegment;
 
   @override
   Route createRoute(BuildContext context) {

@@ -2,10 +2,15 @@ import 'package:beamer/src/beam_page.dart';
 
 abstract class BeamLocation {
   BeamLocation({
-    pathParameters,
-    queryParameters,
-  })  : pathParameters = pathParameters ?? const <String, String>{},
-        queryParameters = queryParameters ?? const <String, String>{};
+    String path,
+    Map<String, String> pathParameters,
+    Map<String, String> queryParameters,
+    Map<String, dynamic> data,
+  })  : pathSegments =
+            path != null ? List.from(Uri.parse(path).pathSegments) : <String>[],
+        pathParameters = pathParameters ?? <String, String>{},
+        queryParameters = queryParameters ?? <String, String>{},
+        data = data ?? <String, dynamic>{};
 
   /// Represents the form of URI path for this [BeamLocation].
   ///
@@ -26,6 +31,8 @@ abstract class BeamLocation {
   /// Will be executed before [pages] are drawn onto screen.
   void Function() executeBefore = () => {};
 
+  List<String> pathSegments;
+
   /// Path parameters extracted from URI
   ///
   /// For example, if [pathBlueprint] is '/books/:id',
@@ -37,6 +44,8 @@ abstract class BeamLocation {
   /// For example, if incoming URI '/books?title=stranger',
   /// then [queryParameters] will be `{'title': 'stranger'}`.
   Map<String, String> queryParameters;
+
+  Map<String, dynamic> data;
 
   /// Complete URI of this [BeamLocation], with path and query parameters.
   ///
@@ -62,20 +71,15 @@ abstract class BeamLocation {
   }
 
   void _makePath() {
-    var pathSegments = Uri.parse(pathBlueprint).pathSegments;
-    pathSegments = List.from(pathSegments);
-    if (pathParameters.isEmpty) {
-      pathSegments.removeWhere((segment) => segment[0] == ':');
-      _path = '/' + pathSegments.join('/');
-    }
+    final realizedPathSegments = List.from(pathSegments);
     pathParameters.forEach((key, value) {
-      var index = pathSegments.indexWhere(
+      var index = realizedPathSegments.indexWhere(
           (segment) => segment[0] == ':' && segment.substring(1) == key);
       if (index != -1) {
-        pathSegments[index] = value;
+        realizedPathSegments[index] = value;
       }
     });
-    _path = '/' + pathSegments.join('/');
+    _path = '/' + realizedPathSegments.join('/');
   }
 }
 

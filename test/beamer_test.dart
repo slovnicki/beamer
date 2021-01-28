@@ -4,9 +4,22 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:beamer/beamer.dart';
 
 class Location1 extends BeamLocation {
+  Location1({
+    String path,
+    Map<String, String> pathParameters,
+    Map<String, String> queryParameters,
+    Map<String, dynamic> data,
+  }) : super(
+          path: path,
+          pathParameters: pathParameters,
+          queryParameters: queryParameters,
+          data: data,
+        );
+
   @override
   List<BeamPage> get pages => [
         BeamPage(
+          pathSegment: 'l1',
           key: ValueKey('l1'),
           page: Container(),
         )
@@ -17,16 +30,22 @@ class Location1 extends BeamLocation {
 }
 
 class Location2 extends BeamLocation {
-  Location2() : super();
-
-  Location2.withParameters({
-    Map<String, String> path,
-    Map<String, String> query,
-  }) : super(pathParameters: path, queryParameters: query);
+  Location2({
+    String path,
+    Map<String, String> pathParameters,
+    Map<String, String> queryParameters,
+    Map<String, dynamic> data,
+  }) : super(
+          path: path,
+          pathParameters: pathParameters,
+          queryParameters: queryParameters,
+          data: data,
+        );
 
   @override
   List<BeamPage> get pages => [
         BeamPage(
+          pathSegment: 'l2',
           key: ValueKey('l2'),
           page: Container(),
         )
@@ -37,14 +56,10 @@ class Location2 extends BeamLocation {
 }
 
 void main() {
-  final location1 = Location1();
-  final location2 = Location2();
+  final location1 = Location1(path: '/l1');
+  final location2 = Location2(path: '/l2/:id');
   final router = BeamerRouterDelegate(
     initialLocation: location1,
-    beamLocations: [
-      location1,
-      location2,
-    ],
   );
   final parser = BeamerRouteInformationParser(
     beamLocations: [
@@ -61,9 +76,10 @@ void main() {
   });
 
   test('BeamLocation can create valid URI while using named constructor', () {
-    final location2WithParameters = Location2.withParameters(
-      path: {'id': '42'},
-      query: {'q': 'xxx'},
+    final location2WithParameters = Location2(
+      path: '/l2/:id',
+      pathParameters: {'id': '42'},
+      queryParameters: {'q': 'xxx'},
     );
     location2WithParameters.prepare();
     expect(location2WithParameters.uri, '/l2/42?q=xxx');

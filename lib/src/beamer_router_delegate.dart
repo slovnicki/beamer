@@ -8,10 +8,8 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<BeamLocation> {
   BeamerRouterDelegate({
     @required BeamLocation initialLocation,
-    @required List<BeamLocation> beamLocations,
     Widget notFoundPage,
   })  : _navigatorKey = GlobalKey<NavigatorState>(),
-        _beamLocations = beamLocations,
         _currentLocation = initialLocation..prepare(),
         _previousLocation = null,
         notFoundPage = notFoundPage ?? Container() {
@@ -20,8 +18,6 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
 
   final GlobalKey<NavigatorState> _navigatorKey;
 
-  /// A [List] of all available [BeamLocation]s in the [Router]'s scope.
-  final List<BeamLocation> _beamLocations;
   final notFoundPage;
 
   BeamLocation _currentLocation;
@@ -42,6 +38,42 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     beamTo(_previousLocation);
   }
 
+  void updateCurrentLocation({
+    @required String path,
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, String> queryParameters = const <String, String>{},
+    Map<String, dynamic> data = const <String, dynamic>{},
+    bool rewriteParameters = false,
+  }) {
+    _currentLocation.pathSegments = List.from(Uri.parse(path).pathSegments);
+    if (rewriteParameters) {
+      _currentLocation.pathParameters = Map.from(pathParameters);
+    } else {
+      pathParameters.forEach((key, value) {
+        _currentLocation.pathParameters[key] = value;
+      });
+    }
+    if (rewriteParameters) {
+      _currentLocation.queryParameters = Map.from(queryParameters);
+    } else {
+      queryParameters.forEach((key, value) {
+        _currentLocation.queryParameters[key] = value;
+      });
+    }
+    if (rewriteParameters) {
+      _currentLocation.data = Map.from(data);
+    } else {
+      data.forEach((key, value) {
+        _currentLocation.data[key] = value;
+      });
+    }
+    _currentLocation.prepare();
+    _currentPages = _currentLocation.pages;
+    notifyListeners();
+  }
+
+  BeamLocation get currentLocation => currentConfiguration;
+
   @override
   BeamLocation get currentConfiguration => _currentLocation;
 
@@ -59,19 +91,15 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     return Navigator(
       key: navigatorKey,
       pages: currentConfiguration is NotFound
-          ? [BeamPage(page: notFoundPage)]
+          ? [BeamPage(pathSegment: '/404', page: notFoundPage)]
           : _currentPages,
       onPopPage: (route, result) {
         if (!route.didPop(result)) {
           return false;
         }
-        final keepPathParameters = _currentPages.last.keepPathParametersOnPop;
-        _currentPages.removeLast();
-        final location = _matchPages(keepPathParameters);
-        if (location != null) {
-          _previousLocation = _currentLocation;
-          _currentLocation = location..prepare();
-          notifyListeners();
+        final lastPage = _currentPages.removeLast();
+        if (lastPage is BeamPage && lastPage.pathSegment != null) {
+          _handlePoppedPathSegment(lastPage.pathSegment);
         }
         return true;
       },
@@ -84,35 +112,13 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     return SynchronousFuture(null);
   }
 
-  /// Finds the [BeamLocation] that has the same stack of pages as current.
-  ///
-  /// Used in [Navigator.onPopPage] to determine whether the pop resulted
-  /// in "implicit beam" to a known location for which the URL can be updated.
-  ///
-  /// For this comparison, parameters are ignored as they can influence pages
-  /// lists that use collection-if on parameters. Until a better solution.
-  BeamLocation _matchPages(bool keepPathParameters) {
-    for (var location in _beamLocations) {
-      if (keepPathParameters) {
-        location.pathParameters = _currentLocation.pathParameters;
-      } else {
-        location.pathParameters = {};
-      }
-      if (location.pages.length != _currentPages.length) {
-        continue;
-      }
-      var found = true;
-      for (var i = 0; i < location.pages.length; i++) {
-        if (location.pages[i] != _currentPages[i]) {
-          found = false;
-          break;
-        }
-      }
-      if (found == true) {
-        return location;
-      }
+  void _handlePoppedPathSegment(String poppedPathSegment) {
+    if (poppedPathSegment[0] == ':') {
+      _currentLocation.pathParameters.remove(poppedPathSegment.substring(1));
     }
-
-    return null;
+    _currentLocation.pathSegments.remove(poppedPathSegment);
+    _currentLocation.prepare();
+    _currentPages = _currentLocation.pages;
+    notifyListeners();
   }
 }

@@ -29,31 +29,33 @@ class BeamerRouteInformationParser
   BeamLocation _chooseBeamLocation(Uri uri) {
     for (var beamLocation in _beamLocations) {
       if (beamLocation.pathBlueprint == uri.path) {
+        beamLocation.pathSegments = uri.pathSegments;
         beamLocation.queryParameters = uri.queryParameters;
         return beamLocation..prepare();
       }
-      final beamLocationPathSegments =
+      final beamLocationPathBlueprintSegments =
           Uri.parse(beamLocation.pathBlueprint).pathSegments;
+      if (uri.pathSegments.length > beamLocationPathBlueprintSegments.length) {
+        continue;
+      }
+      var pathSegments = <String>[];
       var pathParameters = <String, String>{};
-      var checksPassed = false;
+      var checksPassed = true;
       for (var i = 0; i < uri.pathSegments.length; i++) {
-        if (beamLocationPathSegments.length < i + 1) {
+        if (uri.pathSegments[i] != beamLocationPathBlueprintSegments[i] &&
+            beamLocationPathBlueprintSegments[i][0] != ':') {
           checksPassed = false;
           break;
-        }
-        if (uri.pathSegments[i] != beamLocationPathSegments[i] &&
-            beamLocationPathSegments[i][0] != ':') {
-          checksPassed = false;
-          break;
+        } else if (beamLocationPathBlueprintSegments[i][0] == ':') {
+          pathParameters[beamLocationPathBlueprintSegments[i].substring(1)] =
+              uri.pathSegments[i];
+          pathSegments.add(beamLocationPathBlueprintSegments[i]);
         } else {
-          if (beamLocationPathSegments[i][0] == ':') {
-            pathParameters[beamLocationPathSegments[i].substring(1)] =
-                uri.pathSegments[i];
-          }
-          checksPassed = true;
+          pathSegments.add(uri.pathSegments[i]);
         }
       }
       if (checksPassed) {
+        beamLocation.pathSegments = pathSegments;
         beamLocation.pathParameters = pathParameters;
         beamLocation.queryParameters = uri.queryParameters;
         return beamLocation..prepare();
