@@ -64,6 +64,6 @@ class BeamerRouteInformationParser
         }
       }
     }
-    return NotFound();
+    return NotFound(path: uri.path);
   }
 }

@@ -84,9 +84,13 @@ abstract class BeamLocation {
 }
 
 class NotFound extends BeamLocation {
+  NotFound({
+    String path,
+  }) : super(path: path);
+
   @override
   List<BeamPage> get pages => [];
 
   @override
-  List<String> get pathBlueprints => ['404'];
+  List<String> get pathBlueprints => [''];
 }
