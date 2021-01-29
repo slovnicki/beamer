@@ -54,7 +54,7 @@ You can think of it as _teleporting_ / _beaming_ to another place in your app. S
 Here is a recreation of books example from [this article](https://medium.com/flutter/learning-flutters-new-navigation-and-routing-system-7c9068155ade) where you can learn a lot about Navigator 2.0. This recreation starts off with the basic books example, but then goes off in many more flows that show the full power of Beamer. See [Example](https://pub.dev/packages/beamer/example) for full application code of this example.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-books.gif" alt="example-url-sync" style="margin-right:16px;margin-left:16px">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-books-v0.5.0.gif" alt="example-url-sync" style="margin-right:16px;margin-left:16px">
 
 ### Nested Routers
 
