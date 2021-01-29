@@ -24,8 +24,6 @@ Handle your application routing, synchronize it with browser URL and more. `Beam
 - [Key Concepts](#key-concepts)
 - [Examples](#examples)
     - [Books](#books)
-    - [Deep Location](#deep-location)
-    - [Sibling Routers](#sibling-routers) (WIP)
     - [Nested Routers](#nested-routers) (WIP)
 - [Usage](#usage)
   - [Using Beamer Around Entire App](#using-beamer-around-entire-app)
@@ -53,19 +51,10 @@ You can think of it as _teleporting_ / _beaming_ to another place in your app. S
 
 ### Books
 
-This is a recreation of books example from [this article](https://medium.com/flutter/learning-flutters-new-navigation-and-routing-system-7c9068155ade) where you can learn a lot about Navigator 2.0. See [Example](https://pub.dev/packages/beamer/example) for full application code of this example.
+Here is a recreation of books example from [this article](https://medium.com/flutter/learning-flutters-new-navigation-and-routing-system-7c9068155ade) where you can learn a lot about Navigator 2.0. This recreation starts off with the basic books example, but then goes off in many more flows that show the full power of Beamer. See [Example](https://pub.dev/packages/beamer/example) for full application code of this example.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-books.gif" alt="example-url-sync" style="margin-right:16px;margin-left:16px">
-
-### Deep Location
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-deep-location.gif" alt="example-deep-location" width="420" style="margin-right:16px;margin-left:16px">
-
-### Sibling Routers
-
-Coming soon...
 
 ### Nested Routers
 
@@ -88,13 +77,14 @@ class MyApp extends StatelessWidget {
   final List<BeamLocation> beamLocations = [
     HomeLocation(),
     BooksLocation(),
+    ArticlesLocation(),
   ];
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       routerDelegate: BeamerRouterDelegate(
         initialLocation: initialLocation,
-        beamLocations: beamLocations,
         notFoundPage: Scaffold(body: Center(child: Text('Not found'))),
       ),
       routeInformationParser: BeamerRouteInformationParser(
@@ -112,43 +102,115 @@ class HomeLocation extends BeamLocation {
   @override
   List<BeamPage> get pages => [
         BeamPage(
+          pathSegment: '',
           key: ValueKey('home'),
           page: HomeScreen(),
         ),
       ];
 
   @override
-  String get pathBlueprint => '/';
+  List<String> get pathBlueprints => ['/'];
 }
 
 class BooksLocation extends BeamLocation {
-  BooksLocation();
-
-  BooksLocation.withParameters({
-    Map<String, String> path,
-    Map<String, String> query,
-  }) : super(pathParameters: path, queryParameters: query);
+  BooksLocation({
+    String path,
+    Map<String, String> pathParameters,
+    Map<String, String> queryParameters,
+    Map<String, dynamic> data,
+  }) : super(
+          path: path,
+          pathParameters: pathParameters,
+          queryParameters: queryParameters,
+          data: data,
+        );
 
   @override
   List<BeamPage> get pages => [
         ...HomeLocation().pages,
-        BeamPage(
-          key: ValueKey('books-${queryParameters['title'] ?? ''}'),
-          page: BooksScreen(
-            titleQuery: queryParameters['title'] ?? '',
-          ),
-        ),
-        if (pathParameters.containsKey('id'))
+        if (pathSegments.contains('books'))
           BeamPage(
-            key: ValueKey('book-${pathParameters['id']}'),
+            pathSegment: 'books',
+            key: ValueKey('books-${queryParameters['title'] ?? ''}'),
+            page: BooksScreen(
+              titleQuery: queryParameters['title'] ?? '',
+            ),
+          ),
+        if (pathParameters.containsKey('bookId'))
+          BeamPage(
+            pathSegment: ':bookId',
+            key: ValueKey('book-${pathParameters['bookId']}'),
             page: BookDetailsScreen(
-              bookId: pathParameters['id'],
+              bookId: pathParameters['bookId'],
+            ),
+          ),
+        if (pathSegments.contains('buy'))
+          BeamPage(
+            pathSegment: 'buy',
+            key: ValueKey('book-${pathParameters['bookId']}-buy'),
+            page: BuyScreen(
+              book: data['book'],
+            ),
+          ),
+        if (pathSegments.contains('genres'))
+          BeamPage(
+            pathSegment: 'genres',
+            key: ValueKey('book-${pathParameters['bookId']}-genres'),
+            page: GenresScreen(
+              book: data['book'],
+            ),
+          ),
+        if (pathParameters.containsKey('genreId'))
+          BeamPage(
+            pathSegment: ':genreId',
+            key: ValueKey('genres-${pathParameters['genreId']}'),
+            page: GenreDetailsScreen(
+              genre: data['genre'],
             ),
           ),
       ];
 
   @override
-  String get pathBlueprint => '/books/:id';
+  List<String> get pathBlueprints => [
+        '/books/:bookId/genres/:genreId',
+        '/books/:bookId/buy',
+      ];
+}
+
+class ArticlesLocation extends BeamLocation {
+  ArticlesLocation({
+    String path,
+    Map<String, String> pathParameters,
+    Map<String, String> queryParameters,
+    Map<String, dynamic> data,
+  }) : super(
+          path: path,
+          pathParameters: pathParameters,
+          queryParameters: queryParameters,
+          data: data,
+        );
+
+  @override
+  List<BeamPage> get pages => [
+        ...HomeLocation().pages,
+        if (pathSegments.contains('articles'))
+          BeamPage(
+            pathSegment: 'articles',
+            key: ValueKey('articles'),
+            page: ArticlesScreen(),
+          ),
+        if (pathParameters.containsKey('articleId'))
+          BeamPage(
+            pathSegment: ':articleId',
+            key: ValueKey('articles-${pathParameters['articleId']}'),
+            page: ArticleDetailsScreen(
+              articleId: pathParameters['articleId'],
+            ),
+          ),
+      ];
+
+  @override
+  List<String> get pathBlueprints => ['/articles/:articleId'];
 }
 ```
 
