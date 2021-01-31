@@ -4,19 +4,19 @@ class BeamPage extends Page {
   BeamPage({
     Key key,
     @required this.pathSegment,
-    @required this.page,
+    @required this.child,
     this.keepQueryOnPop = false,
   }) : super(key: key);
 
-  final Widget page;
   final String pathSegment;
+  final Widget child;
   final bool keepQueryOnPop;
 
   @override
   Route createRoute(BuildContext context) {
     return MaterialPageRoute(
       settings: this,
-      builder: (context) => page,
+      builder: (context) => child,
     );
   }
 

@@ -91,7 +91,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     return Navigator(
       key: navigatorKey,
       pages: currentConfiguration is NotFound
-          ? [BeamPage(pathSegment: '', page: notFoundPage)]
+          ? [BeamPage(pathSegment: '', child: notFoundPage)]
           : _currentPages,
       onPopPage: (route, result) {
         if (!route.didPop(result)) {

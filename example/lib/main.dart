@@ -295,7 +295,7 @@ class HomeLocation extends BeamLocation {
         BeamPage(
           pathSegment: '',
           key: ValueKey('home'),
-          page: HomeScreen(),
+          child: HomeScreen(),
         ),
       ];
 
@@ -323,7 +323,7 @@ class BooksLocation extends BeamLocation {
           BeamPage(
             pathSegment: 'books',
             key: ValueKey('books-${queryParameters['title'] ?? ''}'),
-            page: BooksScreen(
+            child: BooksScreen(
               titleQuery: queryParameters['title'] ?? '',
             ),
           ),
@@ -331,7 +331,7 @@ class BooksLocation extends BeamLocation {
           BeamPage(
             pathSegment: ':bookId',
             key: ValueKey('book-${pathParameters['bookId']}'),
-            page: BookDetailsScreen(
+            child: BookDetailsScreen(
               bookId: pathParameters['bookId'],
             ),
           ),
@@ -339,7 +339,7 @@ class BooksLocation extends BeamLocation {
           BeamPage(
             pathSegment: 'buy',
             key: ValueKey('book-${pathParameters['bookId']}-buy'),
-            page: BuyScreen(
+            child: BuyScreen(
               book: data['book'],
             ),
           ),
@@ -347,7 +347,7 @@ class BooksLocation extends BeamLocation {
           BeamPage(
             pathSegment: 'genres',
             key: ValueKey('book-${pathParameters['bookId']}-genres'),
-            page: GenresScreen(
+            child: GenresScreen(
               book: data['book'],
             ),
           ),
@@ -355,7 +355,7 @@ class BooksLocation extends BeamLocation {
           BeamPage(
             pathSegment: ':genreId',
             key: ValueKey('genres-${pathParameters['genreId']}'),
-            page: GenreDetailsScreen(
+            child: GenreDetailsScreen(
               genre: data['genre'],
             ),
           ),
@@ -388,13 +388,13 @@ class ArticlesLocation extends BeamLocation {
           BeamPage(
             pathSegment: 'articles',
             key: ValueKey('articles'),
-            page: ArticlesScreen(),
+            child: ArticlesScreen(),
           ),
         if (pathParameters.containsKey('articleId'))
           BeamPage(
             pathSegment: ':articleId',
             key: ValueKey('articles-${pathParameters['articleId']}'),
-            page: ArticleDetailsScreen(
+            child: ArticleDetailsScreen(
               articleId: pathParameters['articleId'],
             ),
           ),

@@ -21,19 +21,19 @@ class Location1 extends BeamLocation {
         BeamPage(
           pathSegment: 'l1',
           key: ValueKey('l1'),
-          page: Container(),
+          child: Container(),
         ),
         if (pathSegments.contains('one'))
           BeamPage(
             pathSegment: 'one',
             key: ValueKey('l1-one'),
-            page: Container(),
+            child: Container(),
           ),
         if (pathSegments.contains('two'))
           BeamPage(
             pathSegment: 'two',
             key: ValueKey('l1-two'),
-            page: Container(),
+            child: Container(),
           )
       ];
 
@@ -59,7 +59,7 @@ class Location2 extends BeamLocation {
         BeamPage(
           pathSegment: 'l2',
           key: ValueKey('l2'),
-          page: Container(),
+          child: Container(),
         )
       ];
 
