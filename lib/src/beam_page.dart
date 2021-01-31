@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// A wrapper pages / screens that will be drawn.
 class BeamPage extends Page {
   BeamPage({
     Key key,
@@ -7,7 +8,13 @@ class BeamPage extends Page {
     this.keepQueryOnPop = false,
   }) : super(key: key);
 
+  /// The concrete Widget representing app's screen.
   final Widget child;
+
+  /// When this [BeamPage] pops from [Navigator] stack, whether to keep the
+  /// query parameters within current [BeamLocation].
+  ///
+  /// Defaults to `false`.
   final bool keepQueryOnPop;
 
   @override

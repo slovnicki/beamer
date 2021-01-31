@@ -14,12 +14,46 @@ class Beamer extends StatelessWidget {
     this.routerDelegate,
   }) : assert(app != null || initialLocation != null && beamLocations != null);
 
+  /// Location to be built if nothing else is signaled.
   final BeamLocation initialLocation;
+
+  /// All the location that this application supports.
   final List<BeamLocation> beamLocations;
+
+  /// Screen to be drawn when no location can handle the URI.
   final Widget notFoundPage;
+
+  /// `*App` widget, e.g. [MaterialApp].
+  ///
+  /// This is useful when using `builder` in the `*App` widget. Then, if using
+  /// Beamer the regular way, `Beamer.of(context)` will not find anything.
+  /// The way to solve it is by using Beamer above `*App` like this:
+  ///
+  /// ```dart
+  /// final BeamerRouterDelegate _beamerRouterDelegate = ...;
+  /// final List<BeamLocation> _beamLocations = ...;
+  ///
+  /// @override
+  /// Widget build(BuildContext context) {
+  ///   return Beamer(
+  ///     routerDelegate: _beamerRouterDelegate,
+  ///     app: MaterialApp.router(
+  ///       routerDelegate: _beamerRouterDelegate,
+  ///       routeInformationParser: BeamerRouteInformationParser(
+  ///         beamLocations: _beamLocations,
+  ///       ),
+  ///       ...
+  ///     )
+  ///   );
+  /// }
+  ///
+  /// ```
   final Widget app;
+
+  /// Responsible for beaming, updating and rebuilding the page stack.
   final BeamerRouterDelegate routerDelegate;
 
+  /// Access Beamer's [routerDelegate].
   static BeamerRouterDelegate of(BuildContext context) {
     return Router.maybeOf(context)?.routerDelegate ??
         context.findAncestorWidgetOfExactType<Beamer>().routerDelegate;

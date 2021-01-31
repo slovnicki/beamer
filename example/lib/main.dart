@@ -1,6 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
 
+// DATA
+const List<Map<String, String>> books = [
+  {
+    'id': '1',
+    'title': 'Stranger in a Strange Land',
+    'author': 'Robert A. Heinlein',
+    'genres': 'Science fiction',
+  },
+  {
+    'id': '2',
+    'title': 'Foundation',
+    'author': 'Isaac Asimov',
+    'genres': 'Science fiction, Political drama',
+  },
+  {
+    'id': '3',
+    'title': 'Fahrenheit 451',
+    'author': 'Ray Bradbury',
+    'genres': '	Dystopian',
+  },
+];
+
+const List<Map<String, String>> articles = [
+  {
+    'id': '1',
+    'title': 'Article 1',
+    'author': 'Author 1',
+  },
+  {
+    'id': '2',
+    'title': 'Article 2',
+    'author': 'Author 2',
+  },
+];
+
 // SCREENS
 class HomeScreen extends StatelessWidget {
   @override
@@ -42,40 +77,6 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-const List<Map<String, String>> books = [
-  {
-    'id': '1',
-    'title': 'Stranger in a Strange Land',
-    'author': 'Robert A. Heinlein',
-    'genres': 'Science fiction',
-  },
-  {
-    'id': '2',
-    'title': 'Foundation',
-    'author': 'Isaac Asimov',
-    'genres': 'Science fiction, Political drama',
-  },
-  {
-    'id': '3',
-    'title': 'Fahrenheit 451',
-    'author': 'Ray Bradbury',
-    'genres': '	Dystopian',
-  },
-];
-
-const List<Map<String, String>> articles = [
-  {
-    'id': '1',
-    'title': 'Article 1',
-    'author': 'Author 1',
-  },
-  {
-    'id': '2',
-    'title': 'Article 2',
-    'author': 'Author 2',
-  },
-];
-
 class BooksScreen extends StatelessWidget {
   BooksScreen({this.titleQuery = ''});
 
@@ -95,7 +96,7 @@ class BooksScreen extends StatelessWidget {
                   title: Text(book['title']),
                   subtitle: Text(book['author']),
                   onTap: () => Beamer.of(context).updateCurrentLocation(
-                    path: '/books/:bookId',
+                    pathBlueprint: '/books/:bookId',
                     pathParameters: {'bookId': book['id']},
                   ),
                 ))
@@ -125,14 +126,14 @@ class BookDetailsScreen extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () => Beamer.of(context).updateCurrentLocation(
-                path: '/books/:bookId/genres',
+                pathBlueprint: '/books/:bookId/genres',
                 data: {'book': book},
               ),
               child: Text('See genres'),
             ),
             ElevatedButton(
               onPressed: () => Beamer.of(context).updateCurrentLocation(
-                path: '/books/:bookId/buy',
+                pathBlueprint: '/books/:bookId/buy',
                 data: {'book': book},
               ),
               child: Text('Buy'),
@@ -185,7 +186,7 @@ class GenresScreen extends StatelessWidget {
               .map((genre) => ListTile(
                     title: Text(genre),
                     onTap: () => Beamer.of(context).updateCurrentLocation(
-                      path: '/books/:bookId/genres/:genreId',
+                      pathBlueprint: '/books/:bookId/genres/:genreId',
                       pathParameters: {
                         'genreId': (genres.indexOf(genre) + 1).toString()
                       },
@@ -218,7 +219,7 @@ class GenreDetailsScreen extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () => Beamer.of(context).updateCurrentLocation(
-                path: '/books',
+                pathBlueprint: '/books',
                 rewriteParameters: true,
               ),
               child: Text('Go back to books'),
@@ -259,7 +260,7 @@ class ArticlesScreen extends StatelessWidget {
                   title: Text(article['title']),
                   subtitle: Text(article['author']),
                   onTap: () => Beamer.of(context).updateCurrentLocation(
-                    path: '/articles/:articleId',
+                    pathBlueprint: '/articles/:articleId',
                     pathParameters: {'articleId': article['id']},
                   ),
                 ))

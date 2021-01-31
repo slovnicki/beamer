@@ -24,8 +24,14 @@ class BeamerRouteInformationParser
     return RouteInformation(location: location.uri);
   }
 
-  /// Traverse all [BeamLocation]s and return the one whose [pathBlueprint]
-  /// matches the [uri], ignoring potential concrete path parameters
+  /// Traverses all [beamLocations] and returns the one whose one of
+  /// [pathBlueprints] contains the [uri], ignoring concrete path parameters.
+  ///
+  /// Upon finding such [BeamLocation], configures it with
+  /// [pathParameters] and [queryParameters] from [uri].
+  ///
+  /// If [beamLocations] don't contain a match, [NotFound] will be returned
+  /// configured with [uri].
   BeamLocation _chooseBeamLocation(Uri uri) {
     for (var beamLocation in _beamLocations) {
       for (var pathBlueprint in beamLocation.pathBlueprints) {

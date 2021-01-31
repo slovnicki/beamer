@@ -17,35 +17,44 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   }
 
   final GlobalKey<NavigatorState> _navigatorKey;
-
-  final notFoundPage;
-
   BeamLocation _currentLocation;
   List<BeamPage> _currentPages;
   BeamLocation _previousLocation;
 
-  /// Updates the [currentConfiguration]
-  /// and rebuilds the [Navigator] to contain the [location.pages] stack of pages.
+  /// Screen to show when no [BeamLocation] supports the incoming URI.
+  final Widget notFoundPage;
+
+  /// Updates the [currentLocation] with prepared [location] and
+  /// rebuilds the [Navigator] to contain the [location.pages] stack of pages.
   ///
-  /// Also remembers the previous location so we can beam back.
+  /// Remembers the previous location so it can [beamBack].
   void beamTo(BeamLocation location) {
     _update(location);
     notifyListeners();
   }
 
-  /// Beams to previous location.
+  /// Beams to previous location, as it were.
   void beamBack() {
     beamTo(_previousLocation);
   }
 
+  /// Update chosen parameters of [currentLocation], in a similar manner
+  /// as with [BeamLocation] constructor.
+  ///
+  /// [pathParameters], [queryParameters] and [data] will be appended to
+  /// [currentLocation]'s [pathParameters], [queryParameters] and [data]
+  /// unless [rewriteParameters] is set to `true`, in which case
+  /// [currentLocation]'s attributes will be set to provided values
+  /// or their default values.
   void updateCurrentLocation({
-    @required String path,
+    @required String pathBlueprint,
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, String> queryParameters = const <String, String>{},
     Map<String, dynamic> data = const <String, dynamic>{},
     bool rewriteParameters = false,
   }) {
-    _currentLocation.pathSegments = List.from(Uri.parse(path).pathSegments);
+    _currentLocation.pathSegments =
+        List.from(Uri.parse(pathBlueprint).pathSegments);
     if (rewriteParameters) {
       _currentLocation.pathParameters = Map.from(pathParameters);
     } else {
@@ -72,6 +81,17 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     notifyListeners();
   }
 
+  /// Access the current [BeamLocation].
+  ///
+  /// The same thing as [currentConfiguration], but with more familiar name.
+  ///
+  /// Can be useful when trying to [updateCurrentLocation], but not sure
+  /// what is the exact state of it, i.e. what is the current value of
+  /// [pathParameters], [queryParameters], [data], etc.
+  ///
+  /// ```dart
+  /// Beamer.of(context).currentLocation
+  /// ```
   BeamLocation get currentLocation => currentConfiguration;
 
   @override
