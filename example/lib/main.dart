@@ -291,6 +291,9 @@ class ArticleDetailsScreen extends StatelessWidget {
 // LOCATIONS
 class HomeLocation extends BeamLocation {
   @override
+  List<String> get pathBlueprints => ['/'];
+
+  @override
   List<BeamPage> get pages => [
         BeamPage(
           pathSegment: '',
@@ -298,9 +301,6 @@ class HomeLocation extends BeamLocation {
           child: HomeScreen(),
         ),
       ];
-
-  @override
-  List<String> get pathBlueprints => ['/'];
 }
 
 class BooksLocation extends BeamLocation {
@@ -315,6 +315,12 @@ class BooksLocation extends BeamLocation {
           queryParameters: queryParameters,
           data: data,
         );
+
+  @override
+  List<String> get pathBlueprints => [
+        '/books/:bookId/genres/:genreId',
+        '/books/:bookId/buy',
+      ];
 
   @override
   List<BeamPage> get pages => [
@@ -360,12 +366,6 @@ class BooksLocation extends BeamLocation {
             ),
           ),
       ];
-
-  @override
-  List<String> get pathBlueprints => [
-        '/books/:bookId/genres/:genreId',
-        '/books/:bookId/buy',
-      ];
 }
 
 class ArticlesLocation extends BeamLocation {
@@ -380,6 +380,9 @@ class ArticlesLocation extends BeamLocation {
           queryParameters: queryParameters,
           data: data,
         );
+
+  @override
+  List<String> get pathBlueprints => ['/articles/:articleId'];
 
   @override
   List<BeamPage> get pages => [
@@ -399,9 +402,6 @@ class ArticlesLocation extends BeamLocation {
             ),
           ),
       ];
-
-  @override
-  List<String> get pathBlueprints => ['/articles/:articleId'];
 }
 
 // APP
