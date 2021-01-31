@@ -18,12 +18,12 @@ class HomeScreen extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () =>
-                      context.beamTo(BooksLocation(path: '/books')),
+                      context.beamTo(BooksLocation(pathBlueprint: '/books')),
                   child: Text('Beam to books location'),
                 ),
                 ElevatedButton(
                   onPressed: () => context.beamTo(BooksLocation(
-                    path: '/books/:bookId',
+                    pathBlueprint: '/books/:bookId',
                     pathParameters: {'bookId': '2'},
                   )),
                   child: Text('Beam to favorite book location'),
@@ -32,7 +32,7 @@ class HomeScreen extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () =>
-                  context.beamTo(ArticlesLocation(path: '/articles')),
+                  context.beamTo(ArticlesLocation(pathBlueprint: '/articles')),
               child: Text('Beam to articles location'),
             ),
           ],
@@ -225,7 +225,7 @@ class GenreDetailsScreen extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () => Beamer.of(context)
-                  .beamTo(ArticlesLocation(path: '/articles')),
+                  .beamTo(ArticlesLocation(pathBlueprint: '/articles')),
               child: Text('Beam to articles'),
             ),
           ],
@@ -305,12 +305,12 @@ class HomeLocation extends BeamLocation {
 
 class BooksLocation extends BeamLocation {
   BooksLocation({
-    String path,
+    String pathBlueprint,
     Map<String, String> pathParameters,
     Map<String, String> queryParameters,
     Map<String, dynamic> data,
   }) : super(
-          path: path,
+          pathBlueprint: pathBlueprint,
           pathParameters: pathParameters,
           queryParameters: queryParameters,
           data: data,
@@ -370,12 +370,12 @@ class BooksLocation extends BeamLocation {
 
 class ArticlesLocation extends BeamLocation {
   ArticlesLocation({
-    String path,
+    String pathBlueprint,
     Map<String, String> pathParameters,
     Map<String, String> queryParameters,
     Map<String, dynamic> data,
   }) : super(
-          path: path,
+          pathBlueprint: pathBlueprint,
           pathParameters: pathParameters,
           queryParameters: queryParameters,
           data: data,

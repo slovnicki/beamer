@@ -5,12 +5,12 @@ import 'package:beamer/beamer.dart';
 
 class Location1 extends BeamLocation {
   Location1({
-    String path,
+    String pathBlueprint,
     Map<String, String> pathParameters,
     Map<String, String> queryParameters,
     Map<String, dynamic> data,
   }) : super(
-          path: path,
+          pathBlueprint: pathBlueprint,
           pathParameters: pathParameters,
           queryParameters: queryParameters,
           data: data,
@@ -43,12 +43,12 @@ class Location1 extends BeamLocation {
 
 class Location2 extends BeamLocation {
   Location2({
-    String path,
+    String pathBlueprint,
     Map<String, String> pathParameters,
     Map<String, String> queryParameters,
     Map<String, dynamic> data,
   }) : super(
-          path: path,
+          pathBlueprint: pathBlueprint,
           pathParameters: pathParameters,
           queryParameters: queryParameters,
           data: data,
@@ -68,8 +68,8 @@ class Location2 extends BeamLocation {
 }
 
 void main() {
-  final location1 = Location1(path: '/l1');
-  final location2 = Location2(path: '/l2/:id');
+  final location1 = Location1(pathBlueprint: '/l1');
+  final location2 = Location2(pathBlueprint: '/l2/:id');
   final router = BeamerRouterDelegate(
     initialLocation: location1,
   );
@@ -89,7 +89,7 @@ void main() {
 
   test('BeamLocation can create valid URI while using named constructor', () {
     final location2WithParameters = Location2(
-      path: '/l2/:id',
+      pathBlueprint: '/l2/:id',
       pathParameters: {'id': '42'},
       queryParameters: {'q': 'xxx'},
     );

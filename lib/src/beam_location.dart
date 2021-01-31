@@ -2,12 +2,13 @@ import 'package:beamer/src/beam_page.dart';
 
 abstract class BeamLocation {
   BeamLocation({
-    String path,
+    String pathBlueprint,
     Map<String, String> pathParameters,
     Map<String, String> queryParameters,
     Map<String, dynamic> data,
-  })  : pathSegments =
-            path != null ? List.from(Uri.parse(path).pathSegments) : <String>[],
+  })  : pathSegments = pathBlueprint != null
+            ? List.from(Uri.parse(pathBlueprint).pathSegments)
+            : <String>[],
         pathParameters = pathParameters ?? <String, String>{},
         queryParameters = queryParameters ?? <String, String>{},
         data = data ?? <String, dynamic>{};
@@ -86,7 +87,7 @@ abstract class BeamLocation {
 class NotFound extends BeamLocation {
   NotFound({
     String path,
-  }) : super(path: path);
+  }) : super(pathBlueprint: path);
 
   @override
   List<BeamPage> get pages => [];
