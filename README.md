@@ -29,6 +29,7 @@ Handle your application routing, synchronize it with browser URL and more. `Beam
   - [Using Beamer Around Entire App](#using-beamer-around-entire-app)
   - [Using Beamer Deeper in Widget Tree](#using-beamer-deeper-in-widget-tree) (WIP)
   - [General Notes](#general-notes)
+- [Migrating from v0.4.X to v0.5.X](#migrating-from-v0.4.x-to-v0.5.x)
 - [Contributing](#contributing)
 
 ## Key Concepts
@@ -51,7 +52,7 @@ You can think of it as _teleporting_ / _beaming_ to another place in your app. S
 
 ### Books
 
-Here is a recreation of books example from [this article](https://medium.com/flutter/learning-flutters-new-navigation-and-routing-system-7c9068155ade) where you can learn a lot about Navigator 2.0. This recreation starts off with the basic books example, but then goes off in many more flows that show the full power of Beamer. See [Example](https://pub.dev/packages/beamer/example) for full application code of this example.
+Here is a recreation of books example from [this article](https://medium.com/flutter/learning-flutters-new-navigation-and-routing-system-7c9068155ade) where you can learn a lot about Navigator 2.0. This recreation starts off with the basic books example, but then proceeds in many more flows that show the full power of Beamer. See [Example](https://pub.dev/packages/beamer/example) for full application code of this example.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-books-v0.5.0.gif" alt="example-url-sync" style="margin-right:16px;margin-left:16px">
@@ -69,26 +70,23 @@ In order to use Beamer on your entire app, you must (as per [official documentat
 - `routerDelegate` that controls (re)building of `Navigator` pages and
 - `routeInformationParser` that decides which URI corresponds to which `Router` state/configuration, in our case - `BeamLocation`.
 
-Here you can just use the Beamer implementation of those - `BeamerRouterDelegate` and `BeamerRouteInformationParser`, to which you pass your `BeamLocation`s. Optional `notFoundPage` will be shown when URI coming from browser is not among the ones you defined in your `BeamLocation`s.
+Here you can just use the Beamer implementation of those - `BeamerRouterDelegate` and `BeamerRouteInformationParser`, to which you pass your `BeamLocation`s. Optional `notFoundPage` will be shown when URI coming from browser is not among the ones that are defined in your `BeamLocation`s.
 
 ```dart
 class MyApp extends StatelessWidget {
-  final BeamLocation initialLocation = HomeLocation();
-  final List<BeamLocation> beamLocations = [
-    HomeLocation(),
-    BooksLocation(),
-    ArticlesLocation(),
-  ];
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
       routerDelegate: BeamerRouterDelegate(
-        initialLocation: initialLocation,
+        initialLocation: HomeLocation(),
         notFoundPage: Scaffold(body: Center(child: Text('Not found'))),
       ),
       routeInformationParser: BeamerRouteInformationParser(
-        beamLocations: beamLocations,
+        beamLocations: [
+          HomeLocation(),
+          BooksLocation(),
+          ArticlesLocation(),
+        ],
       ),
     );
   }
@@ -100,117 +98,109 @@ An example of above book example's `BeamLocation`s would be:
 ```dart
 class HomeLocation extends BeamLocation {
   @override
-  List<BeamPage> get pages => [
-        BeamPage(
-          pathSegment: '',
-          key: ValueKey('home'),
-          page: HomeScreen(),
-        ),
-      ];
+  List<String> get pathBlueprints => ['/'];
 
   @override
-  List<String> get pathBlueprints => ['/'];
+  List<BeamPage> get pages => [
+        BeamPage(
+          key: ValueKey('home'),
+          child: HomeScreen(),
+        ),
+      ];
 }
 
 class BooksLocation extends BeamLocation {
   BooksLocation({
-    String path,
+    String pathBlueprint,
     Map<String, String> pathParameters,
     Map<String, String> queryParameters,
     Map<String, dynamic> data,
   }) : super(
-          path: path,
+          pathBlueprint: pathBlueprint,
           pathParameters: pathParameters,
           queryParameters: queryParameters,
           data: data,
         );
-
-  @override
-  List<BeamPage> get pages => [
-        ...HomeLocation().pages,
-        if (pathSegments.contains('books'))
-          BeamPage(
-            pathSegment: 'books',
-            key: ValueKey('books-${queryParameters['title'] ?? ''}'),
-            page: BooksScreen(
-              titleQuery: queryParameters['title'] ?? '',
-            ),
-          ),
-        if (pathParameters.containsKey('bookId'))
-          BeamPage(
-            pathSegment: ':bookId',
-            key: ValueKey('book-${pathParameters['bookId']}'),
-            page: BookDetailsScreen(
-              bookId: pathParameters['bookId'],
-            ),
-          ),
-        if (pathSegments.contains('buy'))
-          BeamPage(
-            pathSegment: 'buy',
-            key: ValueKey('book-${pathParameters['bookId']}-buy'),
-            page: BuyScreen(
-              book: data['book'],
-            ),
-          ),
-        if (pathSegments.contains('genres'))
-          BeamPage(
-            pathSegment: 'genres',
-            key: ValueKey('book-${pathParameters['bookId']}-genres'),
-            page: GenresScreen(
-              book: data['book'],
-            ),
-          ),
-        if (pathParameters.containsKey('genreId'))
-          BeamPage(
-            pathSegment: ':genreId',
-            key: ValueKey('genres-${pathParameters['genreId']}'),
-            page: GenreDetailsScreen(
-              genre: data['genre'],
-            ),
-          ),
-      ];
 
   @override
   List<String> get pathBlueprints => [
         '/books/:bookId/genres/:genreId',
         '/books/:bookId/buy',
       ];
+
+  @override
+  List<BeamPage> get pages => [
+        ...HomeLocation().pages,
+        if (pathSegments.contains('books'))
+          BeamPage(
+            key: ValueKey('books-${queryParameters['title'] ?? ''}'),
+            child: BooksScreen(
+              titleQuery: queryParameters['title'] ?? '',
+            ),
+          ),
+        if (pathParameters.containsKey('bookId'))
+          BeamPage(
+            key: ValueKey('book-${pathParameters['bookId']}'),
+            child: BookDetailsScreen(
+              bookId: pathParameters['bookId'],
+            ),
+          ),
+        if (pathSegments.contains('buy'))
+          BeamPage(
+            key: ValueKey('book-${pathParameters['bookId']}-buy'),
+            child: BuyScreen(
+              book: data['book'],
+            ),
+          ),
+        if (pathSegments.contains('genres'))
+          BeamPage(
+            key: ValueKey('book-${pathParameters['bookId']}-genres'),
+            child: GenresScreen(
+              book: data['book'],
+            ),
+          ),
+        if (pathParameters.containsKey('genreId'))
+          BeamPage(
+            key: ValueKey('genres-${pathParameters['genreId']}'),
+            child: GenreDetailsScreen(
+              genre: data['genre'],
+            ),
+          ),
+      ];
 }
 
 class ArticlesLocation extends BeamLocation {
   ArticlesLocation({
-    String path,
+    String pathBlueprint,
     Map<String, String> pathParameters,
     Map<String, String> queryParameters,
     Map<String, dynamic> data,
   }) : super(
-          path: path,
+          pathBlueprint: pathBlueprint,
           pathParameters: pathParameters,
           queryParameters: queryParameters,
           data: data,
         );
 
   @override
+  List<String> get pathBlueprints => ['/articles/:articleId'];
+
+  @override
   List<BeamPage> get pages => [
         ...HomeLocation().pages,
         if (pathSegments.contains('articles'))
           BeamPage(
-            pathSegment: 'articles',
             key: ValueKey('articles'),
-            page: ArticlesScreen(),
+            child: ArticlesScreen(),
           ),
         if (pathParameters.containsKey('articleId'))
           BeamPage(
-            pathSegment: ':articleId',
             key: ValueKey('articles-${pathParameters['articleId']}'),
-            page: ArticleDetailsScreen(
+            child: ArticleDetailsScreen(
               articleId: pathParameters['articleId'],
             ),
           ),
       ];
-
-  @override
-  List<String> get pathBlueprints => ['/articles/:articleId'];
 }
 ```
 
@@ -220,15 +210,22 @@ Coming soon...
 
 ### General Notes
 
-When defining your `BeamLocation`, you need to implement 2 getters; `pages` and `pathBlueprint`. `pages` represent a stack that will be built by `Navigator` when you beam there, and `pathBlueprint` is there for the Beamer to decide which `BeamLocation` corresponds to an URL coming from browser.
+- When extending `BeamLocation`, two getters need to be implemented; `pathBlueprints` and `pages`.
+  - `pages` represent a stack that will be built by `Navigator` when you beam there, and `pathBlueprints` is there for Beamer to decide which `BeamLocation` corresponds to an URL coming from browser.
+  - `BeamLocation` takes query and path parameters from URI. The `:` is necessary in `pathBlueprints` if you _might_ get path parameter from browser.
 
-As we can see, `BeamLocation` can take query and path parameters from URI. (the `:` is necessary in `pathBlueprint` if you _might_ get path parameter from browser).
-
-`HomeScreen`, `BooksScreen` and `BookDetailsScreen` are arbitrary `Widgets` that represent your app screens / pages.
-
-`BeamPage` creates `MaterialPageRoute`, but you can extends `BeamPage` and override `createRoute` to make your own implementation instead. The `key` is important for `Navigator` to optimize its rebuilds.
+- `BeamPage`'s child is an arbitrary `Widgets` that represent your app screen / page.
+  - `key` is important for `Navigator` to optimize rebuilds. This should be an unique value for "page state".
+  - `BeamPage` creates `MaterialPageRoute`, but you can extends `BeamPage` and override `createRoute` to make your own implementation instead. The `key` is important for `Navigator` to optimize its rebuilds.
 
 **Note** that "Navigator 1.0" can be used alongside Beamer. You can easily `push` or `pop` pages with `Navigator.of(context)`, but those will not be contributing to the URI. This is often needed when some info/helper page needs to be shown that doesn't influence the browser's URL. And of course, when using Beamer on mobile, this is a non-issue as there is no URL.
+
+## Migrating from v0.4.X to v0.5.X
+
+- instead of wrapping `MaterialApp` with `Beamer`, use `*App.router()`
+- `String BeamLocation.pathBlueprint` is now `List<String> BeamLocation.pathBlueprints`
+- `BeamLocation.withParameters` constructor is removed and all parameters are handled with 1 constructor. See example if you need `super`.
+- `BeamPage.page` is now called `BeamPage.child`
 
 ## Contributing
 
