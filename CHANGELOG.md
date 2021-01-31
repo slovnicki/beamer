@@ -1,3 +1,15 @@
+# 0.5.0
+
+- **BREAKING:** `*App.router` constructor needs to be used
+- **BREAKING:** `String pathBlueprint` is now `List<String> pathBlueprints`
+- **BREAKING:** `BeamLocation.withParameters` constructor is removed and all parameters are handled with 1 constructor. See example if you need `super`.
+- **BREAKING:** `BeamPage`'s `page` renamed to `child`
+- **NEW FEATURE:** `BeamLocation` can support multiple and arbitrary long path blueprints
+- **NEW FEATURE:** `notFoundPage`
+- **Add** more complex books example
+- **Add** more doc comments
+- **Remove** the need for `routerDelegate` to take locations
+
 # 0.4.1+1
 
 - **Add** some more badges
