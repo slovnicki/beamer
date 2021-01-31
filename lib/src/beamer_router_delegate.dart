@@ -91,7 +91,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     return Navigator(
       key: navigatorKey,
       pages: currentConfiguration is NotFound
-          ? [BeamPage(pathSegment: '', child: notFoundPage)]
+          ? [BeamPage(child: notFoundPage)]
           : _currentPages,
       onPopPage: (route, result) {
         if (!route.didPop(result)) {
@@ -113,10 +113,10 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   }
 
   void _handlePop(BeamPage page) {
-    if (page.pathSegment[0] == ':') {
-      _currentLocation.pathParameters.remove(page.pathSegment.substring(1));
+    final pathSegment = _currentLocation.pathSegments.removeLast();
+    if (pathSegment[0] == ':') {
+      _currentLocation.pathParameters.remove(pathSegment.substring(1));
     }
-    _currentLocation.pathSegments.remove(page.pathSegment);
     if (!page.keepQueryOnPop) {
       _currentLocation.queryParameters = {};
     }

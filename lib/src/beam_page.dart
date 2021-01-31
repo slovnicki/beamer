@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 class BeamPage extends Page {
   BeamPage({
     Key key,
-    @required this.pathSegment,
     @required this.child,
     this.keepQueryOnPop = false,
   }) : super(key: key);
 
-  final String pathSegment;
   final Widget child;
   final bool keepQueryOnPop;
 

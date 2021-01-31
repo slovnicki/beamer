@@ -19,19 +19,16 @@ class Location1 extends BeamLocation {
   @override
   List<BeamPage> get pages => [
         BeamPage(
-          pathSegment: 'l1',
           key: ValueKey('l1'),
           child: Container(),
         ),
         if (pathSegments.contains('one'))
           BeamPage(
-            pathSegment: 'one',
             key: ValueKey('l1-one'),
             child: Container(),
           ),
         if (pathSegments.contains('two'))
           BeamPage(
-            pathSegment: 'two',
             key: ValueKey('l1-two'),
             child: Container(),
           )
@@ -57,7 +54,6 @@ class Location2 extends BeamLocation {
   @override
   List<BeamPage> get pages => [
         BeamPage(
-          pathSegment: 'l2',
           key: ValueKey('l2'),
           child: Container(),
         )
