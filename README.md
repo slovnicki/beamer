@@ -24,6 +24,7 @@ Handle your application routing, synchronize it with browser URL and more. `Beam
 - [Key Concepts](#key-concepts)
 - [Examples](#examples)
     - [Books](#books)
+    - [Deep Location](#deep-location)
     - [Nested Routers](#nested-routers) (WIP)
 - [Usage](#usage)
   - [Using Beamer Around Entire App](#using-beamer-around-entire-app)
@@ -52,10 +53,15 @@ You can think of it as _teleporting_ / _beaming_ to another place in your app. S
 
 ### Books
 
-Here is a recreation of books example from [this article](https://medium.com/flutter/learning-flutters-new-navigation-and-routing-system-7c9068155ade) where you can learn a lot about Navigator 2.0. This recreation starts off with the basic books example, but then proceeds in many more flows that show the full power of Beamer. See [Example](https://pub.dev/packages/beamer/example) for full application code of this example.
+Here is a recreation of books example from [this article](https://medium.com/flutter/learning-flutters-new-navigation-and-routing-system-7c9068155ade) where you can learn a lot about Navigator 2.0. This recreation starts off with the basic books example, but then proceeds in many more flows that show the full power of Beamer. See [Example](https://pub.dev/packages/beamer/example) for full application code of this example where you can essentially learn everything you can do with Beamer.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-books-v0.5.0.gif" alt="example-url-sync" style="margin-right:16px;margin-left:16px">
+
+### Deep Location
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-deep-location.gif" alt="example-url-sync" style="margin-right:32px;margin-left:32px">
 
 ### Nested Routers
 
