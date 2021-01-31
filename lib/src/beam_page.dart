@@ -5,10 +5,12 @@ class BeamPage extends Page {
     Key key,
     @required this.pathSegment,
     @required this.page,
+    this.keepQueryOnPop = false,
   }) : super(key: key);
 
   final Widget page;
   final String pathSegment;
+  final bool keepQueryOnPop;
 
   @override
   Route createRoute(BuildContext context) {

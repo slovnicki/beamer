@@ -98,8 +98,8 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
           return false;
         }
         final lastPage = _currentPages.removeLast();
-        if (lastPage is BeamPage && lastPage.pathSegment != null) {
-          _handlePoppedPathSegment(lastPage.pathSegment);
+        if (lastPage is BeamPage) {
+          _handlePop(lastPage);
         }
         return true;
       },
@@ -112,11 +112,14 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     return SynchronousFuture(null);
   }
 
-  void _handlePoppedPathSegment(String poppedPathSegment) {
-    if (poppedPathSegment[0] == ':') {
-      _currentLocation.pathParameters.remove(poppedPathSegment.substring(1));
+  void _handlePop(BeamPage page) {
+    if (page.pathSegment[0] == ':') {
+      _currentLocation.pathParameters.remove(page.pathSegment.substring(1));
     }
-    _currentLocation.pathSegments.remove(poppedPathSegment);
+    _currentLocation.pathSegments.remove(page.pathSegment);
+    if (!page.keepQueryOnPop) {
+      _currentLocation.queryParameters = {};
+    }
     _currentLocation.prepare();
     _currentPages = _currentLocation.pages;
     notifyListeners();
