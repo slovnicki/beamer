@@ -1,6 +1,6 @@
-import 'package:beamer/src/beam_page.dart';
+import 'package:beamer/beamer.dart';
 
-/// The key concept in Beamer.
+/// Configuration for a navigatable application region.
 ///
 /// Extend this class to define your locations to which you can then `beamTo`.
 abstract class BeamLocation {
@@ -33,10 +33,21 @@ abstract class BeamLocation {
   /// is beamed to or internally inferred.
   List<BeamPage> get pages;
 
+  /// Guards that will be executing [check] when this gets beamed to.
+  ///
+  /// Checks will be executed in order; chain of responsibility pattern.
+  /// When some guard returns `false`, location will not be accepted
+  /// and stack of pages will be updated as is configured in [BeamGuard].
+  ///
+  /// Override this in your subclasses, if needed.
+  List<BeamGuard> get guards => const <BeamGuard>[];
+
   /// Will be executed before [pages] are drawn onto screen.
   void Function() executeBefore;
 
   List<String> pathSegments;
+
+  String get pathBlueprint => '/' + pathSegments.join('/');
 
   /// Path parameters extracted from URI.
   ///

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// A wrapper pages / screens that will be drawn.
+/// A wrapper for pages / screens that will be drawn.
 class BeamPage extends Page {
   BeamPage({
     Key key,

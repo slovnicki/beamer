@@ -5,6 +5,7 @@ import 'beam_location.dart';
 import 'beamer_router_delegate.dart';
 import 'beamer_route_information_parser.dart';
 
+/// Central place for creating, accessing and modifying a Router subtree.
 class Beamer extends StatelessWidget {
   Beamer({
     this.initialLocation,

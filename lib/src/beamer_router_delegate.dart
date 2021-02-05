@@ -2,13 +2,14 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import 'package:beamer/src/beam_location.dart';
-
+/// A delegate that is used by the [Router] widget
+/// to build and configure a navigating widget.
 class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<BeamLocation> {
   BeamerRouterDelegate({
     @required BeamLocation initialLocation,
     Widget notFoundPage,
+    this.guards = const <BeamGuard>[],
   })  : _navigatorKey = GlobalKey<NavigatorState>(),
         _currentLocation = initialLocation..prepare(),
         _previousLocation = null,
@@ -16,13 +17,20 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     _currentPages = _currentLocation.pages;
   }
 
+  /// Screen to show when no [BeamLocation] supports the incoming URI.
+  final Widget notFoundPage;
+
+  /// Guards that will be executing [check] on [currentLocation] candidate.
+  ///
+  /// Checks will be executed in order; chain of responsibility pattern.
+  /// When some guard returns `false`, location candidate will not be accepted
+  /// and stack of pages will be updated as is configured in [BeamGuard].
+  final List<BeamGuard> guards;
+
   final GlobalKey<NavigatorState> _navigatorKey;
   BeamLocation _currentLocation;
   List<BeamPage> _currentPages;
   BeamLocation _previousLocation;
-
-  /// Screen to show when no [BeamLocation] supports the incoming URI.
-  final Widget notFoundPage;
 
   /// Updates the [currentLocation] with prepared [location] and
   /// rebuilds the [Navigator] to contain the [location.pages] stack of pages.
@@ -38,6 +46,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     beamTo(_previousLocation);
   }
 
+  // TODO move the logic to BeamLocation
   /// Update chosen parameters of [currentLocation], in a similar manner
   /// as with [BeamLocation] constructor.
   ///
@@ -100,19 +109,19 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   @override
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
 
-  void _update(BeamLocation location) {
-    _previousLocation = _currentLocation;
-    _currentLocation = location..prepare();
-    _currentPages = _currentLocation.pages;
-  }
-
   @override
   Widget build(BuildContext context) {
+    final BeamGuard guard = _guardCheck(context, _currentLocation);
+    if (guard?.beamTo != null) {
+      _update(guard.beamTo(context));
+    }
     return Navigator(
       key: navigatorKey,
-      pages: currentConfiguration is NotFound
+      pages: _currentLocation is NotFound
           ? [BeamPage(child: notFoundPage)]
-          : _currentPages,
+          : guard == null || guard?.beamTo != null
+              ? _currentPages
+              : [BeamPage(child: guard.forbidden)],
       onPopPage: (route, result) {
         if (!route.didPop(result)) {
           return false;
@@ -132,6 +141,12 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     return SynchronousFuture(null);
   }
 
+  void _update(BeamLocation location) {
+    _previousLocation = _currentLocation;
+    _currentLocation = location..prepare();
+    _currentPages = _currentLocation.pages;
+  }
+
   void _handlePop(BeamPage page) {
     final pathSegment = _currentLocation.pathSegments.removeLast();
     if (pathSegment[0] == ':') {
@@ -143,5 +158,19 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     _currentLocation.prepare();
     _currentPages = _currentLocation.pages;
     notifyListeners();
+  }
+
+  BeamGuard _guardCheck(BuildContext context, BeamLocation location) {
+    for (var guard in guards) {
+      if (guard.hasMatch(location) && guard.check(context, location) == false) {
+        return guard;
+      }
+    }
+    for (var guard in location.guards) {
+      if (guard.hasMatch(location) && guard.check(context, location) == false) {
+        return guard;
+      }
+    }
+    return null;
   }
 }
