@@ -1,5 +1,3 @@
-# Beamer
-
 <p align="center">
 <a href="https://pub.dev/packages/beamer"><img src="https://img.shields.io/pub/v/beamer.svg" alt="pub"></a>
 <a href="https://github.com/slovnicki/beamer/blob/master/.github/workflows/test.yml"><img src="https://github.com/slovnicki/beamer/workflows/tests/badge.svg" alt="test"></a>
@@ -19,57 +17,82 @@
 
 Handle your application routing, synchronize it with browser URL and more. `Beamer` uses the power of Navigator 2.0 features and implements all the underlying logic for you.
 
-## Table of Contents
+---
 
 - [Key Concepts](#key-concepts)
 - [Examples](#examples)
     - [Books](#books)
+    - [Advanced Books](#advanced-books)
     - [Deep Location](#deep-location)
-    - [Nested Routers](#nested-routers) (WIP)
+    - [Guards](#guards)
+    - [BottomNavigationBar](#bottomnavigationbar)
 - [Usage](#usage)
-  - [Using Beamer Around Entire App](#using-beamer-around-entire-app)
-  - [Using Beamer Deeper in Widget Tree](#using-beamer-deeper-in-widget-tree) (WIP)
+  - [With App.router](#with-app.router)
+  - [As a Widget](#as-a-widget)
   - [General Notes](#general-notes)
-- [Migrating from v0.4.X to v0.5.X](#migrating-from-v0.4.x-to-v0.5.x)
+- [Migrating from 0.4.x to >=0.5.x](#migrating-from-0.4.x-to->=0.5.x)
 - [Contributing](#contributing)
 
-## Key Concepts
+# Key Concepts
 
 The key concept of Beamer is a `BeamLocation` which represents a stack of one or more pages. You will be extending `BeamLocation` to define your app's locations to which you can then _beam to_ using
 
 ```dart
 Beamer.of(context).beamTo(MyLocation())
+// or context.beamTo(MyLocation())
 ```
 
-or
+You can also `beamTo` a specific configuration of some location;
 
 ```dart
-context.beamTo(MyLocation())
+context.beamTo(
+  BooksLocation(
+    pathBlueprint: '/books/:bookId',
+    pathParameters: {'bookId': '2'},
+  ),
+),
 ```
 
-You can think of it as _teleporting_ / _beaming_ to another place in your app. Similar to `Navigator.of(context).pushReplacementNamed('/my-route')`, but Beamer is not limited to a single page, nor to a push _per se_. You can create an arbitrary stack of pages that gets build when you beam there. Using Beamer _can_ feel like using many of `Navigator`'s `push/pop` methods at once.
+You can think of it as _teleporting_ / _beaming_ to another place in your app. Similar to `Navigator.of(context).pushReplacementNamed('/my-route')`, but Beamer is not limited to a single page, nor to a push _per se_. You can create an arbitrary stack of pages that gets build when you beam there.
 
-## Examples
+Using Beamer _can_ feel like using many of `Navigator`'s `push/pop` methods at once.
 
-### Books
+# Examples
 
-Here is a recreation of books example from [this article](https://medium.com/flutter/learning-flutters-new-navigation-and-routing-system-7c9068155ade) where you can learn a lot about Navigator 2.0. This recreation starts off with the basic books example, but then proceeds in many more flows that show the full power of Beamer. See [Example](https://pub.dev/packages/beamer/example) for full application code of this example where you can essentially learn everything you can do with Beamer.
+## Books
+
+Here is a recreation of books example from [this article](https://medium.com/flutter/learning-flutters-new-navigation-and-routing-system-7c9068155ade) where you can learn a lot about Navigator 2.0. See [Example](https://pub.dev/packages/beamer/example) for full application code of this example.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-books-v0.5.0.gif" alt="example-url-sync" style="margin-right:16px;margin-left:16px">
 
-### Deep Location
+## Advanced Books
+
+For a step further, we add more flows to demonstrate the power of Beamer.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-books-v0.5.0.gif" alt="example-url-sync" style="margin-right:16px;margin-left:16px">
+
+## Deep Location
+
+You can instantly beam to a location in your app that has many pages stacked and then pop them one by one or simply `beamBack` to where you came from.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-deep-location.gif" alt="example-url-sync" style="margin-right:32px;margin-left:32px">
 
-### Nested Routers
+## Guards
 
-Coming soon...
+<p align="center">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-books-v0.5.0.gif" alt="example-url-sync" style="margin-right:16px;margin-left:16px">
 
-## Usage
+## BottomNavigationBar
 
-### Using Beamer Around Entire App
+<p align="center">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-deep-location.gif" alt="example-url-sync" style="margin-right:32px;margin-left:32px">
+
+# Usage
+
+## With App.router
 
 In order to use Beamer on your entire app, you must (as per [official documentation](https://api.flutter.dev/flutter/widgets/Router-class.html)) construct your `*App` widget with `.router` constructor to which (along with all your regular `*App` attributes) you provide
 
@@ -210,11 +233,10 @@ class ArticlesLocation extends BeamLocation {
 }
 ```
 
-### Using Beamer Deeper in Widget Tree
+## As a Widget
 
-Coming soon...
 
-### General Notes
+## General Notes
 
 - When extending `BeamLocation`, two getters need to be implemented; `pathBlueprints` and `pages`.
   - `pages` represent a stack that will be built by `Navigator` when you beam there, and `pathBlueprints` is there for Beamer to decide which `BeamLocation` corresponds to an URL coming from browser.
@@ -226,14 +248,14 @@ Coming soon...
 
 **Note** that "Navigator 1.0" can be used alongside Beamer. You can easily `push` or `pop` pages with `Navigator.of(context)`, but those will not be contributing to the URI. This is often needed when some info/helper page needs to be shown that doesn't influence the browser's URL. And of course, when using Beamer on mobile, this is a non-issue as there is no URL.
 
-## Migrating from v0.4.X to v0.5.X
+# Migrating from 0.4.x to >=0.5.x
 
 - instead of wrapping `MaterialApp` with `Beamer`, use `*App.router()`
 - `String BeamLocation.pathBlueprint` is now `List<String> BeamLocation.pathBlueprints`
 - `BeamLocation.withParameters` constructor is removed and all parameters are handled with 1 constructor. See example if you need `super`.
 - `BeamPage.page` is now called `BeamPage.child`
 
-## Contributing
+# Contributing
 
 This package is still in early stages. To see the upcoming features, check the [Issue board](https://github.com/slovnicki/beamer/issues).
 
