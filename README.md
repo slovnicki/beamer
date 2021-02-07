@@ -110,6 +110,11 @@ In order to use Beamer on your entire app, you must (as per [official documentat
 Here you use the Beamer implementation of those - `BeamerRouterDelegate` and `BeamerRouteInformationParser`, to which you pass your `BeamLocation`s.
 
 ```dart
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
