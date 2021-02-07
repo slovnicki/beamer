@@ -8,12 +8,15 @@ import 'beamer_route_information_parser.dart';
 /// Central place for creating, accessing and modifying a Router subtree.
 class Beamer extends StatelessWidget {
   Beamer({
+    Key key,
     this.initialLocation,
     this.beamLocations,
     this.notFoundPage,
+    bool shouldUpdateBrowser,
     this.app,
     this.routerDelegate,
-  }) : assert(app != null || initialLocation != null && beamLocations != null);
+  })  : shouldUpdateBrowser = shouldUpdateBrowser ?? beamLocations != null,
+        super(key: key);
 
   /// Location to be built if nothing else is signaled.
   final BeamLocation initialLocation;
@@ -23,6 +26,8 @@ class Beamer extends StatelessWidget {
 
   /// Screen to be drawn when no location can handle the URI.
   final Widget notFoundPage;
+
+  final bool shouldUpdateBrowser;
 
   /// `*App` widget, e.g. [MaterialApp].
   ///
@@ -69,9 +74,19 @@ class Beamer extends StatelessWidget {
                 initialLocation: initialLocation,
                 notFoundPage: notFoundPage,
               ),
-          routeInformationParser: BeamerRouteInformationParser(
-            beamLocations: beamLocations,
-          ),
+          routeInformationParser: shouldUpdateBrowser
+              ? BeamerRouteInformationParser(
+                  beamLocations: beamLocations,
+                )
+              : null,
+          routeInformationProvider: shouldUpdateBrowser
+              ? PlatformRouteInformationProvider(
+                  initialRouteInformation: RouteInformation(
+                    location: beamLocations[0].pathBlueprint,
+                  ),
+                )
+              : null,
+          backButtonDispatcher: RootBackButtonDispatcher(),
         );
   }
 }
