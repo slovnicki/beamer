@@ -1,3 +1,7 @@
+# 0.6.0+1
+
+- **Fix** some mistakes in README
+
 # 0.6.0
 
 - **NEW FEATURE:** Guards
