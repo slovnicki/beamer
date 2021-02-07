@@ -1,3 +1,10 @@
+# 0.6.0
+
+- **NEW FEATURE:** Guards
+- **NEW FEATURE:** Beamer as a Widget (see Bottom Navigation example)
+- **Add** `examples/` for every gif in README
+- **Add** state to `Beamer`
+
 # 0.5.0
 
 - **BREAKING:** `*App.router` constructor needs to be used
