@@ -6,28 +6,19 @@ import 'beamer_router_delegate.dart';
 import 'beamer_route_information_parser.dart';
 
 /// Central place for creating, accessing and modifying a Router subtree.
-class Beamer extends StatelessWidget {
+class Beamer extends StatefulWidget {
   Beamer({
     Key key,
-    this.initialLocation,
-    this.beamLocations,
-    this.notFoundPage,
-    bool shouldUpdateBrowser,
+    @required this.routerDelegate,
+    this.routeInformationParser,
     this.app,
-    this.routerDelegate,
-  })  : shouldUpdateBrowser = shouldUpdateBrowser ?? beamLocations != null,
-        super(key: key);
+  }) : super(key: key);
 
-  /// Location to be built if nothing else is signaled.
-  final BeamLocation initialLocation;
+  /// Responsible for beaming, updating and rebuilding the page stack.
+  final BeamerRouterDelegate routerDelegate;
 
-  /// All the location that this application supports.
-  final List<BeamLocation> beamLocations;
-
-  /// Screen to be drawn when no location can handle the URI.
-  final Widget notFoundPage;
-
-  final bool shouldUpdateBrowser;
+  /// Parses the URI from browser into [BeamLocation] and vice versa.
+  final BeamerRouteInformationParser routeInformationParser;
 
   /// `*App` widget, e.g. [MaterialApp].
   ///
@@ -36,18 +27,15 @@ class Beamer extends StatelessWidget {
   /// The way to solve it is by using Beamer above `*App` like this:
   ///
   /// ```dart
-  /// final BeamerRouterDelegate _beamerRouterDelegate = ...;
-  /// final List<BeamLocation> _beamLocations = ...;
+  /// final _routerDelegate = BeamerRouterDelegate(...);
   ///
   /// @override
   /// Widget build(BuildContext context) {
   ///   return Beamer(
-  ///     routerDelegate: _beamerRouterDelegate,
+  ///     routerDelegate: _routerDelegate
   ///     app: MaterialApp.router(
-  ///       routerDelegate: _beamerRouterDelegate,
-  ///       routeInformationParser: BeamerRouteInformationParser(
-  ///         beamLocations: _beamLocations,
-  ///       ),
+  ///       routerDelegate: _routerDelegate,
+  ///       routeInformationParser: BeamerRouteInformationParser(...),
   ///       ...
   ///     )
   ///   );
@@ -56,9 +44,6 @@ class Beamer extends StatelessWidget {
   /// ```
   final Widget app;
 
-  /// Responsible for beaming, updating and rebuilding the page stack.
-  final BeamerRouterDelegate routerDelegate;
-
   /// Access Beamer's [routerDelegate].
   static BeamerRouterDelegate of(BuildContext context) {
     return Router.maybeOf(context)?.routerDelegate ??
@@ -66,23 +51,23 @@ class Beamer extends StatelessWidget {
   }
 
   @override
+  State<StatefulWidget> createState() => BeamerState();
+}
+
+class BeamerState extends State<Beamer> {
+  BeamerRouterDelegate get routerDelegate => widget.routerDelegate;
+  BeamLocation get currentLocation => widget.routerDelegate.currentLocation;
+
+  @override
   Widget build(BuildContext context) {
-    return app ??
+    return widget.app ??
         Router(
-          routerDelegate: routerDelegate ??
-              BeamerRouterDelegate(
-                initialLocation: initialLocation,
-                notFoundPage: notFoundPage,
-              ),
-          routeInformationParser: shouldUpdateBrowser
-              ? BeamerRouteInformationParser(
-                  beamLocations: beamLocations,
-                )
-              : null,
-          routeInformationProvider: shouldUpdateBrowser
+          routerDelegate: routerDelegate,
+          routeInformationParser: widget.routeInformationParser,
+          routeInformationProvider: widget.routeInformationParser != null
               ? PlatformRouteInformationProvider(
                   initialRouteInformation: RouteInformation(
-                    location: beamLocations[0].pathBlueprint,
+                    location: currentLocation.uri,
                   ),
                 )
               : null,

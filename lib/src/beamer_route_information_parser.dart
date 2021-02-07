@@ -6,11 +6,11 @@ import 'package:beamer/src/beam_location.dart';
 class BeamerRouteInformationParser
     extends RouteInformationParser<BeamLocation> {
   BeamerRouteInformationParser({
-    @required List<BeamLocation> beamLocations,
-  }) : _beamLocations = beamLocations;
+    @required this.beamLocations,
+  });
 
   /// A [List] of all available [BeamLocation]s in the [Router]'s scope.
-  final List<BeamLocation> _beamLocations;
+  final List<BeamLocation> beamLocations;
 
   @override
   SynchronousFuture<BeamLocation> parseRouteInformation(
@@ -33,7 +33,7 @@ class BeamerRouteInformationParser
   /// If [beamLocations] don't contain a match, [NotFound] will be returned
   /// configured with [uri].
   BeamLocation _chooseBeamLocation(Uri uri) {
-    for (var beamLocation in _beamLocations) {
+    for (var beamLocation in beamLocations) {
       for (var pathBlueprint in beamLocation.pathBlueprints) {
         if (pathBlueprint == uri.path) {
           beamLocation.pathSegments = uri.pathSegments;
