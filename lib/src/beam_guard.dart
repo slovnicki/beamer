@@ -12,6 +12,7 @@ class BeamGuard {
     @required this.check,
     this.beamTo,
     this.showPage,
+    this.guardNonMatching = false,
   }) : assert(beamTo != null || showPage != null);
 
   /// A list of path strings that are to be guarded.
@@ -22,7 +23,7 @@ class BeamGuard {
   /// but will not match '/books'. To match '/books' and everything after it,
   /// use '/books*'.
   ///
-  /// See [hasMatch] for more details.
+  /// See [_hasMatch] for more details.
   List<String> pathBlueprints;
 
   /// What check should guard perform on a given [location], the one that is
@@ -43,12 +44,16 @@ class BeamGuard {
   /// the conditions necessary to pass guard and rebuilds the tree.
   Widget showPage;
 
+  /// Whether or not [location]s matching the [pathBlueprint]s will be blocked,
+  /// or all other [location]s that don't match the [pathBlueprint]s will be.
+  bool guardNonMatching;
+
   /// Matches [location]'s pathBlueprint to [pathBlueprints].
   ///
   /// If asterisk is present, it is enough that the pre-asterisk substring is
   /// contained within location's pathBlueprint.
   /// Else, they must be equal.
-  bool hasMatch(BeamLocation location) {
+  bool _hasMatch(BeamLocation location) {
     for (var pathBlueprint in pathBlueprints) {
       final asteriskIndex = pathBlueprint.indexOf('*');
       if (asteriskIndex != -1) {
@@ -63,5 +68,10 @@ class BeamGuard {
       }
     }
     return false;
+  }
+
+  /// Whether or not the guard should check access to the [location].
+  bool shouldGuard(BeamLocation location) {
+    return guardNonMatching ? !_hasMatch(location) : _hasMatch(location);
   }
 }
