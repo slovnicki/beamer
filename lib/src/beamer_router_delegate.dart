@@ -162,12 +162,12 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
 
   BeamGuard _guardCheck(BuildContext context, BeamLocation location) {
     for (var guard in guards) {
-      if (guard.hasMatch(location) && guard.check(context, location) == false) {
+      if (guard.shouldBlock(location) && !guard.check(context, location)) {
         return guard;
       }
     }
     for (var guard in location.guards) {
-      if (guard.hasMatch(location) && guard.check(context, location) == false) {
+      if (guard.shouldBlock(location) && !guard.check(context, location)) {
         return guard;
       }
     }
