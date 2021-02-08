@@ -1,3 +1,7 @@
+# 0.6.1
+
+- **Add** `guardNonMatching` attribute to `BeamGuard`
+
 # 0.6.0+1
 
 - **Fix** some mistakes in README

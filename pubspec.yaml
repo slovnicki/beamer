@@ -1,6 +1,6 @@
 name: beamer
 description: Route through guarded page stacks and URLs using the Navigator 2.0 API effortlessly.
-version: 0.6.0+1
+version: 0.6.1
 homepage: https://github.com/slovnicki/beamer
 repository: https://github.com/slovnicki/beamer
 
