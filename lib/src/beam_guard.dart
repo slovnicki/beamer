@@ -12,7 +12,7 @@ class BeamGuard {
     @required this.check,
     this.beamTo,
     this.showPage,
-    this.blockNonMatchingLocations = false,
+    this.guardNonMatching = false,
   }) : assert(beamTo != null || showPage != null);
 
   /// A list of path strings that are to be guarded.
@@ -46,7 +46,7 @@ class BeamGuard {
 
   /// Whether or not [location]s matching the [pathBlueprint]s will be blocked,
   /// or all other [location]s that don't match the [pathBlueprint]s will be.
-  bool blockNonMatchingLocations;
+  bool guardNonMatching;
 
   /// Matches [location]'s pathBlueprint to [pathBlueprints].
   ///
@@ -70,10 +70,8 @@ class BeamGuard {
     return false;
   }
 
-  // Whether or not the guard should check access to the current [location]
-  bool shouldBlock(BeamLocation location) {
-    return blockNonMatchingLocations
-        ? !_hasMatch(location)
-        : _hasMatch(location);
+  /// Whether or not the guard should check access to the [location].
+  bool shouldGuard(BeamLocation location) {
+    return guardNonMatching ? !_hasMatch(location) : _hasMatch(location);
   }
 }

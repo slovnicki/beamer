@@ -16,7 +16,7 @@ void main() {
         beamTo: (context) => Location2(),
       );
 
-      expect(guard.shouldBlock(testLocation), isTrue);
+      expect(guard.shouldGuard(testLocation), isTrue);
     });
 
     test("is false if the location doesn't have a blueprint matching the guard",
@@ -27,7 +27,7 @@ void main() {
         beamTo: (context) => Location2(),
       );
 
-      expect(guard.shouldBlock(testLocation), isFalse);
+      expect(guard.shouldGuard(testLocation), isFalse);
     });
 
     group('with wildcards', () {
@@ -44,7 +44,7 @@ void main() {
           beamTo: (context) => Location2(),
         );
 
-        expect(guard.shouldBlock(testLocation), isTrue);
+        expect(guard.shouldGuard(testLocation), isTrue);
       });
 
       test("is false if the location doesn't have a match against the wildcard",
@@ -57,7 +57,7 @@ void main() {
           beamTo: (context) => Location2(),
         );
 
-        expect(guard.shouldBlock(testLocation), isFalse);
+        expect(guard.shouldGuard(testLocation), isFalse);
       });
     });
 
@@ -69,10 +69,10 @@ void main() {
           ],
           check: (_, __) => true,
           beamTo: (context) => Location2(),
-          blockNonMatchingLocations: true,
+          guardNonMatching: true,
         );
 
-        expect(guard.shouldBlock(testLocation), isFalse);
+        expect(guard.shouldGuard(testLocation), isFalse);
       });
 
       test(
@@ -82,10 +82,10 @@ void main() {
           pathBlueprints: ['/not-a-match'],
           check: (_, __) => true,
           beamTo: (context) => Location2(),
-          blockNonMatchingLocations: true,
+          guardNonMatching: true,
         );
 
-        expect(guard.shouldBlock(testLocation), isTrue);
+        expect(guard.shouldGuard(testLocation), isTrue);
       });
 
       group('with wildcards', () {
@@ -100,10 +100,10 @@ void main() {
             ],
             check: (_, __) => true,
             beamTo: (context) => Location2(),
-            blockNonMatchingLocations: true,
+            guardNonMatching: true,
           );
 
-          expect(guard.shouldBlock(testLocation), isFalse);
+          expect(guard.shouldGuard(testLocation), isFalse);
         });
 
         test(
@@ -115,10 +115,10 @@ void main() {
             ],
             check: (_, __) => true,
             beamTo: (context) => Location2(),
-            blockNonMatchingLocations: true,
+            guardNonMatching: true,
           );
 
-          expect(guard.shouldBlock(testLocation), isTrue);
+          expect(guard.shouldGuard(testLocation), isTrue);
         });
       });
     });
