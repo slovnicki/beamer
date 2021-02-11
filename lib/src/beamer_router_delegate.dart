@@ -10,6 +10,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     @required BeamLocation initialLocation,
     Widget notFoundPage,
     this.guards = const <BeamGuard>[],
+    this.navigatorObservers = const <NavigatorObserver>[],
   })  : _navigatorKey = GlobalKey<NavigatorState>(),
         _currentLocation = initialLocation..prepare(),
         _previousLocation = null,
@@ -26,6 +27,9 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   /// When some guard returns `false`, location candidate will not be accepted
   /// and stack of pages will be updated as is configured in [BeamGuard].
   final List<BeamGuard> guards;
+
+  /// The list of observers for the [Navigator] created for this app.
+  final List<NavigatorObserver> navigatorObservers;
 
   final GlobalKey<NavigatorState> _navigatorKey;
   BeamLocation _currentLocation;
@@ -116,6 +120,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
       _update(guard.beamTo(context));
     }
     return Navigator(
+      observers: navigatorObservers,
       key: navigatorKey,
       pages: _currentLocation is NotFound
           ? [BeamPage(child: notFoundPage)]
