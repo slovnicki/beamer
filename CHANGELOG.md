@@ -1,3 +1,7 @@
+# 0.6.2
+
+- **Add** `navigatorObservers` attribute to `BeamerRouterDelegate`
+
 # 0.6.1
 
 - **Add** `guardNonMatching` attribute to `BeamGuard`
