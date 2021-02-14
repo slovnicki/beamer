@@ -1,3 +1,8 @@
+# 0.6.3
+
+- **Add** `name` attribute to `BeamPage`
+- **Fix** `BeamerRouterDelegate` not notifying listeners on `setNewRoutePath`
+
 # 0.6.2
 
 - **Add** `navigatorObservers` attribute to `BeamerRouterDelegate`
