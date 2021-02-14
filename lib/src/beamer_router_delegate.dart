@@ -143,6 +143,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   @override
   SynchronousFuture<void> setNewRoutePath(BeamLocation location) {
     _update(location);
+    notifyListeners();
     return SynchronousFuture(null);
   }
 
