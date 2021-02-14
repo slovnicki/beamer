@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 class BeamPage extends Page {
   BeamPage({
     Key key,
+    String name,
     @required this.child,
     this.keepQueryOnPop = false,
-  }) : super(key: key);
+  }) : super(key: key, name: name);
 
   /// The concrete Widget representing app's screen.
   final Widget child;
