@@ -1,4 +1,8 @@
 <p align="center">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/logo.png">
+</p>
+
+<p align="center">
 <a href="https://pub.dev/packages/beamer"><img src="https://img.shields.io/pub/v/beamer.svg" alt="pub"></a>
 <a href="https://github.com/slovnicki/beamer/blob/master/.github/workflows/test.yml"><img src="https://github.com/slovnicki/beamer/workflows/tests/badge.svg" alt="test"></a>
 <a href="https://github.com/google/pedantic"><img src="https://dart-lang.github.io/linter/lints/style-pedantic.svg" alt="style"></a>
