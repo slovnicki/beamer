@@ -1,3 +1,7 @@
+# 0.6.4
+
+- **Fix** static analysis (Pana 0.14.10, Flutter 1.22.6, Dart 2.10.5) problem by not using `maybeOf`
+
 # 0.6.3
 
 - **Add** `name` attribute to `BeamPage`
