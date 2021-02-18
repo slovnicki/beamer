@@ -46,8 +46,11 @@ class Beamer extends StatefulWidget {
 
   /// Access Beamer's [routerDelegate].
   static BeamerRouterDelegate of(BuildContext context) {
-    return Router.maybeOf(context)?.routerDelegate ??
-        context.findAncestorWidgetOfExactType<Beamer>().routerDelegate;
+    try {
+      return Router.of(context).routerDelegate;
+    } catch (e) {
+      return context.findAncestorWidgetOfExactType<Beamer>().routerDelegate;
+    }
   }
 
   @override
