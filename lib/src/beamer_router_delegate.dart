@@ -98,14 +98,13 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   ///
   /// The same thing as [currentConfiguration], but with more familiar name.
   ///
-  /// Can be useful when trying to [updateCurrentLocation], but not sure
-  /// what is the exact state of it, i.e. what is the current value of
-  /// [pathParameters], [queryParameters], [data], etc.
+  /// Can be useful in navigation widgets, for example, to check which button
+  /// should be highlighted:
   ///
   /// ```dart
-  /// Beamer.of(context).currentLocation
+  /// highlighted: Beamer.of(context).currentLocation is MyLocation
   /// ```
-  BeamLocation get currentLocation => currentConfiguration;
+  BeamLocation get currentLocation => _currentLocation;
 
   @override
   BeamLocation get currentConfiguration => _currentLocation;
