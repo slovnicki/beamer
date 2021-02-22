@@ -250,6 +250,13 @@ class MyApp extends StatelessWidget {
         AuthenticationStateProvider.of(context).isAuthenticated.value,
     beamTo: (context) => LoginLocation(),
   );
+  final notFoundPage = BeamPage(
+    child: Scaffold(
+      body: Center(
+        child: Text('Not found'),
+      ),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -262,7 +269,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             routerDelegate: BeamerRouterDelegate(
               initialLocation: initialLocation,
-              notFoundPage: Scaffold(body: Center(child: Text('Not found'))),
+              notFoundPage: notFoundPage,
               guards: [authGuard],
             ),
             routeInformationParser: BeamerRouteInformationParser(

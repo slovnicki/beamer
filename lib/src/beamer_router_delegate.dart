@@ -8,18 +8,18 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<BeamLocation> {
   BeamerRouterDelegate({
     @required BeamLocation initialLocation,
-    Widget notFoundPage,
+    BeamPage notFoundPage,
     this.guards = const <BeamGuard>[],
     this.navigatorObservers = const <NavigatorObserver>[],
   })  : _navigatorKey = GlobalKey<NavigatorState>(),
         _currentLocation = initialLocation..prepare(),
         _previousLocation = null,
-        notFoundPage = notFoundPage ?? Container() {
+        notFoundPage = notFoundPage ?? BeamPage(child: Container()) {
     _currentPages = _currentLocation.pages;
   }
 
-  /// Screen to show when no [BeamLocation] supports the incoming URI.
-  final Widget notFoundPage;
+  /// Page to show when no [BeamLocation] supports the incoming URI.
+  final BeamPage notFoundPage;
 
   /// Guards that will be executing [check] on [currentLocation] candidate.
   ///
@@ -122,7 +122,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
       observers: navigatorObservers,
       key: navigatorKey,
       pages: _currentLocation is NotFound
-          ? [BeamPage(child: notFoundPage)]
+          ? [notFoundPage]
           : guard == null || guard?.beamTo != null
               ? _currentPages
               : [BeamPage(child: guard.showPage)],

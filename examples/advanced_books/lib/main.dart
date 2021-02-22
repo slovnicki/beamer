@@ -12,6 +12,13 @@ class MyApp extends StatelessWidget {
     BooksLocation(),
     ArticlesLocation(),
   ];
+  final notFoundPage = BeamPage(
+    child: Scaffold(
+      body: Center(
+        child: Text('Not found'),
+      ),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +26,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routerDelegate: BeamerRouterDelegate(
         initialLocation: initialLocation,
-        notFoundPage: Scaffold(body: Center(child: Text('Not found'))),
-        //guards: [authGuard],
+        notFoundPage: notFoundPage,
       ),
       routeInformationParser: BeamerRouteInformationParser(
         beamLocations: beamLocations,
