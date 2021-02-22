@@ -40,12 +40,10 @@ class HomeScreen extends StatelessWidget {
 }
 
 class BooksScreen extends StatelessWidget {
-  BooksScreen({this.titleQuery = ''});
-
-  final String titleQuery;
-
   @override
   Widget build(BuildContext context) {
+    final titleQuery =
+        Beamer.of(context).currentLocation.queryParameters['title'] ?? '';
     return Scaffold(
       appBar: AppBar(
         title: Text('Books'),
@@ -122,9 +120,7 @@ class BooksLocation extends BeamLocation {
         if (pathSegments.contains('books'))
           BeamPage(
             key: ValueKey('books-${queryParameters['title'] ?? ''}'),
-            child: BooksScreen(
-              titleQuery: queryParameters['title'] ?? '',
-            ),
+            child: BooksScreen(),
           ),
         if (pathParameters.containsKey('bookId'))
           BeamPage(
