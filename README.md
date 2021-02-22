@@ -29,10 +29,10 @@ Handle your application routing, synchronize it with browser URL and more. `Beam
     - [Advanced Books](#advanced-books)
     - [Deep Location](#deep-location)
     - [Guards](#guards)
-    - [Bottom Navigation (WIP)](#bottom-navigation-(wip))
+    - [Inner Beamer](#inner-beamer)
 - [Usage](#usage)
-  - [With *App.router](#with-app.router)
-  - [As a Widget (WIP)](#as-a-widget-(wip))
+  - [On Entire App](#on-entire-app)
+  - [As a Widget](#as-a-widget)
   - [General Notes](#general-notes)
 - [Migrating from 0.4.x to >=0.5.x](#migrating-from-0.4.x-to->=0.5.x)
 - [Contributing](#contributing)
@@ -95,16 +95,16 @@ You can define global guards (for example, authentication guard) or location gua
 <p align="center">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-guards.gif" alt="example-guards" style="margin-right:32px;margin-left:32px">
 
-## Bottom Navigation (WIP)
+## Inner Beamer
 
-An example of putting `Beamer` into widget tree. **This is not yet fully functional for web usage**; setting the URL from browser doesn't update the state properly. It should work when [nested routers issue](https://github.com/slovnicki/beamer/issues/4) is done. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation).
+An example of putting `Beamer` into widget tree. **This is not yet fully functional for web usage**; setting the URL from browser doesn't update the state properly. It should work when [nested routers issue](https://github.com/slovnicki/beamer/issues/4) is settled. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation).
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-bottom-navigation-mobile.gif" alt="example-bottom-navigation" style="margin-right:32px;margin-left:32px">
 
 # Usage
 
-## With *App.router
+## On Entire App
 
 In order to use Beamer on your entire app, you must (as per [official documentation](https://api.flutter.dev/flutter/widgets/Router-class.html)) construct your `*App` widget with `.router` constructor to which (along with all your regular `*App` attributes) you provide
 
@@ -133,53 +133,27 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-## As a Widget (WIP)
+## As a Widget
 
 ```dart
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  final List<BeamLocation> _beamLocations = [
-    BooksLocation(pathBlueprint: '/books'),
-    ArticlesLocation(pathBlueprint: '/articles'),
-  ];
+class MyApp extends StatelessWidget {
   final _beamerKey = GlobalKey<BeamerState>();
-  Beamer _beamer;
-  int _currentIndex = 0;
-
-  @override
-  void initState() {
-    _beamer = Beamer(
-      key: _beamerKey,
-      routerDelegate: BeamerRouterDelegate(initialLocation: _beamLocations[0]),
-      routeInformationParser: BeamerRouteInformationParser(
-        beamLocations: _beamLocations,
-      ),
-    );
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: _beamer,
-        bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            items: [
-              BottomNavigationBarItem(label: 'Books', icon: Icon(Icons.book)),
-              BottomNavigationBarItem(
-                  label: 'Articles', icon: Icon(Icons.article)),
-            ],
-            onTap: (index) {
-              setState(() => _currentIndex = index);
-              _beamerKey.currentState.routerDelegate
-                  .beamTo(_beamLocations[index]);
-            }),
+        body: Beamer(
+          key: _beamerKey,
+          routerDelegate:
+              BeamerRouterDelegate(initialLocation: _beamLocations[0]),
+          routeInformationParser: BeamerRouteInformationParser(
+            beamLocations: _beamLocations,
+          ),
+        ),
+        bottomNavigationBar: BottomNavigationBarWidget(
+          beamerKey: _beamerKey,
+        ),
       ),
     );
   }
