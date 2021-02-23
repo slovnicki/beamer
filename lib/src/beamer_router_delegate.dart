@@ -135,7 +135,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
           ? [notFoundPage]
           : guard == null || guard?.beamTo != null
               ? _currentPages
-              : [BeamPage(child: guard.showPage)],
+              : [guard.showPage],
       onPopPage: (route, result) {
         if (!route.didPop(result)) {
           return false;

@@ -207,13 +207,21 @@ class BooksLocation extends BeamLocation {
           ),
       ];
 
+  final forbiddenPage = BeamPage(
+    child: Scaffold(
+      body: Center(
+        child: Text('Forbidden'),
+      ),
+    ),
+  );
+
   @override
   List<BeamGuard> get guards => [
         BeamGuard(
           pathBlueprints: ['/books/*'],
           check: (context, location) =>
               location.pathParameters['bookId'] != '2',
-          showPage: Scaffold(body: Center(child: Text('Forbidden'))),
+          showPage: forbiddenPage,
         ),
       ];
 }
