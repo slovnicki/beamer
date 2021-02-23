@@ -1,4 +1,5 @@
 import 'package:beamer/beamer.dart';
+import 'package:flutter/foundation.dart';
 
 /// Configuration for a navigatable application region.
 ///
@@ -78,6 +79,45 @@ abstract class BeamLocation {
     _makePath();
     _makeQuery();
     executeBefore?.call();
+  }
+
+  /// Update chosen parameters of [currentLocation], in a similar manner
+  /// as with [BeamLocation] constructor.
+  ///
+  /// [pathParameters], [queryParameters] and [data] will be appended to
+  /// [currentLocation]'s [pathParameters], [queryParameters] and [data]
+  /// unless [rewriteParameters] is set to `true`, in which case
+  /// [currentLocation]'s attributes will be set to provided values
+  /// or their default values.
+  void update({
+    @required String pathBlueprint,
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, String> queryParameters = const <String, String>{},
+    Map<String, dynamic> data = const <String, dynamic>{},
+    bool rewriteParameters = false,
+  }) {
+    pathSegments = List.from(Uri.parse(pathBlueprint).pathSegments);
+    if (rewriteParameters) {
+      this.pathParameters = Map.from(pathParameters);
+    } else {
+      pathParameters.forEach((key, value) {
+        this.pathParameters[key] = value;
+      });
+    }
+    if (rewriteParameters) {
+      this.queryParameters = Map.from(queryParameters);
+    } else {
+      queryParameters.forEach((key, value) {
+        this.queryParameters[key] = value;
+      });
+    }
+    if (rewriteParameters) {
+      this.data = Map.from(data);
+    } else {
+      data.forEach((key, value) {
+        this.data[key] = value;
+      });
+    }
   }
 
   void _makeQuery() {
