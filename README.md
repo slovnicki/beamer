@@ -175,7 +175,7 @@ Scaffold(
 ## Integration with Navigation UI Packages
 
 - [Animated Rail Example](https://github.com/slovnicki/beamer/tree/master/examples/animated_rail), with [animated_rail](https://pub.dev/packages/animated_rail) package.
-- ... (contributions are very welcome)
+- ... (contributions are very welcome, add your suggestions [here](https://github.com/slovnicki/beamer/issues/79))
 
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-animated-rail.gif" alt="example-bottom-navigation" width="240">
 
