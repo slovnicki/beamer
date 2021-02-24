@@ -80,8 +80,8 @@ class BeamerState extends State<Beamer> {
 }
 
 extension BeamTo on BuildContext {
-  void beamTo(BeamLocation location) {
-    Beamer.of(this).beamTo(location);
+  void beamTo(BeamLocation location, {bool beamBackOnPop = false}) {
+    Beamer.of(this).beamTo(location, beamBackOnPop: beamBackOnPop);
   }
 }
 

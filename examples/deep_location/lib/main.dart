@@ -12,6 +12,7 @@ class HomeScreen extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () => context.beamTo(DeepLocation('/a/b/c/d')),
+          // context.beamTo(DeepLocation('/a/b/c/d'), beamBackOnPop: true),
           child: Text('Beam deep'),
         ),
       ),

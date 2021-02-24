@@ -65,6 +65,9 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   /// Current location's effective pages.
   List<BeamPage> get currentPages => _currentPages;
 
+  /// Whether to implicitly [beamBack] instead of default pop
+  bool _beamBackOnPop;
+
   /// Beams to `location`.
   ///
   /// Specifically,
@@ -72,7 +75,11 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   /// 1. adds the prepared `location` to [beamHistory]
   /// 2. updates [currentLocation] and [currentPages]
   /// 3. notifies that the [Navigator] should be rebuilt
-  void beamTo(BeamLocation location) {
+  ///
+  /// if `beamBackOnPop` is set to `true`, default pop action on the newly
+  /// beamed location will triger `beamBack` instead.
+  void beamTo(BeamLocation location, {bool beamBackOnPop = false}) {
+    _beamBackOnPop = beamBackOnPop;
     _beamHistory.add(location..prepare());
     _updateCurrent();
     notifyListeners();
@@ -85,6 +92,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   ///
   /// Returns the success, whether the [currentLocation] was changed.
   bool beamBack() {
+    _beamBackOnPop = false;
     if (_beamHistory.length == 1) {
       return false;
     }
@@ -97,6 +105,8 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   /// Updates [currentLocation] and notifies listeners.
   ///
   /// See [BeamLocation.update] for details.
+  ///
+  /// Note that [_beamBackOnPop] will be reset to `false`.
   void updateCurrentLocation({
     @required String pathBlueprint,
     Map<String, String> pathParameters = const <String, String>{},
@@ -104,6 +114,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     Map<String, dynamic> data = const <String, dynamic>{},
     bool rewriteParameters = false,
   }) {
+    _beamBackOnPop = false;
     _currentLocation.update(
       pathBlueprint: pathBlueprint,
       pathParameters: pathParameters,
@@ -140,9 +151,14 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
         if (!route.didPop(result)) {
           return false;
         }
-        final lastPage = _currentPages.removeLast();
-        if (lastPage is BeamPage) {
-          _handlePop(lastPage);
+        if (_beamBackOnPop) {
+          beamBack();
+          _beamBackOnPop = false;
+        } else {
+          final lastPage = _currentPages.removeLast();
+          if (lastPage is BeamPage) {
+            _handlePop(lastPage);
+          }
         }
         return true;
       },
