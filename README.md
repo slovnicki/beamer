@@ -31,6 +31,7 @@ Handle your application routing, synchronize it with browser URL and more. `Beam
     - [Location Builder](#location-builder)
     - [Guards](#guards)
     - [Inner Beamer](#inner-beamer)
+    - [Integration with Navigation UI Packages](#integration-with-navigation-ui-packages)
 - [Usage](#usage)
   - [On Entire App](#on-entire-app)
   - [As a Widget](#as-a-widget)
@@ -73,21 +74,29 @@ Using Beamer _can_ feel like using many of `Navigator`'s `push/pop` methods at o
 Here is a recreation of books example from [this article](https://medium.com/flutter/learning-flutters-new-navigation-and-routing-system-7c9068155ade) where you can learn a lot about Navigator 2.0. See [Example](https://pub.dev/packages/beamer/example) for full application code of this example.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-books.gif" alt="example-books" style="margin-right:32px;margin-left:32px">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-books.gif" alt="example-books" width="520">
 
 ## Advanced Books
 
 For a step further, we add more flows to demonstrate the power of Beamer. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/advanced_books).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-advanced-books.gif" alt="example-advanced-books" style="margin-right:32px;margin-left:32px">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-advanced-books.gif" width="520">
 
 ## Deep Location
 
 You can instantly beam to a location in your app that has many pages stacked (deep linking) and then pop them one by one or simply `beamBack` to where you came from. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/deep_location). Note that `beamBackOnPop` parameter of `beamTo` might be useful here to override `AppBar`'s `pop` with `beamBack`.
 
+```dart
+ElevatedButton(
+  onPressed: () => context.beamTo(DeepLocation('/a/b/c/d')),
+  // onPressed: () => context.beamTo(DeepLocation('/a/b/c/d'), beamBackOnPop: true),
+  child: Text('Beam deep'),
+),
+```
+
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-deep-location.gif" alt="example-deep-location" style="margin-right:32px;margin-left:32px">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-deep-location.gif" alt="example-deep-location" width="260">
 
 ## Location Builder
 
@@ -104,24 +113,74 @@ Widget builder(BuildContext context, Navigator navigator) {
 ```
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-location-builder.gif" alt="example-location-builder" style="margin-right:32px;margin-left:32px">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-location-builder.gif"  width="260">
 
 ## Guards
 
 You can define global guards (for example, authentication guard) or location guards that keep a specific location safe. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/guards).
 
+- Global Guards
+
+```dart
+BeamerRouterDelegate(
+  initialLocation: initialLocation,
+  guards: [
+    BeamGuard(
+      pathBlueprints: ['/books*'],
+      check: (context, location) => AuthenticationStateProvider.of(context).isAuthenticated.value,
+      beamTo: (context) => LoginLocation(),
+    ),
+  ],
+),
+```
+
+- Location (local) Guards
+
+```dart
+// in your location implementation
+@override
+List<BeamGuard> get guards => [
+  BeamGuard(
+    pathBlueprints: ['/books/*'],
+    check: (context, location) => location.pathParameters['bookId'] != '2',
+    showPage: forbiddenPage,
+  ),
+];
+```
+
+
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-guards.gif" alt="example-guards" style="margin-right:32px;margin-left:32px">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-guards.gif" alt="example-guards"  width="520">
 
 ## Inner Beamer
 
-An example of putting `Beamer` into widget tree. **This is not yet fully functional for web usage**; setting the URL from browser doesn't update the state properly. It should work when [nested routers issue](https://github.com/slovnicki/beamer/issues/4) is settled. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation).
+An example of putting `Beamer` into the widget tree. **This is not yet fully functional for web usage**; setting the URL from browser doesn't update the state properly. It should work when [nested routers issue](https://github.com/slovnicki/beamer/issues/4) is settled. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation).
+
+```dart
+Scaffold(
+  body: Beamer(
+    routerDelegate:
+        BeamerRouterDelegate(initialLocation: _beamLocations[0]),
+    routeInformationParser: BeamerRouteInformationParser(
+      beamLocations: _beamLocations,
+    ),
+  ),
+),
+```
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-bottom-navigation-mobile.gif" alt="example-bottom-navigation" style="margin-right:32px;margin-left:32px">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-bottom-navigation-mobile.gif"  width="240">
 
+---
+## Integration with Navigation UI Packages
+
+- [Animated Rail Example](https://github.com/slovnicki/beamer/tree/master/examples/animated_rail), with [animated_rail](https://pub.dev/packages/animated_rail) package.
+- ... (contributions are very welcome)
+
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-animated-rail.gif" alt="example-bottom-navigation" width="240">
+
+---
 # Usage
-
 ## On Entire App
 
 In order to use Beamer on your entire app, you must (as per [official documentation](https://api.flutter.dev/flutter/widgets/Router-class.html)) construct your `*App` widget with `.router` constructor to which (along with all your regular `*App` attributes) you provide
