@@ -1,3 +1,14 @@
+# 0.7.0
+
+- **BREAKING:** `BeamerRouterDelegate.notFoundPage` is now `BeamPage` instead of `Widget`
+- **BREAKING:** `BeamGuard.showPage` is now `BeamPage` instead of `Widget`
+- **NEW FEATURE:** `beamBack` now goes back through `beamHistory`
+- **NEW FEATURE:** `beamTo` can take an optional `beamBackOnPop` boolean
+- **NEW FEATURE:** `BeamLocation.builder` can be used to provide something to the entire location
+- **NEW EXAMPLE:** location_builder
+- **NEW EXAMPLE:** animated_rail
+- tweaks and improvements to the documentation
+
 # 0.6.4+1
 
 - **Add** logo image
