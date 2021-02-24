@@ -28,6 +28,7 @@ Handle your application routing, synchronize it with browser URL and more. `Beam
     - [Books](#books)
     - [Advanced Books](#advanced-books)
     - [Deep Location](#deep-location)
+    - [Location Builder](#location-builder)
     - [Guards](#guards)
     - [Inner Beamer](#inner-beamer)
 - [Usage](#usage)
@@ -87,6 +88,23 @@ You can instantly beam to a location in your app that has many pages stacked (de
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-deep-location.gif" alt="example-deep-location" style="margin-right:32px;margin-left:32px">
+
+## Location Builder
+
+You can override `BeamLocation.builder` to provide some data to the entire location, i.e. to all of the `pages`. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/location-builder).
+
+```dart
+@override
+Widget builder(BuildContext context, Navigator navigator) {
+  return MyProvider<MyObject>(
+    create: (context) => MyObject(),
+    child: navigator,
+  );
+}
+```
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-location-builder.gif" alt="example-location-builder" style="margin-right:32px;margin-left:32px">
 
 ## Guards
 
