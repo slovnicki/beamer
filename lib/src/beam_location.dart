@@ -1,5 +1,5 @@
 import 'package:beamer/beamer.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
 /// Configuration for a navigatable application region.
 ///
@@ -17,6 +17,24 @@ abstract class BeamLocation {
         pathParameters = pathParameters ?? <String, String>{},
         queryParameters = queryParameters ?? <String, String>{},
         data = data ?? <String, dynamic>{};
+
+  /// Gives the ability to wrap the `navigator`.
+  ///
+  /// Mostly useful for providing something to the entire location,
+  /// i.e. to all of the [pages].
+  ///
+  /// For example:
+  ///
+  /// ```dart
+  /// @override
+  /// Widget builder(BuildContext context, Navigator navigator) {
+  ///   return MyProvider<MyObject>(
+  ///     create: (context) => MyObject(),
+  ///     child: navigator,
+  ///   );
+  /// }
+  /// ```
+  Widget builder(BuildContext context, Navigator navigator) => navigator;
 
   /// Represents the "form" of URI paths supported by this [BeamLocation].
   ///

@@ -139,7 +139,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     if (guard?.beamTo != null) {
       beamTo(guard.beamTo(context));
     }
-    return Navigator(
+    final navigator = Navigator(
       key: navigatorKey,
       observers: navigatorObservers,
       pages: _currentLocation is NotFound
@@ -163,6 +163,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
         return true;
       },
     );
+    return _currentLocation.builder(context, navigator);
   }
 
   @override
