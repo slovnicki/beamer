@@ -15,7 +15,6 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
         notFoundPage = notFoundPage ?? BeamPage(child: Container()) {
     _beamHistory.add(initialLocation..prepare());
     _currentLocation = _beamHistory[0];
-    _currentPages = _currentLocation.pages;
   }
 
   /// Page to show when no [BeamLocation] supports the incoming URI.
@@ -73,7 +72,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   /// Specifically,
   ///
   /// 1. adds the prepared `location` to [beamHistory]
-  /// 2. updates [currentLocation] and [currentPages]
+  /// 2. updates [currentLocation]
   /// 3. notifies that the [Navigator] should be rebuilt
   ///
   /// if `beamBackOnPop` is set to `true`, default pop action on the newly
@@ -81,7 +80,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   void beamTo(BeamLocation location, {bool beamBackOnPop = false}) {
     _beamBackOnPop = beamBackOnPop;
     _beamHistory.add(location..prepare());
-    _updateCurrent();
+    _currentLocation = _beamHistory.last;
     notifyListeners();
   }
 
@@ -97,7 +96,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
       return false;
     }
     _beamHistory.removeLast();
-    _updateCurrent();
+    _currentLocation = _beamHistory.last;
     notifyListeners();
     return true;
   }
@@ -123,7 +122,6 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
       rewriteParameters: rewriteParameters,
     );
     _currentLocation.prepare();
-    _currentPages = _currentLocation.pages;
     notifyListeners();
   }
 
@@ -139,28 +137,33 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     if (guard?.beamTo != null) {
       beamTo(guard.beamTo(context));
     }
-    final navigator = Navigator(
-      key: navigatorKey,
-      observers: navigatorObservers,
-      pages: _currentLocation is NotFound
-          ? [notFoundPage]
-          : guard == null || guard?.beamTo != null
-              ? _currentPages
-              : [guard.showPage],
-      onPopPage: (route, result) {
-        if (!route.didPop(result)) {
-          return false;
-        }
-        if (_beamBackOnPop) {
-          beamBack();
-          _beamBackOnPop = false;
-        } else {
-          final lastPage = _currentPages.removeLast();
-          if (lastPage is BeamPage) {
-            _handlePop(lastPage);
-          }
-        }
-        return true;
+    final navigator = Builder(
+      builder: (context) {
+        _currentPages = _currentLocation.pagesBuilder(context);
+        return Navigator(
+          key: navigatorKey,
+          observers: navigatorObservers,
+          pages: _currentLocation is NotFound
+              ? [notFoundPage]
+              : guard == null || guard?.beamTo != null
+                  ? _currentPages
+                  : [guard.showPage],
+          onPopPage: (route, result) {
+            if (!route.didPop(result)) {
+              return false;
+            }
+            if (_beamBackOnPop) {
+              beamBack();
+              _beamBackOnPop = false;
+            } else {
+              final lastPage = _currentPages.removeLast();
+              if (lastPage is BeamPage) {
+                _handlePop(lastPage);
+              }
+            }
+            return true;
+          },
+        );
       },
     );
     return _currentLocation.builder(context, navigator);
@@ -172,11 +175,6 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     return SynchronousFuture(null);
   }
 
-  void _updateCurrent() {
-    _currentLocation = _beamHistory.last;
-    _currentPages = _currentLocation.pages;
-  }
-
   void _handlePop(BeamPage page) {
     final pathSegment = _currentLocation.pathSegments.removeLast();
     if (pathSegment[0] == ':') {
@@ -186,7 +184,6 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
       _currentLocation.queryParameters = {};
     }
     _currentLocation.prepare();
-    _currentPages = _currentLocation.pages;
     notifyListeners();
   }
 
