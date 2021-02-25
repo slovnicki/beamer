@@ -58,21 +58,21 @@ void main() {
     test('Parsed BeamLocation creates correct pages', () async {
       var routeInformation = RouteInformation(location: '/l1');
       var location = await parser.parseRouteInformation(routeInformation);
-      expect(location.pages.length, 1);
+      expect(location.pagesBuilder(null).length, 1);
 
       routeInformation = RouteInformation(location: '/l1?q=xxx');
       location = await parser.parseRouteInformation(routeInformation);
-      expect(location.pages.length, 1);
+      expect(location.pagesBuilder(null).length, 1);
 
       routeInformation = RouteInformation(location: '/l1/one');
       location = await parser.parseRouteInformation(routeInformation);
-      expect(location.pages.length, 2);
-      expect(location.pages[1].key, ValueKey('l1-one'));
+      expect(location.pagesBuilder(null).length, 2);
+      expect(location.pagesBuilder(null)[1].key, ValueKey('l1-one'));
 
       routeInformation = RouteInformation(location: '/l1/two');
       location = await parser.parseRouteInformation(routeInformation);
-      expect(location.pages.length, 2);
-      expect(location.pages[1].key, ValueKey('l1-two'));
+      expect(location.pagesBuilder(null).length, 2);
+      expect(location.pagesBuilder(null)[1].key, ValueKey('l1-two'));
     });
 
     test('Unknown URI yields NotFound location', () async {

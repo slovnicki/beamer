@@ -112,7 +112,7 @@ class HomeLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/'];
 
   @override
-  List<BeamPage> get pages => [
+  List<BeamPage> pagesBuilder(BuildContext context) => [
         BeamPage(
           key: ValueKey('home'),
           child: HomeScreen(),
@@ -130,28 +130,31 @@ class BooksLocation extends BeamLocation {
         );
 
   @override
-  Widget builder(BuildContext context, Navigator navigator) =>
+  Widget builder(BuildContext context, Widget navigator) =>
       BooksProvider(child: navigator);
 
   @override
   List<String> get pathBlueprints => ['/books/:bookId'];
 
   @override
-  List<BeamPage> get pages => [
-        ...HomeLocation().pages,
-        if (pathSegments.contains('books'))
-          BeamPage(
-            key: ValueKey('books-${queryParameters['title'] ?? ''}'),
-            child: BooksScreen(),
+  List<BeamPage> pagesBuilder(BuildContext context) {
+    print('books: ${BooksProvider.of(context).books.length}');
+    return [
+      ...HomeLocation().pagesBuilder(context),
+      if (pathSegments.contains('books'))
+        BeamPage(
+          key: ValueKey('books-${queryParameters['title'] ?? ''}'),
+          child: BooksScreen(),
+        ),
+      if (pathParameters.containsKey('bookId'))
+        BeamPage(
+          key: ValueKey('book-${pathParameters['bookId']}'),
+          child: BookDetailsScreen(
+            bookId: pathParameters['bookId'],
           ),
-        if (pathParameters.containsKey('bookId'))
-          BeamPage(
-            key: ValueKey('book-${pathParameters['bookId']}'),
-            child: BookDetailsScreen(
-              bookId: pathParameters['bookId'],
-            ),
-          ),
-      ];
+        ),
+    ];
+  }
 }
 
 // APP

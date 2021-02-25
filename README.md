@@ -239,8 +239,8 @@ class MyApp extends StatelessWidget {
 
 ## General Notes
 
-- When extending `BeamLocation`, two getters need to be implemented; `pathBlueprints` and `pages`.
-  - `pages` represent a stack that will be built by `Navigator` when you beam there, and `pathBlueprints` is there for Beamer to decide which `BeamLocation` corresponds to an URL coming from browser.
+- When extending `BeamLocation`, two methods need to be implemented; `pathBlueprints` and `pagesBuilder`.
+  - `pagesBuilder` returns a stack of pages that will be built by `Navigator` when you beam there, and `pathBlueprints` is there for Beamer to decide which `BeamLocation` corresponds to an URL coming from browser.
   - `BeamLocation` takes query and path parameters from URI. The `:` is necessary in `pathBlueprints` if you _might_ get path parameter from browser.
 
 - `BeamPage`'s child is an arbitrary `Widgets` that represent your app screen / page.

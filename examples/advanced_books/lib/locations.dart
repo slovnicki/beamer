@@ -10,7 +10,7 @@ class HomeLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/'];
 
   @override
-  List<BeamPage> get pages => [
+  List<BeamPage> pagesBuilder(BuildContext context) => [
         BeamPage(
           key: ValueKey('home'),
           child: HomeScreen(),
@@ -38,8 +38,8 @@ class BooksLocation extends BeamLocation {
       ];
 
   @override
-  List<BeamPage> get pages => [
-        ...HomeLocation().pages,
+  List<BeamPage> pagesBuilder(BuildContext context) => [
+        ...HomeLocation().pagesBuilder(context),
         if (pathSegments.contains('books'))
           BeamPage(
             key: ValueKey('books-${queryParameters['title'] ?? ''}'),
@@ -95,8 +95,8 @@ class ArticlesLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/articles/:articleId'];
 
   @override
-  List<BeamPage> get pages => [
-        ...HomeLocation().pages,
+  List<BeamPage> pagesBuilder(BuildContext context) => [
+        ...HomeLocation().pagesBuilder(context),
         if (pathSegments.contains('articles'))
           BeamPage(
             key: ValueKey('articles'),
