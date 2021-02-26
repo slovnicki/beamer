@@ -222,11 +222,7 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         body: Beamer(
           key: _beamerKey,
-          routerDelegate:
-              BeamerRouterDelegate(initialLocation: _beamLocations[0]),
-          routeInformationParser: BeamerRouteInformationParser(
-            beamLocations: _beamLocations,
-          ),
+          beamLocations: _beamLocations,
         ),
         bottomNavigationBar: BottomNavigationBarWidget(
           beamerKey: _beamerKey,

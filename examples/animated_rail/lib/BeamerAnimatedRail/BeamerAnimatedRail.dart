@@ -81,10 +81,7 @@ class _BeamerAnimatedRailState extends State<BeamerAnimatedRail> {
     locationsStack.add(selectedIndexNotifier.value);
     _beamer = Beamer(
       key: _beamerKey,
-      routerDelegate: BeamerRouterDelegate(initialLocation: _beamLocations[0]),
-      routeInformationParser: BeamerRouteInformationParser(
-        beamLocations: _beamLocations,
-      ),
+      beamLocations: _beamLocations,
     );
   }
 
