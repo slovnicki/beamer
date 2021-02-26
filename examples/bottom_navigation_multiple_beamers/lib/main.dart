@@ -168,18 +168,6 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-  final _bodyWidgets = [
-    Beamer(
-      beamLocations: [ArticlesLocation()],
-    ),
-    Container(
-      color: Colors.blueAccent,
-      padding: const EdgeInsets.all(32.0),
-      child: Beamer(
-        beamLocations: [BooksLocation()],
-      ),
-    ),
-  ];
   int _currentIndex = 0;
 
   @override
@@ -187,7 +175,21 @@ class MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: _bodyWidgets[_currentIndex],
+        body: IndexedStack(
+          index: _currentIndex,
+          children: [
+            Beamer(
+              beamLocations: [ArticlesLocation()],
+            ),
+            Container(
+              color: Colors.blueAccent,
+              padding: const EdgeInsets.all(32.0),
+              child: Beamer(
+                beamLocations: [BooksLocation()],
+              ),
+            ),
+          ],
+        ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
           items: [

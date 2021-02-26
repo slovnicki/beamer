@@ -185,25 +185,27 @@ class MyApp extends StatelessWidget {
 - [Bottom navigation example with multiple Beamers](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation_multiple_beamers)
 ```dart
 class MyAppState extends State<MyApp> {
-  final _bodyWidgets = [
-    Beamer(
-      beamLocations: [ArticlesLocation()],
-    ),
-    Container(
-      color: Colors.blueAccent,
-      padding: const EdgeInsets.all(32.0),
-      child: Beamer(
-        beamLocations: [BooksLocation()],
-      ),
-    ),
-  ];
   int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: _bodyWidgets[_currentIndex],
+        body: IndexedStack(
+          index: _currentIndex,
+          children: [
+            Beamer(
+              beamLocations: [ArticlesLocation()],
+            ),
+            Container(
+              color: Colors.blueAccent,
+              padding: const EdgeInsets.all(32.0),
+              child: Beamer(
+                beamLocations: [BooksLocation()],
+              ),
+            ),
+          ],
+        ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
           items: [
