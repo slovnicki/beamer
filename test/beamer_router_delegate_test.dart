@@ -4,11 +4,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'test_locations.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   final location1 = Location1(pathBlueprint: '/l1');
   final location2 = Location2(pathBlueprint: '/l2/:id');
   final router = BeamerRouterDelegate(
     initialLocation: location1,
   );
+  router.setNewRoutePath(location1);
 
   group('initialization & beaming', () {
     test('initialLocation is set', () {
