@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BuyScreen extends StatelessWidget {
-  BuyScreen({
-    this.book,
-  });
+  BuyScreen(this.book);
 
   final Map<String, String> book;
 

@@ -24,11 +24,11 @@ class ArticlesScreen extends StatelessWidget {
       body: ListView(
         children: articles
             .map((article) => ListTile(
-                  title: Text(article['title']),
-                  subtitle: Text(article['author']),
+                  title: Text(article['title']!),
+                  subtitle: Text(article['author']!),
                   onTap: () => Beamer.of(context).updateCurrentLocation(
                     pathBlueprint: '/articles/:articleId',
-                    pathParameters: {'articleId': article['id']},
+                    pathParameters: {'articleId': article['id']!},
                   ),
                 ))
             .toList(),

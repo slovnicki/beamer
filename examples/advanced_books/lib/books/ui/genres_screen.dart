@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
 
 class GenresScreen extends StatelessWidget {
-  GenresScreen({
-    this.book,
-  }) : genres = book['genres'].split(', ');
+  GenresScreen(this.book) : genres = book['genres']!.split(', ');
 
   final Map<String, String> book;
   final List<String> genres;
@@ -13,7 +11,7 @@ class GenresScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(book['title'] + "'s genres"),
+        title: Text(book['title']! + "'s genres"),
       ),
       body: Center(
         child: ListView(

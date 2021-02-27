@@ -44,11 +44,11 @@ class BooksScreen extends StatelessWidget {
       body: ListView(
         children: books
             .map((book) => ListTile(
-                  title: Text(book['title']),
-                  subtitle: Text(book['author']),
+                  title: Text(book['title']!),
+                  subtitle: Text(book['author']!),
                   onTap: () => Beamer.of(context).updateCurrentLocation(
                     pathBlueprint: '/books/:bookId',
-                    pathParameters: {'bookId': book['id']},
+                    pathParameters: {'bookId': book['id']!},
                   ),
                 ))
             .toList(),
@@ -58,9 +58,8 @@ class BooksScreen extends StatelessWidget {
 }
 
 class BookDetailsScreen extends StatelessWidget {
-  BookDetailsScreen({
-    this.bookId,
-  }) : book = books.firstWhere((book) => book['id'] == bookId);
+  BookDetailsScreen(this.bookId)
+      : book = books.firstWhere((book) => book['id'] == bookId);
 
   final String bookId;
   final Map<String, String> book;
@@ -82,11 +81,11 @@ class ArticlesScreen extends StatelessWidget {
       body: ListView(
         children: articles
             .map((article) => ListTile(
-                  title: Text(article['title']),
-                  subtitle: Text(article['author']),
+                  title: Text(article['title']!),
+                  subtitle: Text(article['author']!),
                   onTap: () => Beamer.of(context).updateCurrentLocation(
                     pathBlueprint: '/articles/:articleId',
-                    pathParameters: {'articleId': article['id']},
+                    pathParameters: {'articleId': article['id']!},
                   ),
                 ))
             .toList(),
@@ -96,9 +95,8 @@ class ArticlesScreen extends StatelessWidget {
 }
 
 class ArticleDetailsScreen extends StatelessWidget {
-  ArticleDetailsScreen({
-    this.articleId,
-  }) : article = articles.firstWhere((article) => article['id'] == articleId);
+  ArticleDetailsScreen(this.articleId)
+      : article = articles.firstWhere((article) => article['id'] == articleId);
 
   final String articleId;
   final Map<String, String> article;
@@ -115,7 +113,7 @@ class ArticleDetailsScreen extends StatelessWidget {
 // LOCATIONS
 class BooksLocation extends BeamLocation {
   BooksLocation({
-    String pathBlueprint,
+    String? pathBlueprint,
   }) : super(pathBlueprint: pathBlueprint);
 
   @override
@@ -130,16 +128,14 @@ class BooksLocation extends BeamLocation {
         if (pathParameters.containsKey('bookId'))
           BeamPage(
             key: ValueKey('book-${pathParameters['bookId']}'),
-            child: BookDetailsScreen(
-              bookId: pathParameters['bookId'],
-            ),
+            child: BookDetailsScreen(pathParameters['bookId']!),
           ),
       ];
 }
 
 class ArticlesLocation extends BeamLocation {
   ArticlesLocation({
-    String pathBlueprint,
+    String? pathBlueprint,
   }) : super(pathBlueprint: pathBlueprint);
 
   @override
@@ -154,9 +150,7 @@ class ArticlesLocation extends BeamLocation {
         if (pathParameters.containsKey('articleId'))
           BeamPage(
             key: ValueKey('articles-${pathParameters['articleId']}'),
-            child: ArticleDetailsScreen(
-              articleId: pathParameters['articleId'],
-            ),
+            child: ArticleDetailsScreen(pathParameters['articleId']!),
           ),
       ];
 }
@@ -168,7 +162,7 @@ final List<BeamLocation> _beamLocations = [
 ];
 
 class BottomNavigationBarWidget extends StatefulWidget {
-  BottomNavigationBarWidget({this.beamerKey});
+  BottomNavigationBarWidget(this.beamerKey);
 
   final GlobalKey<BeamerState> beamerKey;
 
@@ -182,7 +176,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
 
   @override
   void initState() {
-    widget.beamerKey.currentState.routerDelegate
+    widget.beamerKey.currentState!.routerDelegate
         .addListener(() => _updateCurrentIndex());
     super.initState();
   }
@@ -196,14 +190,14 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
           BottomNavigationBarItem(label: 'Articles', icon: Icon(Icons.article)),
         ],
         onTap: (index) {
-          widget.beamerKey.currentState.routerDelegate
+          widget.beamerKey.currentState!.routerDelegate
               .beamTo(_beamLocations[index]);
         });
   }
 
   void _updateCurrentIndex() {
     final index =
-        (widget.beamerKey.currentState.currentLocation is BooksLocation)
+        (widget.beamerKey.currentState!.currentLocation is BooksLocation)
             ? 0
             : 1;
     if (index != _currentIndex) {
@@ -228,9 +222,7 @@ class MyApp extends StatelessWidget {
             beamLocations: _beamLocations,
           ),
         ),
-        bottomNavigationBar: BottomNavigationBarWidget(
-          beamerKey: _beamerKey,
-        ),
+        bottomNavigationBar: BottomNavigationBarWidget(_beamerKey),
       ),
     );
   }

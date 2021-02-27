@@ -63,7 +63,7 @@ class HomeLocation extends BeamLocation {
 }
 
 class DeepLocation extends BeamLocation {
-  DeepLocation([String path]) : super(pathBlueprint: path);
+  DeepLocation([String? path]) : super(pathBlueprint: path);
 
   @override
   List<String> get pathBlueprints => ['/a/b/c/d'];

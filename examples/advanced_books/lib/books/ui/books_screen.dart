@@ -17,13 +17,13 @@ class BooksScreen extends StatelessWidget {
       body: ListView(
         children: books
             .where((book) =>
-                book['title'].toLowerCase().contains(titleQuery.toLowerCase()))
+                book['title']!.toLowerCase().contains(titleQuery.toLowerCase()))
             .map((book) => ListTile(
-                  title: Text(book['title']),
-                  subtitle: Text(book['author']),
+                  title: Text(book['title']!),
+                  subtitle: Text(book['author']!),
                   onTap: () => Beamer.of(context).updateCurrentLocation(
                     pathBlueprint: '/books/:bookId',
-                    pathParameters: {'bookId': book['id']},
+                    pathParameters: {'bookId': book['id']!},
                   ),
                 ))
             .toList(),

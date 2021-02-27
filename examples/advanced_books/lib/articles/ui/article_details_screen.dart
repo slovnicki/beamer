@@ -4,7 +4,7 @@ import '../data.dart';
 
 class ArticleDetailsScreen extends StatelessWidget {
   ArticleDetailsScreen({
-    this.articleId,
+    this.articleId = '',
   }) : article = articles.firstWhere((article) => article['id'] == articleId);
 
   final String articleId;
@@ -14,7 +14,7 @@ class ArticleDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(article['title']),
+        title: Text(article['title']!),
       ),
       body: Text('Author: ${article['author']}'),
     );

@@ -4,8 +4,8 @@ import 'package:beamer/beamer.dart';
 // BOOKS PROVIDER
 class BooksProvider extends InheritedWidget {
   BooksProvider({
-    Key key,
-    @required Widget child,
+    Key? key,
+    required Widget child,
   }) : super(key: key, child: child);
 
   final List<Map<String, String>> books = [
@@ -26,7 +26,7 @@ class BooksProvider extends InheritedWidget {
     },
   ];
 
-  static BooksProvider of(BuildContext context) =>
+  static BooksProvider? of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<BooksProvider>();
 
   @override
@@ -57,7 +57,7 @@ class BooksScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final titleQuery =
         Beamer.of(context).currentLocation.queryParameters['title'] ?? '';
-    final books = BooksProvider.of(context).books;
+    final books = BooksProvider.of(context)?.books;
     return Scaffold(
       appBar: AppBar(
         title: Text('Books (I' +
@@ -65,42 +65,46 @@ class BooksScreen extends StatelessWidget {
             ' have access to books)'),
       ),
       body: ListView(
-        children: books
-            .where((book) =>
-                book['title'].toLowerCase().contains(titleQuery.toLowerCase()))
-            .map((book) => ListTile(
-                  title: Text(book['title']),
-                  subtitle: Text(book['author']),
-                  onTap: () => Beamer.of(context).updateCurrentLocation(
-                    pathBlueprint: '/books/:bookId',
-                    pathParameters: {'bookId': book['id']},
-                  ),
-                ))
-            .toList(),
+        children: books != null
+            ? books
+                .where((book) => book['title']!
+                    .toLowerCase()
+                    .contains(titleQuery.toLowerCase()))
+                .map((book) => ListTile(
+                      title: Text(book['title']!),
+                      subtitle: Text(book['author']!),
+                      onTap: () => Beamer.of(context).updateCurrentLocation(
+                        pathBlueprint: '/books/:bookId',
+                        pathParameters: {'bookId': book['id']!},
+                      ),
+                    ))
+                .toList()
+            : [],
       ),
     );
   }
 }
 
 class BookDetailsScreen extends StatelessWidget {
-  BookDetailsScreen({this.bookId});
+  BookDetailsScreen(this.bookId);
 
   final String bookId;
 
   @override
   Widget build(BuildContext context) {
-    final books = BooksProvider.of(context).books;
-    final book = books.firstWhere((book) => book['id'] == bookId);
+    final books = BooksProvider.of(context)?.books;
+    final book = books?.firstWhere((book) => book['id'] == bookId);
     return Scaffold(
       appBar: AppBar(
-        title: Text(book['title'] +
+        title: Text((book?['title'] ?? '') +
+            '' +
             (' (I also' +
                 (books != null ? '' : " don't") +
                 ' have access to books)')),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text('Author: ${book['author']}'),
+        child: Text('Author: ${book?['author']}'),
       ),
     );
   }
@@ -122,8 +126,8 @@ class HomeLocation extends BeamLocation {
 
 class BooksLocation extends BeamLocation {
   BooksLocation({
-    String pathBlueprint,
-    Map<String, String> pathParameters,
+    String? pathBlueprint,
+    Map<String, String>? pathParameters,
   }) : super(
           pathBlueprint: pathBlueprint,
           pathParameters: pathParameters,
@@ -147,9 +151,7 @@ class BooksLocation extends BeamLocation {
         if (pathParameters.containsKey('bookId'))
           BeamPage(
             key: ValueKey('book-${pathParameters['bookId']}'),
-            child: BookDetailsScreen(
-              bookId: pathParameters['bookId'],
-            ),
+            child: BookDetailsScreen(pathParameters['bookId']!),
           ),
       ];
 }

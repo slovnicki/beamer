@@ -20,10 +20,10 @@ class HomeLocation extends BeamLocation {
 
 class BooksLocation extends BeamLocation {
   BooksLocation({
-    String pathBlueprint,
-    Map<String, String> pathParameters,
-    Map<String, String> queryParameters,
-    Map<String, dynamic> data,
+    String? pathBlueprint,
+    Map<String, String>? pathParameters,
+    Map<String, String>? queryParameters,
+    Map<String, dynamic>? data,
   }) : super(
           pathBlueprint: pathBlueprint,
           pathParameters: pathParameters,
@@ -51,39 +51,33 @@ class BooksLocation extends BeamLocation {
           BeamPage(
             key: ValueKey('book-${pathParameters['bookId']}'),
             child: BookDetailsScreen(
-              bookId: pathParameters['bookId'],
+              bookId: pathParameters['bookId']!,
             ),
           ),
         if (pathSegments.contains('buy'))
           BeamPage(
             key: ValueKey('book-${pathParameters['bookId']}-buy'),
-            child: BuyScreen(
-              book: data['book'],
-            ),
+            child: BuyScreen(data['book']),
           ),
         if (pathSegments.contains('genres'))
           BeamPage(
             key: ValueKey('book-${pathParameters['bookId']}-genres'),
-            child: GenresScreen(
-              book: data['book'],
-            ),
+            child: GenresScreen(data['book']),
           ),
         if (pathParameters.containsKey('genreId'))
           BeamPage(
             key: ValueKey('genres-${pathParameters['genreId']}'),
-            child: GenreDetailsScreen(
-              genre: data['genre'],
-            ),
+            child: GenreDetailsScreen(data['genre']),
           ),
       ];
 }
 
 class ArticlesLocation extends BeamLocation {
   ArticlesLocation({
-    String pathBlueprint,
-    Map<String, String> pathParameters,
-    Map<String, String> queryParameters,
-    Map<String, dynamic> data,
+    String? pathBlueprint,
+    Map<String, String>? pathParameters,
+    Map<String, String>? queryParameters,
+    Map<String, dynamic>? data,
   }) : super(
           pathBlueprint: pathBlueprint,
           pathParameters: pathParameters,
@@ -106,7 +100,7 @@ class ArticlesLocation extends BeamLocation {
           BeamPage(
             key: ValueKey('articles-${pathParameters['articleId']}'),
             child: ArticleDetailsScreen(
-              articleId: pathParameters['articleId'],
+              articleId: pathParameters['articleId']!,
             ),
           ),
       ];

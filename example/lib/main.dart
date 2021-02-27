@@ -51,13 +51,13 @@ class BooksScreen extends StatelessWidget {
       body: ListView(
         children: books
             .where((book) =>
-                book['title'].toLowerCase().contains(titleQuery.toLowerCase()))
+                book['title']!.toLowerCase().contains(titleQuery.toLowerCase()))
             .map((book) => ListTile(
-                  title: Text(book['title']),
-                  subtitle: Text(book['author']),
+                  title: Text(book['title']!),
+                  subtitle: Text(book['author']!),
                   onTap: () => Beamer.of(context).updateCurrentLocation(
                     pathBlueprint: '/books/:bookId',
-                    pathParameters: {'bookId': book['id']},
+                    pathParameters: {'bookId': book['id']!},
                   ),
                 ))
             .toList(),
@@ -68,7 +68,7 @@ class BooksScreen extends StatelessWidget {
 
 class BookDetailsScreen extends StatelessWidget {
   BookDetailsScreen({
-    this.bookId,
+    this.bookId = '',
   }) : book = books.firstWhere((book) => book['id'] == bookId);
 
   final String bookId;
@@ -78,7 +78,7 @@ class BookDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(book['title']),
+        title: Text(book['title']!),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -104,8 +104,8 @@ class HomeLocation extends BeamLocation {
 
 class BooksLocation extends BeamLocation {
   BooksLocation({
-    String pathBlueprint,
-    Map<String, String> pathParameters,
+    String? pathBlueprint,
+    Map<String, String>? pathParameters,
   }) : super(
           pathBlueprint: pathBlueprint,
           pathParameters: pathParameters,
@@ -126,7 +126,7 @@ class BooksLocation extends BeamLocation {
           BeamPage(
             key: ValueKey('book-${pathParameters['bookId']}'),
             child: BookDetailsScreen(
-              bookId: pathParameters['bookId'],
+              bookId: pathParameters['bookId']!,
             ),
           ),
       ];

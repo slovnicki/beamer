@@ -5,7 +5,7 @@ import '../data.dart';
 
 class BookDetailsScreen extends StatelessWidget {
   BookDetailsScreen({
-    this.bookId,
+    this.bookId = '',
   }) : book = books.firstWhere((book) => book['id'] == bookId);
 
   final String bookId;
@@ -15,7 +15,7 @@ class BookDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(book['title']),
+        title: Text(book['title']!),
       ),
       body: Center(
         child: Column(

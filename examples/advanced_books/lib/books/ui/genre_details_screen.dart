@@ -4,9 +4,7 @@ import 'package:beamer/beamer.dart';
 import 'package:advanced_books/locations.dart';
 
 class GenreDetailsScreen extends StatelessWidget {
-  GenreDetailsScreen({
-    this.genre,
-  });
+  GenreDetailsScreen(this.genre);
 
   final String genre;
 

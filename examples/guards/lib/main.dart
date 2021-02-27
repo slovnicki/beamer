@@ -93,11 +93,11 @@ class BooksScreen extends StatelessWidget {
       body: ListView(
         children: books
             .map((book) => ListTile(
-                  title: Text(book['title']),
-                  subtitle: Text(book['author']),
+                  title: Text(book['title']!),
+                  subtitle: Text(book['author']!),
                   onTap: () => Beamer.of(context).updateCurrentLocation(
                     pathBlueprint: '/books/:bookId',
-                    pathParameters: {'bookId': book['id']},
+                    pathParameters: {'bookId': book['id']!},
                   ),
                 ))
             .toList(),
@@ -107,9 +107,8 @@ class BooksScreen extends StatelessWidget {
 }
 
 class BookDetailsScreen extends StatelessWidget {
-  BookDetailsScreen({
-    this.bookId,
-  }) : book = books.firstWhere((book) => book['id'] == bookId);
+  BookDetailsScreen(this.bookId)
+      : book = books.firstWhere((book) => book['id'] == bookId);
 
   final String bookId;
   final Map<String, String> book;
@@ -118,7 +117,7 @@ class BookDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(book['title']),
+        title: Text(book['title']!),
       ),
       body: Center(
         child: Column(
@@ -176,10 +175,10 @@ class LoginLocation extends BeamLocation {
 
 class BooksLocation extends BeamLocation {
   BooksLocation({
-    String pathBlueprint,
-    Map<String, String> pathParameters,
-    Map<String, String> queryParameters,
-    Map<String, dynamic> data,
+    String? pathBlueprint,
+    Map<String, String>? pathParameters,
+    Map<String, String>? queryParameters,
+    Map<String, dynamic>? data,
   }) : super(
           pathBlueprint: pathBlueprint,
           pathParameters: pathParameters,
@@ -201,9 +200,7 @@ class BooksLocation extends BeamLocation {
         if (pathParameters.containsKey('bookId'))
           BeamPage(
             key: ValueKey('book-${pathParameters['bookId']}'),
-            child: BookDetailsScreen(
-              bookId: pathParameters['bookId'],
-            ),
+            child: BookDetailsScreen(pathParameters['bookId']!),
           ),
       ];
 
@@ -229,15 +226,15 @@ class BooksLocation extends BeamLocation {
 // AUTHENTICATION STATE
 class AuthenticationStateProvider extends InheritedWidget {
   AuthenticationStateProvider({
-    Key key,
-    @required this.isAuthenticated,
-    Widget child,
+    Key? key,
+    required this.isAuthenticated,
+    required Widget child,
   }) : super(key: key, child: child);
 
   final ValueNotifier<bool> isAuthenticated;
 
-  static AuthenticationStateProvider of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<AuthenticationStateProvider>();
+  static AuthenticationStateProvider of(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<AuthenticationStateProvider>()!;
 
   @override
   bool updateShouldNotify(covariant InheritedWidget oldWidget) => true;
