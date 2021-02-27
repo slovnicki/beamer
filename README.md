@@ -28,11 +28,13 @@ Handle your application routing, synchronize it with browser URL and more. `Beam
     - [Books](#books)
     - [Advanced Books](#advanced-books)
     - [Deep Location](#deep-location)
+    - [Location Builder](#location-builder)
     - [Guards](#guards)
-    - [Bottom Navigation (WIP)](#bottom-navigation-(wip))
+    - [Beamer Widget](#beamer-widget)
+    - [Integration with Navigation UI Packages](#integration-with-navigation-ui-packages)
 - [Usage](#usage)
-  - [With *App.router](#with-app.router)
-  - [As a Widget (WIP)](#as-a-widget-(wip))
+  - [On Entire App](#on-entire-app)
+  - [As a Widget](#as-a-widget)
   - [General Notes](#general-notes)
 - [Migrating from 0.4.x to >=0.5.x](#migrating-from-0.4.x-to->=0.5.x)
 - [Contributing](#contributing)
@@ -72,39 +74,163 @@ Using Beamer _can_ feel like using many of `Navigator`'s `push/pop` methods at o
 Here is a recreation of books example from [this article](https://medium.com/flutter/learning-flutters-new-navigation-and-routing-system-7c9068155ade) where you can learn a lot about Navigator 2.0. See [Example](https://pub.dev/packages/beamer/example) for full application code of this example.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-books.gif" alt="example-books" style="margin-right:32px;margin-left:32px">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-books.gif" alt="example-books" width="520">
 
 ## Advanced Books
 
 For a step further, we add more flows to demonstrate the power of Beamer. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/advanced_books).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-advanced-books.gif" alt="example-advanced-books" style="margin-right:32px;margin-left:32px">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-advanced-books.gif" width="520">
 
 ## Deep Location
 
-You can instantly beam to a location in your app that has many pages stacked (deep linking) and then pop them one by one or simply `beamBack` to where you came from. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/deep_location).
+You can instantly beam to a location in your app that has many pages stacked (deep linking) and then pop them one by one or simply `beamBack` to where you came from. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/deep_location). Note that `beamBackOnPop` parameter of `beamTo` might be useful here to override `AppBar`'s `pop` with `beamBack`.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-deep-location.gif" alt="example-deep-location" style="margin-right:32px;margin-left:32px">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-deep-location.gif" alt="example-deep-location" width="260">
+
+```dart
+ElevatedButton(
+  onPressed: () => context.beamTo(DeepLocation('/a/b/c/d')),
+  // onPressed: () => context.beamTo(DeepLocation('/a/b/c/d'), beamBackOnPop: true),
+  child: Text('Beam deep'),
+),
+```
+
+## Location Builder
+
+You can override `BeamLocation.builder` to provide some data to the entire location, i.e. to all of the `pages`. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/location_builder).
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-location-builder.gif"  width="260">
+
+```dart
+// in your location implementation
+@override
+Widget builder(BuildContext context, Navigator navigator) {
+  return MyProvider<MyObject>(
+    create: (context) => MyObject(),
+    child: navigator,
+  );
+}
+```
 
 ## Guards
 
 You can define global guards (for example, authentication guard) or location guards that keep a specific location safe. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/guards).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-guards.gif" alt="example-guards" style="margin-right:32px;margin-left:32px">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-guards.gif" alt="example-guards"  width="520">
 
-## Bottom Navigation (WIP)
+- Global Guards
 
-An example of putting `Beamer` into widget tree. **This is not yet fully functional for web usage**; setting the URL from browser doesn't update the state properly. It should work when [nested routers issue](https://github.com/slovnicki/beamer/issues/4) is done. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation).
+```dart
+BeamerRouterDelegate(
+  initialLocation: initialLocation,
+  guards: [
+    BeamGuard(
+      pathBlueprints: ['/books*'],
+      check: (context, location) => AuthenticationStateProvider.of(context).isAuthenticated.value,
+      beamTo: (context) => LoginLocation(),
+    ),
+  ],
+),
+```
+
+- Location (local) Guards
+
+```dart
+// in your location implementation
+@override
+List<BeamGuard> get guards => [
+  BeamGuard(
+    pathBlueprints: ['/books/*'],
+    check: (context, location) => location.pathParameters['bookId'] != '2',
+    showPage: forbiddenPage,
+  ),
+];
+```
+
+## Beamer Widget
+
+An example of putting `Beamer`(s) into the Widget tree. _This is not yet fully functional for web usage_; setting the URL from browser doesn't update the state properly. It should work when [nested routers issue](https://github.com/slovnicki/beamer/issues/4) is settled.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-bottom-navigation-mobile.gif" alt="example-bottom-navigation" style="margin-right:32px;margin-left:32px">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-bottom-navigation-mobile.gif"  width="240" style="margin-right: 32px">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-bottom-navigation-multiple-beamers.gif"  width="240">
 
+- [Bottom navigation example](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation)
+```dart
+class MyApp extends StatelessWidget {
+  final _beamerKey = GlobalKey<BeamerState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Beamer(
+          key: _beamerKey,
+          beamLocations: _beamLocations,
+        ),
+        bottomNavigationBar: BottomNavigationBarWidget(
+          beamerKey: _beamerKey,
+        ),
+      ),
+    );
+  }
+}
+```
+
+- [Bottom navigation example with multiple Beamers](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation_multiple_beamers)
+```dart
+class MyAppState extends State<MyApp> {
+  int _currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: IndexedStack(
+          index: _currentIndex,
+          children: [
+            Beamer(
+              beamLocations: [ArticlesLocation()],
+            ),
+            Container(
+              color: Colors.blueAccent,
+              padding: const EdgeInsets.all(32.0),
+              child: Beamer(
+                beamLocations: [BooksLocation()],
+              ),
+            ),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          items: [
+            BottomNavigationBarItem(label: 'A', icon: Icon(Icons.article)),
+            BottomNavigationBarItem(label: 'B', icon: Icon(Icons.book)),
+          ],
+          onTap: (index) => setState(() => _currentIndex = index),
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
+## Integration with Navigation UI Packages
+
+- [Animated Rail Example](https://github.com/slovnicki/beamer/tree/master/examples/animated_rail), with [animated_rail](https://pub.dev/packages/animated_rail) package.
+- ... (contributions are very welcome, add your suggestions [here](https://github.com/slovnicki/beamer/issues/79))
+
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-animated-rail.gif" alt="example-bottom-navigation" width="240">
+
+---
 # Usage
-
-## With *App.router
+## On Entire App
 
 In order to use Beamer on your entire app, you must (as per [official documentation](https://api.flutter.dev/flutter/widgets/Router-class.html)) construct your `*App` widget with `.router` constructor to which (along with all your regular `*App` attributes) you provide
 
@@ -133,53 +259,23 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-## As a Widget (WIP)
+## As a Widget
+
+_(not yet fully functional on web, regarding URL parsing)_
 
 ```dart
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  final List<BeamLocation> _beamLocations = [
-    BooksLocation(pathBlueprint: '/books'),
-    ArticlesLocation(pathBlueprint: '/articles'),
-  ];
-  final _beamerKey = GlobalKey<BeamerState>();
-  Beamer _beamer;
-  int _currentIndex = 0;
-
-  @override
-  void initState() {
-    _beamer = Beamer(
-      key: _beamerKey,
-      routerDelegate: BeamerRouterDelegate(initialLocation: _beamLocations[0]),
-      routeInformationParser: BeamerRouteInformationParser(
-        beamLocations: _beamLocations,
-      ),
-    );
-    super.initState();
-  }
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: _beamer,
-        bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            items: [
-              BottomNavigationBarItem(label: 'Books', icon: Icon(Icons.book)),
-              BottomNavigationBarItem(
-                  label: 'Articles', icon: Icon(Icons.article)),
-            ],
-            onTap: (index) {
-              setState(() => _currentIndex = index);
-              _beamerKey.currentState.routerDelegate
-                  .beamTo(_beamLocations[index]);
-            }),
+        body: Beamer(
+          beamLocations: [
+            HomeLocation(),
+            BooksLocation(),
+          ],
+        ),
+        ...
       ),
     );
   }
@@ -188,8 +284,8 @@ class _MyAppState extends State<MyApp> {
 
 ## General Notes
 
-- When extending `BeamLocation`, two getters need to be implemented; `pathBlueprints` and `pages`.
-  - `pages` represent a stack that will be built by `Navigator` when you beam there, and `pathBlueprints` is there for Beamer to decide which `BeamLocation` corresponds to an URL coming from browser.
+- When extending `BeamLocation`, two methods need to be implemented; `pathBlueprints` and `pagesBuilder`.
+  - `pagesBuilder` returns a stack of pages that will be built by `Navigator` when you beam there, and `pathBlueprints` is there for Beamer to decide which `BeamLocation` corresponds to an URL coming from browser.
   - `BeamLocation` takes query and path parameters from URI. The `:` is necessary in `pathBlueprints` if you _might_ get path parameter from browser.
 
 - `BeamPage`'s child is an arbitrary `Widgets` that represent your app screen / page.

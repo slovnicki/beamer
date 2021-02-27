@@ -151,7 +151,7 @@ class HomeLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/'];
 
   @override
-  List<BeamPage> get pages => [
+  List<BeamPage> pagesBuilder(BuildContext context) => [
         BeamPage(
           key: ValueKey('home'),
           child: HomeScreen(),
@@ -166,7 +166,7 @@ class LoginLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/login'];
 
   @override
-  List<BeamPage> get pages => [
+  List<BeamPage> pagesBuilder(BuildContext context) => [
         BeamPage(
           key: ValueKey('login'),
           child: LoginScreen(),
@@ -191,8 +191,8 @@ class BooksLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/books/:bookId'];
 
   @override
-  List<BeamPage> get pages => [
-        ...HomeLocation().pages,
+  List<BeamPage> pagesBuilder(BuildContext context) => [
+        ...HomeLocation().pagesBuilder(context),
         if (pathSegments.contains('books'))
           BeamPage(
             key: ValueKey('books'),
@@ -207,13 +207,21 @@ class BooksLocation extends BeamLocation {
           ),
       ];
 
+  final forbiddenPage = BeamPage(
+    child: Scaffold(
+      body: Center(
+        child: Text('Forbidden'),
+      ),
+    ),
+  );
+
   @override
   List<BeamGuard> get guards => [
         BeamGuard(
           pathBlueprints: ['/books/*'],
           check: (context, location) =>
               location.pathParameters['bookId'] != '2',
-          showPage: Scaffold(body: Center(child: Text('Forbidden'))),
+          showPage: forbiddenPage,
         ),
       ];
 }
@@ -250,6 +258,13 @@ class MyApp extends StatelessWidget {
         AuthenticationStateProvider.of(context).isAuthenticated.value,
     beamTo: (context) => LoginLocation(),
   );
+  final notFoundPage = BeamPage(
+    child: Scaffold(
+      body: Center(
+        child: Text('Not found'),
+      ),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -262,7 +277,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             routerDelegate: BeamerRouterDelegate(
               initialLocation: initialLocation,
-              notFoundPage: Scaffold(body: Center(child: Text('Not found'))),
+              notFoundPage: notFoundPage,
               guards: [authGuard],
             ),
             routeInformationParser: BeamerRouteInformationParser(

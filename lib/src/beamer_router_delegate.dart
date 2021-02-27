@@ -8,18 +8,17 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<BeamLocation> {
   BeamerRouterDelegate({
     @required BeamLocation initialLocation,
-    Widget notFoundPage,
+    BeamPage notFoundPage,
     this.guards = const <BeamGuard>[],
     this.navigatorObservers = const <NavigatorObserver>[],
   })  : _navigatorKey = GlobalKey<NavigatorState>(),
-        _currentLocation = initialLocation..prepare(),
-        _previousLocation = null,
-        notFoundPage = notFoundPage ?? Container() {
-    _currentPages = _currentLocation.pages;
+        notFoundPage = notFoundPage ?? BeamPage(child: Container()) {
+    _beamHistory.add(initialLocation..prepare());
+    _currentLocation = _beamHistory[0];
   }
 
-  /// Screen to show when no [BeamLocation] supports the incoming URI.
-  final Widget notFoundPage;
+  /// Page to show when no [BeamLocation] supports the incoming URI.
+  final BeamPage notFoundPage;
 
   /// Guards that will be executing [check] on [currentLocation] candidate.
   ///
@@ -32,33 +31,81 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   final List<NavigatorObserver> navigatorObservers;
 
   final GlobalKey<NavigatorState> _navigatorKey;
-  BeamLocation _currentLocation;
-  List<BeamPage> _currentPages;
-  BeamLocation _previousLocation;
 
-  /// Updates the [currentLocation] with prepared [location] and
-  /// rebuilds the [Navigator] to contain the [location.pages] stack of pages.
+  final List<BeamLocation> _beamHistory = [];
+
+  /// The history of beaming.
+  List<BeamLocation> get beamHistory => _beamHistory;
+
+  BeamLocation _currentLocation;
+
+  /// Access the current [BeamLocation].
   ///
-  /// Remembers the previous location so it can [beamBack].
-  void beamTo(BeamLocation location) {
-    _update(location);
+  /// The same thing as [currentConfiguration], but with more familiar name.
+  ///
+  /// Can be useful in:
+  ///
+  /// * extracting location properties when building Widgets:
+  ///
+  /// ```dart
+  /// final queryParameters = Beamer.of(context).currentLocation.queryParameters;
+  /// ```
+  ///
+  /// * to check which navigation button should be highlighted:
+  ///
+  /// ```dart
+  /// highlighted: Beamer.of(context).currentLocation is MyLocation,
+  /// ```
+  ///
+  BeamLocation get currentLocation => _currentLocation;
+
+  List<BeamPage> _currentPages;
+
+  /// Current location's effective pages.
+  List<BeamPage> get currentPages => _currentPages;
+
+  /// Whether to implicitly [beamBack] instead of default pop
+  bool _beamBackOnPop;
+
+  /// Beams to `location`.
+  ///
+  /// Specifically,
+  ///
+  /// 1. adds the prepared `location` to [beamHistory]
+  /// 2. updates [currentLocation]
+  /// 3. notifies that the [Navigator] should be rebuilt
+  ///
+  /// if `beamBackOnPop` is set to `true`, default pop action on the newly
+  /// beamed location will triger `beamBack` instead.
+  void beamTo(BeamLocation location, {bool beamBackOnPop = false}) {
+    _beamBackOnPop = beamBackOnPop;
+    _beamHistory.add(location..prepare());
+    _currentLocation = _beamHistory.last;
     notifyListeners();
   }
 
-  /// Beams to previous location, as it were.
-  void beamBack() {
-    beamTo(_previousLocation);
+  /// Beams to previous location in [beamHistory]
+  /// and **removes** the last location from history.
+  ///
+  /// If there is no previous location, does nothing.
+  ///
+  /// Returns the success, whether the [currentLocation] was changed.
+  bool beamBack() {
+    _beamBackOnPop = false;
+    if (_beamHistory.length == 1) {
+      return false;
+    }
+    _beamHistory.removeLast();
+    _currentLocation = _beamHistory.last;
+    notifyListeners();
+    return true;
   }
 
-  // TODO move the logic to BeamLocation
-  /// Update chosen parameters of [currentLocation], in a similar manner
-  /// as with [BeamLocation] constructor.
+  /// Updates [currentLocation] and notifies listeners.
   ///
-  /// [pathParameters], [queryParameters] and [data] will be appended to
-  /// [currentLocation]'s [pathParameters], [queryParameters] and [data]
-  /// unless [rewriteParameters] is set to `true`, in which case
-  /// [currentLocation]'s attributes will be set to provided values
-  /// or their default values.
+  /// See [BeamLocation.update] for details.
+  ///
+  /// Note that [_beamBackOnPop] will be reset to `false`.
   void updateCurrentLocation({
     @required String pathBlueprint,
     Map<String, String> pathParameters = const <String, String>{},
@@ -66,46 +113,17 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     Map<String, dynamic> data = const <String, dynamic>{},
     bool rewriteParameters = false,
   }) {
-    _currentLocation.pathSegments =
-        List.from(Uri.parse(pathBlueprint).pathSegments);
-    if (rewriteParameters) {
-      _currentLocation.pathParameters = Map.from(pathParameters);
-    } else {
-      pathParameters.forEach((key, value) {
-        _currentLocation.pathParameters[key] = value;
-      });
-    }
-    if (rewriteParameters) {
-      _currentLocation.queryParameters = Map.from(queryParameters);
-    } else {
-      queryParameters.forEach((key, value) {
-        _currentLocation.queryParameters[key] = value;
-      });
-    }
-    if (rewriteParameters) {
-      _currentLocation.data = Map.from(data);
-    } else {
-      data.forEach((key, value) {
-        _currentLocation.data[key] = value;
-      });
-    }
+    _beamBackOnPop = false;
+    _currentLocation.update(
+      pathBlueprint: pathBlueprint,
+      pathParameters: pathParameters,
+      queryParameters: queryParameters,
+      data: data,
+      rewriteParameters: rewriteParameters,
+    );
     _currentLocation.prepare();
-    _currentPages = _currentLocation.pages;
     notifyListeners();
   }
-
-  /// Access the current [BeamLocation].
-  ///
-  /// The same thing as [currentConfiguration], but with more familiar name.
-  ///
-  /// Can be useful when trying to [updateCurrentLocation], but not sure
-  /// what is the exact state of it, i.e. what is the current value of
-  /// [pathParameters], [queryParameters], [data], etc.
-  ///
-  /// ```dart
-  /// Beamer.of(context).currentLocation
-  /// ```
-  BeamLocation get currentLocation => currentConfiguration;
 
   @override
   BeamLocation get currentConfiguration => _currentLocation;
@@ -117,40 +135,44 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   Widget build(BuildContext context) {
     final BeamGuard guard = _guardCheck(context, _currentLocation);
     if (guard?.beamTo != null) {
-      _update(guard.beamTo(context));
+      beamTo(guard.beamTo(context));
     }
-    return Navigator(
-      observers: navigatorObservers,
-      key: navigatorKey,
-      pages: _currentLocation is NotFound
-          ? [BeamPage(child: notFoundPage)]
-          : guard == null || guard?.beamTo != null
-              ? _currentPages
-              : [BeamPage(child: guard.showPage)],
-      onPopPage: (route, result) {
-        if (!route.didPop(result)) {
-          return false;
-        }
-        final lastPage = _currentPages.removeLast();
-        if (lastPage is BeamPage) {
-          _handlePop(lastPage);
-        }
-        return true;
+    final navigator = Builder(
+      builder: (context) {
+        _currentPages = _currentLocation.pagesBuilder(context);
+        return Navigator(
+          key: navigatorKey,
+          observers: navigatorObservers,
+          pages: _currentLocation is NotFound
+              ? [notFoundPage]
+              : guard == null || guard?.beamTo != null
+                  ? _currentPages
+                  : [guard.showPage],
+          onPopPage: (route, result) {
+            if (!route.didPop(result)) {
+              return false;
+            }
+            if (_beamBackOnPop) {
+              beamBack();
+              _beamBackOnPop = false;
+            } else {
+              final lastPage = _currentPages.removeLast();
+              if (lastPage is BeamPage) {
+                _handlePop(lastPage);
+              }
+            }
+            return true;
+          },
+        );
       },
     );
+    return _currentLocation.builder(context, navigator);
   }
 
   @override
   SynchronousFuture<void> setNewRoutePath(BeamLocation location) {
-    _update(location);
-    notifyListeners();
+    beamTo(location);
     return SynchronousFuture(null);
-  }
-
-  void _update(BeamLocation location) {
-    _previousLocation = _currentLocation;
-    _currentLocation = location..prepare();
-    _currentPages = _currentLocation.pages;
   }
 
   void _handlePop(BeamPage page) {
@@ -162,7 +184,6 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
       _currentLocation.queryParameters = {};
     }
     _currentLocation.prepare();
-    _currentPages = _currentLocation.pages;
     notifyListeners();
   }
 

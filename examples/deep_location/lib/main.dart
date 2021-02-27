@@ -12,6 +12,7 @@ class HomeScreen extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () => context.beamTo(DeepLocation('/a/b/c/d')),
+          // context.beamTo(DeepLocation('/a/b/c/d'), beamBackOnPop: true),
           child: Text('Beam deep'),
         ),
       ),
@@ -53,7 +54,7 @@ class HomeLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/'];
 
   @override
-  List<BeamPage> get pages => [
+  List<BeamPage> pagesBuilder(BuildContext context) => [
         BeamPage(
           key: ValueKey('home'),
           child: HomeScreen(),
@@ -68,8 +69,8 @@ class DeepLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/a/b/c/d'];
 
   @override
-  List<BeamPage> get pages => [
-        ...HomeLocation().pages,
+  List<BeamPage> pagesBuilder(BuildContext context) => [
+        ...HomeLocation().pagesBuilder(context),
         if (pathSegments.contains('a'))
           BeamPage(
             key: ValueKey('a'),

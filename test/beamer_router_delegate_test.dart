@@ -21,11 +21,19 @@ void main() {
     });
 
     test('beamBack leads to previous location', () {
-      router.beamBack();
+      router.beamTo(location2);
+
+      bool success = router.beamBack();
+      expect(success, true);
+      expect(router.currentLocation, location2);
+
+      success = router.beamBack();
+      expect(success, true);
       expect(router.currentLocation, location1);
 
-      router.beamBack();
-      expect(router.currentLocation, location2);
+      success = router.beamBack();
+      expect(success, false);
+      expect(router.currentLocation, location1);
     });
   });
 }

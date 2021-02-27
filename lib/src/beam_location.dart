@@ -1,4 +1,5 @@
 import 'package:beamer/beamer.dart';
+import 'package:flutter/widgets.dart';
 
 /// Configuration for a navigatable application region.
 ///
@@ -17,6 +18,24 @@ abstract class BeamLocation {
         queryParameters = queryParameters ?? <String, String>{},
         data = data ?? <String, dynamic>{};
 
+  /// Gives the ability to wrap the `navigator`.
+  ///
+  /// Mostly useful for providing something to the entire location,
+  /// i.e. to all of the [pages].
+  ///
+  /// For example:
+  ///
+  /// ```dart
+  /// @override
+  /// Widget builder(BuildContext context, Widget navigator) {
+  ///   return MyProvider<MyObject>(
+  ///     create: (context) => MyObject(),
+  ///     child: navigator,
+  ///   );
+  /// }
+  /// ```
+  Widget builder(BuildContext context, Widget navigator) => navigator;
+
   /// Represents the "form" of URI paths supported by this [BeamLocation].
   ///
   /// Optional path segments are denoted with ':xxx' and consequently
@@ -29,9 +48,12 @@ abstract class BeamLocation {
   /// For example: '/books/:id'.
   List<String> get pathBlueprints;
 
-  /// The list of pages to be built by the [Navigator] when this [BeamLocation]
-  /// is beamed to or internally inferred.
-  List<BeamPage> get pages;
+  /// Creates and returns the list of pages to be built by the [Navigator]
+  /// when this [BeamLocation] is beamed to or internally inferred.
+  ///
+  /// `context` can be useful while building the pages.
+  /// It will also contain anything injected via [builder].
+  List<BeamPage> pagesBuilder(BuildContext context);
 
   /// Guards that will be executing [check] when this gets beamed to.
   ///
@@ -80,6 +102,45 @@ abstract class BeamLocation {
     executeBefore?.call();
   }
 
+  /// Update chosen parameters of [currentLocation], in a similar manner
+  /// as with [BeamLocation] constructor.
+  ///
+  /// [pathParameters], [queryParameters] and [data] will be appended to
+  /// [currentLocation]'s [pathParameters], [queryParameters] and [data]
+  /// unless [rewriteParameters] is set to `true`, in which case
+  /// [currentLocation]'s attributes will be set to provided values
+  /// or their default values.
+  void update({
+    @required String pathBlueprint,
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, String> queryParameters = const <String, String>{},
+    Map<String, dynamic> data = const <String, dynamic>{},
+    bool rewriteParameters = false,
+  }) {
+    pathSegments = List.from(Uri.parse(pathBlueprint).pathSegments);
+    if (rewriteParameters) {
+      this.pathParameters = Map.from(pathParameters);
+    } else {
+      pathParameters.forEach((key, value) {
+        this.pathParameters[key] = value;
+      });
+    }
+    if (rewriteParameters) {
+      this.queryParameters = Map.from(queryParameters);
+    } else {
+      queryParameters.forEach((key, value) {
+        this.queryParameters[key] = value;
+      });
+    }
+    if (rewriteParameters) {
+      this.data = Map.from(data);
+    } else {
+      data.forEach((key, value) {
+        this.data[key] = value;
+      });
+    }
+  }
+
   void _makeQuery() {
     final queryString = Uri(queryParameters: queryParameters).query;
     _query = queryString.isNotEmpty ? '?' + queryString : '';
@@ -104,7 +165,7 @@ class NotFound extends BeamLocation {
   }) : super(pathBlueprint: path);
 
   @override
-  List<BeamPage> get pages => [];
+  List<BeamPage> pagesBuilder(BuildContext context) => [];
 
   @override
   List<String> get pathBlueprints => [''];

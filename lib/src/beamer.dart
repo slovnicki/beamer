@@ -9,16 +9,21 @@ import 'beamer_route_information_parser.dart';
 class Beamer extends StatefulWidget {
   Beamer({
     Key key,
-    @required this.routerDelegate,
-    this.routeInformationParser,
+    this.beamLocations,
+    this.routerDelegate,
     this.app,
-  }) : super(key: key);
+  })  : assert(routerDelegate != null && app != null ||
+            app == null && routerDelegate == null),
+        assert(beamLocations != null && app == null ||
+            beamLocations == null && app != null),
+        super(key: key);
+
+  // TODO give this to delegate also, to enable beamToNamed later on
+  /// [BeamLocation]s that this Beamer handles.
+  final List<BeamLocation> beamLocations;
 
   /// Responsible for beaming, updating and rebuilding the page stack.
   final BeamerRouterDelegate routerDelegate;
-
-  /// Parses the URI from browser into [BeamLocation] and vice versa.
-  final BeamerRouteInformationParser routeInformationParser;
 
   /// `*App` widget, e.g. [MaterialApp].
   ///
@@ -58,30 +63,40 @@ class Beamer extends StatefulWidget {
 }
 
 class BeamerState extends State<Beamer> {
-  BeamerRouterDelegate get routerDelegate => widget.routerDelegate;
-  BeamLocation get currentLocation => widget.routerDelegate.currentLocation;
+  BeamerRouterDelegate _routerDelegate;
+
+  BeamerRouterDelegate get routerDelegate => _routerDelegate;
+  BeamLocation get currentLocation => _routerDelegate.currentLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    _routerDelegate ??= BeamerRouterDelegate(
+      initialLocation: widget.beamLocations[0],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return widget.app ??
         Router(
-          routerDelegate: routerDelegate,
-          routeInformationParser: widget.routeInformationParser,
-          routeInformationProvider: widget.routeInformationParser != null
-              ? PlatformRouteInformationProvider(
-                  initialRouteInformation: RouteInformation(
-                    location: currentLocation.uri,
-                  ),
-                )
-              : null,
+          routerDelegate: _routerDelegate,
+          routeInformationParser: BeamerRouteInformationParser(
+            beamLocations: widget.beamLocations,
+          ),
+          routeInformationProvider: PlatformRouteInformationProvider(
+            initialRouteInformation: RouteInformation(
+              location: currentLocation.uri,
+            ),
+          ),
           backButtonDispatcher: RootBackButtonDispatcher(),
         );
   }
 }
 
 extension BeamTo on BuildContext {
-  void beamTo(BeamLocation location) {
-    Beamer.of(this).beamTo(location);
+  void beamTo(BeamLocation location, {bool beamBackOnPop = false}) {
+    Beamer.of(this).beamTo(location, beamBackOnPop: beamBackOnPop);
   }
 }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import './beam_page.dart';
 import './beam_location.dart';
 
 /// A guard for [BeamLocation]s.
@@ -37,12 +38,12 @@ class BeamGuard {
   /// This has precedence over [showPage].
   BeamLocation Function(BuildContext context) beamTo;
 
-  /// If guard [check] returns false, draw this widget onto screen.
+  /// If guard [check] returns false, put this page onto navigation stack.
   ///
   /// When using this property over [beamTo], the location that was stopped
-  /// by this guard will stay ready to be rebuilt if [showPage] screen changes
+  /// by this guard will stay ready to be rebuilt if [showPage] changes
   /// the conditions necessary to pass guard and rebuilds the tree.
-  Widget showPage;
+  BeamPage showPage;
 
   /// Whether or not [location]s matching the [pathBlueprint]s will be blocked,
   /// or all other [location]s that don't match the [pathBlueprint]s will be.

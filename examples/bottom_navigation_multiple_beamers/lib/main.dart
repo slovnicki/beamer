@@ -162,70 +162,41 @@ class ArticlesLocation extends BeamLocation {
 }
 
 // APP
-final List<BeamLocation> _beamLocations = [
-  BooksLocation(pathBlueprint: '/books'),
-  ArticlesLocation(pathBlueprint: '/articles'),
-];
-
-class BottomNavigationBarWidget extends StatefulWidget {
-  BottomNavigationBarWidget({this.beamerKey});
-
-  final GlobalKey<BeamerState> beamerKey;
-
+class MyApp extends StatefulWidget {
   @override
-  _BottomNavigationBarWidgetState createState() =>
-      _BottomNavigationBarWidgetState();
+  State<StatefulWidget> createState() => MyAppState();
 }
 
-class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
+class MyAppState extends State<MyApp> {
   int _currentIndex = 0;
-
-  @override
-  void initState() {
-    widget.beamerKey.currentState.routerDelegate
-        .addListener(() => _updateCurrentIndex());
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-        currentIndex: _currentIndex,
-        items: [
-          BottomNavigationBarItem(label: 'Books', icon: Icon(Icons.book)),
-          BottomNavigationBarItem(label: 'Articles', icon: Icon(Icons.article)),
-        ],
-        onTap: (index) {
-          widget.beamerKey.currentState.routerDelegate
-              .beamTo(_beamLocations[index]);
-        });
-  }
-
-  void _updateCurrentIndex() {
-    final index =
-        (widget.beamerKey.currentState.currentLocation is BooksLocation)
-            ? 0
-            : 1;
-    if (index != _currentIndex) {
-      setState(() => _currentIndex = index);
-    }
-  }
-}
-
-class MyApp extends StatelessWidget {
-  final _beamerKey = GlobalKey<BeamerState>();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: Beamer(
-          key: _beamerKey,
-          beamLocations: _beamLocations,
+        body: IndexedStack(
+          index: _currentIndex,
+          children: [
+            Beamer(
+              beamLocations: [ArticlesLocation()],
+            ),
+            Container(
+              color: Colors.blueAccent,
+              padding: const EdgeInsets.all(32.0),
+              child: Beamer(
+                beamLocations: [BooksLocation()],
+              ),
+            ),
+          ],
         ),
-        bottomNavigationBar: BottomNavigationBarWidget(
-          beamerKey: _beamerKey,
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          items: [
+            BottomNavigationBarItem(label: 'A', icon: Icon(Icons.article)),
+            BottomNavigationBarItem(label: 'B', icon: Icon(Icons.book)),
+          ],
+          onTap: (index) => setState(() => _currentIndex = index),
         ),
       ),
     );
