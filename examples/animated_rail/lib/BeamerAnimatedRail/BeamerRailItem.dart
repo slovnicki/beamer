@@ -18,9 +18,7 @@ class BeamerRailItem extends RailItem {
     Color iconColor,
   }) : super(
             icon: icon,
-            screen: location.pagesBuilder(null).length > 0
-                ? location.pagesBuilder(null)[0].child
-                : Container(),
+            screen: Container(),
             activeColor: activeColor,
             background: background,
             iconColor: iconColor,

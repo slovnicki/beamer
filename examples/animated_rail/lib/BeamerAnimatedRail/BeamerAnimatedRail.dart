@@ -53,7 +53,7 @@ class BeamerAnimatedRail extends StatefulWidget {
       this.background,
       this.expand = true,
       this.isStatic = false})
-      : assert(items.length > 0, "need at least one item in the list"),
+      : assert(items.length > 0, 'need at least one item in the list'),
         super(key: key);
 
   @override
@@ -75,7 +75,7 @@ class _BeamerAnimatedRailState extends State<BeamerAnimatedRail> {
     init();
   }
 
-  init() {
+  void init() {
     _beamLocations = widget.items.map((e) => e.location).toList();
     locationsStack = [];
     locationsStack.add(selectedIndexNotifier.value);
