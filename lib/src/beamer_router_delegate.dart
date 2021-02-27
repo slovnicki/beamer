@@ -1,5 +1,7 @@
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:beamer/beamer.dart';
 import 'package:flutter/foundation.dart';
+// import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 /// A delegate that is used by the [Router] widget
@@ -13,8 +15,9 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     this.navigatorObservers = const <NavigatorObserver>[],
   })  : _navigatorKey = GlobalKey<NavigatorState>(),
         notFoundPage = notFoundPage ?? BeamPage(child: Container()) {
-    _beamHistory.add(initialLocation..prepare());
-    _currentLocation = _beamHistory[0];
+    // _beamHistory.add(initialLocation..prepare());
+    _currentLocation = initialLocation..prepare();
+    BackButtonInterceptor.add(backInterceptor, name: 'BeamerInterceptor');
   }
 
   /// Page to show when no [BeamLocation] supports the incoming URI.
@@ -199,5 +202,19 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
       }
     }
     return null;
+  }
+
+  @override
+  void dispose() {
+    BackButtonInterceptor.removeByName('BeamerInterceptor');
+    super.dispose();
+  }
+
+  bool backInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+    var canPop = false;
+    if (_beamHistory.length > 1 && currentPages.length == 1) {
+      canPop = beamBack();
+    }
+    return canPop;
   }
 }
