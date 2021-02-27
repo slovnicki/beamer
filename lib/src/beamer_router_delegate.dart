@@ -7,8 +7,8 @@ import 'package:flutter/widgets.dart';
 class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<BeamLocation> {
   BeamerRouterDelegate({
-    @required BeamLocation initialLocation,
-    BeamPage notFoundPage,
+    required BeamLocation initialLocation,
+    BeamPage? notFoundPage,
     this.guards = const <BeamGuard>[],
     this.navigatorObservers = const <NavigatorObserver>[],
   })  : _navigatorKey = GlobalKey<NavigatorState>(),
@@ -38,7 +38,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   /// The history of beaming.
   List<BeamLocation> get beamHistory => _beamHistory;
 
-  BeamLocation _currentLocation;
+  late BeamLocation _currentLocation;
 
   /// Access the current [BeamLocation].
   ///
@@ -60,13 +60,13 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   ///
   BeamLocation get currentLocation => _currentLocation;
 
-  List<BeamPage> _currentPages;
+  List<BeamPage>? _currentPages;
 
   /// Current location's effective pages.
-  List<BeamPage> get currentPages => _currentPages;
+  List<BeamPage>? get currentPages => _currentPages;
 
   /// Whether to implicitly [beamBack] instead of default pop
-  bool _beamBackOnPop;
+  bool _beamBackOnPop = false;
 
   /// Beams to `location`.
   ///
@@ -108,7 +108,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   ///
   /// Note that [_beamBackOnPop] will be reset to `false`.
   void updateCurrentLocation({
-    @required String pathBlueprint,
+    String? pathBlueprint,
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, String> queryParameters = const <String, String>{},
     Map<String, dynamic> data = const <String, dynamic>{},
@@ -135,18 +135,18 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
 
   @override
   Widget build(BuildContext context) {
-    final BeamGuard guard = _guardCheck(context, _currentLocation);
+    final BeamGuard? guard = _guardCheck(context, _currentLocation);
     if (guard?.beamTo != null) {
-      beamTo(guard.beamTo(context));
+      beamTo(guard!.beamTo!(context));
     }
     final navigator = Navigator(
       key: navigatorKey,
       observers: navigatorObservers,
       pages: _currentLocation is NotFound
           ? [notFoundPage]
-          : guard == null || guard?.beamTo != null
-              ? _currentPages
-              : [guard.showPage],
+          : guard == null || guard.beamTo != null
+              ? _currentPages!
+              : [guard.showPage!],
       onPopPage: (route, result) {
         if (!route.didPop(result)) {
           return false;
@@ -155,7 +155,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
           beamBack();
           _beamBackOnPop = false;
         } else {
-          final lastPage = _currentPages.removeLast();
+          final lastPage = _currentPages!.removeLast();
           if (lastPage is BeamPage) {
             _handlePop(lastPage);
           }
@@ -190,7 +190,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     notifyListeners();
   }
 
-  BeamGuard _guardCheck(BuildContext context, BeamLocation location) {
+  BeamGuard? _guardCheck(BuildContext context, BeamLocation location) {
     for (var guard in guards) {
       if (guard.shouldGuard(location) && !guard.check(context, location)) {
         return guard;

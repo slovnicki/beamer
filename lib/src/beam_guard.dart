@@ -9,8 +9,8 @@ import './beam_location.dart';
 /// on screen and providing steps to be executed following a failed check.
 class BeamGuard {
   BeamGuard({
-    @required this.pathBlueprints,
-    @required this.check,
+    required this.pathBlueprints,
+    required this.check,
     this.beamTo,
     this.showPage,
     this.guardNonMatching = false,
@@ -36,14 +36,14 @@ class BeamGuard {
   /// If guard [check] returns false, build a location to be beamed to.
   ///
   /// This has precedence over [showPage].
-  BeamLocation Function(BuildContext context) beamTo;
+  BeamLocation Function(BuildContext context)? beamTo;
 
   /// If guard [check] returns false, put this page onto navigation stack.
   ///
   /// When using this property over [beamTo], the location that was stopped
   /// by this guard will stay ready to be rebuilt if [showPage] changes
   /// the conditions necessary to pass guard and rebuilds the tree.
-  BeamPage showPage;
+  BeamPage? showPage;
 
   /// Whether or not [location]s matching the [pathBlueprint]s will be blocked,
   /// or all other [location]s that don't match the [pathBlueprint]s will be.

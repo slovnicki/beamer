@@ -6,7 +6,7 @@ import 'package:beamer/src/beam_location.dart';
 class BeamerRouteInformationParser
     extends RouteInformationParser<BeamLocation> {
   BeamerRouteInformationParser({
-    @required this.beamLocations,
+    required this.beamLocations,
   });
 
   /// A [List] of all available [BeamLocation]s in the [Router]'s scope.
@@ -15,7 +15,7 @@ class BeamerRouteInformationParser
   @override
   SynchronousFuture<BeamLocation> parseRouteInformation(
       RouteInformation routeInformation) {
-    final uri = Uri.parse(routeInformation.location);
+    final uri = Uri.parse(routeInformation.location!);
     return SynchronousFuture(_chooseBeamLocation(uri));
   }
 

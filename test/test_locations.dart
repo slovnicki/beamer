@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 
 class Location1 extends BeamLocation {
   Location1({
-    String pathBlueprint,
-    Map<String, String> pathParameters,
-    Map<String, String> queryParameters,
-    Map<String, dynamic> data,
+    String? pathBlueprint,
+    Map<String, String>? pathParameters,
+    Map<String, String>? queryParameters,
+    Map<String, dynamic>? data,
   }) : super(
           pathBlueprint: pathBlueprint,
           pathParameters: pathParameters,
@@ -38,10 +38,10 @@ class Location1 extends BeamLocation {
 
 class Location2 extends BeamLocation {
   Location2({
-    String pathBlueprint,
-    Map<String, String> pathParameters,
-    Map<String, String> queryParameters,
-    Map<String, dynamic> data,
+    String? pathBlueprint,
+    Map<String, String>? pathParameters,
+    Map<String, String>? queryParameters,
+    Map<String, dynamic>? data,
   }) : super(
           pathBlueprint: pathBlueprint,
           pathParameters: pathParameters,

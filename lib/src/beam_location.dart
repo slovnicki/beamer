@@ -6,10 +6,10 @@ import 'package:flutter/widgets.dart';
 /// Extend this class to define your locations to which you can then `beamTo`.
 abstract class BeamLocation {
   BeamLocation({
-    String pathBlueprint,
-    Map<String, String> pathParameters,
-    Map<String, String> queryParameters,
-    Map<String, dynamic> data,
+    String? pathBlueprint,
+    Map<String, String>? pathParameters,
+    Map<String, String>? queryParameters,
+    Map<String, dynamic>? data,
     this.executeBefore,
   })  : pathSegments = pathBlueprint != null
             ? List.from(Uri.parse(pathBlueprint).pathSegments)
@@ -62,7 +62,7 @@ abstract class BeamLocation {
   List<BeamGuard> get guards => const <BeamGuard>[];
 
   /// Will be executed before [pages] are drawn onto screen.
-  void Function() executeBefore;
+  void Function()? executeBefore;
 
   List<String> pathSegments;
 
@@ -86,8 +86,8 @@ abstract class BeamLocation {
   /// Complete URI of this [BeamLocation], with path and query parameters.
   String get uri => _path + _query;
 
-  String _path;
-  String _query;
+  late String _path;
+  late String _query;
 
   /// Recreates the [uri] for this [BeamLocation]
   /// considering current value of [pathParameters] and [queryParameters].
@@ -108,13 +108,15 @@ abstract class BeamLocation {
   /// [currentLocation]'s attributes will be set to provided values
   /// or their default values.
   void update({
-    @required String pathBlueprint,
+    String? pathBlueprint,
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, String> queryParameters = const <String, String>{},
     Map<String, dynamic> data = const <String, dynamic>{},
     bool rewriteParameters = false,
   }) {
-    pathSegments = List.from(Uri.parse(pathBlueprint).pathSegments);
+    if (pathBlueprint != null) {
+      pathSegments = List.from(Uri.parse(pathBlueprint).pathSegments);
+    }
     if (rewriteParameters) {
       this.pathParameters = Map.from(pathParameters);
     } else {
@@ -158,7 +160,7 @@ abstract class BeamLocation {
 
 class NotFound extends BeamLocation {
   NotFound({
-    String path,
+    required String path,
   }) : super(pathBlueprint: path);
 
   @override

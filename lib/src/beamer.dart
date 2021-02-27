@@ -8,8 +8,8 @@ import 'beamer_route_information_parser.dart';
 /// Central place for creating, accessing and modifying a Router subtree.
 class Beamer extends StatefulWidget {
   Beamer({
-    Key key,
-    @required this.routerDelegate,
+    Key? key,
+    required this.routerDelegate,
     this.routeInformationParser,
     this.app,
   }) : super(key: key);
@@ -18,7 +18,7 @@ class Beamer extends StatefulWidget {
   final BeamerRouterDelegate routerDelegate;
 
   /// Parses the URI from browser into [BeamLocation] and vice versa.
-  final BeamerRouteInformationParser routeInformationParser;
+  final BeamerRouteInformationParser? routeInformationParser;
 
   /// `*App` widget, e.g. [MaterialApp].
   ///
@@ -42,14 +42,14 @@ class Beamer extends StatefulWidget {
   /// }
   ///
   /// ```
-  final Widget app;
+  final Widget? app;
 
   /// Access Beamer's [routerDelegate].
   static BeamerRouterDelegate of(BuildContext context) {
     try {
-      return Router.of(context).routerDelegate;
+      return Router.of(context).routerDelegate as BeamerRouterDelegate;
     } catch (e) {
-      return context.findAncestorWidgetOfExactType<Beamer>().routerDelegate;
+      return context.findAncestorWidgetOfExactType<Beamer>()!.routerDelegate;
     }
   }
 

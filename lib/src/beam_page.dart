@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 /// A wrapper for pages / screens that will be drawn.
 class BeamPage extends Page {
   BeamPage({
-    Key key,
-    String name,
-    @required this.child,
+    Key? key,
+    String? name,
+    required this.child,
     this.keepQueryOnPop = false,
-  }) : super(key: key, name: name);
+  }) : super(key: key as LocalKey?, name: name);
 
   /// The concrete Widget representing app's screen.
   final Widget child;
