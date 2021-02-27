@@ -1,3 +1,7 @@
+# 1.0.0-nullsafety.0
+
+- **BREAKING:** migrate to nullsafety
+
 # 0.7.0
 
 - **BREAKING:** `BeamerRouterDelegate.notFoundPage` is now `BeamPage` instead of `Widget`
