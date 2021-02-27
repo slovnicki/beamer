@@ -15,8 +15,8 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     this.navigatorObservers = const <NavigatorObserver>[],
   })  : _navigatorKey = GlobalKey<NavigatorState>(),
         notFoundPage = notFoundPage ?? BeamPage(child: Container()) {
-    _beamHistory.add(initialLocation..prepare());
-    _currentLocation = _beamHistory[0];
+    // _beamHistory.add(initialLocation..prepare());
+    _currentLocation = initialLocation..prepare();
     BackButtonInterceptor.add(backInterceptor, name: 'BeamerInterceptor');
   }
 
