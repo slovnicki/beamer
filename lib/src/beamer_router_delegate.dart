@@ -87,6 +87,15 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
     notifyListeners();
   }
 
+  /// Whether it is possible to [beamBack],
+  /// i.e. there is more than 1 location in [beamHistory].
+  bool get canBeamBack => _beamHistory.length > 1;
+
+  /// What is the location to which [beamBack] will lead.
+  /// If there is none, returns null.
+  BeamLocation get beamBackLocation =>
+      canBeamBack ? _beamHistory[_beamHistory.length - 2] : null;
+
   /// Beams to previous location in [beamHistory]
   /// and **removes** the last location from history.
   ///
@@ -95,7 +104,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   /// Returns the success, whether the [currentLocation] was changed.
   bool beamBack() {
     _beamBackOnPop = false;
-    if (_beamHistory.length == 1) {
+    if (!canBeamBack) {
       return false;
     }
     _beamHistory.removeLast();
@@ -211,10 +220,9 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   }
 
   bool backInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    var canPop = false;
-    if (_beamHistory.length > 1 && currentPages.length == 1) {
-      canPop = beamBack();
+    if (_currentPages.length == 1) {
+      return beamBack();
     }
-    return canPop;
+    return false;
   }
 }
