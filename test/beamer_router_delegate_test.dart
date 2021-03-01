@@ -22,17 +22,23 @@ void main() {
       expect(router.currentLocation, location2);
     });
 
-    test('beamBack leads to previous location', () {
+    test('beamBack leads to previous location and all gelpers are correct', () {
       router.beamTo(location2);
 
+      expect(router.canBeamBack, true);
+      expect(router.beamBackLocation, isA<Location2>());
       bool success = router.beamBack();
       expect(success, true);
       expect(router.currentLocation, location2);
 
+      expect(router.canBeamBack, true);
+      expect(router.beamBackLocation, isA<Location1>());
       success = router.beamBack();
       expect(success, true);
       expect(router.currentLocation, location1);
 
+      expect(router.canBeamBack, false);
+      expect(router.beamBackLocation, null);
       success = router.beamBack();
       expect(success, false);
       expect(router.currentLocation, location1);
