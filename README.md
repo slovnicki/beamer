@@ -24,6 +24,9 @@ Handle your application routing, synchronize it with browser URL and more. `Beam
 ---
 
 - [Key Concepts](#key-concepts)
+  - [Beaming](#beaming)
+  - [Updating](#updating)
+  - [Beaming Back](#beaming-back)
 - [Examples](#examples)
     - [Books](#books)
     - [Advanced Books](#advanced-books)
@@ -41,27 +44,56 @@ Handle your application routing, synchronize it with browser URL and more. `Beam
 
 # Key Concepts
 
-The key concept of Beamer is a `BeamLocation` which represents a stack of one or more pages. You will be extending `BeamLocation` to define your app's locations to which you can then _beam to_ using
+The key concept of Beamer is a `BeamLocation` which represents a stack of one or more pages whose ordering and rebuild you control within `pagesBuilder`.
+
+## Beaming
+
+You will be extending `BeamLocation` to define your app's locations to which you can then _beam to_ using
 
 ```dart
-Beamer.of(context).beamTo(MyLocation())
-// or context.beamTo(MyLocation())
+Beamer.of(context).beamTo(MyLocation());
+
+// or with an extension on BuildContext
+context.beamTo(MyLocation());
 ```
 
-or `beamTo` a specific configuration of some location;
+or _beam to_ a specific configuration of some location;
 
 ```dart
+context.beamToNamed('/books/2');
+
+// or more explicitly
 context.beamTo(
   BooksLocation(
     pathBlueprint: '/books/:bookId',
     pathParameters: {'bookId': '2'},
   ),
-),
+);
 ```
 
-You can think of it as _teleporting_ / _beaming_ to another place in your app. Similar to `Navigator.of(context).pushReplacementNamed('/my-route')`, but Beamer is not limited to a single page, nor to a push _per se_. You can create an arbitrary stack of pages that gets build when you beam there.
+You can think of it as _teleporting_ (_beaming_) to another place in your app. Similar to `Navigator.of(context).pushReplacementNamed('/my-route')`, but Beamer is not limited to a single page, nor to a push _per se_. You can define an arbitrary stack of pages that gets build when you beam there. Using Beamer can feel like using many of `Navigator`'s `push/pop` methods at once.
 
-Using Beamer _can_ feel like using many of `Navigator`'s `push/pop` methods at once.
+## Updating
+
+Once at a `BeamLocation`, it is preferable to update the current location instead of beaming if you plan to stay at same location. For example, for going from `/books` to `/books/3` (which are both handled by `BooksLocation`);
+
+```dart
+context.updateCurrentLocation(
+  pathParameters: {'bookId': '3'},
+);
+```
+
+If unsure what is your current location; `Beamer.of(context).currentLocation`.
+
+## Beaming Back
+
+All `BeamLocation`s act as a kind of sub-routers and keep their state. Therefore, there is an ability to _beam back_ to the previous location. For example, after spending some time on `/books` and `/books/3`, say you beam to `/articles` which is handled by another `BeamLocation` (e.g. `ArticlesLocation`). From there, you can get back to your previous location as it were when you left, i.e. `/books/3`;
+
+```dart
+context.beamBack();
+```
+
+You can check whether you can beam back with `Beamer.of(context).canBeamBack` or even inspect the location you'll be beaming back to: `Beamer.of(context).beamBackLocation`.
 
 ---
 
@@ -245,14 +277,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerDelegate: BeamerRouterDelegate(
-        initialLocation: HomeLocation(),
-      ),
-      routeInformationParser: BeamerRouteInformationParser(
         beamLocations: [
           HomeLocation(),
           BooksLocation(),
         ],
       ),
+      routeInformationParser: BeamerRouteInformationParser(),
       ...
     );
   }
