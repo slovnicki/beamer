@@ -86,13 +86,13 @@ extension BeamBack on BuildContext {
 }
 
 extension UpdateCurrentLocation on BuildContext {
-  void updateCurrentLocation(
+  void updateCurrentLocation({
     String pathBlueprint,
-    Map<String, String> pathParameters,
-    Map<String, String> queryParameters,
-    Map<String, dynamic> data,
-    bool rewriteParameters,
-  ) {
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, String> queryParameters = const <String, String>{},
+    Map<String, dynamic> data = const <String, dynamic>{},
+    bool rewriteParameters = false,
+  }) {
     Beamer.of(this).updateCurrentLocation(
       pathBlueprint: pathBlueprint,
       pathParameters: pathParameters,
