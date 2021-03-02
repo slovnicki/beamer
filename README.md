@@ -23,7 +23,7 @@
 <a href="https://www.buymeacoffee.com/slovnicki" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="30px" width= "108px"></a>
 </p>
 
-Handle your application routing, synchronize it with browser URL and more. `Beamer` uses the power of Navigator 2.0 API and implements all the underlying logic for you.
+Handle your application routing, synchronize it with browser URL and more. Beamer uses the power of Navigator 2.0 API and implements all the underlying logic for you.
 
 ---
 
