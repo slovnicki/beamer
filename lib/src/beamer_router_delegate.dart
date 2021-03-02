@@ -127,11 +127,11 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   ///
   /// Note that [_beamBackOnPop] will be reset to `false`.
   void updateCurrentLocation({
-    @required String pathBlueprint,
-    Map<String, String> pathParameters = const <String, String>{},
-    Map<String, String> queryParameters = const <String, String>{},
-    Map<String, dynamic> data = const <String, dynamic>{},
-    bool rewriteParameters = false,
+    String pathBlueprint,
+    Map<String, String> pathParameters,
+    Map<String, String> queryParameters,
+    Map<String, dynamic> data,
+    bool rewriteParameters,
   }) {
     _beamBackOnPop = false;
     _currentLocation.update(
