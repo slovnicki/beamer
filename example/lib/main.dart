@@ -144,11 +144,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerDelegate: BeamerRouterDelegate(
-        initialLocation: initialLocation,
-      ),
-      routeInformationParser: BeamerRouteInformationParser(
         beamLocations: beamLocations,
       ),
+      routeInformationParser: BeamerRouteInformationParser(),
     );
   }
 }

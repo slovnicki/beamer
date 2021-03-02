@@ -8,9 +8,9 @@ void main() {
   final location1 = Location1(pathBlueprint: '/l1');
   final location2 = Location2(pathBlueprint: '/l2/:id');
   final router = BeamerRouterDelegate(
-    initialLocation: location1,
+    beamLocations: [location1, location2],
   );
-  router.setNewRoutePath(location1);
+  router.setNewRoutePath((location1..prepare()).uri);
 
   group('initialization & beaming', () {
     test('initialLocation is set', () {

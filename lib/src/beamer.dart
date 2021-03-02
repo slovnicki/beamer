@@ -49,21 +49,17 @@ class BeamerState extends State<Beamer> {
   void initState() {
     super.initState();
     _routerDelegate ??= widget.routerDelegate ??
-        BeamerRouterDelegate(
-          initialLocation: widget.beamLocations[0],
-        );
+        BeamerRouterDelegate(beamLocations: widget.beamLocations);
   }
 
   @override
   Widget build(BuildContext context) {
     return Router(
       routerDelegate: _routerDelegate,
-      routeInformationParser: BeamerRouteInformationParser(
-        beamLocations: widget.beamLocations,
-      ),
+      routeInformationParser: BeamerRouteInformationParser(),
       routeInformationProvider: PlatformRouteInformationProvider(
         initialRouteInformation: RouteInformation(
-          location: currentLocation.uri,
+          location: currentLocation.uri.toString(),
         ),
       ),
       backButtonDispatcher: RootBackButtonDispatcher(),

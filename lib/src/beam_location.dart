@@ -87,7 +87,7 @@ abstract class BeamLocation {
   Map<String, dynamic> data;
 
   /// Complete URI of this [BeamLocation], with path and query parameters.
-  String get uri => _path + _query;
+  Uri get uri => Uri.parse(_path + _query);
 
   String _path;
   String _query;

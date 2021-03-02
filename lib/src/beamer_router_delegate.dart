@@ -1,24 +1,26 @@
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:beamer/beamer.dart';
+import 'package:beamer/src/utils.dart';
 import 'package:flutter/foundation.dart';
-// import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 /// A delegate that is used by the [Router] widget
 /// to build and configure a navigating widget.
-class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
-    with ChangeNotifier, PopNavigatorRouterDelegateMixin<BeamLocation> {
+class BeamerRouterDelegate extends RouterDelegate<Uri>
+    with ChangeNotifier, PopNavigatorRouterDelegateMixin<Uri> {
   BeamerRouterDelegate({
-    @required BeamLocation initialLocation,
+    @required this.beamLocations,
     BeamPage notFoundPage,
     this.guards = const <BeamGuard>[],
     this.navigatorObservers = const <NavigatorObserver>[],
   })  : _navigatorKey = GlobalKey<NavigatorState>(),
+        _currentLocation = beamLocations[0]..prepare(),
         notFoundPage = notFoundPage ?? BeamPage(child: Container()) {
-    // _beamHistory.add(initialLocation..prepare());
-    _currentLocation = initialLocation..prepare();
     BackButtonInterceptor.add(backInterceptor, name: 'BeamerInterceptor');
   }
+
+  /// List of all [BeamLocation]s that this router handles.
+  final List<BeamLocation> beamLocations;
 
   /// Page to show when no [BeamLocation] supports the incoming URI.
   final BeamPage notFoundPage;
@@ -43,8 +45,6 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   BeamLocation _currentLocation;
 
   /// Access the current [BeamLocation].
-  ///
-  /// The same thing as [currentConfiguration], but with more familiar name.
   ///
   /// Can be useful in:
   ///
@@ -138,7 +138,7 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   }
 
   @override
-  BeamLocation get currentConfiguration => _currentLocation;
+  Uri get currentConfiguration => _currentLocation.uri;
 
   @override
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
@@ -182,8 +182,9 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   }
 
   @override
-  SynchronousFuture<void> setNewRoutePath(BeamLocation location) {
-    beamTo(location);
+  SynchronousFuture<void> setNewRoutePath(Uri uri) {
+    print('.....: $uri');
+    beamTo(Utils.chooseBeamLocation(uri, beamLocations));
     return SynchronousFuture(null);
   }
 
