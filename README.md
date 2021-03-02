@@ -16,6 +16,10 @@
 </p>
 
 <p align="center">
+<a href="https://discord.gg/8hDJ7tP5Mz"><img src="https://img.shields.io/discord/815722893878099978" alt="Discord"></a>
+</p>
+
+<p align="center">
 <a href="https://www.buymeacoffee.com/slovnicki" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="30px" width= "108px"></a>
 </p>
 
@@ -39,7 +43,10 @@ Handle your application routing, synchronize it with browser URL and more. `Beam
   - [On Entire App](#on-entire-app)
   - [As a Widget](#as-a-widget)
   - [General Notes](#general-notes)
-- [Migrating from 0.4.x to >=0.5.x](#migrating-from-0.4.x-to->=0.5.x)
+- [Migrating](#migrating)
+  - [From 0.7 to 0.8](#from-0.7-to-0.8)
+  - [From 0.4 to 0.5](#from-0.4-to-0.5)
+- [Help and Chat](#help-and-chat)
 - [Contributing](#contributing)
 
 # Key Concepts
@@ -322,12 +329,21 @@ class MyApp extends StatelessWidget {
   - `key` is important for `Navigator` to optimize rebuilds. This should be an unique value for "page state".
   - `BeamPage` creates `MaterialPageRoute`, but you can extends `BeamPage` and override `createRoute` to make your own implementation instead.
 
-# Migrating from 0.4.x to >=0.5.x
+# Migrating
+
+## From 0.7 to 0.8
+
+TBA
+## From 0.4 to 0.5
 
 - instead of wrapping `MaterialApp` with `Beamer`, use `*App.router()`
 - `String BeamLocation.pathBlueprint` is now `List<String> BeamLocation.pathBlueprints`
 - `BeamLocation.withParameters` constructor is removed and all parameters are handled with 1 constructor. See example if you need `super`.
 - `BeamPage.page` is now called `BeamPage.child`
+
+# Help and Chat
+
+For any problems, questions, suggestions, fun,... join us at Discord <a href="https://discord.gg/8hDJ7tP5Mz"><img src="https://img.shields.io/discord/815722893878099978" alt="Discord"></a>
 
 # Contributing
 
