@@ -73,6 +73,12 @@ extension BeamTo on BuildContext {
   }
 }
 
+extension BeamToNamed on BuildContext {
+  void beamToNamed(String uri, {bool beamBackOnPop = false}) {
+    Beamer.of(this).beamToNamed(uri, beamBackOnPop: beamBackOnPop);
+  }
+}
+
 extension BeamBack on BuildContext {
   void beamBack() {
     Beamer.of(this).beamBack();

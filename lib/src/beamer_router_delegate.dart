@@ -87,6 +87,14 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     notifyListeners();
   }
 
+  /// Beams to [BeamLocation] that handles `uri`.
+  ///
+  /// See [beamTo].
+  void beamToNamed(String uri, {bool beamBackOnPop = false}) {
+    final location = Utils.chooseBeamLocation(Uri.parse(uri), beamLocations);
+    beamTo(location);
+  }
+
   /// Whether it is possible to [beamBack],
   /// i.e. there is more than 1 location in [beamHistory].
   bool get canBeamBack => _beamHistory.length > 1;
@@ -183,7 +191,6 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
 
   @override
   SynchronousFuture<void> setNewRoutePath(Uri uri) {
-    print('.....: $uri');
     beamTo(Utils.chooseBeamLocation(uri, beamLocations));
     return SynchronousFuture(null);
   }

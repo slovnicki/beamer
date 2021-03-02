@@ -22,9 +22,16 @@ void main() {
       expect(router.currentLocation, location2);
     });
 
-    test('beamBack leads to previous location and all gelpers are correct', () {
-      router.beamTo(location2);
+    test('beamToNamed changes locations with correct parameters', () {
+      router.beamToNamed('/l2/1?q=t');
+      expect(router.currentLocation, location2);
+      expect(location2.pathParameters.containsKey('id'), true);
+      expect(location2.pathParameters['id'], '1');
+      expect(location2.queryParameters.containsKey('q'), true);
+      expect(location2.queryParameters['q'], 't');
+    });
 
+    test('beamBack leads to previous location and all helpers are correct', () {
       expect(router.canBeamBack, true);
       expect(router.beamBackLocation, isA<Location2>());
       bool success = router.beamBack();
