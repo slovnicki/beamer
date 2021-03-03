@@ -23,12 +23,13 @@ void main() {
     });
 
     test('beamToNamed changes locations with correct parameters', () {
-      router.beamToNamed('/l2/1?q=t');
+      router.beamToNamed('/l2/1?q=t', data: {'x': 'y'});
       expect(router.currentLocation, location2);
       expect(location2.pathParameters.containsKey('id'), true);
       expect(location2.pathParameters['id'], '1');
       expect(location2.queryParameters.containsKey('q'), true);
       expect(location2.queryParameters['q'], 't');
+      expect(location2.data, {'x': 'y'});
     });
 
     test('beamBack leads to previous location and all helpers are correct', () {
@@ -50,5 +51,11 @@ void main() {
       expect(success, false);
       expect(router.currentLocation, location1);
     });
+  });
+
+  test('stacked beam takes just last page for currentPages', () {
+    router.beamToNamed('/l1/one', stacked: false);
+    expect(router.currentLocation.pagesBuilder(null).length, 2);
+    //expect(router.currentPages.length, 1);
   });
 }
