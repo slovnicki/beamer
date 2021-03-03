@@ -69,8 +69,16 @@ class BeamerState extends State<Beamer> {
 
 /// See [BeamerRouterDelegate.beamTo]
 extension BeamTo on BuildContext {
-  void beamTo(BeamLocation location, {bool beamBackOnPop = false}) {
-    Beamer.of(this).beamTo(location, beamBackOnPop: beamBackOnPop);
+  void beamTo(
+    BeamLocation location, {
+    bool beamBackOnPop = false,
+    bool stacked = true,
+  }) {
+    Beamer.of(this).beamTo(
+      location,
+      beamBackOnPop: beamBackOnPop,
+      stacked: stacked,
+    );
   }
 }
 
@@ -80,8 +88,14 @@ extension BeamToNamed on BuildContext {
     String uri, {
     Map<String, dynamic> data = const <String, dynamic>{},
     bool beamBackOnPop = false,
+    bool stacked = true,
   }) {
-    Beamer.of(this).beamToNamed(uri, data: data, beamBackOnPop: beamBackOnPop);
+    Beamer.of(this).beamToNamed(
+      uri,
+      data: data,
+      beamBackOnPop: beamBackOnPop,
+      stacked: stacked,
+    );
   }
 }
 
@@ -92,6 +106,7 @@ extension BeamBack on BuildContext {
   }
 }
 
+/// See [BeamerRouterDelegate.updateCurrentLocation]
 extension UpdateCurrentLocation on BuildContext {
   void updateCurrentLocation({
     String pathBlueprint,
@@ -99,6 +114,8 @@ extension UpdateCurrentLocation on BuildContext {
     Map<String, String> queryParameters = const <String, String>{},
     Map<String, dynamic> data = const <String, dynamic>{},
     bool rewriteParameters = false,
+    bool beamBackOnPop,
+    bool stacked,
   }) {
     Beamer.of(this).updateCurrentLocation(
       pathBlueprint: pathBlueprint,
@@ -106,6 +123,8 @@ extension UpdateCurrentLocation on BuildContext {
       queryParameters: queryParameters,
       data: data,
       rewriteParameters: rewriteParameters,
+      beamBackOnPop: beamBackOnPop,
+      stacked: stacked,
     );
   }
 }

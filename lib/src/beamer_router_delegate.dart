@@ -70,7 +70,11 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   List<BeamPage> get currentPages => _currentPages;
 
   /// Whether to implicitly [beamBack] instead of default pop
-  bool _beamBackOnPop;
+  bool _beamBackOnPop = false;
+
+  /// Whether all the pages from location are stacked.
+  /// If not (`false`), just the last page is taken.
+  bool _stacked = true;
 
   /// Beams to `location`.
   ///
@@ -80,10 +84,16 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   /// 2. updates [currentLocation]
   /// 3. notifies that the [Navigator] should be rebuilt
   ///
-  /// if `beamBackOnPop` is set to `true`, default pop action on the newly
+  /// If `beamBackOnPop` is set to `true`, default pop action on the newly
   /// beamed location will triger `beamBack` instead.
-  void beamTo(BeamLocation location, {bool beamBackOnPop = false}) {
+  /// If `stacked` is set to `false`, only the location's last page will be shown.
+  void beamTo(
+    BeamLocation location, {
+    bool beamBackOnPop = false,
+    bool stacked = true,
+  }) {
     _beamBackOnPop = beamBackOnPop;
+    _stacked = stacked;
     _beamHistory.add(location..prepare());
     _currentLocation = _beamHistory.last;
     notifyListeners();
@@ -106,6 +116,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     String uri, {
     Map<String, dynamic> data = const <String, dynamic>{},
     bool beamBackOnPop = false,
+    bool stacked = true,
   }) {
     final location = Utils.chooseBeamLocation(Uri.parse(uri), beamLocations);
     location.data = data;
@@ -129,6 +140,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   /// Returns the success, whether the [currentLocation] was changed.
   bool beamBack() {
     _beamBackOnPop = false;
+    _stacked = true;
     if (!canBeamBack) {
       return false;
     }
@@ -142,15 +154,19 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   ///
   /// See [BeamLocation.update] for details.
   ///
-  /// Note that [_beamBackOnPop] will be reset to `false`.
+  /// If `beamBackOnPop` is not specified, [_beamBackOnPop] will be reset to `false`.
+  /// If `stacked` is not specified, [_stacked] will remain as it was.
   void updateCurrentLocation({
     String pathBlueprint,
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, String> queryParameters = const <String, String>{},
     Map<String, dynamic> data = const <String, dynamic>{},
     bool rewriteParameters = false,
+    bool beamBackOnPop,
+    bool stacked,
   }) {
-    _beamBackOnPop = false;
+    _beamBackOnPop = beamBackOnPop ?? false;
+    _stacked = stacked ?? _stacked;
     _currentLocation.update(
       pathBlueprint: pathBlueprint,
       pathParameters: pathParameters,
@@ -176,7 +192,9 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     }
     final navigator = Builder(
       builder: (context) {
-        _currentPages = _currentLocation.pagesBuilder(context);
+        _currentPages = _stacked
+            ? _currentLocation.pagesBuilder(context)
+            : [_currentLocation.pagesBuilder(context).last];
         return Navigator(
           key: navigatorKey,
           observers: navigatorObservers,
