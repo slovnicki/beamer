@@ -11,6 +11,7 @@ class BeamGuard {
   BeamGuard({
     @required this.pathBlueprints,
     @required this.check,
+    this.onCheckFailed,
     this.beamTo,
     this.showPage,
     this.guardNonMatching = false,
@@ -32,6 +33,11 @@ class BeamGuard {
   ///
   /// [context] is also injected to fetch data up the tree if necessary.
   bool Function(BuildContext context, BeamLocation location) check;
+
+  /// Arbitrary close to execute when [check] fails.
+  ///
+  /// This will run before and regardless of [beamTo] or [showPage].
+  void Function(BuildContext context, BeamLocation location) onCheckFailed;
 
   /// If guard [check] returns false, build a location to be beamed to.
   ///

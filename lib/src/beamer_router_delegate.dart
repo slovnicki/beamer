@@ -188,7 +188,8 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   Widget build(BuildContext context) {
     final BeamGuard guard = _guardCheck(context, _currentLocation);
     if (guard?.beamTo != null) {
-      beamTo(guard.beamTo(context));
+      _beamHistory.add(guard.beamTo(context)..prepare());
+      _currentLocation = _beamHistory.last;
     }
     final navigator = Builder(
       builder: (context) {
@@ -245,11 +246,13 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   BeamGuard _guardCheck(BuildContext context, BeamLocation location) {
     for (var guard in guards) {
       if (guard.shouldGuard(location) && !guard.check(context, location)) {
+        guard.onCheckFailed?.call(context, location);
         return guard;
       }
     }
     for (var guard in location.guards) {
       if (guard.shouldGuard(location) && !guard.check(context, location)) {
+        guard.onCheckFailed?.call(context, location);
         return guard;
       }
     }
