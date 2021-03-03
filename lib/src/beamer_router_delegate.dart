@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:beamer/beamer.dart';
 import 'package:beamer/src/utils.dart';
@@ -16,7 +18,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   })  : _navigatorKey = GlobalKey<NavigatorState>(),
         _currentLocation = beamLocations[0]..prepare(),
         notFoundPage = notFoundPage ?? BeamPage(child: Container()) {
-    if (!kIsWeb) {
+    if (!kIsWeb && Platform.isAndroid) {
       BackButtonInterceptor.add(backInterceptor, name: 'BeamerInterceptor');
     }
   }
@@ -261,7 +263,9 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
 
   @override
   void dispose() {
-    BackButtonInterceptor.removeByName('BeamerInterceptor');
+    if (!kIsWeb && Platform.isAndroid) {
+      BackButtonInterceptor.removeByName('BeamerInterceptor');
+    }
     super.dispose();
   }
 
