@@ -343,7 +343,8 @@ class MyApp extends StatelessWidget {
 
 ## From 0.7 to 0.8
 
-TBA
+- rename `pages` to `pagesBuilder` in `BeamLocation`s
+- pass `beamLocations` to `BeamerRouterDelegate` instead of `BeamerRouteInformationParser`. See [Usage](#usage)
 ## From 0.4 to 0.5
 
 - instead of wrapping `MaterialApp` with `Beamer`, use `*App.router()`
