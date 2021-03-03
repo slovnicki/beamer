@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/logo.png">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/logo.png">
 </p>
 
 <p align="center">
@@ -80,6 +80,15 @@ context.beamTo(
 
 You can think of it as _teleporting_ (_beaming_) to another place in your app. Similar to `Navigator.of(context).pushReplacementNamed('/my-route')`, but Beamer is not limited to a single page, nor to a push _per se_. You can define an arbitrary stack of pages that gets build when you beam there. Using Beamer can feel like using many of `Navigator`'s `push/pop` methods at once.
 
+You can carry an arbitrary key/value data in a location. This can be accessed from every page and updated as you travel through a location.
+
+```dart
+context.beamToNamed(
+  '/book/2',
+  data: {'note': 'this is my favorite book'},
+);
+```
+
 ## Updating
 
 Once at a `BeamLocation`, it is preferable to update the current location instead of beaming if you plan to stay at same location. For example, for going from `/books` to `/books/3` (which are both handled by `BooksLocation`);
@@ -87,6 +96,7 @@ Once at a `BeamLocation`, it is preferable to update the current location instea
 ```dart
 context.updateCurrentLocation(
   pathParameters: {'bookId': '3'},
+  data: {'note': 'this is not my favorite book'},
 );
 ```
 
@@ -117,17 +127,17 @@ Here is a recreation of books example from [this article](https://medium.com/flu
 
 ## Advanced Books
 
-For a step further, we add more flows to demonstrate the power of Beamer. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/advanced_books).
+For a step further, we add more flows to demonstrate the power of Beamer. The full code is available [here](https://github.com/slovnicki/beamer_examples/tree/master/advanced_books).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-advanced-books.gif" width="520">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer_examples/master/advanced_books/example-advanced-books.gif" alt="example-advanced-books" width="520">
 
 ## Deep Location
 
-You can instantly beam to a location in your app that has many pages stacked (deep linking) and then pop them one by one or simply `beamBack` to where you came from. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/deep_location). Note that `beamBackOnPop` parameter of `beamTo` might be useful here to override `AppBar`'s `pop` with `beamBack`.
+You can instantly beam to a location in your app that has many pages stacked (deep linking) and then pop them one by one or simply `beamBack` to where you came from. The full code is available [here](https://github.com/slovnicki/beamer_examples/tree/master/deep_location). Note that `beamBackOnPop` parameter of `beamTo` might be useful here to override `AppBar`'s `pop` with `beamBack`.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-deep-location.gif" alt="example-deep-location" width="260">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer_examples/master/deep_location/example-deep-location.gif" alt="example-deep-location" width="260">
 
 ```dart
 ElevatedButton(
@@ -139,10 +149,10 @@ ElevatedButton(
 
 ## Location Builder
 
-You can override `BeamLocation.builder` to provide some data to the entire location, i.e. to all of the `pages`. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/location_builder).
+You can override `BeamLocation.builder` to provide some data to the entire location, i.e. to all of the `pages`. The full code is available [here](https://github.com/slovnicki/beamer_examples/tree/master/location_builder).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-location-builder.gif"  width="260">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer_examples/master/location_builder/example-location-builder.gif" alt="example-location-builder"  width="260">
 
 ```dart
 // in your location implementation
@@ -157,10 +167,10 @@ Widget builder(BuildContext context, Navigator navigator) {
 
 ## Guards
 
-You can define global guards (for example, authentication guard) or location guards that keep a specific location safe. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/guards).
+You can define global guards (for example, authentication guard) or location guards that keep a specific location safe. The full code is available [here](https://github.com/slovnicki/beamer_examples/tree/master/guards).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-guards.gif" alt="example-guards"  width="520">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer_examples/master/guards/example-guards.gif" alt="example-guards"  width="520">
 
 - Global Guards
 
@@ -196,10 +206,10 @@ List<BeamGuard> get guards => [
 An example of putting `Beamer`(s) into the Widget tree. _This is not yet fully functional for web usage_; setting the URL from browser doesn't update the state properly. It should work when [nested routers issue](https://github.com/slovnicki/beamer/issues/4) is settled.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-bottom-navigation-mobile.gif"  width="240" style="margin-right: 32px">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-bottom-navigation-multiple-beamers.gif"  width="240">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer_examples/master/bottom_navigation/example-bottom-navigation-mobile.gif" alt="example-bottom-navigation-mobile" width="240" style="margin-right: 32px">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer_examples/master/bottom_navigation_multiple_beamers/example-bottom-navigation-multiple-beamers.gif" alt="example-bottom-navigation-multiple-beamers" width="240">
 
-- [Bottom navigation example](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation)
+- [Bottom navigation example](https://github.com/slovnicki/beamer_examples/tree/master/bottom_navigation)
 ```dart
 class MyApp extends StatelessWidget {
   final _beamerKey = GlobalKey<BeamerState>();
@@ -221,7 +231,7 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-- [Bottom navigation example with multiple Beamers](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation_multiple_beamers)
+- [Bottom navigation example with multiple Beamers](https://github.com/slovnicki/beamer_examples/tree/master/bottom_navigation_multiple_beamers)
 ```dart
 class MyAppState extends State<MyApp> {
   int _currentIndex = 0;
@@ -262,10 +272,10 @@ class MyAppState extends State<MyApp> {
 ---
 ## Integration with Navigation UI Packages
 
-- [Animated Rail Example](https://github.com/slovnicki/beamer/tree/master/examples/animated_rail), with [animated_rail](https://pub.dev/packages/animated_rail) package.
-- ... (contributions are very welcome, add your suggestions [here](https://github.com/slovnicki/beamer/issues/79))
+- [Animated Rail Example](https://github.com/slovnicki/beamer_examples/tree/master/animated_rail), with [animated_rail](https://pub.dev/packages/animated_rail) package.
+- ... (contributions are very welcome; add your suggestion [here](https://github.com/slovnicki/beamer/issues/79) or make a PR [here](https://github.com/slovnicki/beamer_examples))
 
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-animated-rail.gif" alt="example-bottom-navigation" width="240">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer_examples/master/animated_rail/example-animated-rail.gif" alt="example-animated-rail" width="240">
 
 ---
 # Usage
