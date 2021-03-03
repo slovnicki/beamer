@@ -1,3 +1,15 @@
+# 0.8.0
+
+- **BREAKING:** `BeamLocation.pages` is now `BeamLocation.pagesBuilder`
+- **BREAKING:** `BeamerRouterDelegate` now takes `beamLocations` and `BeamerRouteInformationParser` nothing
+- **NEW FEATURE:** `beamToNamed`
+- **NEW FEATURE:** `canBeamBack` and `beamBackLocation` helpers
+- **NEW FEATURE:** `BeamGuard.onCheckFailed`
+- **NEW FEATURE:** `stacked` parameter for beaming
+- **Add:** [back_button_interceptor](https://pub.dev/packages/back_button_interceptor) package automatic `beamBack` on Android back button
+- **Add** more details to README: Key Concepts
+- **Add** invite to Discord community for beamer help/discussion/chat
+
 # 0.7.0
 
 - **BREAKING:** `BeamerRouterDelegate.notFoundPage` is now `BeamPage` instead of `Widget`
