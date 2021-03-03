@@ -1,3 +1,7 @@
+# 0.8.1
+
+- **Remove** dart:io
+
 # 0.8.0
 
 - **BREAKING:** `BeamLocation.pages` is now `BeamLocation.pagesBuilder`
