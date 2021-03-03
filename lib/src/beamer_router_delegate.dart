@@ -89,12 +89,27 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     notifyListeners();
   }
 
-  /// Beams to [BeamLocation] that handles `uri`.
+  /// Beams to [BeamLocation] that handles `uri`. See [beamTo].
   ///
-  /// See [beamTo].
-  void beamToNamed(String uri, {bool beamBackOnPop = false}) {
+  /// For example
+  ///
+  /// ```dart
+  /// Beamer.of(context).beamToNamed(
+  ///   '/user/1/transactions?perPage=10',
+  ///   data: {'beenHereBefore': true},
+  /// );
+  /// ```
+  ///
+  /// `data` can be used to pass any data throught the location.
+  /// See [BeamLocation.data].
+  void beamToNamed(
+    String uri, {
+    Map<String, dynamic> data = const <String, dynamic>{},
+    bool beamBackOnPop = false,
+  }) {
     final location = Utils.chooseBeamLocation(Uri.parse(uri), beamLocations);
-    beamTo(location);
+    location.data = data;
+    beamTo(location, beamBackOnPop: beamBackOnPop);
   }
 
   /// Whether it is possible to [beamBack],

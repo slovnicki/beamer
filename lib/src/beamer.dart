@@ -67,18 +67,25 @@ class BeamerState extends State<Beamer> {
   }
 }
 
+/// See [BeamerRouterDelegate.beamTo]
 extension BeamTo on BuildContext {
   void beamTo(BeamLocation location, {bool beamBackOnPop = false}) {
     Beamer.of(this).beamTo(location, beamBackOnPop: beamBackOnPop);
   }
 }
 
+/// See [BeamerRouterDelegate.beamToNamed]
 extension BeamToNamed on BuildContext {
-  void beamToNamed(String uri, {bool beamBackOnPop = false}) {
-    Beamer.of(this).beamToNamed(uri, beamBackOnPop: beamBackOnPop);
+  void beamToNamed(
+    String uri, {
+    Map<String, dynamic> data = const <String, dynamic>{},
+    bool beamBackOnPop = false,
+  }) {
+    Beamer.of(this).beamToNamed(uri, data: data, beamBackOnPop: beamBackOnPop);
   }
 }
 
+/// See [BeamerRouterDelegate.beamBack]
 extension BeamBack on BuildContext {
   void beamBack() {
     Beamer.of(this).beamBack();
