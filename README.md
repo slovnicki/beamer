@@ -123,7 +123,7 @@ You can check whether you can beam back with `Beamer.of(context).canBeamBack` or
 Here is a recreation of books example from [this article](https://medium.com/flutter/learning-flutters-new-navigation-and-routing-system-7c9068155ade) where you can learn a lot about Navigator 2.0. See [Example](https://pub.dev/packages/beamer/example) for full application code of this example.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/res/example-books.gif" alt="example-books" width="520">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/example-books.gif" alt="example-books" width="520">
 
 ## Advanced Books
 
