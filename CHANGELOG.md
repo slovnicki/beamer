@@ -1,3 +1,7 @@
+# 0.8.1+1
+
+- **Fix** README ToC links and typos
+
 # 0.8.1
 
 - **Remove** dart:io
