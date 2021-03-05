@@ -67,8 +67,8 @@ class BeamerState extends State<Beamer> {
   }
 }
 
-/// See [BeamerRouterDelegate.beamTo]
-extension BeamTo on BuildContext {
+extension BeamerExtensions on BuildContext {
+  /// See [BeamerRouterDelegate.beamTo]
   void beamTo(
     BeamLocation location, {
     bool beamBackOnPop = false,
@@ -80,10 +80,8 @@ extension BeamTo on BuildContext {
       stacked: stacked,
     );
   }
-}
 
-/// See [BeamerRouterDelegate.beamToNamed]
-extension BeamToNamed on BuildContext {
+  /// See [BeamerRouterDelegate.beamToNamed]
   void beamToNamed(
     String uri, {
     Map<String, dynamic> data = const <String, dynamic>{},
@@ -97,17 +95,18 @@ extension BeamToNamed on BuildContext {
       stacked: stacked,
     );
   }
-}
 
-/// See [BeamerRouterDelegate.beamBack]
-extension BeamBack on BuildContext {
+  /// See [BeamerRouterDelegate.beamBack]
   void beamBack() {
     Beamer.of(this).beamBack();
   }
-}
 
-/// See [BeamerRouterDelegate.updateCurrentLocation]
-extension UpdateCurrentLocation on BuildContext {
+  /// See [BeamerRouterDelegate.canBeamBack]
+  bool get canBeamBack {
+    return Beamer.of(this).canBeamBack;
+  }
+
+  /// See [BeamerRouterDelegate.updateCurrentLocation]
   void updateCurrentLocation({
     String pathBlueprint,
     Map<String, String> pathParameters = const <String, String>{},
