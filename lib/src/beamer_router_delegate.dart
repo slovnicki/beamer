@@ -11,6 +11,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   BeamerRouterDelegate({
     @required this.beamLocations,
     BeamPage notFoundPage,
+    this.notFoundRedirect,
     this.guards = const <BeamGuard>[],
     this.navigatorObservers = const <NavigatorObserver>[],
   })  : _navigatorKey = GlobalKey<NavigatorState>(),
@@ -26,6 +27,9 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
 
   /// Page to show when no [BeamLocation] supports the incoming URI.
   final BeamPage notFoundPage;
+
+  /// [BeamLocation] to redirect to when no [BeamLocation] supports the incoming URI.
+  final BeamLocation notFoundRedirect;
 
   /// Guards that will be executing [check] on [currentLocation] candidate.
   ///
@@ -190,6 +194,8 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     if (guard?.beamTo != null) {
       _beamHistory.add(guard.beamTo(context)..prepare());
       _currentLocation = _beamHistory.last;
+    } else if ((_currentLocation is NotFound) && notFoundRedirect != null) {
+      _currentLocation = notFoundRedirect..prepare();
     }
     final navigator = Builder(
       builder: (context) {
