@@ -62,11 +62,23 @@ class BeamerState extends State<Beamer> {
           location: currentLocation.uri.toString(),
         ),
       ),
-      backButtonDispatcher: RootBackButtonDispatcher(),
+      backButtonDispatcher: BeamerBackButtonDispatcher(delegate: _routerDelegate),
     );
   }
 }
+class BeamerBackButtonDispatcher extends RootBackButtonDispatcher {
+  final BeamerRouterDelegate delegate;
+  BeamerBackButtonDispatcher({@required this.delegate});
 
+  @override
+  Future<bool> invokeCallback(Future<bool> defaultValue) async {
+    var canPop = await super.invokeCallback(defaultValue);
+    if (!canPop) {
+      canPop = delegate.beamBack();
+    }
+    return Future.value(canPop);
+  }
+}
 /// See [BeamerRouterDelegate.beamTo]
 extension BeamTo on BuildContext {
   void beamTo(
