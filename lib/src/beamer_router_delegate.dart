@@ -226,18 +226,6 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     return _currentLocation.builder(context, navigator);
   }
 
-  void popPagePage() {
-    if (_beamBackOnPop) {
-      beamBack();
-      _beamBackOnPop = false;
-    } else {
-      final lastPage = _currentPages.removeLast();
-      if (lastPage is BeamPage) {
-        _handlePop(lastPage);
-      }
-    }
-  }
-
   @override
   SynchronousFuture<void> setNewRoutePath(Uri uri) {
     beamTo(Utils.chooseBeamLocation(uri, beamLocations));
