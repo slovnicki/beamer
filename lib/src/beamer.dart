@@ -98,9 +98,7 @@ extension BeamerExtensions on BuildContext {
   }
 
   /// See [BeamerRouterDelegate.beamBack]
-  void beamBack() {
-    Beamer.of(this).beamBack();
-  }
+  void beamBack() => Beamer.of(this).beamBack();
 
   /// See [BeamerRouterDelegate.updateCurrentLocation]
   void updateCurrentLocation({
@@ -124,22 +122,14 @@ extension BeamerExtensions on BuildContext {
   }
 
   /// See [BeamerRouterDelegate.currentLocation]
-  BeamLocation get currentBeamLocation {
-    return Beamer.of(this).currentLocation;
-  }
+  BeamLocation get currentBeamLocation => Beamer.of(this).currentLocation;
 
   /// See [BeamerRouterDelegate.currentPages]
-  List<BeamPage> get currentBeamPages {
-    return Beamer.of(this).currentPages;
-  }
+  List<BeamPage> get currentBeamPages => Beamer.of(this).currentPages;
 
   /// See [BeamerRouterDelegate.canBeamBack]
-  bool get canBeamBack {
-    return Beamer.of(this).canBeamBack;
-  }
+  bool get canBeamBack => Beamer.of(this).canBeamBack;
 
   /// See [BeamerRouterDelegate.beamBackLocation]
-  BeamLocation get beamBackLocation {
-    return Beamer.of(this).beamBackLocation;
-  }
+  BeamLocation get beamBackLocation => Beamer.of(this).beamBackLocation;
 }
