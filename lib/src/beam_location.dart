@@ -87,7 +87,7 @@ abstract class BeamLocation {
   Map<String, dynamic> data;
 
   /// Complete URI of this [BeamLocation], with path and query parameters.
-  String get uri => _path + _query;
+  Uri get uri => Uri.parse(_path + _query);
 
   String _path;
   String _query;
@@ -111,13 +111,15 @@ abstract class BeamLocation {
   /// [currentLocation]'s attributes will be set to provided values
   /// or their default values.
   void update({
-    @required String pathBlueprint,
+    String pathBlueprint,
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, String> queryParameters = const <String, String>{},
     Map<String, dynamic> data = const <String, dynamic>{},
     bool rewriteParameters = false,
   }) {
-    pathSegments = List.from(Uri.parse(pathBlueprint).pathSegments);
+    if (pathBlueprint != null) {
+      pathSegments = List.from(Uri.parse(pathBlueprint).pathSegments);
+    }
     if (rewriteParameters) {
       this.pathParameters = Map.from(pathParameters);
     } else {

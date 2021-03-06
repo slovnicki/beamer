@@ -30,8 +30,7 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Center(
         child: ElevatedButton(
-          onPressed: () =>
-              context.beamTo(BooksLocation(pathBlueprint: '/books')),
+          onPressed: () => context.beamToNamed('/books'),
           child: Text('Beam to books location'),
         ),
       ),
@@ -55,7 +54,7 @@ class BooksScreen extends StatelessWidget {
             .map((book) => ListTile(
                   title: Text(book['title']),
                   subtitle: Text(book['author']),
-                  onTap: () => Beamer.of(context).updateCurrentLocation(
+                  onTap: () => context.updateCurrentLocation(
                     pathBlueprint: '/books/:bookId',
                     pathParameters: {'bookId': book['id']},
                   ),
@@ -103,14 +102,6 @@ class HomeLocation extends BeamLocation {
 }
 
 class BooksLocation extends BeamLocation {
-  BooksLocation({
-    String pathBlueprint,
-    Map<String, String> pathParameters,
-  }) : super(
-          pathBlueprint: pathBlueprint,
-          pathParameters: pathParameters,
-        );
-
   @override
   List<String> get pathBlueprints => ['/books/:bookId'];
 
@@ -144,11 +135,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerDelegate: BeamerRouterDelegate(
-        initialLocation: initialLocation,
-      ),
-      routeInformationParser: BeamerRouteInformationParser(
         beamLocations: beamLocations,
       ),
+      routeInformationParser: BeamerRouteInformationParser(),
     );
   }
 }

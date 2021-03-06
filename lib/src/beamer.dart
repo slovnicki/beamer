@@ -1,21 +1,17 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import 'beam_location.dart';
 import 'beamer_router_delegate.dart';
 import 'beamer_route_information_parser.dart';
+import 'beamer_provider.dart';
 
 /// Central place for creating, accessing and modifying a Router subtree.
 class Beamer extends StatefulWidget {
   Beamer({
     Key key,
-    this.beamLocations,
+    @required this.beamLocations,
     this.routerDelegate,
-    this.app,
-  })  : assert(routerDelegate != null && app != null ||
-            app == null && routerDelegate == null),
-        assert(beamLocations != null && app == null ||
-            beamLocations == null && app != null),
+  })  : assert(beamLocations != null),
         super(key: key);
 
   // TODO give this to delegate also, to enable beamToNamed later on
@@ -23,38 +19,19 @@ class Beamer extends StatefulWidget {
   final List<BeamLocation> beamLocations;
 
   /// Responsible for beaming, updating and rebuilding the page stack.
+  ///
+  /// Normally, this never needs to be set
+  /// unless extending [BeamerRouterDelegate] with custom implementation.
   final BeamerRouterDelegate routerDelegate;
-
-  /// `*App` widget, e.g. [MaterialApp].
-  ///
-  /// This is useful when using `builder` in the `*App` widget. Then, if using
-  /// Beamer the regular way, `Beamer.of(context)` will not find anything.
-  /// The way to solve it is by using Beamer above `*App` like this:
-  ///
-  /// ```dart
-  /// final _routerDelegate = BeamerRouterDelegate(...);
-  ///
-  /// @override
-  /// Widget build(BuildContext context) {
-  ///   return Beamer(
-  ///     routerDelegate: _routerDelegate
-  ///     app: MaterialApp.router(
-  ///       routerDelegate: _routerDelegate,
-  ///       routeInformationParser: BeamerRouteInformationParser(...),
-  ///       ...
-  ///     )
-  ///   );
-  /// }
-  ///
-  /// ```
-  final Widget app;
 
   /// Access Beamer's [routerDelegate].
   static BeamerRouterDelegate of(BuildContext context) {
     try {
       return Router.of(context).routerDelegate;
     } catch (e) {
-      return context.findAncestorWidgetOfExactType<Beamer>().routerDelegate;
+      assert(BeamerProvider.of(context) != null,
+          'There was no Router nor BeamerProvider in current context. If using MaterialApp.builder, wrap the MaterialApp.router in BeamerProvider to which you pass the same routerDelegate as to MaterialApp.router.');
+      return BeamerProvider.of(context).routerDelegate;
     }
   }
 
@@ -71,37 +48,83 @@ class BeamerState extends State<Beamer> {
   @override
   void initState() {
     super.initState();
-    _routerDelegate ??= BeamerRouterDelegate(
-      initialLocation: widget.beamLocations[0],
-    );
+    _routerDelegate ??= widget.routerDelegate ??
+        BeamerRouterDelegate(beamLocations: widget.beamLocations);
   }
 
   @override
   Widget build(BuildContext context) {
-    return widget.app ??
-        Router(
-          routerDelegate: _routerDelegate,
-          routeInformationParser: BeamerRouteInformationParser(
-            beamLocations: widget.beamLocations,
-          ),
-          routeInformationProvider: PlatformRouteInformationProvider(
-            initialRouteInformation: RouteInformation(
-              location: currentLocation.uri,
-            ),
-          ),
-          backButtonDispatcher: RootBackButtonDispatcher(),
-        );
+    return Router(
+      routerDelegate: _routerDelegate,
+      routeInformationParser: BeamerRouteInformationParser(),
+      routeInformationProvider: PlatformRouteInformationProvider(
+        initialRouteInformation: RouteInformation(
+          location: currentLocation.uri.toString(),
+        ),
+      ),
+      backButtonDispatcher: RootBackButtonDispatcher(),
+    );
   }
 }
 
+/// See [BeamerRouterDelegate.beamTo]
 extension BeamTo on BuildContext {
-  void beamTo(BeamLocation location, {bool beamBackOnPop = false}) {
-    Beamer.of(this).beamTo(location, beamBackOnPop: beamBackOnPop);
+  void beamTo(
+    BeamLocation location, {
+    bool beamBackOnPop = false,
+    bool stacked = true,
+  }) {
+    Beamer.of(this).beamTo(
+      location,
+      beamBackOnPop: beamBackOnPop,
+      stacked: stacked,
+    );
   }
 }
 
+/// See [BeamerRouterDelegate.beamToNamed]
+extension BeamToNamed on BuildContext {
+  void beamToNamed(
+    String uri, {
+    Map<String, dynamic> data = const <String, dynamic>{},
+    bool beamBackOnPop = false,
+    bool stacked = true,
+  }) {
+    Beamer.of(this).beamToNamed(
+      uri,
+      data: data,
+      beamBackOnPop: beamBackOnPop,
+      stacked: stacked,
+    );
+  }
+}
+
+/// See [BeamerRouterDelegate.beamBack]
 extension BeamBack on BuildContext {
   void beamBack() {
     Beamer.of(this).beamBack();
+  }
+}
+
+/// See [BeamerRouterDelegate.updateCurrentLocation]
+extension UpdateCurrentLocation on BuildContext {
+  void updateCurrentLocation({
+    String pathBlueprint,
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, String> queryParameters = const <String, String>{},
+    Map<String, dynamic> data = const <String, dynamic>{},
+    bool rewriteParameters = false,
+    bool beamBackOnPop,
+    bool stacked,
+  }) {
+    Beamer.of(this).updateCurrentLocation(
+      pathBlueprint: pathBlueprint,
+      pathParameters: pathParameters,
+      queryParameters: queryParameters,
+      data: data,
+      rewriteParameters: rewriteParameters,
+      beamBackOnPop: beamBackOnPop,
+      stacked: stacked,
+    );
   }
 }
