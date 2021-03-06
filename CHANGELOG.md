@@ -1,3 +1,12 @@
+# 0.8.2
+
+- **Add** optional `notFoundRedirect` to `BeamerRouterDelegate`
+- **Fix** parsing URIs in the form `/path/` the same as `/path`
+
+# 0.8.1+1
+
+- **Fix** README ToC links and typos
+
 # 0.8.1
 
 - **Remove** dart:io

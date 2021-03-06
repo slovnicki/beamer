@@ -7,3 +7,4 @@ export 'src/beamer_route_information_parser.dart';
 export 'src/beamer_router_delegate.dart';
 export 'src/beamer.dart';
 export 'src/beamer_provider.dart';
+export 'src/beamer_back_button_dispatcher.dart';

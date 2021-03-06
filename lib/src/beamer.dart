@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'beam_page.dart';
 import 'beam_location.dart';
+import 'beamer_back_button_dispatcher.dart';
 import 'beamer_router_delegate.dart';
 import 'beamer_route_information_parser.dart';
 import 'beamer_provider.dart';
@@ -63,7 +64,7 @@ class BeamerState extends State<Beamer> {
           location: currentLocation.uri.toString(),
         ),
       ),
-      backButtonDispatcher: RootBackButtonDispatcher(),
+      backButtonDispatcher: BeamerBackButtonDispatcher(delegate: _routerDelegate),
     );
   }
 }

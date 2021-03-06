@@ -20,26 +20,29 @@ abstract class Utils {
           beamLocation.queryParameters = uri.queryParameters;
           return beamLocation..prepare();
         }
+        final uriPathSegments = List.from(uri.pathSegments);
+        if (uriPathSegments.last == '') {
+          uriPathSegments.removeLast();
+        }
         final beamLocationPathBlueprintSegments =
             Uri.parse(pathBlueprint).pathSegments;
-        if (uri.pathSegments.length >
-            beamLocationPathBlueprintSegments.length) {
+        if (uriPathSegments.length > beamLocationPathBlueprintSegments.length) {
           continue;
         }
         var pathSegments = <String>[];
         var pathParameters = <String, String>{};
         var checksPassed = true;
-        for (var i = 0; i < uri.pathSegments.length; i++) {
-          if (uri.pathSegments[i] != beamLocationPathBlueprintSegments[i] &&
+        for (var i = 0; i < uriPathSegments.length; i++) {
+          if (uriPathSegments[i] != beamLocationPathBlueprintSegments[i] &&
               beamLocationPathBlueprintSegments[i][0] != ':') {
             checksPassed = false;
             break;
           } else if (beamLocationPathBlueprintSegments[i][0] == ':') {
             pathParameters[beamLocationPathBlueprintSegments[i].substring(1)] =
-                uri.pathSegments[i];
+                uriPathSegments[i];
             pathSegments.add(beamLocationPathBlueprintSegments[i]);
           } else {
-            pathSegments.add(uri.pathSegments[i]);
+            pathSegments.add(uriPathSegments[i]);
           }
         }
         if (checksPassed) {

@@ -1,6 +1,6 @@
 name: beamer
 description: A router that lets you navigate through guarded page stacks and URLs using the Navigator 2.0 API effortlessly.
-version: 0.8.1
+version: 0.8.2
 homepage: https://github.com/slovnicki/beamer
 repository: https://github.com/slovnicki/beamer
 
@@ -11,7 +11,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  back_button_interceptor: ^4.4.2
 
 dev_dependencies:
   flutter_test:

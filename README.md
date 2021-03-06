@@ -44,8 +44,8 @@ Handle your application routing, synchronize it with browser URL and more. Beame
   - [As a Widget](#as-a-widget)
   - [General Notes](#general-notes)
 - [Migrating](#migrating)
-  - [From 0.7 to 0.8](#from-0.7-to-0.8)
-  - [From 0.4 to 0.5](#from-0.4-to-0.5)
+  - [From 0.7 to 0.8](#from-07-to-08)
+  - [From 0.4 to 0.5](#from-04-to-05)
 - [Help and Chat](#help-and-chat)
 - [Contributing](#contributing)
 
@@ -91,7 +91,7 @@ context.beamToNamed(
 
 ## Updating
 
-Once at a `BeamLocation`, it is preferable to update the current location instead of beaming if you plan to stay at same location. For example, for going from `/books` to `/books/3` (which are both handled by `BooksLocation`);
+Once at a `BeamLocation`, it is preferable to update the current location instead of beaming if you plan to stay at the same location. For example, for going from `/books` to `/books/3` (which are both handled by `BooksLocation`);
 
 ```dart
 context.updateCurrentLocation(
@@ -332,12 +332,12 @@ class MyApp extends StatelessWidget {
 ## General Notes
 
 - When extending `BeamLocation`, two methods need to be implemented; `pathBlueprints` and `pagesBuilder`.
-  - `pagesBuilder` returns a stack of pages that will be built by `Navigator` when you beam there, and `pathBlueprints` is there for Beamer to decide which `BeamLocation` corresponds to an URL coming from browser.
+  - `pagesBuilder` returns a stack of pages that will be built by `Navigator` when you beam there, and `pathBlueprints` is there for Beamer to decide which `BeamLocation` corresponds to a URL coming from browser.
   - `BeamLocation` takes query and path parameters from URI. The `:` is necessary in `pathBlueprints` if you _might_ get path parameter from browser.
 
 - `BeamPage`'s child is an arbitrary `Widgets` that represent your app screen / page.
-  - `key` is important for `Navigator` to optimize rebuilds. This should be an unique value for "page state".
-  - `BeamPage` creates `MaterialPageRoute`, but you can extends `BeamPage` and override `createRoute` to make your own implementation instead.
+  - `key` is important for `Navigator` to optimize rebuilds. This should be a unique value for "page state".
+  - `BeamPage` creates `MaterialPageRoute`, but you can extend `BeamPage` and override `createRoute` to make your own implementation instead.
 
 # Migrating
 
