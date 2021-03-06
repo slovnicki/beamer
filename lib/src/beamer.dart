@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import 'beam_location.dart';
+import 'beamer_back_button_dispatcher.dart';
 import 'beamer_router_delegate.dart';
 import 'beamer_route_information_parser.dart';
 import 'beamer_provider.dart';
@@ -64,19 +65,6 @@ class BeamerState extends State<Beamer> {
       ),
       backButtonDispatcher: BeamerBackButtonDispatcher(delegate: _routerDelegate),
     );
-  }
-}
-class BeamerBackButtonDispatcher extends RootBackButtonDispatcher {
-  final BeamerRouterDelegate delegate;
-  BeamerBackButtonDispatcher({@required this.delegate});
-
-  @override
-  Future<bool> invokeCallback(Future<bool> defaultValue) async {
-    var canPop = await super.invokeCallback(defaultValue);
-    if (!canPop) {
-      canPop = delegate.beamBack();
-    }
-    return Future.value(canPop);
   }
 }
 /// See [BeamerRouterDelegate.beamTo]
