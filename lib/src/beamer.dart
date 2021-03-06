@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import 'beam_page.dart';
 import 'beam_location.dart';
 import 'beamer_router_delegate.dart';
 import 'beamer_route_information_parser.dart';
@@ -101,11 +102,6 @@ extension BeamerExtensions on BuildContext {
     Beamer.of(this).beamBack();
   }
 
-  /// See [BeamerRouterDelegate.canBeamBack]
-  bool get canBeamBack {
-    return Beamer.of(this).canBeamBack;
-  }
-
   /// See [BeamerRouterDelegate.updateCurrentLocation]
   void updateCurrentLocation({
     String pathBlueprint,
@@ -125,5 +121,25 @@ extension BeamerExtensions on BuildContext {
       beamBackOnPop: beamBackOnPop,
       stacked: stacked,
     );
+  }
+
+  /// See [BeamerRouterDelegate.currentLocation]
+  BeamLocation get currentBeamLocation {
+    return Beamer.of(this).currentLocation;
+  }
+
+  /// See [BeamerRouterDelegate.currentPages]
+  List<BeamPage> get currentBeamPages {
+    return Beamer.of(this).currentPages;
+  }
+
+  /// See [BeamerRouterDelegate.canBeamBack]
+  bool get canBeamBack {
+    return Beamer.of(this).canBeamBack;
+  }
+
+  /// See [BeamerRouterDelegate.beamBackLocation]
+  BeamLocation get beamBackLocation {
+    return Beamer.of(this).beamBackLocation;
   }
 }
