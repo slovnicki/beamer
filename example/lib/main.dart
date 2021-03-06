@@ -133,11 +133,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var routerDelegate = BeamerRouterDelegate(
+      beamLocations: beamLocations,
+    );
     return MaterialApp.router(
-      routerDelegate: BeamerRouterDelegate(
-        beamLocations: beamLocations,
-      ),
+      routerDelegate: routerDelegate,
       routeInformationParser: BeamerRouteInformationParser(),
+      backButtonDispatcher:
+          BeamerBackButtonDispatcher(delegate: routerDelegate),
     );
   }
 }
