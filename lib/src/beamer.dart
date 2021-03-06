@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import 'beam_page.dart';
 import 'beam_location.dart';
 import 'beamer_back_button_dispatcher.dart';
 import 'beamer_router_delegate.dart';
@@ -67,8 +68,9 @@ class BeamerState extends State<Beamer> {
     );
   }
 }
-/// See [BeamerRouterDelegate.beamTo]
-extension BeamTo on BuildContext {
+
+extension BeamerExtensions on BuildContext {
+  /// See [BeamerRouterDelegate.beamTo]
   void beamTo(
     BeamLocation location, {
     bool beamBackOnPop = false,
@@ -80,10 +82,8 @@ extension BeamTo on BuildContext {
       stacked: stacked,
     );
   }
-}
 
-/// See [BeamerRouterDelegate.beamToNamed]
-extension BeamToNamed on BuildContext {
+  /// See [BeamerRouterDelegate.beamToNamed]
   void beamToNamed(
     String uri, {
     Map<String, dynamic> data = const <String, dynamic>{},
@@ -97,17 +97,11 @@ extension BeamToNamed on BuildContext {
       stacked: stacked,
     );
   }
-}
 
-/// See [BeamerRouterDelegate.beamBack]
-extension BeamBack on BuildContext {
-  void beamBack() {
-    Beamer.of(this).beamBack();
-  }
-}
+  /// See [BeamerRouterDelegate.beamBack]
+  void beamBack() => Beamer.of(this).beamBack();
 
-/// See [BeamerRouterDelegate.updateCurrentLocation]
-extension UpdateCurrentLocation on BuildContext {
+  /// See [BeamerRouterDelegate.updateCurrentLocation]
   void updateCurrentLocation({
     String pathBlueprint,
     Map<String, String> pathParameters = const <String, String>{},
@@ -127,4 +121,16 @@ extension UpdateCurrentLocation on BuildContext {
       stacked: stacked,
     );
   }
+
+  /// See [BeamerRouterDelegate.currentLocation]
+  BeamLocation get currentBeamLocation => Beamer.of(this).currentLocation;
+
+  /// See [BeamerRouterDelegate.currentPages]
+  List<BeamPage> get currentBeamPages => Beamer.of(this).currentPages;
+
+  /// See [BeamerRouterDelegate.canBeamBack]
+  bool get canBeamBack => Beamer.of(this).canBeamBack;
+
+  /// See [BeamerRouterDelegate.beamBackLocation]
+  BeamLocation get beamBackLocation => Beamer.of(this).beamBackLocation;
 }
