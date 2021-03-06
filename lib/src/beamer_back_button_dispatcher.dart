@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'beamer_router_delegate.dart';
 
+/// Overrides default back button behavior in [RootBackButtonDispatcher] 
+/// to do [BeamerRouterDelegate.beamBack] when possible.
 class BeamerBackButtonDispatcher extends RootBackButtonDispatcher {
   final BeamerRouterDelegate delegate;
   BeamerBackButtonDispatcher({@required this.delegate});
