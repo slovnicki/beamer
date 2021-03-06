@@ -272,8 +272,4 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     return null;
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }
