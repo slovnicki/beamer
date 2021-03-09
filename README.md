@@ -80,7 +80,7 @@ context.beamTo(
 
 You can think of it as _teleporting_ (_beaming_) to another place in your app. Similar to `Navigator.of(context).pushReplacementNamed('/my-route')`, but Beamer is not limited to a single page, nor to a push _per se_. You can define an arbitrary stack of pages that gets build when you beam there. Using Beamer can feel like using many of `Navigator`'s `push/pop` methods at once.
 
-You can carry an arbitrary key/value data in a location. This can be accessed from every page and updated as you travel through a location.
+You can carry an arbitrary key/value `data` in a location. This can be accessed from every page and updated as you travel through a location.
 
 ```dart
 context.beamToNamed(
@@ -91,7 +91,7 @@ context.beamToNamed(
 
 ## Updating
 
-Once at a `BeamLocation`, it is preferable to update the current location instead of beaming if you plan to stay at the same location. For example, for going from `/books` to `/books/3` (which are both handled by `BooksLocation`);
+Once at a `BeamLocation`, it is preferable to update the current location instead of adding it to the `beamHistory` if you plan to stay at the same location. For example, for going from `/books` to `/books/3` (which are both handled by `BooksLocation`);
 
 ```dart
 context.updateCurrentLocation(
@@ -100,17 +100,21 @@ context.updateCurrentLocation(
 );
 ```
 
-If unsure what is your current location; `Beamer.of(context).currentLocation`.
+**Note** that both beaming functions (`beamTo` and `BeamToNamed`) will implicitly do this for you when you try to beam to a location which you're currently on. You can turn that off by setting `BeamerRouterDelegate.preferUpdate` to `false`.
+
+If unsure what is your current location; `context.currentBeamLocation`.
 
 ## Beaming Back
 
-All `BeamLocation`s act as a kind of sub-routers and keep their state. Therefore, there is an ability to _beam back_ to the previous location. For example, after spending some time on `/books` and `/books/3`, say you beam to `/articles` which is handled by another `BeamLocation` (e.g. `ArticlesLocation`). From there, you can get back to your previous location as it were when you left, i.e. `/books/3`;
+All `BeamLocation`s that you visited are kept in `beamHistory`. Therefore, there is an ability to _beam back_ to the previous location. For example, after spending some time on `/books` and `/books/3`, say you beam to `/articles` which is handled by another `BeamLocation` (e.g. `ArticlesLocation`). From there, you can get back to your previous location as it were when you left, i.e. `/books/3`;
 
 ```dart
 context.beamBack();
 ```
 
-You can check whether you can beam back with `Beamer.of(context).canBeamBack` or even inspect the location you'll be beaming back to: `Beamer.of(context).beamBackLocation`.
+**Note** that Beamer will remove duplicate locations from `beamHistory` as you go. For example, if you visit `BooksLocation`, `ArticlesLocation` and then `BooksLocation` again, the first instance of `BooksLocation` will be removed from history and `beamHistory` will be `[ArticlesLocation,BooksLocation]` instead of `[BooksLocation,ArticlesLocation,BooksLocation]`. You can turn that off by setting `BeamerRouterDelegate.removeDuplicateHistory` to `false`.
+
+You can check whether you can beam back with `context.canBeamBack` or even inspect the location you'll be beaming back to: `context.beamBackLocation`.
 
 ---
 
@@ -290,17 +294,19 @@ Here you use the Beamer implementation of those - `BeamerRouterDelegate` and `Be
 
 ```dart
 class MyApp extends StatelessWidget {
+  final routerDelegate = BeamerRouterDelegate(
+    beamLocations: [
+      HomeLocation(),
+      BooksLocation(),
+    ],
+  );
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routerDelegate: BeamerRouterDelegate(
-        beamLocations: [
-          HomeLocation(),
-          BooksLocation(),
-        ],
-      ),
+      routerDelegate: routerDelegate,
       routeInformationParser: BeamerRouteInformationParser(),
-      ...
+      backButtonDispatcher:
+          BeamerBackButtonDispatcher(delegate: routerDelegate),
     );
   }
 }

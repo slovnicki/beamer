@@ -125,17 +125,14 @@ class BooksLocation extends BeamLocation {
 
 // APP
 class MyApp extends StatelessWidget {
-  final BeamLocation initialLocation = HomeLocation();
-  final List<BeamLocation> beamLocations = [
-    HomeLocation(),
-    BooksLocation(),
-  ];
-
+  final routerDelegate = BeamerRouterDelegate(
+    beamLocations: [
+      HomeLocation(),
+      BooksLocation(),
+    ],
+  );
   @override
   Widget build(BuildContext context) {
-    var routerDelegate = BeamerRouterDelegate(
-      beamLocations: beamLocations,
-    );
     return MaterialApp.router(
       routerDelegate: routerDelegate,
       routeInformationParser: BeamerRouteInformationParser(),
