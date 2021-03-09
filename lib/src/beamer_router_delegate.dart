@@ -9,16 +9,25 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<Uri> {
   BeamerRouterDelegate({
     @required this.beamLocations,
+    this.preferUpdate = true,
     BeamPage notFoundPage,
     this.notFoundRedirect,
     this.guards = const <BeamGuard>[],
     this.navigatorObservers = const <NavigatorObserver>[],
   })  : _navigatorKey = GlobalKey<NavigatorState>(),
         _currentLocation = beamLocations[0]..prepare(),
-        notFoundPage = notFoundPage ?? BeamPage(child: Container());
+        notFoundPage = notFoundPage ?? BeamPage(child: Container()) {
+    _beamHistory.add(_currentLocation);
+  }
 
   /// List of all [BeamLocation]s that this router handles.
   final List<BeamLocation> beamLocations;
+
+  /// Whether to prefer updating [currentLocation] if it's of the same type
+  /// as the location being beamed to, instead of adding it to [beamHistory].
+  ///
+  /// See how this is used at [beamTo] implementation.
+  final bool preferUpdate;
 
   /// Page to show when no [BeamLocation] supports the incoming URI.
   final BeamPage notFoundPage;
@@ -93,6 +102,9 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   }) {
     _beamBackOnPop = beamBackOnPop;
     _stacked = stacked;
+    if (preferUpdate && location.runtimeType == _currentLocation.runtimeType) {
+      _beamHistory.removeLast();
+    }
     _beamHistory.add(location..prepare());
     _currentLocation = _beamHistory.last;
     notifyListeners();

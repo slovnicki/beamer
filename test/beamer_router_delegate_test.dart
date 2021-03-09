@@ -22,7 +22,7 @@ void main() {
       expect(router.currentLocation, location2);
     });
 
-    test('beamToNamed changes locations with correct parameters', () {
+    test('beamToNamed updates locations with correct parameters', () {
       router.beamToNamed('/l2/1?q=t', data: {'x': 'y'});
       expect(router.currentLocation, location2);
       expect(location2.pathParameters.containsKey('id'), true);
@@ -32,23 +32,30 @@ void main() {
       expect(location2.data, {'x': 'y'});
     });
 
+    test(
+        'beaming to the same location type will not add it to history but will update current location',
+        () {
+      final historyLength = router.beamHistory.length;
+      router.beamToNamed('/l2/2?q=t&r=s', data: {'x': 'z'});
+      expect(router.beamHistory.length, historyLength);
+      expect(router.currentLocation.pathParameters.containsKey('id'), true);
+      expect(router.currentLocation.pathParameters['id'], '2');
+      expect(router.currentLocation.queryParameters.containsKey('q'), true);
+      expect(router.currentLocation.queryParameters['q'], 't');
+      expect(router.currentLocation.queryParameters.containsKey('r'), true);
+      expect(router.currentLocation.queryParameters['r'], 's');
+      expect(router.currentLocation.data, {'x': 'z'});
+    });
+
     test('beamBack leads to previous location and all helpers are correct', () {
       expect(router.canBeamBack, true);
-      expect(router.beamBackLocation, isA<Location2>());
-      bool success = router.beamBack();
-      expect(success, true);
-      expect(router.currentLocation, location2);
-
-      expect(router.canBeamBack, true);
       expect(router.beamBackLocation, isA<Location1>());
-      success = router.beamBack();
-      expect(success, true);
+      expect(router.beamBack(), true);
       expect(router.currentLocation, location1);
 
       expect(router.canBeamBack, false);
       expect(router.beamBackLocation, null);
-      success = router.beamBack();
-      expect(success, false);
+      expect(router.beamBack(), false);
       expect(router.currentLocation, location1);
     });
   });
