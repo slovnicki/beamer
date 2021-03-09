@@ -64,7 +64,8 @@ class BeamerState extends State<Beamer> {
           location: currentLocation.uri.toString(),
         ),
       ),
-      backButtonDispatcher: BeamerBackButtonDispatcher(delegate: _routerDelegate),
+      backButtonDispatcher:
+          BeamerBackButtonDispatcher(delegate: _routerDelegate),
     );
   }
 }
