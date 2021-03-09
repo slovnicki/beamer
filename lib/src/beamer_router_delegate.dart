@@ -119,7 +119,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   }) {
     final location = Utils.chooseBeamLocation(Uri.parse(uri), beamLocations);
     location.data = data;
-    beamTo(location, beamBackOnPop: beamBackOnPop);
+    beamTo(location, beamBackOnPop: beamBackOnPop, stacked: stacked);
   }
 
   /// Whether it is possible to [beamBack],
@@ -259,5 +259,4 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     }
     return null;
   }
-
 }
