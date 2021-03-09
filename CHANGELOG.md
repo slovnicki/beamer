@@ -1,3 +1,7 @@
+# 0.9.0+1
+
+- **Fix** formatting
+
 # 0.9.0
 
 - **Add** removing duplicates in `beamHistory` + `BeamerRouterDelegate.removeDuplicateHistory`
