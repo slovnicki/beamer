@@ -1,3 +1,10 @@
+# 0.9.0
+
+- **Add** removing duplicates in `beamHistory` + `BeamerRouterDelegate.removeDuplicateHistory`
+- **Add** implicit updates of current location + `BeamerRouterDelegate.preferUpdate`
+- **Add** more Beamer extensions to `BuildContext`
+- **Remove** the need for `back_button_interceptor` package (not that it's not good, but we realized it can be implemented more naturally)
+
 # 0.8.2
 
 - **Add** optional `notFoundRedirect` to `BeamerRouterDelegate`
