@@ -10,6 +10,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   BeamerRouterDelegate({
     @required this.beamLocations,
     this.preferUpdate = true,
+    this.removeDuplicateHistory = true,
     BeamPage notFoundPage,
     this.notFoundRedirect,
     this.guards = const <BeamGuard>[],
@@ -28,6 +29,12 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   ///
   /// See how this is used at [beamTo] implementation.
   final bool preferUpdate;
+
+  /// Whether to remove locations from history if they are the same type
+  /// as the location beaing beamed to.
+  ///
+  /// See how this is used at [beamTo] implementation.
+  final bool removeDuplicateHistory;
 
   /// Page to show when no [BeamLocation] supports the incoming URI.
   final BeamPage notFoundPage;
@@ -104,6 +111,9 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     _stacked = stacked;
     if (preferUpdate && location.runtimeType == _currentLocation.runtimeType) {
       _beamHistory.removeLast();
+    }
+    if (removeDuplicateHistory) {
+      _beamHistory.removeWhere((l) => l.runtimeType == location.runtimeType);
     }
     _beamHistory.add(location..prepare());
     _currentLocation = _beamHistory.last;

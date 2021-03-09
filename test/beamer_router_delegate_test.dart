@@ -58,6 +58,17 @@ void main() {
       expect(router.beamBack(), false);
       expect(router.currentLocation, location1);
     });
+
+    test('duplicate locations are removed from history', () {
+      expect(router.beamHistory.length, 1);
+      expect(router.beamHistory[0], isA<Location1>());
+      router.beamToNamed('/l2');
+      expect(router.beamHistory.length, 2);
+      expect(router.beamHistory[0], isA<Location1>());
+      router.beamToNamed('/l1');
+      expect(router.beamHistory.length, 2);
+      expect(router.beamHistory[0], isA<Location2>());
+    });
   });
 
   test('stacked beam takes just last page for currentPages', () {
