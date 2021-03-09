@@ -1,25 +1,46 @@
 import 'package:beamer/beamer.dart';
+import 'package:beamer/src/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 /// A delegate that is used by the [Router] widget
 /// to build and configure a navigating widget.
-class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
-    with ChangeNotifier, PopNavigatorRouterDelegateMixin<BeamLocation> {
+class BeamerRouterDelegate extends RouterDelegate<Uri>
+    with ChangeNotifier, PopNavigatorRouterDelegateMixin<Uri> {
   BeamerRouterDelegate({
-    required BeamLocation initialLocation,
+    required this.beamLocations,
+    this.preferUpdate = true,
+    this.removeDuplicateHistory = true,
     BeamPage? notFoundPage,
+    this.notFoundRedirect,
     this.guards = const <BeamGuard>[],
     this.navigatorObservers = const <NavigatorObserver>[],
   })  : _navigatorKey = GlobalKey<NavigatorState>(),
+        _currentLocation = beamLocations[0]..prepare(),
         notFoundPage = notFoundPage ?? BeamPage(child: Container()) {
-    _beamHistory.add(initialLocation..prepare());
-    _currentLocation = _beamHistory[0];
-    _currentPages = _currentLocation.pages;
+    _beamHistory.add(_currentLocation);
   }
+
+  /// List of all [BeamLocation]s that this router handles.
+  final List<BeamLocation> beamLocations;
+
+  /// Whether to prefer updating [currentLocation] if it's of the same type
+  /// as the location being beamed to, instead of adding it to [beamHistory].
+  ///
+  /// See how this is used at [beamTo] implementation.
+  final bool preferUpdate;
+
+  /// Whether to remove locations from history if they are the same type
+  /// as the location beaing beamed to.
+  ///
+  /// See how this is used at [beamTo] implementation.
+  final bool removeDuplicateHistory;
 
   /// Page to show when no [BeamLocation] supports the incoming URI.
   final BeamPage notFoundPage;
+
+  /// [BeamLocation] to redirect to when no [BeamLocation] supports the incoming URI.
+  final BeamLocation? notFoundRedirect;
 
   /// Guards that will be executing [check] on [currentLocation] candidate.
   ///
@@ -41,8 +62,6 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   late BeamLocation _currentLocation;
 
   /// Access the current [BeamLocation].
-  ///
-  /// The same thing as [currentConfiguration], but with more familiar name.
   ///
   /// Can be useful in:
   ///
@@ -68,22 +87,71 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   /// Whether to implicitly [beamBack] instead of default pop
   bool _beamBackOnPop = false;
 
+  /// Whether all the pages from location are stacked.
+  /// If not (`false`), just the last page is taken.
+  bool _stacked = true;
+
   /// Beams to `location`.
   ///
   /// Specifically,
   ///
   /// 1. adds the prepared `location` to [beamHistory]
-  /// 2. updates [currentLocation] and [currentPages]
+  /// 2. updates [currentLocation]
   /// 3. notifies that the [Navigator] should be rebuilt
   ///
-  /// if `beamBackOnPop` is set to `true`, default pop action on the newly
+  /// If `beamBackOnPop` is set to `true`, default pop action on the newly
   /// beamed location will triger `beamBack` instead.
-  void beamTo(BeamLocation location, {bool beamBackOnPop = false}) {
+  /// If `stacked` is set to `false`, only the location's last page will be shown.
+  void beamTo(
+    BeamLocation location, {
+    bool beamBackOnPop = false,
+    bool stacked = true,
+  }) {
     _beamBackOnPop = beamBackOnPop;
+    _stacked = stacked;
+    if (preferUpdate && location.runtimeType == _currentLocation.runtimeType) {
+      _beamHistory.removeLast();
+    }
+    if (removeDuplicateHistory) {
+      _beamHistory.removeWhere((l) => l.runtimeType == location.runtimeType);
+    }
     _beamHistory.add(location..prepare());
-    _updateCurrent();
+    _currentLocation = _beamHistory.last;
     notifyListeners();
   }
+
+  /// Beams to [BeamLocation] that handles `uri`. See [beamTo].
+  ///
+  /// For example
+  ///
+  /// ```dart
+  /// Beamer.of(context).beamToNamed(
+  ///   '/user/1/transactions?perPage=10',
+  ///   data: {'beenHereBefore': true},
+  /// );
+  /// ```
+  ///
+  /// `data` can be used to pass any data throught the location.
+  /// See [BeamLocation.data].
+  void beamToNamed(
+    String uri, {
+    Map<String, dynamic> data = const <String, dynamic>{},
+    bool beamBackOnPop = false,
+    bool stacked = true,
+  }) {
+    final location = Utils.chooseBeamLocation(Uri.parse(uri), beamLocations);
+    location.data = data;
+    beamTo(location, beamBackOnPop: beamBackOnPop, stacked: stacked);
+  }
+
+  /// Whether it is possible to [beamBack],
+  /// i.e. there is more than 1 location in [beamHistory].
+  bool get canBeamBack => _beamHistory.length > 1;
+
+  /// What is the location to which [beamBack] will lead.
+  /// If there is none, returns null.
+  BeamLocation? get beamBackLocation =>
+      canBeamBack ? _beamHistory[_beamHistory.length - 2] : null;
 
   /// Beams to previous location in [beamHistory]
   /// and **removes** the last location from history.
@@ -93,11 +161,12 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   /// Returns the success, whether the [currentLocation] was changed.
   bool beamBack() {
     _beamBackOnPop = false;
-    if (_beamHistory.length == 1) {
+    _stacked = true;
+    if (!canBeamBack) {
       return false;
     }
     _beamHistory.removeLast();
-    _updateCurrent();
+    _currentLocation = _beamHistory.last;
     notifyListeners();
     return true;
   }
@@ -106,15 +175,19 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   ///
   /// See [BeamLocation.update] for details.
   ///
-  /// Note that [_beamBackOnPop] will be reset to `false`.
+  /// If `beamBackOnPop` is not specified, [_beamBackOnPop] will be reset to `false`.
+  /// If `stacked` is not specified, [_stacked] will remain as it was.
   void updateCurrentLocation({
     String? pathBlueprint,
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, String> queryParameters = const <String, String>{},
     Map<String, dynamic> data = const <String, dynamic>{},
     bool rewriteParameters = false,
+    bool? beamBackOnPop,
+    bool? stacked,
   }) {
-    _beamBackOnPop = false;
+    _beamBackOnPop = beamBackOnPop ?? false;
+    _stacked = stacked ?? _stacked;
     _currentLocation.update(
       pathBlueprint: pathBlueprint,
       pathParameters: pathParameters,
@@ -123,12 +196,11 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
       rewriteParameters: rewriteParameters,
     );
     _currentLocation.prepare();
-    _currentPages = _currentLocation.pages;
     notifyListeners();
   }
 
   @override
-  BeamLocation get currentConfiguration => _currentLocation;
+  Uri get currentConfiguration => _currentLocation.uri;
 
   @override
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
@@ -137,44 +209,49 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
   Widget build(BuildContext context) {
     final BeamGuard? guard = _guardCheck(context, _currentLocation);
     if (guard?.beamTo != null) {
-      beamTo(guard!.beamTo!(context));
+      _beamHistory.add(guard!.beamTo!(context)..prepare());
+      _currentLocation = _beamHistory.last;
+    } else if ((_currentLocation is NotFound) && notFoundRedirect != null) {
+      _currentLocation = notFoundRedirect!..prepare();
     }
-    final navigator = Navigator(
-      key: navigatorKey,
-      observers: navigatorObservers,
-      pages: _currentLocation is NotFound
-          ? [notFoundPage]
-          : guard == null || guard.beamTo != null
-              ? _currentPages!
-              : [guard.showPage!],
-      onPopPage: (route, result) {
-        if (!route.didPop(result)) {
-          return false;
-        }
-        if (_beamBackOnPop) {
-          beamBack();
-          _beamBackOnPop = false;
-        } else {
-          final lastPage = _currentPages!.removeLast();
-          if (lastPage is BeamPage) {
-            _handlePop(lastPage);
-          }
-        }
-        return true;
+    final navigator = Builder(
+      builder: (context) {
+        _currentPages = _stacked
+            ? _currentLocation.pagesBuilder(context)
+            : [_currentLocation.pagesBuilder(context).last];
+        return Navigator(
+          key: navigatorKey,
+          observers: navigatorObservers,
+          pages: _currentLocation is NotFound
+              ? [notFoundPage]
+              : guard == null || guard.beamTo != null
+                  ? _currentPages!
+                  : [guard.showPage!],
+          onPopPage: (route, result) {
+            if (!route.didPop(result)) {
+              return false;
+            }
+            if (_beamBackOnPop) {
+              beamBack();
+              _beamBackOnPop = false;
+            } else {
+              final lastPage = _currentPages!.removeLast();
+              if (lastPage is BeamPage) {
+                _handlePop(lastPage);
+              }
+            }
+            return true;
+          },
+        );
       },
     );
     return _currentLocation.builder(context, navigator);
   }
 
   @override
-  SynchronousFuture<void> setNewRoutePath(BeamLocation location) {
-    beamTo(location);
+  SynchronousFuture<void> setNewRoutePath(Uri uri) {
+    beamTo(Utils.chooseBeamLocation(uri, beamLocations));
     return SynchronousFuture(null);
-  }
-
-  void _updateCurrent() {
-    _currentLocation = _beamHistory.last;
-    _currentPages = _currentLocation.pages;
   }
 
   void _handlePop(BeamPage page) {
@@ -186,18 +263,19 @@ class BeamerRouterDelegate extends RouterDelegate<BeamLocation>
       _currentLocation.queryParameters = {};
     }
     _currentLocation.prepare();
-    _currentPages = _currentLocation.pages;
     notifyListeners();
   }
 
   BeamGuard? _guardCheck(BuildContext context, BeamLocation location) {
     for (var guard in guards) {
       if (guard.shouldGuard(location) && !guard.check(context, location)) {
+        guard.onCheckFailed?.call(context, location);
         return guard;
       }
     }
     for (var guard in location.guards) {
       if (guard.shouldGuard(location) && !guard.check(context, location)) {
+        guard.onCheckFailed?.call(context, location);
         return guard;
       }
     }

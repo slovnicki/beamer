@@ -30,8 +30,7 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Center(
         child: ElevatedButton(
-          onPressed: () =>
-              context.beamTo(BooksLocation(pathBlueprint: '/books')),
+          onPressed: () => context.beamToNamed('/books'),
           child: Text('Beam to books location'),
         ),
       ),
@@ -55,7 +54,7 @@ class BooksScreen extends StatelessWidget {
             .map((book) => ListTile(
                   title: Text(book['title']!),
                   subtitle: Text(book['author']!),
-                  onTap: () => Beamer.of(context).updateCurrentLocation(
+                  onTap: () => context.updateCurrentLocation(
                     pathBlueprint: '/books/:bookId',
                     pathParameters: {'bookId': book['id']!},
                   ),
@@ -94,7 +93,7 @@ class HomeLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/'];
 
   @override
-  List<BeamPage> get pages => [
+  List<BeamPage> pagesBuilder(BuildContext? context) => [
         BeamPage(
           key: ValueKey('home'),
           child: HomeScreen(),
@@ -103,20 +102,12 @@ class HomeLocation extends BeamLocation {
 }
 
 class BooksLocation extends BeamLocation {
-  BooksLocation({
-    String? pathBlueprint,
-    Map<String, String>? pathParameters,
-  }) : super(
-          pathBlueprint: pathBlueprint,
-          pathParameters: pathParameters,
-        );
-
   @override
   List<String> get pathBlueprints => ['/books/:bookId'];
 
   @override
-  List<BeamPage> get pages => [
-        ...HomeLocation().pages,
+  List<BeamPage> pagesBuilder(BuildContext? context) => [
+        ...HomeLocation().pagesBuilder(context),
         if (pathSegments.contains('books'))
           BeamPage(
             key: ValueKey('books-${queryParameters['title'] ?? ''}'),
@@ -134,21 +125,19 @@ class BooksLocation extends BeamLocation {
 
 // APP
 class MyApp extends StatelessWidget {
-  final BeamLocation initialLocation = HomeLocation();
-  final List<BeamLocation> beamLocations = [
-    HomeLocation(),
-    BooksLocation(),
-  ];
-
+  final routerDelegate = BeamerRouterDelegate(
+    beamLocations: [
+      HomeLocation(),
+      BooksLocation(),
+    ],
+  );
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routerDelegate: BeamerRouterDelegate(
-        initialLocation: initialLocation,
-      ),
-      routeInformationParser: BeamerRouteInformationParser(
-        beamLocations: beamLocations,
-      ),
+      routerDelegate: routerDelegate,
+      routeInformationParser: BeamerRouteInformationParser(),
+      backButtonDispatcher:
+          BeamerBackButtonDispatcher(delegate: routerDelegate),
     );
   }
 }

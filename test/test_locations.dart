@@ -15,7 +15,7 @@ class Location1 extends BeamLocation {
         );
 
   @override
-  List<BeamPage> get pages => [
+  List<BeamPage> pagesBuilder(BuildContext? context) => [
         BeamPage(
           key: ValueKey('l1'),
           child: Container(),
@@ -50,7 +50,7 @@ class Location2 extends BeamLocation {
         );
 
   @override
-  List<BeamPage> get pages => [
+  List<BeamPage> pagesBuilder(BuildContext? context) => [
         BeamPage(
           key: ValueKey('l2'),
           child: Container(),

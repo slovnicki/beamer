@@ -9,7 +9,7 @@ void main() {
       location2.pathParameters = {'id': '42'};
       location2.queryParameters = {'q': 'xxx'};
       location2.prepare();
-      expect(location2.uri, '/l2/42?q=xxx');
+      expect(location2.uri.toString(), '/l2/42?q=xxx');
     });
 
     test('BeamLocation can create valid URI while using named constructor', () {
@@ -19,7 +19,7 @@ void main() {
         queryParameters: {'q': 'xxx'},
       );
       location2WithParameters.prepare();
-      expect(location2WithParameters.uri, '/l2/42?q=xxx');
+      expect(location2WithParameters.uri.toString(), '/l2/42?q=xxx');
     });
   });
 }

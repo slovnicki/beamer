@@ -1,3 +1,22 @@
+# 1.0.0-nullsafety.1
+
+This is a merge of `v0.9.0` into `v1.0.0-nullsafety.0` so changes can also be seen [here](https://pub.dev/packages/beamer/changelog) at in-between versions: `v0.8.0`, `v0.8.1`, `v0.8.1+1`, `v0.8.2`.
+
+- **BREAKING:** `BeamLocation.pages` is now `BeamLocation.pagesBuilder`
+- **BREAKING:** `BeamerRouterDelegate` now takes `beamLocations` and `BeamerRouteInformationParser` nothing
+- **NEW FEATURE:** `beamToNamed`
+- **NEW FEATURE:** `canBeamBack` and `beamBackLocation` helpers
+- **NEW FEATURE:** removing duplicates in `beamHistory` + `BeamerRouterDelegate.removeDuplicateHistory`
+- **NEW FEATURE:** implicit updates of current location + `BeamerRouterDelegate.preferUpdate`
+- **Add** `BeamGuard.onCheckFailed`
+- **Add** more Beamer extensions to `BuildContext`
+- **Add** optional `notFoundRedirect` to `BeamerRouterDelegate`
+- **Add** `stacked` parameter for beaming
+- **Add** more details to README: Key Concepts
+- **Add** invite to Discord community for beamer help/discussion/chat
+- **Fix** parsing URIs in the form `/path/` the same as `/path`
+- **Fix** README ToC links and typos
+
 # 1.0.0-nullsafety.0
 
 - **BREAKING:** migrate to nullsafety

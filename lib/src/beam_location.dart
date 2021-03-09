@@ -27,14 +27,14 @@ abstract class BeamLocation {
   ///
   /// ```dart
   /// @override
-  /// Widget builder(BuildContext context, Navigator navigator) {
+  /// Widget builder(BuildContext context, Widget navigator) {
   ///   return MyProvider<MyObject>(
   ///     create: (context) => MyObject(),
   ///     child: navigator,
   ///   );
   /// }
   /// ```
-  Widget builder(BuildContext context, Navigator navigator) => navigator;
+  Widget builder(BuildContext context, Widget navigator) => navigator;
 
   /// Represents the "form" of URI paths supported by this [BeamLocation].
   ///
@@ -48,9 +48,12 @@ abstract class BeamLocation {
   /// For example: '/books/:id'.
   List<String> get pathBlueprints;
 
-  /// The list of pages to be built by the [Navigator] when this [BeamLocation]
-  /// is beamed to or internally inferred.
-  List<BeamPage> get pages;
+  /// Creates and returns the list of pages to be built by the [Navigator]
+  /// when this [BeamLocation] is beamed to or internally inferred.
+  ///
+  /// `context` can be useful while building the pages.
+  /// It will also contain anything injected via [builder].
+  List<BeamPage> pagesBuilder(BuildContext? context);
 
   /// Guards that will be executing [check] when this gets beamed to.
   ///
@@ -84,7 +87,7 @@ abstract class BeamLocation {
   Map<String, dynamic> data;
 
   /// Complete URI of this [BeamLocation], with path and query parameters.
-  String get uri => _path + _query;
+  Uri get uri => Uri.parse(_path + _query);
 
   late String _path;
   late String _query;
@@ -164,7 +167,7 @@ class NotFound extends BeamLocation {
   }) : super(pathBlueprint: path);
 
   @override
-  List<BeamPage> get pages => [];
+  List<BeamPage> pagesBuilder(BuildContext? context) => [];
 
   @override
   List<String> get pathBlueprints => [''];
