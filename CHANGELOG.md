@@ -1,3 +1,7 @@
+# 1.0.0-nullsafety.2
+
+- **Fix** removing the last empty path segment when it's the only one
+
 # 1.0.0-nullsafety.1
 
 This is a merge of `v0.9.0` into `v1.0.0-nullsafety.0` so changes can also be seen [here](https://pub.dev/packages/beamer/changelog) at in-between versions: `v0.8.0`, `v0.8.1`, `v0.8.1+1`, `v0.8.2`.
