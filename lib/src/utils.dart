@@ -21,7 +21,7 @@ abstract class Utils {
           return beamLocation..prepare();
         }
         final uriPathSegments = List.from(uri.pathSegments);
-        if (uriPathSegments.last == '') {
+        if (uriPathSegments.length > 1 && uriPathSegments.last == '') {
           uriPathSegments.removeLast();
         }
         final beamLocationPathBlueprintSegments =
