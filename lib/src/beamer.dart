@@ -13,8 +13,7 @@ class Beamer extends StatefulWidget {
     Key? key,
     required this.beamLocations,
     this.routerDelegate,
-  })  : assert(beamLocations != null),
-        super(key: key);
+  }) : super(key: key);
 
   // TODO give this to delegate also, to enable beamToNamed later on
   /// [BeamLocation]s that this Beamer handles.
