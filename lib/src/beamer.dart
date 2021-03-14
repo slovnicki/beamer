@@ -4,7 +4,6 @@ import 'beam_page.dart';
 import 'beam_location.dart';
 import 'beamer_back_button_dispatcher.dart';
 import 'beamer_router_delegate.dart';
-import 'beamer_route_information_parser.dart';
 import 'beamer_provider.dart';
 
 /// Central place for creating, accessing and modifying a Router subtree.
@@ -16,7 +15,6 @@ class Beamer extends StatefulWidget {
   })  : assert(beamLocations != null),
         super(key: key);
 
-  // TODO give this to delegate also, to enable beamToNamed later on
   /// [BeamLocation]s that this Beamer handles.
   final List<BeamLocation> beamLocations;
 
@@ -42,6 +40,7 @@ class Beamer extends StatefulWidget {
 }
 
 class BeamerState extends State<Beamer> {
+  RootRouterDelegate _rootRouterDelegate;
   BeamerRouterDelegate _routerDelegate;
 
   BeamerRouterDelegate get routerDelegate => _routerDelegate;
@@ -55,15 +54,21 @@ class BeamerState extends State<Beamer> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    try {
+      _rootRouterDelegate = Router.of(context).routerDelegate;
+      _routerDelegate.navigationNotifier =
+          _rootRouterDelegate.navigationNotifier;
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Router(
       routerDelegate: _routerDelegate,
-      routeInformationParser: BeamerRouteInformationParser(),
-      routeInformationProvider: PlatformRouteInformationProvider(
-        initialRouteInformation: RouteInformation(
-          location: currentLocation.uri.toString(),
-        ),
-      ),
       backButtonDispatcher:
           BeamerBackButtonDispatcher(delegate: _routerDelegate),
     );

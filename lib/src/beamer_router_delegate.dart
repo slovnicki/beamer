@@ -3,6 +3,24 @@ import 'package:beamer/src/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
+/// A notifier for communication between
+/// [RootRouterDelegate] and [BeamerRouterDelegate].
+///
+/// Gets created and kept in [RootRouterDelegate].
+class NavigationNotifier extends ChangeNotifier {
+  Uri _uri;
+  Uri get uri => _uri;
+  set uri(Uri uri) {
+    _uri = uri;
+    notifyListeners();
+  }
+
+  BeamLocation _currentLocation;
+  BeamLocation get currentLocation => _currentLocation;
+  set currentLocation(BeamLocation curentLocation) =>
+      _currentLocation = currentLocation;
+}
+
 /// A delegate that is used by the [Router] widget
 /// to build and configure a navigating widget.
 class BeamerRouterDelegate extends RouterDelegate<Uri>
@@ -19,6 +37,18 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
         _currentLocation = beamLocations[0]..prepare(),
         notFoundPage = notFoundPage ?? BeamPage(child: Container()) {
     _beamHistory.add(_currentLocation);
+  }
+
+  NavigationNotifier _navigationNotifier;
+  set navigationNotifier(NavigationNotifier navigationNotifier) {
+    _navigationNotifier = navigationNotifier;
+    _navigationNotifier.addListener(setPathFromUriNotifier);
+  }
+
+  void setPathFromUriNotifier() {
+    if (_navigationNotifier.uri != currentConfiguration) {
+      setNewRoutePath(_navigationNotifier.uri);
+    }
   }
 
   /// List of all [BeamLocation]s that this router handles.
@@ -117,7 +147,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     }
     _beamHistory.add(location..prepare());
     _currentLocation = _beamHistory.last;
-    notifyListeners();
+    _update();
   }
 
   /// Beams to [BeamLocation] that handles `uri`. See [beamTo].
@@ -167,7 +197,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     }
     _beamHistory.removeLast();
     _currentLocation = _beamHistory.last;
-    notifyListeners();
+    _update();
     return true;
   }
 
@@ -196,7 +226,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
       rewriteParameters: rewriteParameters,
     );
     _currentLocation.prepare();
-    notifyListeners();
+    _update();
   }
 
   @override
@@ -254,6 +284,12 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     return SynchronousFuture(null);
   }
 
+  void _update() {
+    notifyListeners();
+    _navigationNotifier?.uri = currentConfiguration;
+    _navigationNotifier?.currentLocation = currentLocation;
+  }
+
   void _handlePop(BeamPage page) {
     final pathSegment = _currentLocation.pathSegments.removeLast();
     if (pathSegment[0] == ':') {
@@ -263,7 +299,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
       _currentLocation.queryParameters = {};
     }
     _currentLocation.prepare();
-    notifyListeners();
+    _update();
   }
 
   BeamGuard _guardCheck(BuildContext context, BeamLocation location) {
@@ -280,5 +316,78 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
       }
     }
     return null;
+  }
+
+  @override
+  void dispose() {
+    _navigationNotifier?.removeListener(setPathFromUriNotifier);
+    super.dispose();
+  }
+}
+
+/// A delegate that serves just for collecting URI and building a shell
+/// Navigator for [homeBuilder] that will contain Beamer(s).
+///
+/// Used just for "nested routers".
+class RootRouterDelegate extends RouterDelegate<Uri>
+    with ChangeNotifier, PopNavigatorRouterDelegateMixin<Uri> {
+  RootRouterDelegate({@required this.homeBuilder})
+      : _navigatorKey = GlobalKey<NavigatorState>() {
+    _navigationNotifier = NavigationNotifier()..addListener(notifyUriChange);
+  }
+
+  /// A Widget used as `MaterialApp.home`.
+  final Function(BuildContext context, Uri uri) homeBuilder;
+
+  NavigationNotifier _navigationNotifier;
+  NavigationNotifier get navigationNotifier => _navigationNotifier;
+
+  Uri _currrentUri;
+
+  void notifyUriChange() {
+    if (_navigationNotifier.uri != _currrentUri) {
+      _currrentUri = _navigationNotifier.uri;
+      notifyListeners();
+    }
+  }
+
+  final GlobalKey<NavigatorState> _navigatorKey;
+
+  @override
+  Uri get currentConfiguration => _currrentUri;
+
+  @override
+  GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
+
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+      key: navigatorKey,
+      pages: [
+        BeamPage(
+          key: ValueKey('root'),
+          child: homeBuilder(context, currentConfiguration),
+        )
+      ],
+      onPopPage: (route, result) {
+        if (!route.didPop(result)) {
+          return false;
+        }
+        return true;
+      },
+    );
+  }
+
+  @override
+  SynchronousFuture<void> setNewRoutePath(Uri uri) {
+    _currrentUri = uri;
+    _navigationNotifier.uri = _currrentUri;
+    return SynchronousFuture(null);
+  }
+
+  @override
+  void dispose() {
+    _navigationNotifier.removeListener(notifyUriChange);
+    super.dispose();
   }
 }
