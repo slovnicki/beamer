@@ -67,8 +67,18 @@ abstract class BeamLocation {
   /// Will be executed before [pages] are drawn onto screen.
   void Function() executeBefore;
 
+  /// The list of realized/current path segments.
+  ///
+  /// Effectively, this is split [pathBlueprint].
+  //
+  /// For '/user/1/details', this would be `['user', ':id', 'details']`.
   List<String> pathSegments;
 
+  /// The realized/current pathBlueprint, one of [pathBlueprints].
+  ///
+  /// Effectively, this is joined [pathSegments].
+  ///
+  /// For '/user/1/details', this would be '/user/:id/details'.
   String get pathBlueprint => '/' + pathSegments.join('/');
 
   /// Path parameters extracted from URI.
