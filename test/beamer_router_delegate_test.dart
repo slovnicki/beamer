@@ -74,6 +74,7 @@ void main() {
       expect(router.currentLocation, location1);
       expect(router.beamHistory.length, 2);
       router.beamTo(location2, replaceCurrent: true);
+      expect(router.currentLocation, location2);
       expect(router.beamHistory.length, 1);
     });
   });
