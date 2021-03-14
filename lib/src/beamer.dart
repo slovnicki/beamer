@@ -76,11 +76,13 @@ extension BeamerExtensions on BuildContext {
     BeamLocation location, {
     bool beamBackOnPop = false,
     bool stacked = true,
+    bool replaceCurrent = false,
   }) {
     Beamer.of(this).beamTo(
       location,
       beamBackOnPop: beamBackOnPop,
       stacked: stacked,
+      replaceCurrent: replaceCurrent,
     );
   }
 
