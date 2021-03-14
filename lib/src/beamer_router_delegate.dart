@@ -102,14 +102,16 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   /// If `beamBackOnPop` is set to `true`, default pop action on the newly
   /// beamed location will triger `beamBack` instead.
   /// If `stacked` is set to `false`, only the location's last page will be shown.
+  /// If `replaceCurrent` is set to `true`, new location will replace the last one in the stack.
   void beamTo(
     BeamLocation location, {
     bool beamBackOnPop = false,
     bool stacked = true,
+    bool replaceCurrent = false,
   }) {
     _beamBackOnPop = beamBackOnPop;
     _stacked = stacked;
-    if (preferUpdate && location.runtimeType == _currentLocation.runtimeType) {
+    if ((preferUpdate && location.runtimeType == _currentLocation.runtimeType) || replaceCurrent) {
       _beamHistory.removeLast();
     }
     if (removeDuplicateHistory) {
