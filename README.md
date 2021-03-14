@@ -41,7 +41,7 @@ Handle your application routing, synchronize it with browser URL and more. Beame
     - [Integration with Navigation UI Packages](#integration-with-navigation-ui-packages)
 - [Usage](#usage)
   - [On Entire App](#on-entire-app)
-  - [As a Widget](#as-a-widget)
+  - [Deeper in the Tree](#deeper-in-the-tree)
   - [General Notes](#general-notes)
 - [Migrating](#migrating)
   - [From 0.7 to 0.8](#from-07-to-08)
@@ -207,7 +207,7 @@ List<BeamGuard> get guards => [
 
 ## Beamer Widget
 
-An example of putting `Beamer`(s) into the Widget tree. _This is not yet fully functional for web usage_; setting the URL from browser doesn't update the state properly. It should work when [nested routers issue](https://github.com/slovnicki/beamer/issues/4) is settled.
+An example of putting `Beamer`(s) into the Widget tree, for example in usage with `bottomNavigationBar`.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer_examples/master/bottom_navigation/example-bottom-navigation-mobile.gif" alt="example-bottom-navigation-mobile" width="240" style="margin-right: 32px">
@@ -220,14 +220,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Beamer(
-          key: _beamerKey,
-          beamLocations: _beamLocations,
-        ),
-        bottomNavigationBar: BottomNavigationBarWidget(
-          beamerKey: _beamerKey,
+    return MaterialApp.router(
+      routeInformationParser: BeamerRouteInformationParser(),
+      routerDelegate: RootRouterDelegate(
+        homeBuilder: (context, uri) => Scaffold(
+          body: Beamer(
+            key: _beamerKey,
+            beamLocations: _beamLocations,
+          ),
+          bottomNavigationBar: BottomNavigationBarWidget(
+            beamerKey: _beamerKey,
+          ),
         ),
       ),
     );
@@ -235,7 +238,7 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-- [Bottom navigation example with multiple Beamers](https://github.com/slovnicki/beamer_examples/tree/master/bottom_navigation_multiple_beamers)
+- [Bottom navigation example with multiple Beamers](https://github.com/slovnicki/beamer_examples/tree/master/bottom_navigation_multiple_beamers) (WIP)
 ```dart
 class MyAppState extends State<MyApp> {
   int _currentIndex = 0;
@@ -312,24 +315,25 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-## As a Widget
+## Deeper in the Tree
 
-_(not yet fully functional on web, regarding URL parsing)_
+Similar to above example, but we use `RootRouterDelegate` with `homeBuilder` (same purpose as `home` in `MaterialApp`) where we put `Beamer` somewhere in the tree.
 
 ```dart
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Beamer(
-          beamLocations: [
-            HomeLocation(),
-            BooksLocation(),
-          ],
+    return MaterialApp.router(
+      routeInformationParser: BeamerRouteInformationParser(),
+      routerDelegate: RootRouterDelegate(
+        homeBuilder: (context, uri) => Scaffold(
+          body: Beamer(
+            beamLocations: _beamLocations,
+          ),
+          ...
         ),
-        ...
       ),
+      ...
     );
   }
 }
