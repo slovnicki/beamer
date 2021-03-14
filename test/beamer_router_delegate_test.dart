@@ -69,6 +69,13 @@ void main() {
       expect(router.beamHistory.length, 2);
       expect(router.beamHistory[0], isA<Location2>());
     });
+
+    test('beamTo replaceCurrent removes previous history state before appending new', () {
+      expect(router.currentLocation, location1);
+      expect(router.beamHistory.length, 2);
+      router.beamTo(location2, replaceCurrent: true);
+      expect(router.beamHistory.length, 1);
+    });
   });
 
   test('stacked beam takes just last page for currentPages', () {
