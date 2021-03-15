@@ -133,17 +133,18 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   /// );
   /// ```
   ///
-  /// `data` can be used to pass any data throught the location.
+  /// `data` can be used to pass any data through the location.
   /// See [BeamLocation.data].
   void beamToNamed(
     String uri, {
     Map<String, dynamic> data = const <String, dynamic>{},
     bool beamBackOnPop = false,
     bool stacked = true,
+    bool replaceCurrent = false,
   }) {
     final location = Utils.chooseBeamLocation(Uri.parse(uri), beamLocations);
     location.data = data;
-    beamTo(location, beamBackOnPop: beamBackOnPop, stacked: stacked);
+    beamTo(location, beamBackOnPop: beamBackOnPop, stacked: stacked, replaceCurrent: replaceCurrent);
   }
 
   /// Whether it is possible to [beamBack],

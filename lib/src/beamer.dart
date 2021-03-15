@@ -92,12 +92,14 @@ extension BeamerExtensions on BuildContext {
     Map<String, dynamic> data = const <String, dynamic>{},
     bool beamBackOnPop = false,
     bool stacked = true,
+    bool replaceCurrent = false,
   }) {
     Beamer.of(this).beamToNamed(
       uri,
       data: data,
       beamBackOnPop: beamBackOnPop,
       stacked: stacked,
+      replaceCurrent: replaceCurrent,
     );
   }
 
