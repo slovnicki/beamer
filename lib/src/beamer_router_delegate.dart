@@ -111,7 +111,9 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   }) {
     _beamBackOnPop = beamBackOnPop;
     _stacked = stacked;
-    if ((preferUpdate && location.runtimeType == _currentLocation.runtimeType) || replaceCurrent) {
+    if ((preferUpdate &&
+            location.runtimeType == _currentLocation.runtimeType) ||
+        replaceCurrent) {
       _beamHistory.removeLast();
     }
     if (removeDuplicateHistory) {
@@ -144,7 +146,12 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   }) {
     final location = Utils.chooseBeamLocation(Uri.parse(uri), beamLocations);
     location.data = data;
-    beamTo(location, beamBackOnPop: beamBackOnPop, stacked: stacked, replaceCurrent: replaceCurrent);
+    beamTo(
+      location,
+      beamBackOnPop: beamBackOnPop,
+      stacked: stacked,
+      replaceCurrent: replaceCurrent,
+    );
   }
 
   /// Whether it is possible to [beamBack],
