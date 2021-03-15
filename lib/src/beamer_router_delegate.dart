@@ -255,7 +255,9 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   }
 
   void _handlePop(BeamPage page) {
-    final pathSegment = _currentLocation.pathSegments.removeLast();
+    final pathSegments = List<String>.from(_currentLocation.pathSegments);
+    final pathSegment = pathSegments.removeLast();
+    _currentLocation.pathSegments = pathSegments;
     if (pathSegment[0] == ':') {
       _currentLocation.pathParameters.remove(pathSegment.substring(1));
     }
