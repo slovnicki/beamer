@@ -102,14 +102,18 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   /// If `beamBackOnPop` is set to `true`, default pop action on the newly
   /// beamed location will triger `beamBack` instead.
   /// If `stacked` is set to `false`, only the location's last page will be shown.
+  /// If `replaceCurrent` is set to `true`, new location will replace the last one in the stack.
   void beamTo(
     BeamLocation location, {
     bool beamBackOnPop = false,
     bool stacked = true,
+    bool replaceCurrent = false,
   }) {
     _beamBackOnPop = beamBackOnPop;
     _stacked = stacked;
-    if (preferUpdate && location.runtimeType == _currentLocation.runtimeType) {
+    if ((preferUpdate &&
+            location.runtimeType == _currentLocation.runtimeType) ||
+        replaceCurrent) {
       _beamHistory.removeLast();
     }
     if (removeDuplicateHistory) {
@@ -131,17 +135,23 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   /// );
   /// ```
   ///
-  /// `data` can be used to pass any data throught the location.
+  /// `data` can be used to pass any data through the location.
   /// See [BeamLocation.data].
   void beamToNamed(
     String uri, {
     Map<String, dynamic> data = const <String, dynamic>{},
     bool beamBackOnPop = false,
     bool stacked = true,
+    bool replaceCurrent = false,
   }) {
     final location = Utils.chooseBeamLocation(Uri.parse(uri), beamLocations);
     location.data = data;
-    beamTo(location, beamBackOnPop: beamBackOnPop, stacked: stacked);
+    beamTo(
+      location,
+      beamBackOnPop: beamBackOnPop,
+      stacked: stacked,
+      replaceCurrent: replaceCurrent,
+    );
   }
 
   /// Whether it is possible to [beamBack],
