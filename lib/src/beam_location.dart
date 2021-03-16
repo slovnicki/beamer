@@ -53,7 +53,7 @@ abstract class BeamLocation {
   ///
   /// `context` can be useful while building the pages.
   /// It will also contain anything injected via [builder].
-  List<BeamPage> pagesBuilder(BuildContext? context);
+  List<BeamPage> pagesBuilder(BuildContext context);
 
   /// Guards that will be executing [check] when this gets beamed to.
   ///
