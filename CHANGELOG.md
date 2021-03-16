@@ -1,3 +1,8 @@
+# 0.9.3
+
+- **Add** `replaceCurrent` attribute (default `false`) to beaming function
+- **Fix** old information at Guards section in README
+
 # 0.9.2
 
 - **Fix** removing last path segment from possibly unmodifiable List
