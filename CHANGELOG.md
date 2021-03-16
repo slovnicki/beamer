@@ -1,3 +1,10 @@
+# 1.0.0-nullsafety.3
+
+- **Add** replaceCurrent attribute (default false) to beaming function
+- **Fix** nullability of `BuildContext` in `pagesBuilder`
+- **Fix** removing last path segment from possibly unmodifiable List
+- **Fix** old information at Guards section in README
+
 # 1.0.0-nullsafety.2
 
 - **Fix** removing the last empty path segment when it's the only one
