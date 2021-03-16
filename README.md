@@ -180,7 +180,11 @@ You can define global guards (for example, authentication guard) or location gua
 
 ```dart
 BeamerRouterDelegate(
-  initialLocation: initialLocation,
+  beamLocations: [
+    HomeLocation(),
+    LoginLocation(),
+    BooksLocation(),
+  ],
   guards: [
     BeamGuard(
       pathBlueprints: ['/books*'],
