@@ -40,7 +40,6 @@ class Beamer extends StatefulWidget {
 }
 
 class BeamerState extends State<Beamer> {
-  RootRouterDelegate _rootRouterDelegate;
   BeamerRouterDelegate _routerDelegate;
 
   BeamerRouterDelegate get routerDelegate => _routerDelegate;
@@ -57,9 +56,9 @@ class BeamerState extends State<Beamer> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     try {
-      _rootRouterDelegate = Router.of(context).routerDelegate;
       _routerDelegate.navigationNotifier =
-          _rootRouterDelegate.navigationNotifier;
+          (Router.of(context).routerDelegate as BeamerRouterDelegate)
+              .navigationNotifier;
     } catch (e) {
       print(e);
     }

@@ -40,6 +40,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   }
 
   NavigationNotifier _navigationNotifier;
+  NavigationNotifier get navigationNotifier => _navigationNotifier;
   set navigationNotifier(NavigationNotifier navigationNotifier) {
     _navigationNotifier = navigationNotifier;
     _navigationNotifier.addListener(setPathFromUriNotifier);
@@ -325,69 +326,65 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   }
 }
 
-/// A delegate that serves just for collecting URI and building a shell
-/// Navigator for [homeBuilder] that will contain Beamer(s).
-///
-/// Used just for "nested routers".
-class RootRouterDelegate extends RouterDelegate<Uri>
-    with ChangeNotifier, PopNavigatorRouterDelegateMixin<Uri> {
-  RootRouterDelegate({@required this.homeBuilder})
-      : _navigatorKey = GlobalKey<NavigatorState>() {
-    _navigationNotifier = NavigationNotifier()..addListener(notifyUriChange);
-  }
+class _RootLocation extends BeamLocation {
+  _RootLocation(this.homeBuilder);
 
-  /// A Widget used as `MaterialApp.home`.
   final Function(BuildContext context, Uri uri) homeBuilder;
 
-  NavigationNotifier _navigationNotifier;
-  NavigationNotifier get navigationNotifier => _navigationNotifier;
-
-  Uri _currrentUri;
-
-  void notifyUriChange() {
-    if (_navigationNotifier.uri != _currrentUri) {
-      _currrentUri = _navigationNotifier.uri;
-      notifyListeners();
-    }
-  }
-
-  final GlobalKey<NavigatorState> _navigatorKey;
-
   @override
-  Uri get currentConfiguration => _currrentUri;
-
+  List<String> get pathBlueprints => ['/*'];
   @override
-  GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
-
-  @override
-  Widget build(BuildContext context) {
-    return Navigator(
-      key: navigatorKey,
-      pages: [
+  List<BeamPage> pagesBuilder(BuildContext context) => [
         BeamPage(
           key: ValueKey('root'),
-          child: homeBuilder(context, currentConfiguration),
+          child: homeBuilder(context, uri),
         )
-      ],
-      onPopPage: (route, result) {
-        if (!route.didPop(result)) {
-          return false;
-        }
-        return true;
-      },
-    );
+      ];
+}
+
+/// A delegate that communicates with browser when there are nested routers.
+///
+/// Creates the instance of [NavigationNotifier] that deeper routers will listen.
+class RootRouterDelegate extends BeamerRouterDelegate {
+  RootRouterDelegate({
+    this.homeBuilder,
+    List<BeamLocation> beamLocations,
+    bool preferUpdate = true,
+    bool removeDuplicateHistory = true,
+    BeamPage notFoundPage,
+    BeamLocation notFoundRedirect,
+    List<BeamGuard> guards = const <BeamGuard>[],
+    List<NavigatorObserver> navigatorObservers = const <NavigatorObserver>[],
+  })  : assert(homeBuilder != null || beamLocations != null),
+        super(
+          beamLocations: beamLocations ?? [_RootLocation(homeBuilder)],
+          preferUpdate: preferUpdate,
+          removeDuplicateHistory: removeDuplicateHistory,
+          notFoundPage: notFoundPage,
+          notFoundRedirect: notFoundRedirect,
+          guards: guards,
+          navigatorObservers: navigatorObservers,
+        ) {
+    _navigationNotifier = NavigationNotifier()..addListener(notifyListeners);
   }
+
+  final Function(BuildContext context, Uri uri) homeBuilder;
+
+  @override
+  Uri get currentConfiguration => _navigationNotifier.uri;
 
   @override
   SynchronousFuture<void> setNewRoutePath(Uri uri) {
-    _currrentUri = uri;
-    _navigationNotifier.uri = _currrentUri;
+    if (beamLocations.isNotEmpty) {
+      beamTo(Utils.chooseBeamLocation(uri, beamLocations));
+    }
+    _navigationNotifier.uri = uri;
     return SynchronousFuture(null);
   }
 
   @override
   void dispose() {
-    _navigationNotifier.removeListener(notifyUriChange);
+    _navigationNotifier.removeListener(notifyListeners);
     super.dispose();
   }
 }
