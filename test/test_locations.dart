@@ -4,14 +4,10 @@ import 'package:flutter/material.dart';
 class Location1 extends BeamLocation {
   Location1({
     String pathBlueprint,
-    Map<String, String> pathParameters,
-    Map<String, String> queryParameters,
-    Map<String, dynamic> data,
   }) : super(
-          pathBlueprint: pathBlueprint,
-          pathParameters: pathParameters,
-          queryParameters: queryParameters,
-          data: data,
+          state: BeamState(
+            pathBlueprintSegments: Uri.parse(pathBlueprint).pathSegments,
+          ),
         );
 
   @override
@@ -20,12 +16,12 @@ class Location1 extends BeamLocation {
           key: ValueKey('l1'),
           child: Container(),
         ),
-        if (pathSegments.contains('one'))
+        if (state.pathBlueprintSegments.contains('one'))
           BeamPage(
             key: ValueKey('l1-one'),
             child: Container(),
           ),
-        if (pathSegments.contains('two'))
+        if (state.pathBlueprintSegments.contains('two'))
           BeamPage(
             key: ValueKey('l1-two'),
             child: Container(),
@@ -39,14 +35,10 @@ class Location1 extends BeamLocation {
 class Location2 extends BeamLocation {
   Location2({
     String pathBlueprint,
-    Map<String, String> pathParameters,
-    Map<String, String> queryParameters,
-    Map<String, dynamic> data,
   }) : super(
-          pathBlueprint: pathBlueprint,
-          pathParameters: pathParameters,
-          queryParameters: queryParameters,
-          data: data,
+          state: BeamState(
+            pathBlueprintSegments: Uri.parse(pathBlueprint).pathSegments,
+          ),
         );
 
   @override

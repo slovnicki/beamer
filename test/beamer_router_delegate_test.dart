@@ -10,7 +10,7 @@ void main() {
   final router = BeamerRouterDelegate(
     beamLocations: [location1, location2],
   );
-  router.setNewRoutePath((location1..prepare()).uri);
+  router.setNewRoutePath((location1..prepare()).state.uri);
 
   group('initialization & beaming', () {
     test('initialLocation is set', () {
@@ -25,11 +25,11 @@ void main() {
     test('beamToNamed updates locations with correct parameters', () {
       router.beamToNamed('/l2/1?q=t', data: {'x': 'y'});
       expect(router.currentLocation, location2);
-      expect(location2.pathParameters.containsKey('id'), true);
-      expect(location2.pathParameters['id'], '1');
-      expect(location2.queryParameters.containsKey('q'), true);
-      expect(location2.queryParameters['q'], 't');
-      expect(location2.data, {'x': 'y'});
+      expect(location2.state.pathParameters.containsKey('id'), true);
+      expect(location2.state.pathParameters['id'], '1');
+      expect(location2.state.queryParameters.containsKey('q'), true);
+      expect(location2.state.queryParameters['q'], 't');
+      expect(location2.state.data, {'x': 'y'});
     });
 
     test(
@@ -38,13 +38,16 @@ void main() {
       final historyLength = router.beamHistory.length;
       router.beamToNamed('/l2/2?q=t&r=s', data: {'x': 'z'});
       expect(router.beamHistory.length, historyLength);
-      expect(router.currentLocation.pathParameters.containsKey('id'), true);
-      expect(router.currentLocation.pathParameters['id'], '2');
-      expect(router.currentLocation.queryParameters.containsKey('q'), true);
-      expect(router.currentLocation.queryParameters['q'], 't');
-      expect(router.currentLocation.queryParameters.containsKey('r'), true);
-      expect(router.currentLocation.queryParameters['r'], 's');
-      expect(router.currentLocation.data, {'x': 'z'});
+      expect(
+          router.currentLocation.state.pathParameters.containsKey('id'), true);
+      expect(router.currentLocation.state.pathParameters['id'], '2');
+      expect(
+          router.currentLocation.state.queryParameters.containsKey('q'), true);
+      expect(router.currentLocation.state.queryParameters['q'], 't');
+      expect(
+          router.currentLocation.state.queryParameters.containsKey('r'), true);
+      expect(router.currentLocation.state.queryParameters['r'], 's');
+      expect(router.currentLocation.state.data, {'x': 'z'});
     });
 
     test('beamBack leads to previous location and all helpers are correct', () {

@@ -64,12 +64,13 @@ class BeamGuard {
     for (var pathBlueprint in pathBlueprints) {
       final asteriskIndex = pathBlueprint.indexOf('*');
       if (asteriskIndex != -1) {
-        if (location.pathBlueprint
+        if (location.state.uri
+            .toString()
             .contains(pathBlueprint.substring(0, asteriskIndex))) {
           return true;
         }
       } else {
-        if (pathBlueprint == location.pathBlueprint) {
+        if (pathBlueprint == location.state.uri.toString()) {
           return true;
         }
       }

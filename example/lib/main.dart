@@ -31,7 +31,7 @@ class HomeScreen extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () => context.beamToNamed('/books'),
-          child: Text('Beam to books location'),
+          child: Text('See books'),
         ),
       ),
     );
@@ -42,7 +42,7 @@ class BooksScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final titleQuery =
-        Beamer.of(context).currentLocation.queryParameters['title'] ?? '';
+        context.currentBeamLocation.state.queryParameters['title'] ?? '';
     return Scaffold(
       appBar: AppBar(
         title: Text('Books'),
@@ -51,14 +51,19 @@ class BooksScreen extends StatelessWidget {
         children: books
             .where((book) =>
                 book['title'].toLowerCase().contains(titleQuery.toLowerCase()))
-            .map((book) => ListTile(
-                  title: Text(book['title']),
-                  subtitle: Text(book['author']),
-                  onTap: () => context.updateCurrentLocation(
-                    pathBlueprint: '/books/:bookId',
+            .map(
+              (book) => ListTile(
+                title: Text(book['title']),
+                subtitle: Text(book['author']),
+                onTap: () => context.currentBeamLocation.update(
+                  (state) => state.copyWith(
+                    pathBlueprintSegments: ['books', ':bookId'],
                     pathParameters: {'bookId': book['id']},
                   ),
-                ))
+                ),
+                //onTap: () => context.beamToNamed('/books/${book['id']}'),
+              ),
+            )
             .toList(),
       ),
     );
@@ -88,9 +93,9 @@ class BookDetailsScreen extends StatelessWidget {
 }
 
 // LOCATIONS
-class HomeLocation extends BeamLocation {
+class BooksLocation extends BeamLocation {
   @override
-  List<String> get pathBlueprints => ['/'];
+  List<String> get pathBlueprints => ['/books/:bookId'];
 
   @override
   List<BeamPage> pagesBuilder(BuildContext context) => [
@@ -98,26 +103,16 @@ class HomeLocation extends BeamLocation {
           key: ValueKey('home'),
           child: HomeScreen(),
         ),
-      ];
-}
-
-class BooksLocation extends BeamLocation {
-  @override
-  List<String> get pathBlueprints => ['/books/:bookId'];
-
-  @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
-        ...HomeLocation().pagesBuilder(context),
-        if (pathSegments.contains('books'))
+        if (state.uri.pathSegments.contains('books'))
           BeamPage(
-            key: ValueKey('books-${queryParameters['title'] ?? ''}'),
+            key: ValueKey('books-${state.queryParameters['title'] ?? ''}'),
             child: BooksScreen(),
           ),
-        if (pathParameters.containsKey('bookId'))
+        if (state.pathParameters.containsKey('bookId'))
           BeamPage(
-            key: ValueKey('book-${pathParameters['bookId']}'),
+            key: ValueKey('book-${state.pathParameters['bookId']}'),
             child: BookDetailsScreen(
-              bookId: pathParameters['bookId'],
+              bookId: state.pathParameters['bookId'],
             ),
           ),
       ];
@@ -127,7 +122,6 @@ class BooksLocation extends BeamLocation {
 class MyApp extends StatelessWidget {
   final routerDelegate = BeamerRouterDelegate(
     beamLocations: [
-      HomeLocation(),
       BooksLocation(),
     ],
   );

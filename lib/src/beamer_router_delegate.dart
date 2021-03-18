@@ -1,4 +1,5 @@
 import 'package:beamer/beamer.dart';
+import 'package:beamer/src/beam_state.dart';
 import 'package:beamer/src/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -50,6 +51,11 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     if (_navigationNotifier.uri != currentConfiguration) {
       setNewRoutePath(_navigationNotifier.uri);
     }
+  }
+
+  void notify() {
+    _navigationNotifier?.uri = _currentLocation.state.uri;
+    notifyListeners();
   }
 
   /// List of all [BeamLocation]s that this router handles.
@@ -140,6 +146,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     bool stacked = true,
     bool replaceCurrent = false,
   }) {
+    _currentLocation.removeListener(notify);
     _beamBackOnPop = beamBackOnPop;
     _stacked = stacked;
     if ((preferUpdate &&
@@ -152,6 +159,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     }
     _beamHistory.add(location..prepare());
     _currentLocation = _beamHistory.last;
+    _currentLocation.addListener(notify);
     _update();
   }
 
@@ -176,7 +184,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     bool replaceCurrent = false,
   }) {
     final location = Utils.chooseBeamLocation(Uri.parse(uri), beamLocations);
-    location.data = data;
+    location.update((state) => state.copyWith(data: data));
     beamTo(
       location,
       beamBackOnPop: beamBackOnPop,
@@ -212,36 +220,8 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     return true;
   }
 
-  /// Updates [currentLocation] and notifies listeners.
-  ///
-  /// See [BeamLocation.update] for details.
-  ///
-  /// If `beamBackOnPop` is not specified, [_beamBackOnPop] will be reset to `false`.
-  /// If `stacked` is not specified, [_stacked] will remain as it was.
-  void updateCurrentLocation({
-    String pathBlueprint,
-    Map<String, String> pathParameters = const <String, String>{},
-    Map<String, String> queryParameters = const <String, String>{},
-    Map<String, dynamic> data = const <String, dynamic>{},
-    bool rewriteParameters = false,
-    bool beamBackOnPop,
-    bool stacked,
-  }) {
-    _beamBackOnPop = beamBackOnPop ?? false;
-    _stacked = stacked ?? _stacked;
-    _currentLocation.update(
-      pathBlueprint: pathBlueprint,
-      pathParameters: pathParameters,
-      queryParameters: queryParameters,
-      data: data,
-      rewriteParameters: rewriteParameters,
-    );
-    _currentLocation.prepare();
-    _update();
-  }
-
   @override
-  Uri get currentConfiguration => _currentLocation.uri;
+  Uri get currentConfiguration => _currentLocation.state.uri;
 
   @override
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
@@ -302,16 +282,19 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   }
 
   void _handlePop(BeamPage page) {
-    final pathSegments = List<String>.from(_currentLocation.pathSegments);
-    final pathSegment = pathSegments.removeLast();
-    _currentLocation.pathSegments = pathSegments;
+    final pathBlueprintSegments =
+        List<String>.from(_currentLocation.state.pathBlueprintSegments);
+    final pathParameters =
+        Map<String, String>.from(_currentLocation.state.pathParameters);
+    final pathSegment = pathBlueprintSegments.removeLast();
     if (pathSegment[0] == ':') {
-      _currentLocation.pathParameters.remove(pathSegment.substring(1));
+      pathParameters.remove(pathSegment.substring(1));
     }
-    if (!page.keepQueryOnPop) {
-      _currentLocation.queryParameters = {};
-    }
-    _currentLocation.prepare();
+    _currentLocation.update((state) => state.copyWith(
+          pathBlueprintSegments: pathBlueprintSegments,
+          pathParameters: pathParameters,
+          queryParameters: !page.keepQueryOnPop ? {} : null,
+        ));
     _update();
   }
 
@@ -349,7 +332,7 @@ class _RootLocation extends BeamLocation {
   List<BeamPage> pagesBuilder(BuildContext context) => [
         BeamPage(
           key: ValueKey('root'),
-          child: homeBuilder(context, uri),
+          child: homeBuilder(context, state.uri),
         )
       ];
 }

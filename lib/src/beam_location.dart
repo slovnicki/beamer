@@ -1,22 +1,37 @@
 import 'package:beamer/beamer.dart';
+import 'package:beamer/src/beam_state.dart';
 import 'package:flutter/widgets.dart';
 
 /// Configuration for a navigatable application region.
 ///
 /// Extend this class to define your locations to which you can then `beamTo`.
-abstract class BeamLocation {
+abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   BeamLocation({
-    String pathBlueprint,
+    T state,
+  }) : _state = state ?? BeamState();
+
+  /// A state of this location.
+  ///
+  /// Initially upon load will hold `uriBlueprint` and `pathParameters`.
+  T _state;
+  T get state => _state;
+  set state(T state) {
+    _state = state..configure();
+    notifyListeners();
+  }
+
+  /// How to create state.
+  T createState(
+    List<String> pathBlueprintSegments,
     Map<String, String> pathParameters,
     Map<String, String> queryParameters,
-    Map<String, dynamic> data,
-    this.executeBefore,
-  })  : pathSegments = pathBlueprint != null
-            ? List.from(Uri.parse(pathBlueprint).pathSegments)
-            : <String>[],
-        pathParameters = pathParameters ?? <String, String>{},
-        queryParameters = queryParameters ?? <String, String>{},
-        data = data ?? <String, dynamic>{};
+  ) =>
+      null;
+
+  /// Update a state via callback receiving the current state.
+  ///
+  /// Useful with [BeamState.copyWith].
+  void update(T Function(T) copy) => state = copy(_state);
 
   /// Gives the ability to wrap the `navigator`.
   ///
@@ -67,114 +82,24 @@ abstract class BeamLocation {
   /// Will be executed before [pages] are drawn onto screen.
   void Function() executeBefore;
 
-  /// The list of realized/current path segments.
-  ///
-  /// Effectively, this is split [pathBlueprint].
-  //
-  /// For '/user/1/details', this would be `['user', ':id', 'details']`.
-  List<String> pathSegments;
-
-  /// The realized/current pathBlueprint, one of [pathBlueprints].
-  ///
-  /// Effectively, this is joined [pathSegments].
-  ///
-  /// For '/user/1/details', this would be '/user/:id/details'.
-  String get pathBlueprint => '/' + pathSegments.join('/');
-
-  /// Path parameters extracted from URI.
-  ///
-  /// For example, if [pathBlueprint] is '/books/:id',
-  /// and incoming URI '/books/1', then [pathParameters] will be `{'id': '1'}`.
-  Map<String, String> pathParameters;
-
-  /// Query parameters extracted from URI.
-  ///
-  /// For example, if incoming URI '/books?title=stranger',
-  /// then [queryParameters] will be `{'title': 'stranger'}`.
-  Map<String, String> queryParameters;
-
-  /// Used for passing any custom data to [BeamLocation].
-  Map<String, dynamic> data;
-
-  /// Complete URI of this [BeamLocation], with path and query parameters.
-  Uri get uri => Uri.parse(_path + _query);
-
-  String _path;
-  String _query;
-
   /// Recreates the [uri] for this [BeamLocation]
   /// considering current value of [pathParameters] and [queryParameters].
   ///
   /// Calls [executeBefore] if defined.
   void prepare() {
-    _makePath();
-    _makeQuery();
+    //_makePath();
+    //_makeQuery();
     executeBefore?.call();
-  }
-
-  /// Update chosen parameters of [currentLocation], in a similar manner
-  /// as with [BeamLocation] constructor.
-  ///
-  /// [pathParameters], [queryParameters] and [data] will be appended to
-  /// [currentLocation]'s [pathParameters], [queryParameters] and [data]
-  /// unless [rewriteParameters] is set to `true`, in which case
-  /// [currentLocation]'s attributes will be set to provided values
-  /// or their default values.
-  void update({
-    String pathBlueprint,
-    Map<String, String> pathParameters = const <String, String>{},
-    Map<String, String> queryParameters = const <String, String>{},
-    Map<String, dynamic> data = const <String, dynamic>{},
-    bool rewriteParameters = false,
-  }) {
-    if (pathBlueprint != null) {
-      pathSegments = List.from(Uri.parse(pathBlueprint).pathSegments);
-    }
-    if (rewriteParameters) {
-      this.pathParameters = Map.from(pathParameters);
-    } else {
-      pathParameters.forEach((key, value) {
-        this.pathParameters[key] = value;
-      });
-    }
-    if (rewriteParameters) {
-      this.queryParameters = Map.from(queryParameters);
-    } else {
-      queryParameters.forEach((key, value) {
-        this.queryParameters[key] = value;
-      });
-    }
-    if (rewriteParameters) {
-      this.data = Map.from(data);
-    } else {
-      data.forEach((key, value) {
-        this.data[key] = value;
-      });
-    }
-  }
-
-  void _makeQuery() {
-    final queryString = Uri(queryParameters: queryParameters).query;
-    _query = queryString.isNotEmpty ? '?' + queryString : '';
-  }
-
-  void _makePath() {
-    final realizedPathSegments = List.from(pathSegments);
-    pathParameters.forEach((key, value) {
-      var index = realizedPathSegments.indexWhere(
-          (segment) => segment[0] == ':' && segment.substring(1) == key);
-      if (index != -1) {
-        realizedPathSegments[index] = value;
-      }
-    });
-    _path = '/' + realizedPathSegments.join('/');
   }
 }
 
 class NotFound extends BeamLocation {
-  NotFound({
-    String path,
-  }) : super(pathBlueprint: path);
+  NotFound({String path})
+      : super(
+          state: BeamState(
+            pathBlueprintSegments: Uri.parse(path).pathSegments,
+          ),
+        );
 
   @override
   List<BeamPage> pagesBuilder(BuildContext context) => [];

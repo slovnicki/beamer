@@ -4,14 +4,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'test_locations.dart';
 
 void main() {
-  final testLocation = Location1(pathBlueprint: '/li/one');
+  final pathBlueprint = '/l1/one';
+  final testLocation = Location1(pathBlueprint: pathBlueprint);
 
   group('shouldBlock', () {
     test('is true if the location has a blueprint matching the guard', () {
       final guard = BeamGuard(
-        pathBlueprints: [
-          testLocation.pathBlueprint,
-        ],
+        pathBlueprints: [pathBlueprint],
         check: (_, __) => true,
         beamTo: (context) => Location2(),
       );
@@ -34,9 +33,9 @@ void main() {
       test('is true if the location has a match up to the wildcard', () {
         final guard = BeamGuard(
           pathBlueprints: [
-            testLocation.pathBlueprint.substring(
+            pathBlueprint.substring(
                   0,
-                  testLocation.pathBlueprint.indexOf('/'),
+                  pathBlueprint.indexOf('/'),
                 ) +
                 '/*',
           ],
@@ -65,7 +64,7 @@ void main() {
       test('is false if the location has a blueprint matching the guard', () {
         final guard = BeamGuard(
           pathBlueprints: [
-            testLocation.pathBlueprint,
+            pathBlueprint,
           ],
           check: (_, __) => true,
           beamTo: (context) => Location2(),
@@ -92,9 +91,9 @@ void main() {
         test('is false if the location has a match up to the wildcard', () {
           final guard = BeamGuard(
             pathBlueprints: [
-              testLocation.pathBlueprint.substring(
+              pathBlueprint.substring(
                     0,
-                    testLocation.pathBlueprint.indexOf('/'),
+                    pathBlueprint.indexOf('/'),
                   ) +
                   '/*',
             ],

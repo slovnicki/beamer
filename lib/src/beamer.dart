@@ -110,27 +110,6 @@ extension BeamerExtensions on BuildContext {
   /// See [BeamerRouterDelegate.beamBack]
   void beamBack() => Beamer.of(this).beamBack();
 
-  /// See [BeamerRouterDelegate.updateCurrentLocation]
-  void updateCurrentLocation({
-    String pathBlueprint,
-    Map<String, String> pathParameters = const <String, String>{},
-    Map<String, String> queryParameters = const <String, String>{},
-    Map<String, dynamic> data = const <String, dynamic>{},
-    bool rewriteParameters = false,
-    bool beamBackOnPop,
-    bool stacked,
-  }) {
-    Beamer.of(this).updateCurrentLocation(
-      pathBlueprint: pathBlueprint,
-      pathParameters: pathParameters,
-      queryParameters: queryParameters,
-      data: data,
-      rewriteParameters: rewriteParameters,
-      beamBackOnPop: beamBackOnPop,
-      stacked: stacked,
-    );
-  }
-
   /// See [BeamerRouterDelegate.currentLocation]
   BeamLocation get currentBeamLocation => Beamer.of(this).currentLocation;
 

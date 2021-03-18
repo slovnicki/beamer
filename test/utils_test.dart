@@ -41,16 +41,16 @@ void main() {
     test('Parsed BeamLocation carries URL parameters', () async {
       var uri = Uri.parse('/l2');
       var location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location.pathParameters, {});
+      expect(location.state.pathParameters, {});
 
       uri = Uri.parse('/l2/123');
       location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location.pathParameters, {'id': '123'});
+      expect(location.state.pathParameters, {'id': '123'});
 
       uri = Uri.parse('/l2/123?q=xxx');
       location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location.pathParameters, {'id': '123'});
-      expect(location.queryParameters, {'q': 'xxx'});
+      expect(location.state.pathParameters, {'id': '123'});
+      expect(location.state.queryParameters, {'q': 'xxx'});
     });
 
     test('Parsed BeamLocation creates correct pages', () async {

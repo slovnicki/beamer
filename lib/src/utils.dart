@@ -1,4 +1,5 @@
 import 'package:beamer/beamer.dart';
+import 'package:beamer/src/beam_state.dart';
 
 abstract class Utils {
   /// Traverses `beamLocations` and returns the one whose one of
@@ -16,8 +17,15 @@ abstract class Utils {
     for (var beamLocation in beamLocations) {
       for (var pathBlueprint in beamLocation.pathBlueprints) {
         if (pathBlueprint == uri.path) {
-          beamLocation.pathSegments = uri.pathSegments;
-          beamLocation.queryParameters = uri.queryParameters;
+          beamLocation.state = beamLocation.createState(
+                uri.pathSegments,
+                {},
+                uri.queryParameters,
+              ) ??
+              BeamState(
+                pathBlueprintSegments: uri.pathSegments,
+                queryParameters: uri.queryParameters,
+              );
           return beamLocation..prepare();
         }
         final uriPathSegments = List.from(uri.pathSegments);
@@ -30,9 +38,16 @@ abstract class Utils {
         var pathParameters = <String, String>{};
         if (beamLocationPathBlueprintSegments.length == 1 &&
             beamLocationPathBlueprintSegments[0] == '*') {
-          beamLocation.pathSegments = pathSegments;
-          beamLocation.pathParameters = pathParameters;
-          beamLocation.queryParameters = uri.queryParameters;
+          beamLocation.state = beamLocation.createState(
+                pathSegments,
+                pathParameters,
+                uri.queryParameters,
+              ) ??
+              BeamState(
+                pathBlueprintSegments: pathSegments,
+                pathParameters: pathParameters,
+                queryParameters: uri.queryParameters,
+              );
           return beamLocation..prepare();
         }
         if (uriPathSegments.length > beamLocationPathBlueprintSegments.length) {
@@ -57,9 +72,16 @@ abstract class Utils {
           }
         }
         if (checksPassed) {
-          beamLocation.pathSegments = pathSegments;
-          beamLocation.pathParameters = pathParameters;
-          beamLocation.queryParameters = uri.queryParameters;
+          beamLocation.state = beamLocation.createState(
+                pathSegments,
+                pathParameters,
+                uri.queryParameters,
+              ) ??
+              BeamState(
+                pathBlueprintSegments: pathSegments,
+                pathParameters: pathParameters,
+                queryParameters: uri.queryParameters,
+              );
           return beamLocation..prepare();
         }
       }
