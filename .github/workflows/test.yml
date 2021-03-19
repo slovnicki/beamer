@@ -3,11 +3,11 @@ name: tests
 on:
   push:
     branches:
-    	- master
+      - master
 
 jobs:
   test:
-  	defaults:
+    defaults:
       run:
         working-directory: package
     runs-on: ubuntu-latest
