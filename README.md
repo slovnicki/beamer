@@ -78,7 +78,7 @@ context.beamTo(
 );
 ```
 
-You can think of it as _teleporting_ (_beaming_) to another place in your app. Similar to `Navigator.of(context).pushReplacementNamed('/my-route')`, but Beamer is not limited to a single page, nor to a push _per se_. You can define an arbitrary stack of pages that gets build when you beam there. Using Beamer can feel like using many of `Navigator`'s `push/pop` methods at once.
+You can think of it as _teleporting_ (_beaming_) to another place in your app. Similar to `Navigator.of(context).pushReplacementNamed('/my-route')`, but Beamer is not limited to a single page, nor to a push _per se_. You can define an arbitrary stack of pages that get built when you beam there. Using Beamer can feel like using many of `Navigator`'s `push/pop` methods at once.
 
 You can carry an arbitrary key/value `data` in a location. This can be accessed from every page and updated as you travel through a location.
 
