@@ -1,4 +1,3 @@
-import 'package:beamer/src/beam_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'test_locations.dart';
