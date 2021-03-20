@@ -1,3 +1,13 @@
+# 0.10.0
+
+- **Add** `RootRouterDelegate` for nested navigation
+- **Add** `BeamState` for more declarative experience
+- **Remove** most attributes from `BeamLocation` and put them into `BeamLocation.state`
+- **Change** `BeamLocation` constructor to take only `state`.
+
+See [migration details](https://pub.dev/packages/beamer#from-09-to-010)
+
+
 # 0.9.3
 
 - **Add** `replaceCurrent` attribute (default `false`) to beaming function
