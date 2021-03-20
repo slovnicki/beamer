@@ -44,6 +44,11 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   NavigationNotifier get navigationNotifier => _navigationNotifier;
   set navigationNotifier(NavigationNotifier navigationNotifier) {
     _navigationNotifier = navigationNotifier;
+    final location =
+        Utils.chooseBeamLocation(_navigationNotifier.uri, beamLocations);
+    _beamHistory.add(location..prepare());
+    _currentLocation = _beamHistory.last;
+    _currentLocation.addListener(notify);
     _navigationNotifier.addListener(setPathFromUriNotifier);
   }
 

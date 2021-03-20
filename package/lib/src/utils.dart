@@ -16,7 +16,7 @@ abstract class Utils {
   ) {
     for (var beamLocation in beamLocations) {
       for (var pathBlueprint in beamLocation.pathBlueprints) {
-        if (pathBlueprint == uri.path) {
+        if (pathBlueprint == uri.path || pathBlueprint == '/*') {
           beamLocation.state = beamLocation.createState(
                 uri.pathSegments,
                 {},
@@ -26,6 +26,7 @@ abstract class Utils {
                 pathBlueprintSegments: uri.pathSegments,
                 queryParameters: uri.queryParameters,
               );
+          //print('returning: ${uri.pathSegments} for $beamLocation');
           return beamLocation..prepare();
         }
         final uriPathSegments = List.from(uri.pathSegments);
@@ -36,26 +37,14 @@ abstract class Utils {
             Uri.parse(pathBlueprint).pathSegments;
         var pathSegments = <String>[];
         var pathParameters = <String, String>{};
-        if (beamLocationPathBlueprintSegments.length == 1 &&
-            beamLocationPathBlueprintSegments[0] == '*') {
-          beamLocation.state = beamLocation.createState(
-                pathSegments,
-                pathParameters,
-                uri.queryParameters,
-              ) ??
-              BeamState(
-                pathBlueprintSegments: pathSegments,
-                pathParameters: pathParameters,
-                queryParameters: uri.queryParameters,
-              );
-          return beamLocation..prepare();
-        }
-        if (uriPathSegments.length > beamLocationPathBlueprintSegments.length) {
+        if (uriPathSegments.length > beamLocationPathBlueprintSegments.length &&
+            !beamLocationPathBlueprintSegments.contains('*')) {
           continue;
         }
         var checksPassed = true;
-        for (var i = 0; i < uriPathSegments.length; i++) {
+        for (int i = 0; i < uriPathSegments.length; i++) {
           if (beamLocationPathBlueprintSegments[i] == '*') {
+            pathSegments = List<String>.from(uriPathSegments);
             checksPassed = true;
             break;
           }
@@ -82,6 +71,7 @@ abstract class Utils {
                 pathParameters: pathParameters,
                 queryParameters: uri.queryParameters,
               );
+          //print('returning: ${pathSegments} for $beamLocation');
           return beamLocation..prepare();
         }
       }
