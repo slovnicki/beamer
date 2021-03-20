@@ -44,6 +44,7 @@ Handle your application routing, synchronize it with browser URL and more. Beame
   - [Deeper in the Tree](#deeper-in-the-tree)
   - [General Notes](#general-notes)
 - [Migrating](#migrating)
+  - [From 0.9 to 0.10](#from-09-to-010)
   - [From 0.7 to 0.8](#from-07-to-08)
   - [From 0.4 to 0.5](#from-04-to-05)
 - [Help and Chat](#help-and-chat)
@@ -78,7 +79,7 @@ context.beamTo(
 );
 ```
 
-You can think of it as _teleporting_ (_beaming_) to another place in your app. Similar to `Navigator.of(context).pushReplacementNamed('/my-route')`, but Beamer is not limited to a single page, nor to a push _per se_. You can define an arbitrary stack of pages that gets build when you beam there. Using Beamer can feel like using many of `Navigator`'s `push/pop` methods at once.
+You can think of it as _teleporting_ (_beaming_) to another place in your app. Similar to `Navigator.of(context).pushReplacementNamed('/my-route')`, but Beamer is not limited to a single page, nor to a push _per se_. You can define an arbitrary stack of pages that get built when you beam there. Using Beamer can feel like using many of `Navigator`'s `push/pop` methods at once.
 
 You can carry an arbitrary key/value `data` in a location. This can be accessed from every page and updated as you travel through a location.
 
@@ -91,22 +92,22 @@ context.beamToNamed(
 
 ## Updating
 
-Once at a `BeamLocation`, it is preferable to update the current location instead of adding it to the `beamHistory` if you plan to stay at the same location. For example, for going from `/books` to `/books/3` (which are both handled by `BooksLocation`);
+Once at a `BeamLocation`, it is preferable to update the current location's state. For example, for going from `/books` to `/books/3` (which are both handled by `BooksLocation`);
 
 ```dart
-context.updateCurrentLocation(
-  pathParameters: {'bookId': '3'},
-  data: {'note': 'this is not my favorite book'},
-);
+context.currentBeamLocation.update(
+  (state) => state.copyWith(
+    pathBlueprintSegments: ['books', ':bookId'],
+    pathParameters: {'bookId': '3'},
+  ),
+),
 ```
 
-**Note** that both beaming functions (`beamTo` and `BeamToNamed`) will implicitly do this for you when you try to beam to a location which you're currently on. You can turn that off by setting `BeamerRouterDelegate.preferUpdate` to `false`.
-
-If unsure what is your current location; `context.currentBeamLocation`.
+**Note** that both beaming functions (`beamTo` and `BeamToNamed`) will have the same effect as `update` when you try to beam to a location which you're currently on, e.g. if you would to call `context.beamToNamed('/books/3')` instead of above code.
 
 ## Beaming Back
 
-All `BeamLocation`s that you visited are kept in `beamHistory`. Therefore, there is an ability to _beam back_ to the previous location. For example, after spending some time on `/books` and `/books/3`, say you beam to `/articles` which is handled by another `BeamLocation` (e.g. `ArticlesLocation`). From there, you can get back to your previous location as it were when you left, i.e. `/books/3`;
+All `BeamLocation`s that you visited are kept in `beamHistory`. Therefore, there is an ability to _beam back_ to the previous `BeamLocation`. For example, after spending some time on `/books` and `/books/3`, say you beam to `/articles` which is handled by another `BeamLocation` (e.g. `ArticlesLocation`). From there, you can get back to your previous location as it were when you left, i.e. `/books/3`;
 
 ```dart
 context.beamBack();
@@ -131,14 +132,14 @@ Here is a recreation of books example from [this article](https://medium.com/flu
 
 ## Advanced Books
 
-For a step further, we add more flows to demonstrate the power of Beamer. The full code is available [here](https://github.com/slovnicki/beamer_examples/tree/master/advanced_books).
+For a step further, we add more flows to demonstrate the power of Beamer. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/advanced_books).
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/advanced_books/example-advanced-books.gif" alt="example-advanced-books" width="520">
 
 ## Deep Location
 
-You can instantly beam to a location in your app that has many pages stacked (deep linking) and then pop them one by one or simply `beamBack` to where you came from. The full code is available [here](https://github.com/slovnicki/beamer_examples/tree/master/deep_location). Note that `beamBackOnPop` parameter of `beamTo` might be useful here to override `AppBar`'s `pop` with `beamBack`.
+You can instantly beam to a location in your app that has many pages stacked (deep linking) and then pop them one by one or simply `beamBack` to where you came from. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/deep_location). Note that `beamBackOnPop` parameter of `beamTo` might be useful here to override `AppBar`'s `pop` with `beamBack`.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/deep_location/example-deep-location.gif" alt="example-deep-location" width="260">
@@ -153,7 +154,7 @@ ElevatedButton(
 
 ## Location Builder
 
-You can override `BeamLocation.builder` to provide some data to the entire location, i.e. to all of the `pages`. The full code is available [here](https://github.com/slovnicki/beamer_examples/tree/master/location_builder).
+You can override `BeamLocation.builder` to provide some data to the entire location, i.e. to all of the `pages`. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/location_builder).
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/location_builder/example-location-builder.gif" alt="example-location-builder"  width="260">
@@ -171,7 +172,7 @@ Widget builder(BuildContext context, Navigator navigator) {
 
 ## Guards
 
-You can define global guards (for example, authentication guard) or location guards that keep a specific location safe. The full code is available [here](https://github.com/slovnicki/beamer_examples/tree/master/guards).
+You can define global guards (for example, authentication guard) or location guards that keep a specific location safe. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/guards).
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/guards/example-guards.gif" alt="example-guards"  width="520">
@@ -211,13 +212,17 @@ List<BeamGuard> get guards => [
 
 ## Beamer Widget
 
-An example of putting `Beamer`(s) into the Widget tree, for example in usage with `bottomNavigationBar`.
+Examples of putting `Beamer`s into the Widget tree, when you need nested navigation.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/bottom_navigation/example-bottom-navigation-mobile.gif" alt="example-bottom-navigation-mobile" width="240" style="margin-right: 32px">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/bottom_navigation_multiple_beamers/example-bottom-navigation-multiple-beamers.gif" alt="example-bottom-navigation-multiple-beamers" width="240">
 
-- [Bottom navigation example](https://github.com/slovnicki/beamer_examples/tree/master/bottom_navigation)
+<p align="center">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/nested_navigation/example-nested-navigation.gif" alt="example-nested-navigation" width="520">
+
+- [Bottom navigation example](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation)
+
 ```dart
 class MyApp extends StatelessWidget {
   final _beamerKey = GlobalKey<BeamerState>();
@@ -242,7 +247,8 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-- [Bottom navigation example with multiple Beamers](https://github.com/slovnicki/beamer_examples/tree/master/bottom_navigation_multiple_beamers) (WIP)
+- [Bottom navigation example with multiple Beamers](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation_multiple_beamers) (WIP)
+
 ```dart
 class MyAppState extends State<MyApp> {
   int _currentIndex = 0;
@@ -280,11 +286,95 @@ class MyAppState extends State<MyApp> {
 }
 ```
 
+- [Nested navigation example](https://github.com/slovnicki/beamer/tree/master/examples/nested_navigation)
+
+```dart
+...
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routeInformationParser: BeamerRouteInformationParser(),
+      routerDelegate: RootRouterDelegate(
+        beamLocations: [
+          HomeLocation(),
+        ],
+      ),
+    );
+  }
+}
+
+...
+
+
+class HomeLocation extends BeamLocation {
+  @override
+  List<String> get pathBlueprints => ['/*'];
+
+  @override
+  List<BeamPage> pagesBuilder(BuildContext context) => [
+        BeamPage(
+          key: ValueKey('home'),
+          child: HomeScreen(),
+        )
+      ];
+}
+
+...
+
+class HomeScreen extends StatelessWidget {
+  final _beamerKey = GlobalKey<BeamerState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Home'),
+      ),
+      body: Row(
+        children: [
+          Container(
+            color: Colors.blue[300],
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () => _beamerKey.currentState.routerDelegate
+                      .beamToNamed('/books'),
+                  child: Text('Books'),
+                ),
+                SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () => _beamerKey.currentState.routerDelegate
+                      .beamToNamed('/articles'),
+                  child: Text('Articles'),
+                ),
+              ],
+            ),
+          ),
+          Container(width: 1, color: Colors.blue),
+          Expanded(
+            child: Beamer(
+              key: _beamerKey,
+              beamLocations: [
+                BooksLocation(),
+                ArticlesLocation(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
 ---
 ## Integration with Navigation UI Packages
 
-- [Animated Rail Example](https://github.com/slovnicki/beamer_examples/tree/master/animated_rail), with [animated_rail](https://pub.dev/packages/animated_rail) package.
-- ... (contributions are very welcome; add your suggestion [here](https://github.com/slovnicki/beamer/issues/79) or make a PR [here](https://github.com/slovnicki/beamer_examples))
+- [Animated Rail Example](https://github.com/slovnicki/beamer/tree/master/examples/animated_rail), with [animated_rail](https://pub.dev/packages/animated_rail) package.
+- ... (contributions are very welcome; add your suggestion [here](https://github.com/slovnicki/beamer/issues/79) or make a PR)
 
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/animated_rail/example-animated-rail.gif" alt="example-animated-rail" width="240">
 
@@ -321,7 +411,9 @@ class MyApp extends StatelessWidget {
 
 ## Deeper in the Tree
 
-Similar to above example, but we use `RootRouterDelegate` with `homeBuilder` (same purpose as `home` in `MaterialApp`) where we put `Beamer` somewhere in the tree.
+Similar to above example, but we use `RootRouterDelegate` instead of `BeamerRouterDelegate`. Then, we have 2 options:
+
+- provide `homeBuilder` to `RootRouterDelegate` which will serve the same role as `MaterialApp.home`. This is useful when you need a simple app with some navigation bar.
 
 ```dart
 class MyApp extends StatelessWidget {
@@ -343,17 +435,48 @@ class MyApp extends StatelessWidget {
 }
 ```
 
+- provide `beamLocations` to `RootRouterDelegate` as we would to `BeamerRouterDelegate` and have `Beamer` somewhere deep within those locations (see [nested navigation example](https://github.com/slovnicki/beamer/tree/master/examples/nested_navigation)).
+
+```dart
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routeInformationParser: BeamerRouteInformationParser(),
+      routerDelegate: RootRouterDelegate(
+        beamLocations: [
+          HomeLocation(),
+          BooksLocation(),
+          ArticlesLocation(),
+        ],
+      ),
+      ...
+    );
+  }
+}
+```
+
 ## General Notes
 
 - When extending `BeamLocation`, two methods need to be implemented; `pathBlueprints` and `pagesBuilder`.
-  - `pagesBuilder` returns a stack of pages that will be built by `Navigator` when you beam there, and `pathBlueprints` is there for Beamer to decide which `BeamLocation` corresponds to a URL coming from browser.
-  - `BeamLocation` takes query and path parameters from URI. The `:` is necessary in `pathBlueprints` if you _might_ get path parameter from browser.
+  - `pagesBuilder` returns a stack of pages that will be built by `Navigator` when you beam there, and `pathBlueprints` is there for Beamer to decide which `BeamLocation` corresponds to which URI.
+  - `BeamLocation` keeps query and path parameters from URI in its `BeamState` . The `:` is necessary in `pathBlueprints` if you _might_ get path parameter from browser.
 
 - `BeamPage`'s child is an arbitrary `Widgets` that represent your app screen / page.
   - `key` is important for `Navigator` to optimize rebuilds. This should be a unique value for "page state".
   - `BeamPage` creates `MaterialPageRoute`, but you can extend `BeamPage` and override `createRoute` to make your own implementation instead.
 
 # Migrating
+
+## From 0.9 to 0.10
+
+- `BeamLocation` constructor now takes only `BeamState state`. (there's no need to define special constructors and call `super` if you use `beamToNamed`)
+- most of the attributes that were in `BeamLocation` are now in `BeamLocation.state`. When accessing them through `BeamLocation`;
+  - `pathParameters` is now `state.pathParameters`
+  - `queryParameters` is now `state.queryParameters`
+  - `data` is now `state.data`
+  - `pathSegments` is now `state.pathBlueprintSegments`
+  - `uri` is now `state.uri`
 
 ## From 0.7 to 0.8
 
