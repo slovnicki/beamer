@@ -30,7 +30,10 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Center(
         child: ElevatedButton(
-          onPressed: () => context.beamToNamed('/books'),
+          //onPressed: () => context.beamToNamed('/books'),
+          onPressed: () => context.currentBeamLocation.state = BeamState(
+            pathBlueprintSegments: ['books'],
+          ),
           child: Text('See books'),
         ),
       ),
@@ -55,13 +58,13 @@ class BooksScreen extends StatelessWidget {
               (book) => ListTile(
                 title: Text(book['title']),
                 subtitle: Text(book['author']),
+                //onTap: () => context.beamToNamed('/books/${book['id']}'),
                 onTap: () => context.currentBeamLocation.update(
                   (state) => state.copyWith(
                     pathBlueprintSegments: ['books', ':bookId'],
                     pathParameters: {'bookId': book['id']},
                   ),
                 ),
-                //onTap: () => context.beamToNamed('/books/${book['id']}'),
               ),
             )
             .toList(),
