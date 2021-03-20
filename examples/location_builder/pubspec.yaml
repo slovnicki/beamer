@@ -24,8 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   beamer:
-    path: ../../beamer
-  # beamer: 0.9.3
+    path: ../../package
   provider: ^5.0.0
 
   # The following adds the Cupertino Icons font to your application.
