@@ -1,6 +1,5 @@
 import 'package:beamer/src/beam_location.dart';
 import 'package:beamer/src/utils.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'test_locations.dart';
@@ -56,6 +55,7 @@ void main() {
     test('Parsed BeamLocation creates correct pages', () async {
       var uri = Uri.parse('/l1');
       var location = Utils.chooseBeamLocation(uri, beamLocations);
+      expect(location, isNotNull);
       //expect(location.pagesBuilder(null).length, 1);
 
       uri = Uri.parse('/l1?q=xxx');
