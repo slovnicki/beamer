@@ -1,3 +1,14 @@
+# 1.0.0-nullsafety.4
+
+This is a merge of `v0.10.0` into `v1.0.0-nullsafety.3.
+
+- **BREAKING:** Removed most attributes from `BeamLocation` and put them into `BeamLocation.state`
+- **BREAKING:** Changed `BeamLocation` constructor to take only `state`.
+- **Add** `RootRouterDelegate` for nested navigation
+- **Add** `BeamState` for more declarative experience
+
+See [migration details](https://pub.dev/packages/beamer#from-09-to-010)
+
 # 1.0.0-nullsafety.3
 
 - **Add** replaceCurrent attribute (default false) to beaming function
