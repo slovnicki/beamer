@@ -9,6 +9,7 @@ void main() {
   final beamLocations = [
     Location1(pathBlueprint: '/l1'),
     Location2(pathBlueprint: '/l2/:id'),
+    CustomStateLocation(),
   ];
 
   group('chooseBeamLocation', () {
@@ -77,6 +78,13 @@ void main() {
       var uri = Uri.parse('/x');
       var location = Utils.chooseBeamLocation(uri, beamLocations);
       expect(location, isA<NotFound>());
+    });
+
+    test('Custom state is created', () {
+      final uri = Uri.parse('/custom');
+      final location = Utils.chooseBeamLocation(uri, beamLocations);
+      expect(location, isA<CustomStateLocation>());
+      expect((location as CustomStateLocation).state.customVar, 'test');
     });
   });
 }
