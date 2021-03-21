@@ -1,5 +1,4 @@
 import 'package:beamer/beamer.dart';
-import 'package:beamer/src/beam_state.dart';
 
 abstract class Utils {
   /// Traverses `beamLocations` and returns the one whose one of
@@ -12,20 +11,18 @@ abstract class Utils {
   /// configured with `uri`.
   static BeamLocation chooseBeamLocation(
     Uri uri,
-    List<BeamLocation> beamLocations,
-  ) {
+    List<BeamLocation> beamLocations, {
+    Map<String, dynamic> data = const <String, dynamic>{},
+  }) {
     for (var beamLocation in beamLocations) {
       for (var pathBlueprint in beamLocation.pathBlueprints) {
         if (pathBlueprint == uri.path || pathBlueprint == '/*') {
           beamLocation.state = beamLocation.createState(
-                uri.pathSegments,
-                {},
-                uri.queryParameters,
-              ) ??
-              BeamState(
-                pathBlueprintSegments: uri.pathSegments,
-                queryParameters: uri.queryParameters,
-              );
+            uri.pathSegments,
+            {},
+            uri.queryParameters,
+            data,
+          );
           //print('returning: ${uri.pathSegments} for $beamLocation');
           return beamLocation..prepare();
         }
@@ -62,15 +59,11 @@ abstract class Utils {
         }
         if (checksPassed) {
           beamLocation.state = beamLocation.createState(
-                pathSegments,
-                pathParameters,
-                uri.queryParameters,
-              ) ??
-              BeamState(
-                pathBlueprintSegments: pathSegments,
-                pathParameters: pathParameters,
-                queryParameters: uri.queryParameters,
-              );
+            pathSegments,
+            pathParameters,
+            uri.queryParameters,
+            data,
+          );
           //print('returning: ${pathSegments} for $beamLocation');
           return beamLocation..prepare();
         }

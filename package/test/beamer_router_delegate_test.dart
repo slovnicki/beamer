@@ -7,8 +7,13 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final location1 = Location1(pathBlueprint: '/l1');
   final location2 = Location2(pathBlueprint: '/l2/:id');
+  final customStateLocation = CustomStateLocation();
   final router = BeamerRouterDelegate(
-    beamLocations: [location1, location2],
+    beamLocations: [
+      location1,
+      location2,
+      customStateLocation,
+    ],
   );
   router.setNewRoutePath((location1..prepare()).state.uri);
 
@@ -89,5 +94,15 @@ void main() {
     router.beamToNamed('/l1/one', stacked: false);
     //expect(router.currentLocation.pagesBuilder(null).length, 2);
     //expect(router.currentPages.length, 1);
+  });
+
+  test('custom state can be updated', () {
+    router.beamToNamed('/custom');
+    expect((router.currentLocation as CustomStateLocation).state.customVar,
+        'test');
+    (router.currentLocation as CustomStateLocation)
+        .update((state) => state.copyWith(customVar: 'test-ok'));
+    expect((router.currentLocation as CustomStateLocation).state.customVar,
+        'test-ok');
   });
 }

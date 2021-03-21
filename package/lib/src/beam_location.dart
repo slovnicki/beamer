@@ -8,12 +8,16 @@ import 'package:flutter/widgets.dart';
 abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   BeamLocation({
     T? state,
-  }) : _state = state ?? (BeamState() as T);
+  }) {
+    if (state != null) _state = state;
+  }
+
+  late T _state;
 
   /// A state of this location.
   ///
-  /// Initially upon load will hold `uriBlueprint` and `pathParameters`.
-  late T _state;
+  /// Upon beaming, it will be populated by all necessary attributes.
+  /// See [BeamState].
   T get state => _state;
   set state(T state) {
     _state = state..configure();
@@ -21,12 +25,20 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   }
 
   /// How to create state.
-  T? createState(
+  ///
+  /// Override this if you have your custom state class extending [BeamState].
+  T createState(
     List<String> pathBlueprintSegments,
     Map<String, String> pathParameters,
     Map<String, String> queryParameters,
+    Map<String, dynamic> data,
   ) =>
-      null;
+      BeamState(
+        pathBlueprintSegments: pathBlueprintSegments,
+        pathParameters: pathParameters,
+        queryParameters: queryParameters,
+        data: data,
+      ) as T;
 
   /// Update a state via callback receiving the current state.
   ///
@@ -93,6 +105,7 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   }
 }
 
+/// Default location to choose if requested URI doesn't parse to any location.
 class NotFound extends BeamLocation {
   NotFound({String path = '/'})
       : super(
