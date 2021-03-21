@@ -12,8 +12,9 @@ abstract class Utils {
   /// configured with `uri`.
   static BeamLocation chooseBeamLocation(
     Uri uri,
-    List<BeamLocation> beamLocations,
-  ) {
+    List<BeamLocation> beamLocations, {
+    Map<String, dynamic> data = const <String, dynamic>{},
+  }) {
     for (var beamLocation in beamLocations) {
       for (var pathBlueprint in beamLocation.pathBlueprints) {
         if (pathBlueprint == uri.path || pathBlueprint == '/*') {
@@ -21,10 +22,12 @@ abstract class Utils {
                 uri.pathSegments,
                 {},
                 uri.queryParameters,
+                data,
               ) ??
               BeamState(
                 pathBlueprintSegments: uri.pathSegments,
                 queryParameters: uri.queryParameters,
+                data: data,
               );
           //print('returning: ${uri.pathSegments} for $beamLocation');
           return beamLocation..prepare();
@@ -65,11 +68,13 @@ abstract class Utils {
                 pathSegments,
                 pathParameters,
                 uri.queryParameters,
+                data,
               ) ??
               BeamState(
                 pathBlueprintSegments: pathSegments,
                 pathParameters: pathParameters,
                 queryParameters: uri.queryParameters,
+                data: data,
               );
           //print('returning: ${pathSegments} for $beamLocation');
           return beamLocation..prepare();

@@ -187,8 +187,11 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     bool stacked = true,
     bool replaceCurrent = false,
   }) {
-    final location = Utils.chooseBeamLocation(Uri.parse(uri), beamLocations);
-    location.update((state) => state.copyWith(data: data));
+    final location = Utils.chooseBeamLocation(
+      Uri.parse(uri),
+      beamLocations,
+      data: data,
+    );
     beamTo(
       location,
       beamBackOnPop: beamBackOnPop,
@@ -294,11 +297,12 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     if (pathSegment[0] == ':') {
       pathParameters.remove(pathSegment.substring(1));
     }
-    _currentLocation.update((state) => state.copyWith(
-          pathBlueprintSegments: pathBlueprintSegments,
-          pathParameters: pathParameters,
-          queryParameters: !page.keepQueryOnPop ? {} : null,
-        ));
+    _currentLocation.state = _currentLocation.createState(
+      pathBlueprintSegments,
+      pathParameters,
+      !page.keepQueryOnPop ? {} : _currentLocation.state.queryParameters,
+      _currentLocation.state.data,
+    );
     _update();
   }
 

@@ -8,7 +8,7 @@ import 'package:flutter/widgets.dart';
 abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   BeamLocation({
     T state,
-  }) : _state = state ?? BeamState();
+  }) : _state = state;
 
   /// A state of this location.
   ///
@@ -25,6 +25,7 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
     List<String> pathBlueprintSegments,
     Map<String, String> pathParameters,
     Map<String, String> queryParameters,
+    Map<String, dynamic> data,
   ) =>
       null;
 
