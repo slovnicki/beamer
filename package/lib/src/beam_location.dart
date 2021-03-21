@@ -27,7 +27,12 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
     Map<String, String> queryParameters,
     Map<String, dynamic> data,
   ) =>
-      null;
+      BeamState(
+        pathBlueprintSegments: pathBlueprintSegments,
+        pathParameters: pathParameters,
+        queryParameters: queryParameters,
+        data: data,
+      ) as T;
 
   /// Update a state via callback receiving the current state.
   ///
