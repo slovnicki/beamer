@@ -1,5 +1,4 @@
 import 'package:beamer/beamer.dart';
-import 'package:beamer/src/beam_state.dart';
 
 abstract class Utils {
   /// Traverses `beamLocations` and returns the one whose one of
