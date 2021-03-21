@@ -1,9 +1,14 @@
+# 0.10.1
+
+- **Fix** creation of a custom `BeamState`
+- **Add** tests and doc comments for `BeamState`
+
 # 0.10.0
 
+- **BREAKING** Removed most attributes from `BeamLocation` and put them into `BeamLocation.state`
+- **BREAKING** Changed `BeamLocation` constructor to take only `state`.
 - **Add** `RootRouterDelegate` for nested navigation
 - **Add** `BeamState` for more declarative experience
-- **Remove** most attributes from `BeamLocation` and put them into `BeamLocation.state`
-- **Change** `BeamLocation` constructor to take only `state`.
 
 See [migration details](https://pub.dev/packages/beamer#from-09-to-010)
 
