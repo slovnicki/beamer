@@ -9,17 +9,48 @@ class BeamState {
     configure();
   }
 
+  /// Path segments of the current URI,
+  /// in the form as it's defined in [BeamLocation.pathBlueprints].
+  ///
+  /// If current URI is '/books/1', this will be `['books', ':bookId']`.
   final List<String> pathBlueprintSegments;
+
+  /// Path parameters from the URI,
+  /// in the form as it's defined in [BeamLocation.pathBlueprints].
+  ///
+  /// If current URI is '/books/1', this will be `{'bookId': '1'}`.
   final Map<String, String> pathParameters;
+
+  /// Query parameters of the current URI.
+  ///
+  /// If current URI is '/books?title=str', this will be `{'title': 'str'}`.
   final Map<String, String> queryParameters;
+
+  /// Custom key/value data for arbitrary use throught a beam location.
   final Map<String, dynamic> data;
 
   Uri _uriBlueprint;
+
+  /// Current URI object in the "blueprint form",
+  /// as it's defined in [BeamLocation.pathBlueprints].
+  ///
+  /// This is constructed from [pathBlueprintSegments] and [queryParameters].
+  /// See more at [configure].
   Uri get uriBlueprint => _uriBlueprint;
 
   Uri _uri;
+
+  /// Current URI object in the "real form",
+  /// as it should be shown in browser's URL bar.
+  ///
+  /// This is constructed from [pathBlueprintSegments] and [queryParameters],
+  /// with the addition of replacing each pathBlueprintSegment of the form ':*'
+  /// with a coresponding value from [pathParameters].
+  ///
+  /// See more at [configure].
   Uri get uri => _uri;
 
+  /// Returns a configured copy of this.
   BeamState copyWith({
     List<String> pathBlueprintSegments,
     Map<String, String> pathParameters,
@@ -34,6 +65,7 @@ class BeamState {
         data: data ?? this.data,
       )..configure();
 
+  /// Constructs [uriBlueprint] and [uri] upon creation.
   void configure() {
     _uriBlueprint = Uri(
       pathSegments: [''] + pathBlueprintSegments,

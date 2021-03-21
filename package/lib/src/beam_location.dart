@@ -10,10 +10,12 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
     T state,
   }) : _state = state;
 
+  T _state;
+
   /// A state of this location.
   ///
-  /// Initially upon load will hold `uriBlueprint` and `pathParameters`.
-  T _state;
+  /// Upon beaming, it will be populated by all necessary attributes.
+  /// See [BeamState].
   T get state => _state;
   set state(T state) {
     _state = state..configure();
@@ -21,6 +23,8 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   }
 
   /// How to create state.
+  ///
+  /// Override this if you have your custom state class extending [BeamState].
   T createState(
     List<String> pathBlueprintSegments,
     Map<String, String> pathParameters,
@@ -99,6 +103,7 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   }
 }
 
+/// Default location to choose if requested URI doesn't parse to any location.
 class NotFound extends BeamLocation {
   NotFound({String path})
       : super(
