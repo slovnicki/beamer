@@ -1,3 +1,8 @@
+# 1.0.0-nullsafety.5
+
+- **Fix** creation of `BeamState`
+- **Add** tests and doc comments for `BeamState`
+
 # 1.0.0-nullsafety.4
 
 This is a merge of `v0.10.0` into `v1.0.0-nullsafety.3.
