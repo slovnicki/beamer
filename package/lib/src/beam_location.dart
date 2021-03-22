@@ -8,7 +8,9 @@ import 'package:flutter/widgets.dart';
 abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   BeamLocation({
     T state,
-  }) : _state = state;
+  }) {
+    _state = state ?? createState();
+  }
 
   T _state;
 
@@ -25,12 +27,12 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   /// How to create state.
   ///
   /// Override this if you have your custom state class extending [BeamState].
-  T createState(
-    List<String> pathBlueprintSegments,
-    Map<String, String> pathParameters,
-    Map<String, String> queryParameters,
-    Map<String, dynamic> data,
-  ) =>
+  T createState({
+    List<String> pathBlueprintSegments = const <String>[],
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, String> queryParameters = const <String, String>{},
+    Map<String, dynamic> data = const <String, dynamic>{},
+  }) =>
       BeamState(
         pathBlueprintSegments: pathBlueprintSegments,
         pathParameters: pathParameters,
