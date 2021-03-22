@@ -1,3 +1,8 @@
+# 0.10.2
+
+- **Fix** non-existent state if not set explicitly
+- (slight) **Change** to a signature of `BeamLocation.createState`, but hopefully no one has used it yet to be affected :)
+
 # 0.10.1
 
 - **Fix** creation of a custom `BeamState`
