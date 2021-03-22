@@ -298,10 +298,11 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
       pathParameters.remove(pathSegment.substring(1));
     }
     _currentLocation.state = _currentLocation.createState(
-      pathBlueprintSegments,
-      pathParameters,
-      !page.keepQueryOnPop ? {} : _currentLocation.state.queryParameters,
-      _currentLocation.state.data,
+      pathBlueprintSegments: pathBlueprintSegments,
+      pathParameters: pathParameters,
+      queryParameters:
+          !page.keepQueryOnPop ? {} : _currentLocation.state.queryParameters,
+      data: _currentLocation.state.data,
     );
     _update();
   }

@@ -105,4 +105,10 @@ void main() {
     expect((router.currentLocation as CustomStateLocation).state.customVar,
         'test-ok');
   });
+
+  test('beamTo works without setting the BeamState explicitly', () {
+    router.beamTo(NoStateLocation());
+    expect(router.currentLocation.state, isNotNull);
+    router.beamBack();
+  });
 }

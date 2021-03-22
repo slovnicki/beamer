@@ -18,10 +18,9 @@ abstract class Utils {
       for (var pathBlueprint in beamLocation.pathBlueprints) {
         if (pathBlueprint == uri.path || pathBlueprint == '/*') {
           beamLocation.state = beamLocation.createState(
-            uri.pathSegments,
-            {},
-            uri.queryParameters,
-            data,
+            pathBlueprintSegments: uri.pathSegments,
+            queryParameters: uri.queryParameters,
+            data: data,
           );
           //print('returning: ${uri.pathSegments} for $beamLocation');
           return beamLocation..prepare();
@@ -59,10 +58,10 @@ abstract class Utils {
         }
         if (checksPassed) {
           beamLocation.state = beamLocation.createState(
-            pathSegments,
-            pathParameters,
-            uri.queryParameters,
-            data,
+            pathBlueprintSegments: pathSegments,
+            pathParameters: pathParameters,
+            queryParameters: uri.queryParameters,
+            data: data,
           );
           //print('returning: ${pathSegments} for $beamLocation');
           return beamLocation..prepare();

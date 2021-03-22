@@ -100,12 +100,12 @@ class CustomStateLocation extends BeamLocation<CustomState> {
       ];
 
   @override
-  CustomState createState(
-    List<String> pathBlueprintSegments,
-    Map<String, String> pathParameters,
-    Map<String, String> queryParameters,
-    Map<String, dynamic> data,
-  ) =>
+  CustomState createState({
+    List<String> pathBlueprintSegments = const <String>[],
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, String> queryParameters = const <String, String>{},
+    Map<String, dynamic> data = const <String, dynamic>{},
+  }) =>
       CustomState(
         pathBlueprintSegments: pathBlueprintSegments,
         pathParameters: pathParameters,
@@ -113,4 +113,17 @@ class CustomStateLocation extends BeamLocation<CustomState> {
         data: data,
         customVar: 'test',
       );
+}
+
+class NoStateLocation extends BeamLocation {
+  @override
+  List<String> get pathBlueprints => ['/page'];
+
+  @override
+  List<BeamPage> pagesBuilder(BuildContext context) => [
+        BeamPage(
+          key: ValueKey('page'),
+          child: Container(),
+        )
+      ];
 }
