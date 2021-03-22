@@ -1,3 +1,8 @@
+# 1.0.0-nullsafety.6
+
+- **Fix** non-existent state if not set explicitly
+- (slight) **Change** to a signature of `BeamLocation.createState`, but hopefully no one has used it yet to be affected :)
+
 # 1.0.0-nullsafety.5
 
 - **Fix** creation of `BeamState`
