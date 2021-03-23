@@ -52,7 +52,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   }
 
   void setPathFromUriNotifier() {
-    if (_navigationNotifier.uri != currentConfiguration) {
+    if (_navigationNotifier.uri != _currentLocation.state.uri) {
       setNewRoutePath(_navigationNotifier.uri);
     }
   }
@@ -228,7 +228,8 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   }
 
   @override
-  Uri get currentConfiguration => _currentLocation.state.uri;
+  Uri get currentConfiguration =>
+      _navigationNotifier == null ? _currentLocation.state.uri : null;
 
   @override
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
@@ -284,7 +285,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
 
   void _update() {
     notifyListeners();
-    _navigationNotifier?.uri = currentConfiguration;
+    _navigationNotifier?.uri = _currentLocation.state.uri;
     _navigationNotifier?.currentLocation = currentLocation;
   }
 
