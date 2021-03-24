@@ -17,7 +17,7 @@ class NavigationNotifier extends ChangeNotifier {
 
   BeamLocation _currentLocation;
   BeamLocation get currentLocation => _currentLocation;
-  set currentLocation(BeamLocation curentLocation) =>
+  set currentLocation(BeamLocation currentLocation) =>
       _currentLocation = currentLocation;
 }
 
