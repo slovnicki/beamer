@@ -1,3 +1,7 @@
+# 0.10.3
+
+- **Fix** Unexpected null value exception; [issue 144](https://github.com/slovnicki/beamer/issues/144)
+
 # 0.10.2
 
 - **Fix** non-existent state if not set explicitly
