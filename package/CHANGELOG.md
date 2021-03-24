@@ -1,3 +1,7 @@
+# 1.0.0-nullsafety.7
+
+- **Fix** Unexpected null value exception; [issue 144](https://github.com/slovnicki/beamer/issues/144)
+
 # 1.0.0-nullsafety.6
 
 - **Fix** non-existent state if not set explicitly
