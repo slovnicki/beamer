@@ -14,11 +14,6 @@ class NavigationNotifier extends ChangeNotifier {
     _uri = uri;
     notifyListeners();
   }
-
-  BeamLocation _currentLocation;
-  BeamLocation get currentLocation => _currentLocation;
-  set currentLocation(BeamLocation currentLocation) =>
-      _currentLocation = currentLocation;
 }
 
 /// A delegate that is used by the [Router] widget
@@ -295,7 +290,6 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   void _update() {
     notifyListeners();
     _navigationNotifier?.uri = _currentLocation.state.uri;
-    _navigationNotifier?.currentLocation = currentLocation;
   }
 
   void _handlePop(BeamPage page) {
