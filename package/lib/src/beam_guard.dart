@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 
-import './beam_page.dart';
 import './beam_location.dart';
+import './beam_page.dart';
 
 /// A guard for [BeamLocation]s.
 ///
@@ -13,9 +13,10 @@ class BeamGuard {
     required this.check,
     this.onCheckFailed,
     this.beamTo,
+    this.beamToNamed,
     this.showPage,
     this.guardNonMatching = false,
-  }) : assert(beamTo != null || showPage != null);
+  }) : assert(beamTo != null || beamToNamed != null || showPage != null);
 
   /// A list of path strings that are to be guarded.
   ///
@@ -43,6 +44,11 @@ class BeamGuard {
   ///
   /// This has precedence over [showPage].
   BeamLocation Function(BuildContext context)? beamTo;
+
+  /// If guard [check] returns false, beam to this uri.
+  ///
+  /// This has precedence over [showPage].
+  String? beamToNamed;
 
   /// If guard [check] returns false, put this page onto navigation stack.
   ///
