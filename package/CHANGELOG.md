@@ -1,3 +1,7 @@
+# 0.10.5
+
+- **Remove** `NavigationNotifier.currentLocation` (not needed)
+
 # 0.10.4
 
 - **Add** `BeamGuard.beamToNamed`
