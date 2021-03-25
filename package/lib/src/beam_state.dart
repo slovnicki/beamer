@@ -1,3 +1,6 @@
+import './utils.dart';
+import './beam_location.dart';
+
 /// A state for [BeamLocation]
 class BeamState {
   BeamState({
@@ -7,6 +10,19 @@ class BeamState {
     this.data = const <String, dynamic>{},
   }) {
     configure();
+  }
+
+  factory BeamState.fromUri(
+    Uri uri, {
+    BeamLocation beamLocation,
+    Map<String, dynamic> data = const <String, dynamic>{},
+  }) {
+    final state = Utils.createBeamState(
+      uri,
+      beamLocation: beamLocation,
+      data: data,
+    );
+    return state..configure();
   }
 
   /// Path segments of the current URI,

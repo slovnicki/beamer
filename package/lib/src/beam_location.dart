@@ -6,10 +6,13 @@ import 'package:flutter/widgets.dart';
 ///
 /// Extend this class to define your locations to which you can then `beamTo`.
 abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
-  BeamLocation({
-    T state,
-  }) {
-    _state = state ?? createState();
+  BeamLocation(T state) {
+    _state = createState(
+      pathBlueprintSegments: state.pathBlueprintSegments,
+      pathParameters: state.pathParameters,
+      queryParameters: state.queryParameters,
+      data: state.data,
+    );
   }
 
   T _state;
@@ -33,10 +36,12 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
     Map<String, String> queryParameters = const <String, String>{},
     Map<String, dynamic> data = const <String, dynamic>{},
   }) =>
-      BeamState(
-        pathBlueprintSegments: pathBlueprintSegments,
-        pathParameters: pathParameters,
-        queryParameters: queryParameters,
+      BeamState.fromUri(
+        Uri(
+          pathSegments: pathBlueprintSegments,
+          queryParameters: queryParameters,
+        ),
+        beamLocation: this,
         data: data,
       ) as T;
 
@@ -107,12 +112,7 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
 
 /// Default location to choose if requested URI doesn't parse to any location.
 class NotFound extends BeamLocation {
-  NotFound({String path})
-      : super(
-          state: BeamState(
-            pathBlueprintSegments: Uri.parse(path).pathSegments,
-          ),
-        );
+  NotFound({String path}) : super(BeamState.fromUri(Uri.parse(path)));
 
   @override
   List<BeamPage> pagesBuilder(BuildContext context) => [];

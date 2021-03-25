@@ -1,3 +1,4 @@
+import 'package:beamer/beamer.dart';
 import 'package:flutter/widgets.dart';
 
 import 'beam_page.dart';
@@ -10,13 +11,13 @@ import 'beamer_provider.dart';
 class Beamer extends StatefulWidget {
   Beamer({
     Key key,
-    @required this.beamLocations,
+    @required this.locationBuilder,
     this.routerDelegate,
-  })  : assert(beamLocations != null),
+  })  : assert(locationBuilder != null),
         super(key: key);
 
   /// [BeamLocation]s that this Beamer handles.
-  final List<BeamLocation> beamLocations;
+  final BeamLocation Function(BeamState) locationBuilder;
 
   /// Responsible for beaming, updating and rebuilding the page stack.
   ///
@@ -49,7 +50,7 @@ class BeamerState extends State<Beamer> {
   void initState() {
     super.initState();
     _routerDelegate ??= widget.routerDelegate ??
-        BeamerRouterDelegate(beamLocations: widget.beamLocations);
+        BeamerRouterDelegate(locationBuilder: widget.locationBuilder);
   }
 
   @override
