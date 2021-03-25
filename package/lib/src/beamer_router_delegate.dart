@@ -240,6 +240,13 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     if (guard?.beamTo != null) {
       _beamHistory.add(guard.beamTo(context)..prepare());
       _currentLocation = _beamHistory.last;
+    } else if (guard?.beamToNamed != null) {
+      final location = Utils.chooseBeamLocation(
+        Uri.parse(guard.beamToNamed),
+        beamLocations,
+      );
+      _beamHistory.add(location..prepare());
+      _currentLocation = _beamHistory.last;
     } else if ((_currentLocation is NotFound) && notFoundRedirect != null) {
       _currentLocation = notFoundRedirect..prepare();
     }
@@ -253,7 +260,9 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
           observers: navigatorObservers,
           pages: _currentLocation is NotFound
               ? [notFoundPage]
-              : guard == null || guard?.beamTo != null
+              : guard == null ||
+                      guard.beamTo != null ||
+                      guard.beamToNamed != null
                   ? _currentPages
                   : [guard.showPage],
           onPopPage: (route, result) {
