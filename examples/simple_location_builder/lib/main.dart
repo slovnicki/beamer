@@ -100,72 +100,25 @@ class BookDetailsScreen extends StatelessWidget {
   }
 }
 
-// LOCATIONS
-class HomeLocation extends BeamLocation {
-  HomeLocation(BeamState state) : super(state);
-
-  @override
-  List<String> get pathBlueprints => ['/'];
-
-  @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
-        BeamPage(
-          key: ValueKey('home'),
-          child: HomeScreen(),
-        ),
-      ];
-}
-
-class BooksLocation extends BeamLocation {
-  BooksLocation(BeamState state) : super(state);
-
-  @override
-  Widget builder(BuildContext context, Widget navigator) =>
-      ChangeNotifierProvider(
-        create: (context) => Books(),
-        child: navigator,
-      );
-
-  @override
-  List<String> get pathBlueprints => ['/books/:bookId'];
-
-  @override
-  List<BeamPage> pagesBuilder(BuildContext context) {
-    print('books: ${context.read<Books>().books.length}');
-    Color color = context.watch<Books>().color;
-    return [
-      ...HomeLocation(state).pagesBuilder(context),
-      if (state.uri.pathSegments.contains('books'))
-        BeamPage(
-          key: ValueKey('books-${state.queryParameters['title'] ?? ''}'),
-          child: BooksScreen(),
-        ),
-      if (color == Colors.red)
-        BeamPage(
-          key: ValueKey('book-1'),
-          child: BookDetailsScreen(
-            bookId: '1', //pathParameters['bookId'],
-          ),
-        ),
-    ];
-  }
-}
-
 // APP
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      routerDelegate: BeamerRouterDelegate(
-        locationBuilder: BeamerLocationBuilder(
-          beamLocations: (state) => [
-            HomeLocation(state),
-            BooksLocation(state),
-          ],
+    return ChangeNotifierProvider(
+      create: (context) => Books(),
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        routerDelegate: BeamerRouterDelegate(
+          locationBuilder: SimpleLocationBuilder(routes: {
+            '/': (context) => HomeScreen(),
+            '/books': (context) => BooksScreen(),
+            '/books/:bookId': (context) => BookDetailsScreen(
+                bookId:
+                    context.currentBeamLocation.state.pathParameters['bookId']),
+          }),
         ),
+        routeInformationParser: BeamerRouteInformationParser(),
       ),
-      routeInformationParser: BeamerRouteInformationParser(),
     );
   }
 }
