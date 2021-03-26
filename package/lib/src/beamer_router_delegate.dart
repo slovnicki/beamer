@@ -17,8 +17,8 @@ class NavigationNotifier extends ChangeNotifier {
   BeamLocation _currentLocation;
   BeamLocation get currentLocation => _currentLocation;
   set currentLocation(BeamLocation curentLocation) =>
-      _currentLocation = currentLocation;
-}
+    _currentLocation = currentLocation;
+  }
 
 /// A delegate that is used by the [Router] widget
 /// to build and configure a navigating widget.
@@ -40,6 +40,8 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     }) =>
         BeamState.fromUri(uri) as T;
     notFoundPage ??= BeamPage(child: Container());
+    _currentLocation = locationBuilder(createState(Uri.base));
+    _beamHistory.add(_currentLocation);
   }
 
   T Function(
@@ -70,7 +72,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   }
 
   /// List of all [BeamLocation]s that this router handles.
-  final BeamLocation Function(BeamState) locationBuilder;
+  final LocationBuilder locationBuilder;
 
   /// Whether to prefer updating [currentLocation] if it's of the same type
   /// as the location being beamed to, instead of adding it to [beamHistory].
@@ -341,6 +343,7 @@ class _RootLocation extends BeamLocation {
 
   @override
   List<String> get pathBlueprints => ['/*'];
+
   @override
   List<BeamPage> pagesBuilder(BuildContext context) => [
         BeamPage(

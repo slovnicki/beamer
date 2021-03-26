@@ -17,7 +17,7 @@ class Beamer extends StatefulWidget {
         super(key: key);
 
   /// [BeamLocation]s that this Beamer handles.
-  final BeamLocation Function(BeamState) locationBuilder;
+  final LocationBuilder locationBuilder;
 
   /// Responsible for beaming, updating and rebuilding the page stack.
   ///
