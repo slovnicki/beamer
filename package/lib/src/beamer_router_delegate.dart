@@ -13,11 +13,6 @@ class NavigationNotifier extends ChangeNotifier {
     _uri = uri;
     notifyListeners();
   }
-
-  BeamLocation _currentLocation;
-  BeamLocation get currentLocation => _currentLocation;
-  set currentLocation(BeamLocation curentLocation) =>
-      _currentLocation = currentLocation;
 }
 
 /// A delegate that is used by the [Router] widget
@@ -248,8 +243,12 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     final navigator = Builder(
       builder: (context) {
         _currentPages = _stacked
-            ? _currentLocation.pagesBuilder(context)
-            : [_currentLocation.pagesBuilder(context).last];
+            ? _currentLocation.pagesBuilder(context, _currentLocation.state)
+            : [
+                _currentLocation
+                    .pagesBuilder(context, _currentLocation.state)
+                    .last
+              ];
         return Navigator(
           key: navigatorKey,
           observers: navigatorObservers,
@@ -289,7 +288,6 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   void _update() {
     notifyListeners();
     _navigationNotifier?.uri = currentConfiguration;
-    _navigationNotifier?.currentLocation = currentLocation;
   }
 
   void _handlePop(BeamPage page) {
@@ -308,7 +306,6 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
           !page.keepQueryOnPop ? {} : _currentLocation.state.queryParameters,
       data: _currentLocation.state.data,
     );
-    _update();
   }
 
   BeamGuard _guardCheck(BuildContext context, BeamLocation location) {
@@ -342,7 +339,7 @@ class _RootLocation extends BeamLocation {
   @override
   List<String> get pathBlueprints => ['/*'];
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('root'),
           child: homeBuilder(context, state.uri),

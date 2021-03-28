@@ -85,7 +85,7 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   ///
   /// `context` can be useful while building the pages.
   /// It will also contain anything injected via [builder].
-  List<BeamPage> pagesBuilder(BuildContext context);
+  List<BeamPage> pagesBuilder(BuildContext context, T state);
 
   /// Guards that will be executing [check] when this gets beamed to.
   ///
@@ -115,7 +115,7 @@ class NotFound extends BeamLocation {
   NotFound({String path}) : super(BeamState.fromUri(Uri.parse(path)));
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [];
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [];
 
   @override
   List<String> get pathBlueprints => [''];
