@@ -5,14 +5,14 @@ import 'test_locations.dart';
 
 void main() {
   final pathBlueprint = '/l1/one';
-  final testLocation = Location1(pathBlueprint: pathBlueprint);
+  final testLocation = Location1(BeamState.fromUri(Uri.parse(pathBlueprint)));
 
   group('shouldBlock', () {
     test('is true if the location has a blueprint matching the guard', () {
       final guard = BeamGuard(
         pathBlueprints: [pathBlueprint],
         check: (_, __) => true,
-        beamTo: (context) => Location2(),
+        beamTo: (context) => Location2(BeamState()),
       );
 
       expect(guard.shouldGuard(testLocation), isTrue);
@@ -23,7 +23,7 @@ void main() {
       final guard = BeamGuard(
         pathBlueprints: ['/not-a-match'],
         check: (_, __) => true,
-        beamTo: (context) => Location2(),
+        beamTo: (context) => Location2(BeamState()),
       );
 
       expect(guard.shouldGuard(testLocation), isFalse);
@@ -40,7 +40,7 @@ void main() {
                 '/*',
           ],
           check: (_, __) => true,
-          beamTo: (context) => Location2(),
+          beamTo: (context) => Location2(BeamState()),
         );
 
         expect(guard.shouldGuard(testLocation), isTrue);
@@ -53,7 +53,7 @@ void main() {
             '/not-a-match/*',
           ],
           check: (_, __) => true,
-          beamTo: (context) => Location2(),
+          beamTo: (context) => Location2(BeamState()),
         );
 
         expect(guard.shouldGuard(testLocation), isFalse);
@@ -67,7 +67,7 @@ void main() {
             pathBlueprint,
           ],
           check: (_, __) => true,
-          beamTo: (context) => Location2(),
+          beamTo: (context) => Location2(BeamState()),
           guardNonMatching: true,
         );
 
@@ -80,7 +80,7 @@ void main() {
         final guard = BeamGuard(
           pathBlueprints: ['/not-a-match'],
           check: (_, __) => true,
-          beamTo: (context) => Location2(),
+          beamTo: (context) => Location2(BeamState()),
           guardNonMatching: true,
         );
 
@@ -98,7 +98,7 @@ void main() {
                   '/*',
             ],
             check: (_, __) => true,
-            beamTo: (context) => Location2(),
+            beamTo: (context) => Location2(BeamState()),
             guardNonMatching: true,
           );
 
@@ -113,7 +113,7 @@ void main() {
               '/not-a-match/*',
             ],
             check: (_, __) => true,
-            beamTo: (context) => Location2(),
+            beamTo: (context) => Location2(BeamState()),
             guardNonMatching: true,
           );
 

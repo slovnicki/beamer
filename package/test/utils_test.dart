@@ -1,3 +1,4 @@
+import 'package:beamer/beamer.dart';
 import 'package:beamer/src/beam_location.dart';
 import 'package:beamer/src/utils.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +8,8 @@ import 'test_locations.dart';
 
 void main() {
   final beamLocations = [
-    Location1(pathBlueprint: '/l1'),
-    Location2(pathBlueprint: '/l2/:id'),
+    Location1(BeamState()),
+    Location2(BeamState()),
     CustomStateLocation(),
   ];
 
@@ -57,21 +58,23 @@ void main() {
     test('Parsed BeamLocation creates correct pages', () async {
       var uri = Uri.parse('/l1');
       var location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location.pagesBuilder(null).length, 1);
+      expect(location.pagesBuilder(null, location.state).length, 1);
 
       uri = Uri.parse('/l1?q=xxx');
       location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location.pagesBuilder(null).length, 1);
+      expect(location.pagesBuilder(null, location.state).length, 1);
 
       uri = Uri.parse('/l1/one');
       location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location.pagesBuilder(null).length, 2);
-      expect(location.pagesBuilder(null)[1].key, ValueKey('l1-one'));
+      expect(location.pagesBuilder(null, location.state).length, 2);
+      expect(location.pagesBuilder(null, location.state)[1].key,
+          ValueKey('l1-one'));
 
       uri = Uri.parse('/l1/two');
       location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location.pagesBuilder(null).length, 2);
-      expect(location.pagesBuilder(null)[1].key, ValueKey('l1-two'));
+      expect(location.pagesBuilder(null, location.state).length, 2);
+      expect(location.pagesBuilder(null, location.state)[1].key,
+          ValueKey('l1-two'));
     });
 
     test('Unknown URI yields NotFound location', () async {
