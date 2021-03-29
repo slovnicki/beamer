@@ -7,12 +7,7 @@ import 'package:flutter/widgets.dart';
 /// Extend this class to define your locations to which you can then `beamTo`.
 abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   BeamLocation(T state) {
-    _state = createState(
-      pathBlueprintSegments: state.pathBlueprintSegments,
-      pathParameters: state.pathParameters,
-      queryParameters: state.queryParameters,
-      data: state.data,
-    );
+    _state = createState(state);
   }
 
   T _state;
@@ -27,23 +22,11 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// How to create state.
+  /// How to create state from generic [BeamState], often produced by [Beamer]
+  /// for the use in [BeamerRouterDelegate.locationBuilder].
   ///
   /// Override this if you have your custom state class extending [BeamState].
-  T createState({
-    List<String> pathBlueprintSegments = const <String>[],
-    Map<String, String> pathParameters = const <String, String>{},
-    Map<String, String> queryParameters = const <String, String>{},
-    Map<String, dynamic> data = const <String, dynamic>{},
-  }) =>
-      BeamState.fromUri(
-        Uri(
-          pathSegments: pathBlueprintSegments,
-          queryParameters: queryParameters,
-        ),
-        beamLocation: this,
-        data: data,
-      ) as T;
+  T createState(BeamState state) => state.copyForLocation(this);
 
   /// Update a state via callback receiving the current state.
   ///

@@ -33,7 +33,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
       Uri uri, {
       Map<String, dynamic> data,
     }) =>
-        BeamState.fromUri(uri) as T;
+        BeamState.fromUri(uri, data: data) as T;
     notFoundPage ??= BeamPage(child: Container());
   }
 
@@ -300,11 +300,13 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
       pathParameters.remove(pathSegment.substring(1));
     }
     _currentLocation.state = _currentLocation.createState(
-      pathBlueprintSegments: pathBlueprintSegments,
-      pathParameters: pathParameters,
-      queryParameters:
-          !page.keepQueryOnPop ? {} : _currentLocation.state.queryParameters,
-      data: _currentLocation.state.data,
+      BeamState(
+        pathBlueprintSegments: pathBlueprintSegments,
+        pathParameters: pathParameters,
+        queryParameters:
+            !page.keepQueryOnPop ? {} : _currentLocation.state.queryParameters,
+        data: _currentLocation.state.data,
+      ),
     );
   }
 
