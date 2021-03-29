@@ -11,8 +11,8 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Center(
         child: ElevatedButton(
-          //onPressed: () => context.beamToNamed('/a/b/c/d'),
-          onPressed: () => context.beamToNamed('/a/b/c/d', beamBackOnPop: true),
+          onPressed: () => context.beamToNamed('/a/b/c/d'),
+          //onPressed: () => context.beamToNamed('/a/b/c/d', beamBackOnPop: true),
           child: Text('Beam deep'),
         ),
       ),
@@ -50,11 +50,13 @@ class DeepestScreen extends StatelessWidget {
 
 // LOCATIONS
 class HomeLocation extends BeamLocation {
+  HomeLocation(BeamState state) : super(state);
+
   @override
   List<String> get pathBlueprints => ['/'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('home'),
           child: HomeScreen(),
@@ -63,12 +65,14 @@ class HomeLocation extends BeamLocation {
 }
 
 class DeepLocation extends BeamLocation {
+  DeepLocation(BeamState state) : super(state);
+
   @override
   List<String> get pathBlueprints => ['/a/b/c/d'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
-        ...HomeLocation().pagesBuilder(context),
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+        ...HomeLocation(state).pagesBuilder(context, state),
         if (state.uri.pathSegments.contains('a'))
           BeamPage(
             key: ValueKey('a'),
@@ -94,18 +98,17 @@ class DeepLocation extends BeamLocation {
 
 // APP
 class MyApp extends StatelessWidget {
-  final BeamLocation initialLocation = HomeLocation();
-  final List<BeamLocation> beamLocations = [
-    HomeLocation(),
-    DeepLocation(),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerDelegate: BeamerRouterDelegate(
-        beamLocations: beamLocations,
+        locationBuilder: (state) {
+          if (state.uri.pathSegments.contains('a')) {
+            return DeepLocation(state);
+          }
+          return HomeLocation(state);
+        },
       ),
       routeInformationParser: BeamerRouteInformationParser(),
     );

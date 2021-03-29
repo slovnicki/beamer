@@ -138,11 +138,13 @@ class BookDetailsScreen extends StatelessWidget {
 
 // LOCATIONS
 class HomeLocation extends BeamLocation {
+  HomeLocation(BeamState state) : super(state);
+
   @override
   List<String> get pathBlueprints => ['/'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('home'),
           child: HomeScreen(),
@@ -151,11 +153,13 @@ class HomeLocation extends BeamLocation {
 }
 
 class LoginLocation extends BeamLocation {
+  LoginLocation(BeamState state) : super(state);
+
   @override
   List<String> get pathBlueprints => ['/login'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('login'),
           child: LoginScreen(),
@@ -164,12 +168,14 @@ class LoginLocation extends BeamLocation {
 }
 
 class BooksLocation extends BeamLocation {
+  BooksLocation(BeamState state) : super(state);
+
   @override
   List<String> get pathBlueprints => ['/books/:bookId'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
-        ...HomeLocation().pagesBuilder(context),
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+        ...HomeLocation(state).pagesBuilder(context, state),
         if (state.uri.pathSegments.contains('books'))
           BeamPage(
             key: ValueKey('books'),
@@ -224,17 +230,12 @@ class AuthenticationStateProvider extends InheritedWidget {
 class MyApp extends StatelessWidget {
   final ValueNotifier<bool> _isAuthenticated = ValueNotifier<bool>(false);
 
-  final BeamLocation initialLocation = HomeLocation();
-  final List<BeamLocation> beamLocations = [
-    HomeLocation(),
-    BooksLocation(),
-  ];
   final authGuard = BeamGuard(
     pathBlueprints: ['/books*'],
     check: (context, location) =>
         AuthenticationStateProvider.of(context).isAuthenticated.value,
     onCheckFailed: (context, location) => print('failed $location'),
-    beamTo: (context) => LoginLocation(),
+    beamTo: (context) => LoginLocation(BeamState.fromUri(Uri.parse('/login'))),
   );
   final notFoundPage = BeamPage(
     child: Scaffold(
@@ -254,7 +255,15 @@ class MyApp extends StatelessWidget {
           child: MaterialApp.router(
             debugShowCheckedModeBanner: false,
             routerDelegate: BeamerRouterDelegate(
-              beamLocations: beamLocations,
+              locationBuilder: (state) {
+                if (state.uri.pathSegments.contains('books')) {
+                  return BooksLocation(state);
+                }
+                if (state.uri.pathSegments.contains('login')) {
+                  return LoginLocation(state);
+                }
+                return HomeLocation(state);
+              },
               notFoundPage: notFoundPage,
               guards: [authGuard],
             ),

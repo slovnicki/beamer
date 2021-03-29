@@ -6,12 +6,6 @@ import 'package:advanced_books/locations.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  final BeamLocation initialLocation = HomeLocation();
-  final List<BeamLocation> beamLocations = [
-    HomeLocation(),
-    BooksLocation(),
-    ArticlesLocation(),
-  ];
   final notFoundPage = BeamPage(
     child: Scaffold(
       body: Center(
@@ -25,7 +19,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerDelegate: BeamerRouterDelegate(
-        beamLocations: beamLocations,
+        locationBuilder: (state) {
+          if (state.pathBlueprintSegments.contains('books')) {
+            return BooksLocation(state);
+          }
+          if (state.pathBlueprintSegments.contains('articles')) {
+            return ArticlesLocation(state);
+          }
+          return HomeLocation(state);
+        },
         notFoundPage: notFoundPage,
       ),
       routeInformationParser: BeamerRouteInformationParser(),
