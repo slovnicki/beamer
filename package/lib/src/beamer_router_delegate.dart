@@ -336,7 +336,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
 class _RootLocation extends BeamLocation {
   _RootLocation(state, this.homeBuilder) : super(state);
 
-  final Function(BuildContext context, Uri uri) homeBuilder;
+  final Function(BuildContext context, BeamState state) homeBuilder;
 
   @override
   List<String> get pathBlueprints => ['/*'];
@@ -344,7 +344,7 @@ class _RootLocation extends BeamLocation {
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('root'),
-          child: homeBuilder(context, state.uri),
+          child: homeBuilder(context, state),
         )
       ];
 }
@@ -376,7 +376,7 @@ class RootRouterDelegate extends BeamerRouterDelegate {
     _navigationNotifier = NavigationNotifier()..addListener(notifyListeners);
   }
 
-  final Function(BuildContext context, Uri uri) homeBuilder;
+  final Function(BuildContext context, BeamState state) homeBuilder;
 
   @override
   Uri get currentConfiguration => _navigationNotifier.uri;
