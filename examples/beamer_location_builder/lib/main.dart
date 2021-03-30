@@ -1,27 +1,24 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-// BOOKS PROVIDER
-class Books extends ChangeNotifier {
-  List<Map<String, String>> books = [
-    {
-      'id': '1',
-      'title': 'Stranger in a Strange Land',
-      'author': 'Robert A. Heinlein',
-    },
-    {
-      'id': '2',
-      'title': 'Foundation',
-      'author': 'Isaac Asimov',
-    },
-    {
-      'id': '3',
-      'title': 'Fahrenheit 451',
-      'author': 'Ray Bradbury',
-    },
-  ];
-}
+// BOOKS
+const List<Map<String, String>> books = [
+  {
+    'id': '1',
+    'title': 'Stranger in a Strange Land',
+    'author': 'Robert A. Heinlein',
+  },
+  {
+    'id': '2',
+    'title': 'Foundation',
+    'author': 'Isaac Asimov',
+  },
+  {
+    'id': '3',
+    'title': 'Fahrenheit 451',
+    'author': 'Ray Bradbury',
+  },
+];
 
 // SCREENS
 class HomeScreen extends StatelessWidget {
@@ -29,7 +26,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Home Screen (I don't have access to books)"),
+        title: Text('Home Screen'),
       ),
       body: Center(
         child: ElevatedButton(
@@ -46,12 +43,9 @@ class BooksScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final titleQuery =
         Beamer.of(context).currentLocation.state.queryParameters['title'] ?? '';
-    final books = context.read<Books>().books;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Books (I' +
-            (books != null ? '' : " don't") +
-            ' have access to books)'),
+        title: Text('Books'),
       ),
       body: ListView(
         children: books
@@ -80,14 +74,10 @@ class BookDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final books = context.read<Books>().books;
     final book = books.firstWhere((book) => book['id'] == bookId);
     return Scaffold(
       appBar: AppBar(
-        title: Text(book['title'] +
-            (' (I also' +
-                (books != null ? '' : " don't") +
-                ' have access to books)')),
+        title: Text(book['title']),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -99,8 +89,6 @@ class BookDetailsScreen extends StatelessWidget {
 
 // LOCATIONS
 class HomeLocation extends BeamLocation {
-  HomeLocation(BeamState state) : super(state);
-
   @override
   List<String> get pathBlueprints => ['/'];
 
@@ -114,22 +102,13 @@ class HomeLocation extends BeamLocation {
 }
 
 class BooksLocation extends BeamLocation {
-  BooksLocation(BeamState state) : super(state);
-
-  @override
-  Widget builder(BuildContext context, Widget navigator) =>
-      ChangeNotifierProvider(
-        create: (context) => Books(),
-        child: navigator,
-      );
-
   @override
   List<String> get pathBlueprints => ['/books/:bookId'];
 
   @override
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) {
     return [
-      ...HomeLocation(state).pagesBuilder(context, state),
+      ...HomeLocation().pagesBuilder(context, state),
       if (state.uri.pathSegments.contains('books'))
         BeamPage(
           key: ValueKey('books-${state.queryParameters['title'] ?? ''}'),
@@ -155,8 +134,8 @@ class MyApp extends StatelessWidget {
       routerDelegate: BeamerRouterDelegate(
         locationBuilder: BeamerLocationBuilder(
           beamLocations: (state) => [
-            BooksLocation(state),
-            HomeLocation(state),
+            BooksLocation(),
+            HomeLocation(),
           ],
         ),
       ),
