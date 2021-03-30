@@ -82,6 +82,15 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   /// Will be executed before [pages] are drawn onto screen.
   void Function() executeBefore;
 
+  /// A transition delegate to be used by [Navigator].
+  ///
+  /// This will be used only by this location, unlike
+  /// [BeamerRouterDelegate.transitionDelegate]
+  /// that will be used for all locations.
+  ///
+  /// This ransition delegate will override the one in [BeamerRouterDelegate].
+  TransitionDelegate get transitionDelegate => null;
+
   /// Recreates the [uri] for this [BeamLocation]
   /// considering current value of [pathParameters] and [queryParameters].
   ///

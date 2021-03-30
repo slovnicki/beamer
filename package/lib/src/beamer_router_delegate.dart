@@ -28,6 +28,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     this.notFoundRedirect,
     this.guards = const <BeamGuard>[],
     this.navigatorObservers = const <NavigatorObserver>[],
+    this.transitionDelegate = const DefaultTransitionDelegate(),
   }) {
     createState ??= (
       Uri uri, {
@@ -94,6 +95,12 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
 
   /// The list of observers for the [Navigator] created for this app.
   final List<NavigatorObserver> navigatorObservers;
+
+  /// A transition delegate to be used by [Navigator].
+  ///
+  /// This transition delegate will be overridden by the one in [BeamLocation],
+  /// if any is set.
+  final TransitionDelegate transitionDelegate;
 
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
@@ -258,6 +265,8 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
         return Navigator(
           key: navigatorKey,
           observers: navigatorObservers,
+          transitionDelegate:
+              _currentLocation.transitionDelegate ?? transitionDelegate,
           pages: _currentLocation is NotFound
               ? [notFoundPage]
               : guard == null ||
@@ -371,6 +380,7 @@ class RootRouterDelegate extends BeamerRouterDelegate {
     BeamLocation notFoundRedirect,
     List<BeamGuard> guards = const <BeamGuard>[],
     List<NavigatorObserver> navigatorObservers = const <NavigatorObserver>[],
+    TransitionDelegate transitionDelegate = const DefaultTransitionDelegate(),
   })  : assert(homeBuilder != null || locationBuilder != null),
         super(
           locationBuilder:
@@ -381,6 +391,7 @@ class RootRouterDelegate extends BeamerRouterDelegate {
           notFoundRedirect: notFoundRedirect,
           guards: guards,
           navigatorObservers: navigatorObservers,
+          transitionDelegate: transitionDelegate,
         ) {
     _navigationNotifier = NavigationNotifier()..addListener(notifyListeners);
   }
