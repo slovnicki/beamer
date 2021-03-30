@@ -97,11 +97,13 @@ class BookDetailsScreen extends StatelessWidget {
 
 // LOCATIONS
 class BooksLocation extends BeamLocation {
+  BooksLocation(BeamState state) : super(state);
+
   @override
   List<String> get pathBlueprints => ['/books/:bookId'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('home'),
           child: HomeScreen(),
@@ -124,9 +126,7 @@ class BooksLocation extends BeamLocation {
 // APP
 class MyApp extends StatelessWidget {
   final routerDelegate = BeamerRouterDelegate(
-    beamLocations: [
-      BooksLocation(),
-    ],
+    locationBuilder: (state) => BooksLocation(state),
   );
   @override
   Widget build(BuildContext context) {

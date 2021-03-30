@@ -18,28 +18,36 @@ class NavigationNotifier extends ChangeNotifier {
 
 /// A delegate that is used by the [Router] widget
 /// to build and configure a navigating widget.
-class BeamerRouterDelegate extends RouterDelegate<Uri>
+class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<Uri> {
   BeamerRouterDelegate({
-    @required this.beamLocations,
+    @required this.locationBuilder,
+    this.createState,
     this.preferUpdate = true,
     this.removeDuplicateHistory = true,
-    BeamPage notFoundPage,
+    this.notFoundPage,
     this.notFoundRedirect,
     this.guards = const <BeamGuard>[],
     this.navigatorObservers = const <NavigatorObserver>[],
-  })  : _navigatorKey = GlobalKey<NavigatorState>(),
-        _currentLocation = beamLocations[0]..prepare(),
-        notFoundPage = notFoundPage ?? BeamPage(child: Container()) {
-    _beamHistory.add(_currentLocation);
+  }) {
+    createState ??= (
+      Uri uri, {
+      Map<String, dynamic> data,
+    }) =>
+        BeamState.fromUri(uri, data: data) as T;
+    notFoundPage ??= BeamPage(child: Container());
   }
+
+  T Function(
+    Uri uri, {
+    Map<String, dynamic> data,
+  }) createState;
 
   NavigationNotifier _navigationNotifier;
   NavigationNotifier get navigationNotifier => _navigationNotifier;
   set navigationNotifier(NavigationNotifier navigationNotifier) {
     _navigationNotifier = navigationNotifier;
-    final location =
-        Utils.chooseBeamLocation(_navigationNotifier.uri, beamLocations);
+    final location = locationBuilder(createState(_navigationNotifier.uri));
     _beamHistory.add(location..prepare());
     _currentLocation = _beamHistory.last;
     _currentLocation.addListener(notify);
@@ -58,7 +66,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   }
 
   /// List of all [BeamLocation]s that this router handles.
-  final List<BeamLocation> beamLocations;
+  final BeamLocation Function(BeamState) locationBuilder;
 
   /// Whether to prefer updating [currentLocation] if it's of the same type
   /// as the location being beamed to, instead of adding it to [beamHistory].
@@ -73,7 +81,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   final bool removeDuplicateHistory;
 
   /// Page to show when no [BeamLocation] supports the incoming URI.
-  final BeamPage notFoundPage;
+  BeamPage notFoundPage;
 
   /// [BeamLocation] to redirect to when no [BeamLocation] supports the incoming URI.
   final BeamLocation notFoundRedirect;
@@ -88,7 +96,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
   /// The list of observers for the [Navigator] created for this app.
   final List<NavigatorObserver> navigatorObservers;
 
-  final GlobalKey<NavigatorState> _navigatorKey;
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   final List<BeamLocation> _beamHistory = [];
 
@@ -145,7 +153,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     bool stacked = true,
     bool replaceCurrent = false,
   }) {
-    _currentLocation.removeListener(notify);
+    _currentLocation?.removeListener(notify);
     _beamBackOnPop = beamBackOnPop;
     _stacked = stacked;
     if ((preferUpdate &&
@@ -182,11 +190,7 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     bool stacked = true,
     bool replaceCurrent = false,
   }) {
-    final location = Utils.chooseBeamLocation(
-      Uri.parse(uri),
-      beamLocations,
-      data: data,
-    );
+    final location = locationBuilder(createState(Uri.parse(uri), data: data));
     beamTo(
       location,
       beamBackOnPop: beamBackOnPop,
@@ -236,10 +240,8 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
       _beamHistory.add(guard.beamTo(context)..prepare());
       _currentLocation = _beamHistory.last;
     } else if (guard?.beamToNamed != null) {
-      final location = Utils.chooseBeamLocation(
-        Uri.parse(guard.beamToNamed),
-        beamLocations,
-      );
+      final location =
+          locationBuilder(createState(Uri.parse(guard.beamToNamed)));
       _beamHistory.add(location..prepare());
       _currentLocation = _beamHistory.last;
     } else if ((_currentLocation is NotFound) && notFoundRedirect != null) {
@@ -248,8 +250,12 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
     final navigator = Builder(
       builder: (context) {
         _currentPages = _stacked
-            ? _currentLocation.pagesBuilder(context)
-            : [_currentLocation.pagesBuilder(context).last];
+            ? _currentLocation.pagesBuilder(context, _currentLocation.state)
+            : [
+                _currentLocation
+                    .pagesBuilder(context, _currentLocation.state)
+                    .last
+              ];
         return Navigator(
           key: navigatorKey,
           observers: navigatorObservers,
@@ -283,7 +289,8 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
 
   @override
   SynchronousFuture<void> setNewRoutePath(Uri uri) {
-    beamTo(Utils.chooseBeamLocation(uri, beamLocations));
+    final location = locationBuilder(createState(uri));
+    beamTo(location);
     return SynchronousFuture(null);
   }
 
@@ -302,13 +309,14 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
       pathParameters.remove(pathSegment.substring(1));
     }
     _currentLocation.state = _currentLocation.createState(
-      pathBlueprintSegments: pathBlueprintSegments,
-      pathParameters: pathParameters,
-      queryParameters:
-          !page.keepQueryOnPop ? {} : _currentLocation.state.queryParameters,
-      data: _currentLocation.state.data,
+      BeamState(
+        pathBlueprintSegments: pathBlueprintSegments,
+        pathParameters: pathParameters,
+        queryParameters:
+            !page.keepQueryOnPop ? {} : _currentLocation.state.queryParameters,
+        data: _currentLocation.state.data,
+      ),
     );
-    _update();
   }
 
   BeamGuard _guardCheck(BuildContext context, BeamLocation location) {
@@ -335,17 +343,17 @@ class BeamerRouterDelegate extends RouterDelegate<Uri>
 }
 
 class _RootLocation extends BeamLocation {
-  _RootLocation(this.homeBuilder);
+  _RootLocation(state, this.homeBuilder) : super(state);
 
-  final Function(BuildContext context, Uri uri) homeBuilder;
+  final Function(BuildContext context, BeamState state) homeBuilder;
 
   @override
   List<String> get pathBlueprints => ['/*'];
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('root'),
-          child: homeBuilder(context, state.uri),
+          child: homeBuilder(context, state),
         )
       ];
 }
@@ -356,16 +364,17 @@ class _RootLocation extends BeamLocation {
 class RootRouterDelegate extends BeamerRouterDelegate {
   RootRouterDelegate({
     this.homeBuilder,
-    List<BeamLocation> beamLocations,
+    BeamLocation Function(BeamState) locationBuilder,
     bool preferUpdate = true,
     bool removeDuplicateHistory = true,
     BeamPage notFoundPage,
     BeamLocation notFoundRedirect,
     List<BeamGuard> guards = const <BeamGuard>[],
     List<NavigatorObserver> navigatorObservers = const <NavigatorObserver>[],
-  })  : assert(homeBuilder != null || beamLocations != null),
+  })  : assert(homeBuilder != null || locationBuilder != null),
         super(
-          beamLocations: beamLocations ?? [_RootLocation(homeBuilder)],
+          locationBuilder:
+              locationBuilder ?? (_) => _RootLocation(BeamState(), homeBuilder),
           preferUpdate: preferUpdate,
           removeDuplicateHistory: removeDuplicateHistory,
           notFoundPage: notFoundPage,
@@ -376,16 +385,15 @@ class RootRouterDelegate extends BeamerRouterDelegate {
     _navigationNotifier = NavigationNotifier()..addListener(notifyListeners);
   }
 
-  final Function(BuildContext context, Uri uri) homeBuilder;
+  final Function(BuildContext context, BeamState state) homeBuilder;
 
   @override
   Uri get currentConfiguration => _navigationNotifier.uri;
 
   @override
   SynchronousFuture<void> setNewRoutePath(Uri uri) {
-    if (beamLocations.isNotEmpty) {
-      beamTo(Utils.chooseBeamLocation(uri, beamLocations));
-    }
+    final location = locationBuilder(createState(uri));
+    beamTo(location);
     _navigationNotifier.uri = uri;
     return SynchronousFuture(null);
   }

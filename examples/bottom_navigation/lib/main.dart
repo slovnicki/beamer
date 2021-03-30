@@ -118,11 +118,13 @@ class ArticleDetailsScreen extends StatelessWidget {
 
 // LOCATIONS
 class BooksLocation extends BeamLocation {
+  BooksLocation(BeamState state) : super(state);
+
   @override
   List<String> get pathBlueprints => ['/books/:bookId'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('books'),
           child: BooksScreen(),
@@ -138,11 +140,13 @@ class BooksLocation extends BeamLocation {
 }
 
 class ArticlesLocation extends BeamLocation {
+  ArticlesLocation(BeamState state) : super(state);
+
   @override
   List<String> get pathBlueprints => ['/articles/:articleId'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('articles'),
           child: ArticlesScreen(),
@@ -158,9 +162,9 @@ class ArticlesLocation extends BeamLocation {
 }
 
 // APP
-final List<BeamLocation> _beamLocations = [
-  BooksLocation(),
-  ArticlesLocation(),
+final _beamLocations = [
+  BooksLocation(BeamState()),
+  ArticlesLocation(BeamState()),
 ];
 
 class BottomNavigationBarWidget extends StatefulWidget {
@@ -216,10 +220,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       routeInformationParser: BeamerRouteInformationParser(),
       routerDelegate: RootRouterDelegate(
-        homeBuilder: (context, uri) => Scaffold(
+        homeBuilder: (context, state) => Scaffold(
           body: Beamer(
             key: _beamerKey,
-            beamLocations: _beamLocations,
+            routerDelegate: BeamerRouterDelegate(
+              locationBuilder: (state) {
+                if (state.uri.pathSegments.contains('books')) {
+                  return BooksLocation(state);
+                }
+                return ArticlesLocation(state);
+              },
+            ),
           ),
           bottomNavigationBar: BottomNavigationBarWidget(
             beamerKey: _beamerKey,

@@ -6,14 +6,14 @@ import 'test_locations.dart';
 
 void main() {
   final pathBlueprint = '/l1/one';
-  final testLocation = Location1(pathBlueprint: pathBlueprint);
+  final testLocation = Location1(BeamState.fromUri(Uri.parse(pathBlueprint)));
 
   group('shouldBlock', () {
     test('is true if the location has a blueprint matching the guard', () {
       final guard = BeamGuard(
         pathBlueprints: [pathBlueprint],
         check: (_, __) => true,
-        beamTo: (context) => Location2(),
+        beamTo: (context) => Location2(BeamState()),
       );
 
       expect(guard.shouldGuard(testLocation), isTrue);
@@ -24,7 +24,7 @@ void main() {
       final guard = BeamGuard(
         pathBlueprints: ['/not-a-match'],
         check: (_, __) => true,
-        beamTo: (context) => Location2(),
+        beamTo: (context) => Location2(BeamState()),
       );
 
       expect(guard.shouldGuard(testLocation), isFalse);
@@ -41,7 +41,7 @@ void main() {
                 '/*',
           ],
           check: (_, __) => true,
-          beamTo: (context) => Location2(),
+          beamTo: (context) => Location2(BeamState()),
         );
 
         expect(guard.shouldGuard(testLocation), isTrue);
@@ -54,7 +54,7 @@ void main() {
             '/not-a-match/*',
           ],
           check: (_, __) => true,
-          beamTo: (context) => Location2(),
+          beamTo: (context) => Location2(BeamState()),
         );
 
         expect(guard.shouldGuard(testLocation), isFalse);
@@ -68,7 +68,7 @@ void main() {
             pathBlueprint,
           ],
           check: (_, __) => true,
-          beamTo: (context) => Location2(),
+          beamTo: (context) => Location2(BeamState()),
           guardNonMatching: true,
         );
 
@@ -81,7 +81,7 @@ void main() {
         final guard = BeamGuard(
           pathBlueprints: ['/not-a-match'],
           check: (_, __) => true,
-          beamTo: (context) => Location2(),
+          beamTo: (context) => Location2(BeamState()),
           guardNonMatching: true,
         );
 
@@ -99,7 +99,7 @@ void main() {
                   '/*',
             ],
             check: (_, __) => true,
-            beamTo: (context) => Location2(),
+            beamTo: (context) => Location2(BeamState()),
             guardNonMatching: true,
           );
 
@@ -114,7 +114,7 @@ void main() {
               '/not-a-match/*',
             ],
             check: (_, __) => true,
-            beamTo: (context) => Location2(),
+            beamTo: (context) => Location2(BeamState()),
             guardNonMatching: true,
           );
 
@@ -124,17 +124,28 @@ void main() {
     });
 
     group('guard updates location on build', () {
-      final targetLocation = Location2(pathBlueprint: '/l2');
-      final fallbackLocation = CustomStateLocation();
-
       testWidgets('guard beamTo changes the location on build', (tester) async {
         var router = BeamerRouterDelegate(
-          beamLocations: [testLocation, targetLocation, fallbackLocation],
+          locationBuilder: (state) {
+            if (state.uri.pathSegments.isEmpty) {
+              state = state.copyWith(
+                pathBlueprintSegments: ['l1'],
+              );
+            }
+            if (state.uri.pathSegments.contains('l1')) {
+              return Location1(state);
+            }
+            if (state.uri.pathSegments.contains('l2')) {
+              return Location2(state);
+            }
+            return CustomStateLocation.fromBeamState(state);
+          },
           guards: [
             BeamGuard(
-                pathBlueprints: ['/l2'],
-                check: (context, loc) => false,
-                beamTo: (context) => fallbackLocation),
+              pathBlueprints: ['/l2'],
+              check: (context, loc) => false,
+              beamTo: (context) => CustomStateLocation(),
+            ),
           ],
         );
 
@@ -143,23 +154,37 @@ void main() {
           routeInformationParser: BeamerRouteInformationParser(),
         ));
 
-        expect(router.currentLocation, equals(testLocation));
+        expect(router.currentLocation, isA<Location1>());
 
-        router.beamTo(targetLocation);
+        router.beamTo(Location2(BeamState.fromUri(Uri.parse('/l2'))));
         await tester.pump();
 
-        expect(router.currentLocation, equals(fallbackLocation));
+        expect(router.currentLocation, isA<CustomStateLocation>());
       });
 
       testWidgets('guard beamToNamed changes the location on build',
           (tester) async {
         var router = BeamerRouterDelegate(
-          beamLocations: [testLocation, targetLocation, fallbackLocation],
+          locationBuilder: (state) {
+            if (state.uri.pathSegments.isEmpty) {
+              state = state.copyWith(
+                pathBlueprintSegments: ['l1'],
+              );
+            }
+            if (state.uri.pathSegments.contains('l1')) {
+              return Location1(state);
+            }
+            if (state.uri.pathSegments.contains('l2')) {
+              return Location2(state);
+            }
+            return CustomStateLocation.fromBeamState(state);
+          },
           guards: [
             BeamGuard(
-                pathBlueprints: ['/l2'],
-                check: (context, loc) => false,
-                beamToNamed: '/custom/123'),
+              pathBlueprints: ['/l2'],
+              check: (context, loc) => false,
+              beamToNamed: '/custom/123',
+            ),
           ],
         );
 
@@ -168,14 +193,14 @@ void main() {
           routeInformationParser: BeamerRouteInformationParser(),
         ));
 
-        expect(router.currentLocation, equals(testLocation));
+        expect(router.currentLocation, isA<Location1>());
 
-        router.beamTo(targetLocation);
+        router.beamTo(Location2(BeamState.fromUri(Uri.parse('/l2'))));
         await tester.pump();
 
         expect(router.currentLocation, isA<CustomStateLocation>());
-        expect(router.currentLocation.state.pathParameters,
-            equals({'customVar': '123'}));
+        expect((router.currentLocation as CustomStateLocation).state.customVar,
+            equals('123'));
       });
     });
   });

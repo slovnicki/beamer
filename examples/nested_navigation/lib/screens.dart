@@ -36,10 +36,16 @@ class HomeScreen extends StatelessWidget {
           Expanded(
             child: Beamer(
               key: _beamerKey,
-              beamLocations: [
-                BooksLocation(),
-                ArticlesLocation(),
-              ],
+              routerDelegate: BeamerRouterDelegate(
+                locationBuilder: (state) {
+                  if (state.uri.pathSegments.contains('books')) {
+                    return BooksLocation(state);
+                  }
+                  if (state.uri.pathSegments.contains('articles')) {
+                    return ArticlesLocation(state);
+                  }
+                },
+              ),
             ),
           ),
         ],
@@ -82,9 +88,9 @@ class BooksScreen extends StatelessWidget {
           Expanded(
             child: Beamer(
               key: _beamerKey,
-              beamLocations: [
-                BooksContentLocation(),
-              ],
+              routerDelegate: BeamerRouterDelegate(
+                locationBuilder: (state) => BooksContentLocation(state),
+              ),
             ),
           ),
         ],
@@ -160,9 +166,9 @@ class ArticlesScreen extends StatelessWidget {
           Expanded(
             child: Beamer(
               key: _beamerKey,
-              beamLocations: [
-                ArticlesContentLocation(),
-              ],
+              routerDelegate: BeamerRouterDelegate(
+                locationBuilder: (state) => ArticlesContentLocation(state),
+              ),
             ),
           ),
         ],

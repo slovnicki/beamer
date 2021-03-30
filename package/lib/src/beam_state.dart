@@ -1,3 +1,6 @@
+import './utils.dart';
+import './beam_location.dart';
+
 /// A state for [BeamLocation]
 class BeamState {
   BeamState({
@@ -7,6 +10,18 @@ class BeamState {
     this.data = const <String, dynamic>{},
   }) {
     configure();
+  }
+
+  factory BeamState.fromUri(
+    Uri uri, {
+    BeamLocation beamLocation,
+    Map<String, dynamic> data = const <String, dynamic>{},
+  }) {
+    return Utils.createBeamState(
+      uri,
+      beamLocation: beamLocation,
+      data: data,
+    );
   }
 
   /// Path segments of the current URI,
@@ -49,6 +64,15 @@ class BeamState {
   ///
   /// See more at [configure].
   Uri get uri => _uri;
+
+  /// Copies this with configuration for specific [BeamLocation].
+  BeamState copyForLocation(BeamLocation beamLocation) {
+    return Utils.createBeamState(
+      uri,
+      beamLocation: beamLocation,
+      data: data,
+    );
+  }
 
   /// Returns a configured copy of this.
   BeamState copyWith({
