@@ -97,7 +97,7 @@ class BeamState {
     );
     final pathSegments = List<String>.from(pathBlueprintSegments);
     for (int i = 0; i < pathSegments.length; i++) {
-      if (pathSegments[i][0] == ':') {
+      if (pathSegments[i].isNotEmpty && pathSegments[i][0] == ':') {
         final key = pathSegments[i].substring(1);
         if (pathParameters.containsKey(key)) {
           pathSegments[i] = pathParameters[key];

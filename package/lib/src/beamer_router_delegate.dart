@@ -1,5 +1,4 @@
 import 'package:beamer/beamer.dart';
-import 'package:beamer/src/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -66,7 +65,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   }
 
   /// List of all [BeamLocation]s that this router handles.
-  final BeamLocation Function(BeamState) locationBuilder;
+  final LocationBuilder locationBuilder;
 
   /// Whether to prefer updating [currentLocation] if it's of the same type
   /// as the location being beamed to, instead of adding it to [beamHistory].
@@ -349,6 +348,7 @@ class _RootLocation extends BeamLocation {
 
   @override
   List<String> get pathBlueprints => ['/*'];
+
   @override
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
@@ -364,7 +364,7 @@ class _RootLocation extends BeamLocation {
 class RootRouterDelegate extends BeamerRouterDelegate {
   RootRouterDelegate({
     this.homeBuilder,
-    BeamLocation Function(BeamState) locationBuilder,
+    LocationBuilder locationBuilder,
     bool preferUpdate = true,
     bool removeDuplicateHistory = true,
     BeamPage notFoundPage,

@@ -9,3 +9,4 @@ export 'src/beamer_router_delegate.dart';
 export 'src/beamer.dart';
 export 'src/beamer_provider.dart';
 export 'src/beamer_back_button_dispatcher.dart';
+export 'src/beamer_location_builder.dart';
