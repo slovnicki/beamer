@@ -19,10 +19,11 @@ class HomeScreen extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () => context.beamTo(
-                    BooksLocation()
-                      ..state = BeamState(
+                    BooksLocation(
+                      BeamState(
                         pathBlueprintSegments: ['books'],
                       ),
+                    ),
                   ),
                   child: Text('Beam to books location'),
                 ),

@@ -2,16 +2,10 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 
 class Location1 extends BeamLocation {
-  Location1({
-    String pathBlueprint,
-  }) : super(
-          state: BeamState(
-            pathBlueprintSegments: Uri.parse(pathBlueprint).pathSegments,
-          ),
-        );
+  Location1(BeamState state) : super(state);
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('l1'),
           child: Container(),
@@ -33,16 +27,10 @@ class Location1 extends BeamLocation {
 }
 
 class Location2 extends BeamLocation {
-  Location2({
-    String pathBlueprint,
-  }) : super(
-          state: BeamState(
-            pathBlueprintSegments: Uri.parse(pathBlueprint).pathSegments,
-          ),
-        );
+  Location2(BeamState state) : super(state);
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('l2'),
           child: Container(),
@@ -88,11 +76,13 @@ class CustomState extends BeamState {
 }
 
 class CustomStateLocation extends BeamLocation<CustomState> {
+  CustomStateLocation() : super(CustomState(pathBlueprintSegments: ['path']));
+
   @override
   List<String> get pathBlueprints => ['/custom/:customVar'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, CustomState state) => [
         BeamPage(
           key: ValueKey('custom-${state.customVar}'),
           child: Container(),
@@ -100,27 +90,23 @@ class CustomStateLocation extends BeamLocation<CustomState> {
       ];
 
   @override
-  CustomState createState({
-    List<String> pathBlueprintSegments = const <String>[],
-    Map<String, String> pathParameters = const <String, String>{},
-    Map<String, String> queryParameters = const <String, String>{},
-    Map<String, dynamic> data = const <String, dynamic>{},
-  }) =>
-      CustomState(
-        pathBlueprintSegments: pathBlueprintSegments,
-        pathParameters: pathParameters,
-        queryParameters: queryParameters,
-        data: data,
+  CustomState createState(BeamState state) => CustomState(
+        pathBlueprintSegments: state.pathBlueprintSegments,
+        pathParameters: state.pathParameters,
+        queryParameters: state.queryParameters,
+        data: state.data,
         customVar: 'test',
       );
 }
 
 class NoStateLocation extends BeamLocation {
+  NoStateLocation() : super(BeamState());
+
   @override
   List<String> get pathBlueprints => ['/page'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('page'),
           child: Container(),

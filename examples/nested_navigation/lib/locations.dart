@@ -3,11 +3,13 @@ import 'package:flutter/widgets.dart';
 import './screens.dart';
 
 class HomeLocation extends BeamLocation {
+  HomeLocation(BeamState state) : super(state);
+
   @override
   List<String> get pathBlueprints => ['/*'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('home'),
           child: HomeScreen(),
@@ -16,11 +18,13 @@ class HomeLocation extends BeamLocation {
 }
 
 class BooksLocation extends BeamLocation {
+  BooksLocation(BeamState state) : super(state);
+
   @override
   List<String> get pathBlueprints => ['/books/*'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('books'),
           child: BooksScreen(),
@@ -29,6 +33,8 @@ class BooksLocation extends BeamLocation {
 }
 
 class BooksContentLocation extends BeamLocation {
+  BooksContentLocation(BeamState state) : super(state);
+
   @override
   List<String> get pathBlueprints => [
         '/books/authors',
@@ -36,7 +42,7 @@ class BooksContentLocation extends BeamLocation {
       ];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('books-home'),
           child: BooksHomeScreen(),
@@ -55,11 +61,13 @@ class BooksContentLocation extends BeamLocation {
 }
 
 class ArticlesLocation extends BeamLocation {
+  ArticlesLocation(BeamState state) : super(state);
+
   @override
   List<String> get pathBlueprints => ['/articles/*'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('articles'),
           child: ArticlesScreen(),
@@ -68,6 +76,8 @@ class ArticlesLocation extends BeamLocation {
 }
 
 class ArticlesContentLocation extends BeamLocation {
+  ArticlesContentLocation(BeamState state) : super(state);
+
   @override
   List<String> get pathBlueprints => [
         '/articles/authors',
@@ -75,7 +85,7 @@ class ArticlesContentLocation extends BeamLocation {
       ];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('articles-home'),
           child: ArticlesHomeScreen(),

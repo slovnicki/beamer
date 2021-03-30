@@ -21,12 +21,6 @@ class Books extends ChangeNotifier {
       'author': 'Ray Bradbury',
     },
   ];
-  Color _color;
-  Color get color => _color;
-  set color(Color color) {
-    _color = color;
-    notifyListeners();
-  }
 }
 
 // SCREENS
@@ -54,7 +48,6 @@ class BooksScreen extends StatelessWidget {
         Beamer.of(context).currentLocation.state.queryParameters['title'] ?? '';
     final books = context.read<Books>().books;
     return Scaffold(
-      backgroundColor: Provider.of<Books>(context).color,
       appBar: AppBar(
         title: Text('Books (I' +
             (books != null ? '' : " don't") +
@@ -67,8 +60,12 @@ class BooksScreen extends StatelessWidget {
             .map((book) => ListTile(
                   title: Text(book['title']),
                   subtitle: Text(book['author']),
-                  onTap: () =>
-                      Beamer.of(context).beamToNamed('/books/${book['id']}'),
+                  onTap: () => Beamer.of(context).currentLocation.update(
+                        (state) => state.copyWith(
+                          pathBlueprintSegments: ['books', ':bookId'],
+                          pathParameters: {'bookId': book['id']},
+                        ),
+                      ),
                 ))
             .toList(),
       ),
@@ -108,7 +105,7 @@ class HomeLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('home'),
           child: HomeScreen(),
@@ -130,9 +127,7 @@ class BooksLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/books/:bookId'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) {
-    print('books: ${context.read<Books>().books.length}');
-    Color color = context.watch<Books>().color;
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) {
     return [
       ...HomeLocation(state).pagesBuilder(context),
       if (state.uri.pathSegments.contains('books'))
@@ -140,11 +135,11 @@ class BooksLocation extends BeamLocation {
           key: ValueKey('books-${state.queryParameters['title'] ?? ''}'),
           child: BooksScreen(),
         ),
-      if (color == Colors.red)
+      if (state.pathParameters.containsKey('bookId'))
         BeamPage(
-          key: ValueKey('book-1'),
+          key: ValueKey('book-${state.pathParameters['bookId']}'),
           child: BookDetailsScreen(
-            bookId: '1', //pathParameters['bookId'],
+            bookId: state.pathParameters['bookId'],
           ),
         ),
     ];
@@ -158,12 +153,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerDelegate: BeamerRouterDelegate(
-        locationBuilder: BeamerLocationBuilder(
-          beamLocations: (state) => [
-            HomeLocation(state),
-            BooksLocation(state),
-          ],
-        ),
+        locationBuilder: (state) {
+          if (state.uri.pathSegments.contains('books')) {
+            return BooksLocation(state);
+          }
+          return HomeLocation(state);
+        },
       ),
       routeInformationParser: BeamerRouteInformationParser(),
     );

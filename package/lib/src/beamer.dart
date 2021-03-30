@@ -11,18 +11,10 @@ import 'beamer_provider.dart';
 class Beamer extends StatefulWidget {
   Beamer({
     Key key,
-    @required this.locationBuilder,
-    this.routerDelegate,
-  })  : assert(locationBuilder != null),
-        super(key: key);
-
-  /// [BeamLocation]s that this Beamer handles.
-  final LocationBuilder locationBuilder;
+    @required this.routerDelegate,
+  }) : super(key: key);
 
   /// Responsible for beaming, updating and rebuilding the page stack.
-  ///
-  /// Normally, this never needs to be set
-  /// unless extending [BeamerRouterDelegate] with custom implementation.
   final BeamerRouterDelegate routerDelegate;
 
   /// Access Beamer's [routerDelegate].
@@ -41,23 +33,14 @@ class Beamer extends StatefulWidget {
 }
 
 class BeamerState extends State<Beamer> {
-  BeamerRouterDelegate _routerDelegate;
-
-  BeamerRouterDelegate get routerDelegate => _routerDelegate;
-  BeamLocation get currentLocation => _routerDelegate.currentLocation;
-
-  @override
-  void initState() {
-    super.initState();
-    _routerDelegate ??= widget.routerDelegate ??
-        BeamerRouterDelegate(locationBuilder: widget.locationBuilder);
-  }
+  BeamerRouterDelegate get routerDelegate => widget.routerDelegate;
+  BeamLocation get currentLocation => widget.routerDelegate.currentLocation;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     try {
-      _routerDelegate.navigationNotifier =
+      widget.routerDelegate.navigationNotifier =
           (Router.of(context).routerDelegate as BeamerRouterDelegate)
               .navigationNotifier;
     } catch (e) {
@@ -68,9 +51,9 @@ class BeamerState extends State<Beamer> {
   @override
   Widget build(BuildContext context) {
     return Router(
-      routerDelegate: _routerDelegate,
+      routerDelegate: widget.routerDelegate,
       backButtonDispatcher:
-          BeamerBackButtonDispatcher(delegate: _routerDelegate),
+          BeamerBackButtonDispatcher(delegate: widget.routerDelegate),
     );
   }
 }

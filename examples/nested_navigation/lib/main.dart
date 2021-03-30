@@ -12,11 +12,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       routeInformationParser: BeamerRouteInformationParser(),
       routerDelegate: RootRouterDelegate(
-        beamLocations: [
-          HomeLocation(),
-          BooksLocation(),
-          ArticlesLocation(),
-        ],
+        locationBuilder: (state) => HomeLocation(state),
       ),
     );
   }

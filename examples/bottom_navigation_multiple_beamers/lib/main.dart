@@ -46,10 +46,12 @@ class BooksScreen extends StatelessWidget {
             .map((book) => ListTile(
                   title: Text(book['title']),
                   subtitle: Text(book['author']),
-                  onTap: () => Beamer.of(context).updateCurrentLocation(
-                    pathBlueprint: '/books/:bookId',
-                    pathParameters: {'bookId': book['id']},
-                  ),
+                  onTap: () => Beamer.of(context).currentLocation.update(
+                        (state) => state.copyWith(
+                          pathBlueprintSegments: ['books', ':bookId'],
+                          pathParameters: {'bookId': book['id']},
+                        ),
+                      ),
                 ))
             .toList(),
       ),
@@ -84,10 +86,12 @@ class ArticlesScreen extends StatelessWidget {
             .map((article) => ListTile(
                   title: Text(article['title']),
                   subtitle: Text(article['author']),
-                  onTap: () => Beamer.of(context).updateCurrentLocation(
-                    pathBlueprint: '/articles/:articleId',
-                    pathParameters: {'articleId': article['id']},
-                  ),
+                  onTap: () => Beamer.of(context)
+                      .currentLocation
+                      .update((state) => state.copyWith(
+                            pathBlueprintSegments: ['articles', ':articleId'],
+                            pathParameters: {'articleId': article['id']},
+                          )),
                 ))
             .toList(),
       ),
@@ -114,48 +118,44 @@ class ArticleDetailsScreen extends StatelessWidget {
 
 // LOCATIONS
 class BooksLocation extends BeamLocation {
-  BooksLocation({
-    String pathBlueprint,
-  }) : super(pathBlueprint: pathBlueprint);
+  BooksLocation(BeamState state) : super(state);
 
   @override
   List<String> get pathBlueprints => ['/books/:bookId'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('books'),
           child: BooksScreen(),
         ),
-        if (pathParameters.containsKey('bookId'))
+        if (state.pathParameters.containsKey('bookId'))
           BeamPage(
-            key: ValueKey('book-${pathParameters['bookId']}'),
+            key: ValueKey('book-${state.pathParameters['bookId']}'),
             child: BookDetailsScreen(
-              bookId: pathParameters['bookId'],
+              bookId: state.pathParameters['bookId'],
             ),
           ),
       ];
 }
 
 class ArticlesLocation extends BeamLocation {
-  ArticlesLocation({
-    String pathBlueprint,
-  }) : super(pathBlueprint: pathBlueprint);
+  ArticlesLocation(BeamState state) : super(state);
 
   @override
   List<String> get pathBlueprints => ['/articles/:articleId'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('articles'),
           child: ArticlesScreen(),
         ),
-        if (pathParameters.containsKey('articleId'))
+        if (state.pathParameters.containsKey('articleId'))
           BeamPage(
-            key: ValueKey('articles-${pathParameters['articleId']}'),
+            key: ValueKey('articles-${state.pathParameters['articleId']}'),
             child: ArticleDetailsScreen(
-              articleId: pathParameters['articleId'],
+              articleId: state.pathParameters['articleId'],
             ),
           ),
       ];
@@ -175,19 +175,23 @@ class MyAppState extends State<MyApp> {
     return MaterialApp.router(
       routeInformationParser: BeamerRouteInformationParser(),
       routerDelegate: RootRouterDelegate(
-        homeBuilder: (context, uri) {
+        homeBuilder: (context, state) {
           return Scaffold(
             body: IndexedStack(
               index: _currentIndex,
               children: [
                 Beamer(
-                  beamLocations: [ArticlesLocation()],
+                  routerDelegate: BeamerRouterDelegate(
+                    locationBuilder: (state) => ArticlesLocation(state),
+                  ),
                 ),
                 Container(
                   color: Colors.blueAccent,
                   padding: const EdgeInsets.all(32.0),
                   child: Beamer(
-                    beamLocations: [BooksLocation()],
+                    routerDelegate: BeamerRouterDelegate(
+                      locationBuilder: (state) => BooksLocation(state),
+                    ),
                   ),
                 ),
               ],

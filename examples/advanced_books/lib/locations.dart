@@ -6,11 +6,13 @@ import './books/ui/screens.dart';
 import './articles/ui/screens.dart';
 
 class HomeLocation extends BeamLocation {
+  HomeLocation(BeamState state) : super(state);
+
   @override
   List<String> get pathBlueprints => ['/'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('home'),
           child: HomeScreen(),
@@ -19,6 +21,8 @@ class HomeLocation extends BeamLocation {
 }
 
 class BooksLocation extends BeamLocation {
+  BooksLocation(BeamState state) : super(state);
+
   @override
   List<String> get pathBlueprints => [
         '/books/:bookId/genres/:genreId',
@@ -26,8 +30,8 @@ class BooksLocation extends BeamLocation {
       ];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
-        ...HomeLocation().pagesBuilder(context),
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+        ...HomeLocation(state).pagesBuilder(context, state),
         if (state.pathBlueprintSegments.contains('books'))
           BeamPage(
             key: ValueKey('books-${state.queryParameters['title'] ?? ''}'),
@@ -67,12 +71,14 @@ class BooksLocation extends BeamLocation {
 }
 
 class ArticlesLocation extends BeamLocation {
+  ArticlesLocation(BeamState state) : super(state);
+
   @override
   List<String> get pathBlueprints => ['/articles/:articleId'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
-        ...HomeLocation().pagesBuilder(context),
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+        ...HomeLocation(state).pagesBuilder(context, state),
         if (state.uri.pathSegments.contains('articles'))
           BeamPage(
             key: ValueKey('articles'),

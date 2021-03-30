@@ -103,7 +103,7 @@ class BooksLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/books/:bookId'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('home'),
           child: HomeScreen(),
