@@ -21,10 +21,12 @@ class BeamerLocationBuilder implements Function {
 }
 
 class SimpleLocationBuilder implements Function {
-  SimpleLocationBuilder({@required this.routes});
+  SimpleLocationBuilder({@required this.routes, this.builder});
 
   /// List of all routes this builder handles.
   final Map<String, WidgetBuilder> routes;
+
+  Widget Function(BuildContext context, Widget navigator) builder;
 
   BeamLocation call(BeamState state) {
     var matched = SimpleBeamLocation.chooseRoutes(state, routes.keys);
@@ -33,6 +35,7 @@ class SimpleLocationBuilder implements Function {
         state,
         Map.fromEntries(
             routes.entries.where((e) => matched.containsKey(e.key))),
+        builder,
       );
     } else {
       return NotFound(path: state.uri.path);
@@ -41,10 +44,22 @@ class SimpleLocationBuilder implements Function {
 }
 
 class SimpleBeamLocation extends BeamLocation {
-  SimpleBeamLocation(BeamState state, this.routes) : super(state);
+  SimpleBeamLocation(BeamState state, this.routes, this.navBuilder)
+      : super(state);
 
   /// Map of all routes this location handles.
   Map<String, WidgetBuilder> routes;
+
+  Widget Function(BuildContext context, Widget navigator) navBuilder;
+
+  @override
+  Widget builder(BuildContext context, Widget navigator) {
+    if (navBuilder != null) {
+      return navBuilder(context, navigator);
+    } else {
+      return navigator;
+    }
+  }
 
   List<String> get sortedRoutes =>
       routes.keys.toList()..sort((a, b) => a.length - b.length);

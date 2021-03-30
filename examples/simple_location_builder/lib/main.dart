@@ -101,24 +101,35 @@ class BookDetailsScreen extends StatelessWidget {
 }
 
 // APP
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final RouterDelegate routerDelegate = BeamerRouterDelegate(
+    locationBuilder: SimpleLocationBuilder(
+      routes: {
+        '/': (context) => HomeScreen(),
+        '/books': (context) => BooksScreen(),
+        '/books/:bookId': (context) => BookDetailsScreen(
+            bookId: context.currentBeamLocation.state.pathParameters['bookId']),
+      },
+      builder: (context, navigator) {
+        return ChangeNotifierProvider(
+          create: (context) => Books(),
+          child: navigator,
+        );
+      },
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => Books(),
-      child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        routerDelegate: BeamerRouterDelegate(
-          locationBuilder: SimpleLocationBuilder(routes: {
-            '/': (context) => HomeScreen(),
-            '/books': (context) => BooksScreen(),
-            '/books/:bookId': (context) => BookDetailsScreen(
-                bookId:
-                    context.currentBeamLocation.state.pathParameters['bookId']),
-          }),
-        ),
-        routeInformationParser: BeamerRouteInformationParser(),
-      ),
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      routerDelegate: routerDelegate,
+      routeInformationParser: BeamerRouteInformationParser(),
     );
   }
 }

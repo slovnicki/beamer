@@ -35,8 +35,6 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     }) =>
         BeamState.fromUri(uri, data: data) as T;
     notFoundPage ??= BeamPage(child: Container());
-    _currentLocation = locationBuilder(createState(Uri.base));
-    _beamHistory.add(_currentLocation);
   }
 
   T Function(
