@@ -1,4 +1,5 @@
 import 'package:beamer/beamer.dart';
+import 'package:beamer/src/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -56,7 +57,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   }
 
   void setPathFromUriNotifier() {
-    if (_navigationNotifier.uri != currentConfiguration) {
+    if (_navigationNotifier.uri != _currentLocation.state.uri) {
       setNewRoutePath(_navigationNotifier.uri);
     }
   }
@@ -228,7 +229,8 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   }
 
   @override
-  Uri get currentConfiguration => _currentLocation.state.uri;
+  Uri get currentConfiguration =>
+      _navigationNotifier == null ? _currentLocation.state.uri : null;
 
   @override
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
@@ -238,6 +240,11 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     final BeamGuard guard = _guardCheck(context, _currentLocation);
     if (guard?.beamTo != null) {
       _beamHistory.add(guard.beamTo(context)..prepare());
+      _currentLocation = _beamHistory.last;
+    } else if (guard?.beamToNamed != null) {
+      final location =
+          locationBuilder(createState(Uri.parse(guard.beamToNamed)));
+      _beamHistory.add(location..prepare());
       _currentLocation = _beamHistory.last;
     } else if ((_currentLocation is NotFound) && notFoundRedirect != null) {
       _currentLocation = notFoundRedirect..prepare();
@@ -256,7 +263,9 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
           observers: navigatorObservers,
           pages: _currentLocation is NotFound
               ? [notFoundPage]
-              : guard == null || guard?.beamTo != null
+              : guard == null ||
+                      guard.beamTo != null ||
+                      guard.beamToNamed != null
                   ? _currentPages
                   : [guard.showPage],
           onPopPage: (route, result) {
@@ -289,7 +298,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
 
   void _update() {
     notifyListeners();
-    _navigationNotifier?.uri = currentConfiguration;
+    _navigationNotifier?.uri = _currentLocation.state.uri;
   }
 
   void _handlePop(BeamPage page) {

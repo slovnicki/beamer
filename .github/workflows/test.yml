@@ -6,6 +6,12 @@ on:
       - master
     paths:
       - "package/**"
+  pull_request:
+    branches:
+      - master
+      - nullsafety
+    paths:
+      - "package/**"
 
 jobs:
   test:

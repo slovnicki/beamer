@@ -1,3 +1,15 @@
+# 0.10.5
+
+- **Remove** `NavigationNotifier.currentLocation` (not needed)
+
+# 0.10.4
+
+- **Add** `BeamGuard.beamToNamed`
+
+# 0.10.3
+
+- **Fix** Unexpected null value exception; [issue 144](https://github.com/slovnicki/beamer/issues/144)
+
 # 0.10.2
 
 - **Fix** non-existent state if not set explicitly

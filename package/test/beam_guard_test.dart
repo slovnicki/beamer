@@ -1,4 +1,5 @@
 import 'package:beamer/beamer.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'test_locations.dart';
@@ -119,6 +120,87 @@ void main() {
 
           expect(guard.shouldGuard(testLocation), isTrue);
         });
+      });
+    });
+
+    group('guard updates location on build', () {
+      testWidgets('guard beamTo changes the location on build', (tester) async {
+        var router = BeamerRouterDelegate(
+          locationBuilder: (state) {
+            if (state.uri.pathSegments.isEmpty) {
+              state = state.copyWith(
+                pathBlueprintSegments: ['l1'],
+              );
+            }
+            if (state.uri.pathSegments.contains('l1')) {
+              return Location1(state);
+            }
+            if (state.uri.pathSegments.contains('l2')) {
+              return Location2(state);
+            }
+            return CustomStateLocation.fromBeamState(state);
+          },
+          guards: [
+            BeamGuard(
+              pathBlueprints: ['/l2'],
+              check: (context, loc) => false,
+              beamTo: (context) => CustomStateLocation(),
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(
+          routerDelegate: router,
+          routeInformationParser: BeamerRouteInformationParser(),
+        ));
+
+        expect(router.currentLocation, isA<Location1>());
+
+        router.beamTo(Location2(BeamState.fromUri(Uri.parse('/l2'))));
+        await tester.pump();
+
+        expect(router.currentLocation, isA<CustomStateLocation>());
+      });
+
+      testWidgets('guard beamToNamed changes the location on build',
+          (tester) async {
+        var router = BeamerRouterDelegate(
+          locationBuilder: (state) {
+            if (state.uri.pathSegments.isEmpty) {
+              state = state.copyWith(
+                pathBlueprintSegments: ['l1'],
+              );
+            }
+            if (state.uri.pathSegments.contains('l1')) {
+              return Location1(state);
+            }
+            if (state.uri.pathSegments.contains('l2')) {
+              return Location2(state);
+            }
+            return CustomStateLocation.fromBeamState(state);
+          },
+          guards: [
+            BeamGuard(
+              pathBlueprints: ['/l2'],
+              check: (context, loc) => false,
+              beamToNamed: '/custom/123',
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(
+          routerDelegate: router,
+          routeInformationParser: BeamerRouteInformationParser(),
+        ));
+
+        expect(router.currentLocation, isA<Location1>());
+
+        router.beamTo(Location2(BeamState.fromUri(Uri.parse('/l2'))));
+        await tester.pump();
+
+        expect(router.currentLocation, isA<CustomStateLocation>());
+        expect((router.currentLocation as CustomStateLocation).state.customVar,
+            equals('123'));
       });
     });
   });

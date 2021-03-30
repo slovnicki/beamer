@@ -76,7 +76,20 @@ class CustomState extends BeamState {
 }
 
 class CustomStateLocation extends BeamLocation<CustomState> {
-  CustomStateLocation() : super(CustomState(pathBlueprintSegments: ['path']));
+  CustomStateLocation() : super(CustomState(pathBlueprintSegments: ['custom']));
+
+  factory CustomStateLocation.fromBeamState(BeamState state) {
+    return CustomStateLocation()
+      ..state = CustomState(
+        pathBlueprintSegments: state.pathBlueprintSegments,
+        pathParameters: state.pathParameters,
+        queryParameters: state.queryParameters,
+        data: state.data,
+        customVar: state.pathBlueprintSegments.length > 1
+            ? state.pathBlueprintSegments[1]
+            : 'test',
+      );
+  }
 
   @override
   List<String> get pathBlueprints => ['/custom/:customVar'];
@@ -95,7 +108,9 @@ class CustomStateLocation extends BeamLocation<CustomState> {
         pathParameters: state.pathParameters,
         queryParameters: state.queryParameters,
         data: state.data,
-        customVar: 'test',
+        customVar: state.pathBlueprintSegments.length > 2
+            ? state.pathBlueprintSegments[1]
+            : 'test',
       );
 }
 
