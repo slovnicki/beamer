@@ -153,12 +153,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerDelegate: BeamerRouterDelegate(
-        locationBuilder: (state) {
-          if (state.uri.pathSegments.contains('books')) {
-            return BooksLocation(state);
-          }
-          return HomeLocation(state);
-        },
+        locationBuilder: BeamerLocationBuilder(
+          beamLocations: (state) => [
+            BooksLocation(state),
+            HomeLocation(state),
+          ],
+        ),
       ),
       routeInformationParser: BeamerRouteInformationParser(),
     );

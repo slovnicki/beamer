@@ -1,5 +1,4 @@
 import 'package:beamer/beamer.dart';
-import 'package:beamer/src/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -367,7 +366,7 @@ class _RootLocation extends BeamLocation {
 class RootRouterDelegate extends BeamerRouterDelegate {
   RootRouterDelegate({
     this.homeBuilder,
-    BeamLocation Function(BeamState) locationBuilder,
+    LocationBuilder locationBuilder,
     bool preferUpdate = true,
     bool removeDuplicateHistory = true,
     BeamPage notFoundPage,
