@@ -1,5 +1,5 @@
-import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:beamer/beamer.dart';
 import 'package:provider/provider.dart';
 
 // BOOKS PROVIDER
@@ -129,7 +129,7 @@ class BooksLocation extends BeamLocation {
   @override
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) {
     return [
-      ...HomeLocation(state).pagesBuilder(context),
+      ...HomeLocation(state).pagesBuilder(context, state),
       if (state.uri.pathSegments.contains('books'))
         BeamPage(
           key: ValueKey('books-${state.queryParameters['title'] ?? ''}'),
