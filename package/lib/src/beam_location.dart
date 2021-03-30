@@ -6,8 +6,8 @@ import 'package:flutter/widgets.dart';
 ///
 /// Extend this class to define your locations to which you can then `beamTo`.
 abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
-  BeamLocation(T state) {
-    _state = createState(state);
+  BeamLocation([T state]) {
+    _state = createState(state ?? BeamState());
   }
 
   T _state;
