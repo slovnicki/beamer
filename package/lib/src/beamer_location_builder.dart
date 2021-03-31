@@ -9,14 +9,10 @@ class BeamerLocationBuilder implements Function {
   BeamerLocationBuilder({@required this.beamLocations});
 
   /// List of all [BeamLocation]s that this builder handles.
-  final List<BeamLocation> Function(BeamState) beamLocations;
-
-  List<BeamLocation> _beamLocations;
+  final List<BeamLocation> beamLocations;
 
   BeamLocation call(BeamState state) {
-    _beamLocations ??= beamLocations(state);
-    return Utils.chooseBeamLocation(state.uri, _beamLocations,
-        data: state.data);
+    return Utils.chooseBeamLocation(state.uri, beamLocations, data: state.data);
   }
 }
 
