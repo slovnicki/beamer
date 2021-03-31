@@ -235,7 +235,14 @@ class MyApp extends StatelessWidget {
         homeBuilder: (context, uri) => Scaffold(
           body: Beamer(
             key: _beamerKey,
-            beamLocations: _beamLocations,
+            routerDelegate: BeamerRouterDelegate(
+              locationBuilder: (state) {
+                if (state.uri.pathSegments.contains('books')) {
+                  return BooksLocation(state);
+                }
+                return ArticlesLocation(state);
+              },
+            ),
           ),
           bottomNavigationBar: BottomNavigationBarWidget(
             beamerKey: _beamerKey,
@@ -261,13 +268,17 @@ class MyAppState extends State<MyApp> {
           index: _currentIndex,
           children: [
             Beamer(
-              beamLocations: [ArticlesLocation()],
+              routerDelegate: BeamerRouterDelegate(
+                locationBuilder: (state) => ArticlesLocation(state),
+              ),
             ),
             Container(
               color: Colors.blueAccent,
               padding: const EdgeInsets.all(32.0),
               child: Beamer(
-                beamLocations: [BooksLocation()],
+                routerDelegate: BeamerRouterDelegate(
+                  locationBuilder: (state) => BooksLocation(state),
+                ),
               ),
             ),
           ],
@@ -297,9 +308,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       routeInformationParser: BeamerRouteInformationParser(),
       routerDelegate: RootRouterDelegate(
-        beamLocations: [
-          HomeLocation(),
-        ],
+        locationBuilder: (state) => HomeLocation(state),
       ),
     );
   }
@@ -357,10 +366,16 @@ class HomeScreen extends StatelessWidget {
           Expanded(
             child: Beamer(
               key: _beamerKey,
-              beamLocations: [
-                BooksLocation(),
-                ArticlesLocation(),
-              ],
+              routerDelegate: BeamerRouterDelegate(
+                locationBuilder: (state) {
+                  if (state.uri.pathSegments.contains('books')) {
+                    return BooksLocation(state);
+                  }
+                  if (state.uri.pathSegments.contains('articles')) {
+                    return ArticlesLocation(state);
+                  }
+                },
+              ),
             ),
           ),
         ],
@@ -387,15 +402,18 @@ In order to use Beamer on your entire app, you must (as per [official documentat
 - `routerDelegate` that controls (re)building of `Navigator` pages and
 - `routeInformationParser` that decides which URI corresponds to which `Router` state/configuration, in our case - `BeamLocation`.
 
-Here you use the Beamer implementation of those - `BeamerRouterDelegate` and `BeamerRouteInformationParser`, to which you pass your `BeamLocation`s.
+Here you use the Beamer implementation of those - `BeamerRouterDelegate` and `BeamerRouteInformationParser`, to which you pass your `LocationBuilder`.
+In the simplest form, this is just a function which takes the current `BeamState` and returns a custom `BeamLocation` based on the URI or other state properties.
 
 ```dart
 class MyApp extends StatelessWidget {
   final routerDelegate = BeamerRouterDelegate(
-    beamLocations: [
-      HomeLocation(),
-      BooksLocation(),
-    ],
+    locationBuilder: (state) {
+      if (state.uri.pathSegments.contains('books')) {
+        return BooksLocation(state);
+      }
+      return HomeLocation(state);
+    },
   );
   @override
   Widget build(BuildContext context) {
@@ -407,6 +425,36 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+```
+
+There are also two other options available, if you don't want to define a custom `LocationBuilder` function.
+
+### With a List of BeamLocations
+
+You can use the `BeamerLocationBuilder` with a list of `BeamLocation`s. This builder will automatically select the correct location, based on the `pathBlueprints` of each `BeamLocation`. In this case define your `BeamerRouterDelegate` like this:
+
+```dart
+final routerDelegate = BeamerRouterDelegate(
+  locationBuilder: BeamerLocationBuilder(beamLocations: [
+    HomeLocation(),
+    BooksLocation(),
+  ]),
+);
+```
+
+### With a Map of Routes
+
+You can use the `SimpleLocationBuilder` with a map of routes and `WidgetBuilder`s. This completely removes the need for custom `BeamLocation`s, but also gives you the least amount of customizability. Still, wildcards and path parameters in your paths are supported as with all the other options.
+
+```dart
+final routerDelegate = BeamerRouterDelegate(
+  locationBuilder: SimpleLocationBuilder(routes: {
+    '/': (context) => HomeScreen(),
+    '/books': (context) => BooksScreen(),
+    '/books/:bookId': (context) => BookDetailsScreen(
+        bookId: context.currentBeamLocation.state.pathParameters['bookId']),
+  }),
+);
 ```
 
 ## Deeper in the Tree
@@ -435,7 +483,7 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-- provide `beamLocations` to `RootRouterDelegate` as we would to `BeamerRouterDelegate` and have `Beamer` somewhere deep within those locations (see [nested navigation example](https://github.com/slovnicki/beamer/tree/master/examples/nested_navigation)).
+- provide `locationBuilder` to `RootRouterDelegate` as we would to `BeamerRouterDelegate` and have `Beamer` somewhere deep within those locations (see [nested navigation example](https://github.com/slovnicki/beamer/tree/master/examples/nested_navigation)).
 
 ```dart
 class MyApp extends StatelessWidget {
@@ -444,11 +492,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       routeInformationParser: BeamerRouteInformationParser(),
       routerDelegate: RootRouterDelegate(
-        beamLocations: [
+        locationBuilder: BeamerLocationBuilder(beamLocations: [
           HomeLocation(),
           BooksLocation(),
           ArticlesLocation(),
-        ],
+        ]),
       ),
       ...
     );
