@@ -91,14 +91,12 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final RouterDelegate routerDelegate = BeamerRouterDelegate(
-    locationBuilder: SimpleLocationBuilder(
-      routes: {
-        '/': (context) => HomeScreen(),
-        '/books': (context) => BooksScreen(),
-        '/books/:bookId': (context) => BookDetailsScreen(
-            bookId: context.currentBeamLocation.state.pathParameters['bookId']),
-      },
-    ),
+    locationBuilder: SimpleLocationBuilder(routes: {
+      '/': (context) => HomeScreen(),
+      '/books': (context) => BooksScreen(),
+      '/books/:bookId': (context) => BookDetailsScreen(
+          bookId: context.currentBeamLocation.state.pathParameters['bookId']),
+    }),
   );
 
   @override
