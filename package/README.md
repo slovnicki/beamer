@@ -420,7 +420,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       routerDelegate: routerDelegate,
       routeInformationParser: BeamerRouteInformationParser(),
-      backButtonDispatcher: 
+      backButtonDispatcher:
           BeamerBackButtonDispatcher(delegate: routerDelegate),
     );
   }
