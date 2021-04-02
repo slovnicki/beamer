@@ -21,6 +21,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<Uri> {
   BeamerRouterDelegate({
     @required this.locationBuilder,
+    this.initialPath = '/',
     this.createState,
     this.preferUpdate = true,
     this.removeDuplicateHistory = true,
@@ -67,6 +68,16 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
 
   /// List of all [BeamLocation]s that this router handles.
   final LocationBuilder locationBuilder;
+
+  /// The path to replace `/` as default initial route path upon load.
+  ///
+  /// Not that (if set to anything other than `/` (default)),
+  /// you will not be able to navigate to `/` by manually typing
+  /// it in the URL bar, because it will always be transformed to `initialPath`,
+  /// but you will be able to get to `/` by popping pages with back button,
+  /// if there are pages in [BeamLocation.pagesBuilder] that will build
+  /// when there are no path segments.
+  final String initialPath;
 
   /// Whether to prefer updating [currentLocation] if it's of the same type
   /// as the location being beamed to, instead of adding it to [beamHistory].
@@ -296,6 +307,14 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   }
 
   @override
+  SynchronousFuture<void> setInitialRoutePath(Uri configuration) {
+    if (configuration.path == '/') {
+      configuration = Uri.parse(initialPath);
+    }
+    return setNewRoutePath(configuration);
+  }
+
+  @override
   SynchronousFuture<void> setNewRoutePath(Uri uri) {
     final location = locationBuilder(createState(uri));
     beamTo(location);
@@ -374,6 +393,7 @@ class RootRouterDelegate extends BeamerRouterDelegate {
   RootRouterDelegate({
     this.homeBuilder,
     LocationBuilder locationBuilder,
+    String initialPath,
     bool preferUpdate = true,
     bool removeDuplicateHistory = true,
     BeamPage notFoundPage,
@@ -385,6 +405,7 @@ class RootRouterDelegate extends BeamerRouterDelegate {
         super(
           locationBuilder:
               locationBuilder ?? (_) => _RootLocation(BeamState(), homeBuilder),
+          initialPath: initialPath,
           preferUpdate: preferUpdate,
           removeDuplicateHistory: removeDuplicateHistory,
           notFoundPage: notFoundPage,
