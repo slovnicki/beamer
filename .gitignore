@@ -74,3 +74,7 @@ example/*.lock
 !**/ios/**/default.mode2v3
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
+
+# tests
+package/coverage/
+package/test/.test_coverage.dart
