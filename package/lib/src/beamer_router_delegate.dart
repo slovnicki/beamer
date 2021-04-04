@@ -252,16 +252,17 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
 
   @override
   Widget build(BuildContext context) {
-    final BeamGuard guard = _guardCheck(context, _currentLocation);
-    if (guard?.beamTo != null) {
-      _beamHistory.add(guard.beamTo(context)..prepare());
-      _currentLocation = _beamHistory.last;
-    } else if (guard?.beamToNamed != null) {
-      final location =
-          locationBuilder(createState(Uri.parse(guard.beamToNamed)));
-      _beamHistory.add(location..prepare());
-      _currentLocation = _beamHistory.last;
-    } else if ((_currentLocation is NotFound) && notFoundRedirect != null) {
+    BeamGuard guard = _globalGuardCheck(context, _currentLocation);
+    if (guard != null && guard.showPage == null) {
+      _applyGuard(guard, context);
+    }
+    if (guard == null) {
+      guard = _localGuardCheck(context, _currentLocation);
+      if (guard != null && guard.showPage == null) {
+        _applyGuard(guard, context);
+      }
+    }
+    if ((_currentLocation is NotFound) && notFoundRedirect != null) {
       _currentLocation = notFoundRedirect..prepare();
     }
     final navigator = Builder(
@@ -284,7 +285,9 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
                       guard.beamTo != null ||
                       guard.beamToNamed != null
                   ? _currentPages
-                  : [guard.showPage],
+                  : guard.replaceCurrentStack
+                      ? [guard.showPage]
+                      : _currentPages + [guard.showPage],
           onPopPage: (route, result) {
             if (!route.didPop(result)) {
               return false;
@@ -346,13 +349,17 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     );
   }
 
-  BeamGuard _guardCheck(BuildContext context, BeamLocation location) {
+  BeamGuard _globalGuardCheck(BuildContext context, BeamLocation location) {
     for (var guard in guards) {
       if (guard.shouldGuard(location) && !guard.check(context, location)) {
         guard.onCheckFailed?.call(context, location);
         return guard;
       }
     }
+    return null;
+  }
+
+  BeamGuard _localGuardCheck(BuildContext context, BeamLocation location) {
     for (var guard in location.guards) {
       if (guard.shouldGuard(location) && !guard.check(context, location)) {
         guard.onCheckFailed?.call(context, location);
@@ -360,6 +367,21 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
       }
     }
     return null;
+  }
+
+  void _applyGuard(BeamGuard guard, BuildContext context) {
+    if (guard.replaceCurrentStack) {
+      _beamHistory.removeLast();
+    }
+    if (guard.beamTo != null) {
+      _beamHistory.add(guard.beamTo(context)..prepare());
+      _currentLocation = _beamHistory.last;
+    } else if (guard.beamToNamed != null) {
+      final location =
+          locationBuilder(createState(Uri.parse(guard.beamToNamed)));
+      _beamHistory.add(location..prepare());
+      _currentLocation = _beamHistory.last;
+    }
   }
 
   @override

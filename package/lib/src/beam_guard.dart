@@ -16,6 +16,7 @@ class BeamGuard {
     this.beamToNamed,
     this.showPage,
     this.guardNonMatching = false,
+    this.replaceCurrentStack = true,
   }) : assert(beamTo != null || beamToNamed != null || showPage != null);
 
   /// A list of path strings that are to be guarded.
@@ -42,24 +43,28 @@ class BeamGuard {
 
   /// If guard [check] returns false, build a location to be beamed to.
   ///
-  /// This has precedence over [showPage].
+  /// [showPage] has precedence over this attribute.
   BeamLocation Function(BuildContext context) beamTo;
 
   /// If guard [check] returns false, beam to this uri.
   ///
-  /// This has precedence over [showPage].
+  /// [showPage] has precedence over this attribute.
   String beamToNamed;
 
   /// If guard [check] returns false, put this page onto navigation stack.
   ///
-  /// When using this property over [beamTo], the location that was stopped
-  /// by this guard will stay ready to be rebuilt if [showPage] changes
-  /// the conditions necessary to pass guard and rebuilds the tree.
+  /// When using [showPage], you probably want [replaceCurrentStack] set to `false`.
+  ///
+  /// This has precedence over [beamTo] and [beamToNamed].
   BeamPage showPage;
 
   /// Whether or not [location]s matching the [pathBlueprint]s will be blocked,
   /// or all other [location]s that don't match the [pathBlueprint]s will be.
   bool guardNonMatching;
+
+  /// Whether or not to replace the current location's stack of pages;
+  /// the one that is yielding a `false` [check] upon being beamed to.
+  final bool replaceCurrentStack;
 
   /// Matches [location]'s pathBlueprint to [pathBlueprints].
   ///
