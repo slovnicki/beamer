@@ -201,6 +201,7 @@ class BooksLocation extends BeamLocation {
   @override
   List<BeamGuard> get guards => [
         BeamGuard(
+          replaceCurrentStack: false,
           pathBlueprints: ['/books/*'],
           check: (context, location) =>
               location.state.pathParameters['bookId'] != '2',
@@ -235,7 +236,7 @@ class MyApp extends StatelessWidget {
     check: (context, location) =>
         AuthenticationStateProvider.of(context).isAuthenticated.value,
     onCheckFailed: (context, location) => print('failed $location'),
-    beamTo: (context) => LoginLocation(BeamState.fromUri(Uri.parse('/login'))),
+    beamToNamed: '/login',
   );
   final notFoundPage = BeamPage(
     child: Scaffold(
@@ -247,6 +248,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final routerDelegate = BeamerRouterDelegate(
+      locationBuilder: (state) {
+        if (state.uri.pathSegments.contains('books')) {
+          return BooksLocation(state);
+        }
+        if (state.uri.pathSegments.contains('login')) {
+          return LoginLocation(state);
+        }
+        return HomeLocation(state);
+      },
+      notFoundPage: notFoundPage,
+      guards: [authGuard],
+    );
     return ValueListenableBuilder(
       valueListenable: _isAuthenticated,
       builder: (context, isAuthenticated, child) {
@@ -254,20 +268,10 @@ class MyApp extends StatelessWidget {
           isAuthenticated: _isAuthenticated,
           child: MaterialApp.router(
             debugShowCheckedModeBanner: false,
-            routerDelegate: BeamerRouterDelegate(
-              locationBuilder: (state) {
-                if (state.uri.pathSegments.contains('books')) {
-                  return BooksLocation(state);
-                }
-                if (state.uri.pathSegments.contains('login')) {
-                  return LoginLocation(state);
-                }
-                return HomeLocation(state);
-              },
-              notFoundPage: notFoundPage,
-              guards: [authGuard],
-            ),
+            routerDelegate: routerDelegate,
             routeInformationParser: BeamerRouteInformationParser(),
+            backButtonDispatcher:
+                BeamerBackButtonDispatcher(delegate: routerDelegate),
           ),
         );
       },
