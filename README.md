@@ -638,7 +638,8 @@ class HomeScreen extends StatelessWidget {
 ## From 0.10 to 0.11
 
 - `BeamerRouterDelegate.beamLocations` is now `locationBuilder`. See `BeamerLocationBuilder` for easiest migration.
-- `Beamer` now takes `BeamerRouterDelegate`, not `BeamLocations` directly.
+- `Beamer` now takes `BeamerRouterDelegate`, not `BeamLocations` directly
+- `pagesBuilder` now also brings `state`
 
 ## From 0.9 to 0.10
 
