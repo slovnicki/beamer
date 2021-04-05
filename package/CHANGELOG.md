@@ -1,3 +1,7 @@
+# 0.11.0+1
+
+- add missing ToC titles
+
 # 0.11.0
 
 - migrated to null safety

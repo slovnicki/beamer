@@ -29,6 +29,8 @@ Handle your application routing, synchronize it with browser URL and more. Beame
 
 - [Quick Start](#quick-start)
 - [Key Concepts](#key-concepts)
+  - [BeamLocation](#beamlocation)
+  - [BeamState](#beamstate)
   - [Beaming](#beaming)
   - [Updating](#updating)
   - [Beaming Back](#beaming-back)
