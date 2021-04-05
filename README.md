@@ -23,40 +23,154 @@
 <a href="https://www.buymeacoffee.com/slovnicki" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="30px" width= "108px"></a>
 </p>
 
-Handle your application routing, synchronize it with browser URL and more. Beamer uses the power of Navigator 2.0 API and implements all the underlying logic for you.
+Handle your application routing, synchronize it with browser URL and more. Beamer uses the power of Router and implements all the underlying logic for you.
 
 ---
 
+- [Quick Start](#quick-start)
 - [Key Concepts](#key-concepts)
   - [Beaming](#beaming)
   - [Updating](#updating)
   - [Beaming Back](#beaming-back)
-- [Examples](#examples)
-    - [Books](#books)
-    - [Advanced Books](#advanced-books)
-    - [Deep Location](#deep-location)
-    - [Location Builder](#location-builder)
-    - [Guards](#guards)
-    - [Beamer Widget](#beamer-widget)
-    - [Integration with Navigation UI Packages](#integration-with-navigation-ui-packages)
 - [Usage](#usage)
   - [On Entire App](#on-entire-app)
   - [Deeper in the Tree](#deeper-in-the-tree)
   - [General Notes](#general-notes)
+- [Examples](#examples)
+  - [Books](#books)
+  - [Advanced Books](#advanced-books)
+  - [Deep Location](#deep-location)
+  - [Location Builder](#location-builder)
+  - [Guards](#guards)
+  - [Beamer Widget](#beamer-widget)
+  - [Integration with Navigation UI Packages](#integration-with-navigation-ui-packages)
 - [Migrating](#migrating)
+  - [From 0.10 to 0.11](#from-10-to-011)
   - [From 0.9 to 0.10](#from-09-to-010)
   - [From 0.7 to 0.8](#from-07-to-08)
   - [From 0.4 to 0.5](#from-04-to-05)
 - [Help and Chat](#help-and-chat)
 - [Contributing](#contributing)
 
+
+# Quick Start
+
+For a simple application, `SimpleLocationBuilder` is an appropriate choice which yields the least amount of code for a functioning application:
+
+```dart
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routeInformationParser: BeamerRouteInformationParser(),
+      routerDelegate: BeamerRouterDelegate(
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '/': (context) => HomeScreen(),
+            '/books': (context) => BooksScreen(),
+            '/books/:bookId': (context) => BookDetailsScreen()
+          },
+        ),
+      ),
+    );
+  }
+}
+```
+
+Navigating through those routes can be done with
+
+```dart
+Beamer.of(context).beamToNamed('/books/2');
+
+// or
+context.beamToNamed('/books/2');
+```
+
+And accessing route attributes (for example, `bookId` for building `BookDetailsScreen`) can be done with
+
+```dart
+Beamer.of(context).currentLocation.state.pathParameters['bookId'];
+
+// or
+context.currentBeamLocation.state.pathParameters['bookId'];
+```
+
 # Key Concepts
 
-The key concept of Beamer is a `BeamLocation` which represents a stack of one or more pages whose ordering and rebuild you control within `pagesBuilder`.
+For a fairly large app, it is recommended to use `Beamer` in its "natural" form.
+
+## BeamLocation
+
+The most important construct in Beamer is a `BeamLocation` which represents a stack of one or more pages.  
+`BeamLocation` has **3 important roles**;
+
+- know which URIs it can handle: `pathBlueprints`
+- know how to build a stack of pages: `pagesBuilder`
+- keep a `state` that provides a link between the first 2
+
+`BeamLocation` is an abstract class which needs to be extended. The purpose of having multiple `BeamLocation`s is to architecturally separate unrelated "places" in an application.
+
+For example, `BooksLocation` can handle all the pages related to books and `ArticlesLocation` everything related to articles. In the light of this scoping, `BeamLocation` also has a `builder` for wrapping an entire stack of its pages with some `Provider` so the similar data can be shared between similar pages.
+
+This is an example of `BeamLocation`:
+
+```dart
+class BooksLocation extends BeamLocation {
+  BooksLocation(BeamState state) : super(state);
+
+  @override
+  List<String> get pathBlueprints => ['/books/:bookId'];
+
+  @override
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+        BeamPage(
+          key: ValueKey('home'),
+          child: HomeScreen(),
+        ),
+        if (state.uri.pathSegments.contains('books'))
+          BeamPage(
+            key: ValueKey('books'),
+            child: BooksScreen(),
+          ),
+        if (state.pathParameters.containsKey('bookId'))
+          BeamPage(
+            key: ValueKey('book-${state.pathParameters['bookId']}'),
+            child: BookDetailsScreen(
+              bookId: state.pathParameters['bookId'],
+            ),
+          ),
+      ];
+}
+```
+
+## BeamState
+
+This is the above-mentioned `state` of `BeamLocation`. Its role is to keep various URI attributes such as `pathBlueprintSegments` (the segments of chosen pathBlueprint, as each `BeamLocation` supports many of those), `pathParameters`, `queryParameters` and arbitrary key-value `data`. Those attributes are important while building pages and for `BeamState` to create an `uri` that will be consumed by the browser.
+
+Besides purely imperative navigation via e.g. `beamToNamed('/books/3')`, this also provides a method to have declarative navigation by changing the `state` of `BeamLocation`. For example:
+
+```dart
+Beamer.of(context).currentLocation.update(
+  (state) => state.copyWith(
+    pathBlueprintSegments: ['books', ':bookId'],
+    pathParameters: {'bookId': '3'},
+  ),
+),
+```
+
+`BeamState` can be extended with a completely custom state which can be used for `BeamLocation`, for example:
+
+```dart
+class BooksLocation extends BeamLocation<MyState> {...}
+```
+
+It is important in this case that `CustomState` has an `uri` getter which is needed for browser's URL bar.
 
 ## Beaming
 
-You will be extending `BeamLocation` to define your app's locations to which you can then _beam to_ using
+Navigating between or within `BeamLocation`s is achieved by _beaming_. You can think of it as _teleporting_ (_beaming_) to another place in your app. Similar to `Navigator.of(context).pushReplacementNamed('/my-route')`, but Beamer is not limited to a single page, nor to a push _per se_. `BeamLocation`s hold an arbitrary stack of pages that get built when you beam there. Using Beamer can feel like using many of `Navigator`'s `push/pop` methods at once.
+
+Examples of beaming:
 
 ```dart
 Beamer.of(context).beamTo(MyLocation());
@@ -65,23 +179,19 @@ Beamer.of(context).beamTo(MyLocation());
 context.beamTo(MyLocation());
 ```
 
-or _beam to_ a specific configuration of some location;
-
 ```dart
 context.beamToNamed('/books/2');
 
 // or more explicitly
 context.beamTo(
   BooksLocation(
-    pathBlueprint: '/books/:bookId',
-    pathParameters: {'bookId': '2'},
+    BeamState(
+      pathBlueprintSegments: ['books', ':bookId'],
+      pathParameters: {'bookId': '2'},
+    ),
   ),
-);
+),
 ```
-
-You can think of it as _teleporting_ (_beaming_) to another place in your app. Similar to `Navigator.of(context).pushReplacementNamed('/my-route')`, but Beamer is not limited to a single page, nor to a push _per se_. You can define an arbitrary stack of pages that get built when you beam there. Using Beamer can feel like using many of `Navigator`'s `push/pop` methods at once.
-
-You can carry an arbitrary key/value `data` in a location. This can be accessed from every page and updated as you travel through a location.
 
 ```dart
 context.beamToNamed(
@@ -103,7 +213,7 @@ context.currentBeamLocation.update(
 ),
 ```
 
-**Note** that both beaming functions (`beamTo` and `BeamToNamed`) will have the same effect as `update` when you try to beam to a location which you're currently on, e.g. if you would to call `context.beamToNamed('/books/3')` instead of above code.
+**NOTE** that both beaming functions (`beamTo` and `BeamToNamed`) will have the same effect as `update` when you try to beam to a location which you're currently on, e.g. if you would to call `context.beamToNamed('/books/3')` instead of above code.
 
 ## Beaming Back
 
@@ -113,13 +223,147 @@ All `BeamLocation`s that you visited are kept in `beamHistory`. Therefore, there
 context.beamBack();
 ```
 
-**Note** that Beamer will remove duplicate locations from `beamHistory` as you go. For example, if you visit `BooksLocation`, `ArticlesLocation` and then `BooksLocation` again, the first instance of `BooksLocation` will be removed from history and `beamHistory` will be `[ArticlesLocation,BooksLocation]` instead of `[BooksLocation,ArticlesLocation,BooksLocation]`. You can turn that off by setting `BeamerRouterDelegate.removeDuplicateHistory` to `false`.
+**NOTE** that Beamer will remove duplicate locations from `beamHistory` as you go. For example, if you visit `BooksLocation`, `ArticlesLocation` and then `BooksLocation` again, the first instance of `BooksLocation` will be removed from history and `beamHistory` will be `[ArticlesLocation,BooksLocation]` instead of `[BooksLocation,ArticlesLocation,BooksLocation]`. You can turn that off by setting `BeamerRouterDelegate.removeDuplicateHistory` to `false`.
+
+**NOTE** that Beamer can integrate Android's back button to do `beamBack` if possible when all of the pages from current `BeamLocation` have been popped. This is achieved by setting a back button dispatcher in in `MaterialApp.router`.
+
+```dart
+backButtonDispatcher: BeamerBackButtonDispatcher(delegate: routerDelegate)
+```
 
 You can check whether you can beam back with `context.canBeamBack` or even inspect the location you'll be beaming back to: `context.beamBackLocation`.
 
----
+# Usage
 
-**Note** that "Navigator 1.0" can be used alongside Beamer. You can easily `push` or `pop` pages with `Navigator.of(context)`, but those will not be contributing to the URI. This is often needed when some info/helper page needs to be shown that doesn't influence the browser's URL. And of course, when using Beamer on mobile, this is a non-issue as there is no URL.
+Lastly, we go through a couple of notes on how and where to put Beamer.
+## On Entire App
+
+In order to use Beamer on your entire app, you must (as per [official documentation](https://api.flutter.dev/flutter/widgets/Router-class.html)) construct your `*App` widget with `.router` constructor to which (along with all your regular `*App` attributes) you provide
+
+- `routeInformationParser` that parses an incoming URI.
+- `routerDelegate` that controls (re)building of `Navigator`
+
+Here you use the Beamer implementation of those - `BeamerRouteInformationParser` and `BeamerRouterDelegate`, to which you pass your `LocationBuilder`.  
+
+In the simplest form, `LocationBuilder` is just a function which takes the current `BeamState` and returns a custom `BeamLocation` based on the URI or other state properties.
+
+```dart
+class MyApp extends StatelessWidget {
+  final routerDelegate = BeamerRouterDelegate(
+    locationBuilder: (state) {
+      if (state.uri.pathSegments.contains('books')) {
+        return BooksLocation(state);
+      }
+      return HomeLocation(state);
+    },
+  );
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routerDelegate: routerDelegate,
+      routeInformationParser: BeamerRouteInformationParser(),
+      backButtonDispatcher:
+          BeamerBackButtonDispatcher(delegate: routerDelegate),
+    );
+  }
+}
+```
+
+There are also two other options available, if you don't want to define a custom `LocationBuilder` function.
+
+### With a List of BeamLocations
+
+You can use the `BeamerLocationBuilder` with a list of `BeamLocation`s. This builder will automatically select the correct location, based on the `pathBlueprints` of each `BeamLocation`. In this case define your `BeamerRouterDelegate` like this:
+
+```dart
+final routerDelegate = BeamerRouterDelegate(
+  locationBuilder: BeamerLocationBuilder(
+    beamLocations: [
+      HomeLocation(),
+      BooksLocation(),
+    ],
+  ),
+);
+```
+
+### With a Map of Routes
+
+You can use the `SimpleLocationBuilder` with a map of routes and `WidgetBuilder`s, as mentioned in [Quick Start](#quick-start). This completely removes the need for custom `BeamLocation`s, but also gives you the least amount of customizability. Still, wildcards and path parameters in your paths are supported as with all the other options.
+
+```dart
+final routerDelegate = BeamerRouterDelegate(
+  locationBuilder: SimpleLocationBuilder(
+    routes: {
+      '/': (context) => HomeScreen(),
+      '/books': (context) => BooksScreen(),
+      '/books/:bookId': (context) => BookDetailsScreen(
+        bookId: context.currentBeamLocation.state.pathParameters['bookId'],
+      ),
+    },
+  ),
+);
+```
+
+## Deeper in the Tree
+
+If there is a need for nested navigation, `Beamer` will be put somewhere deeper in the tree. In this case, it is a **MUST** to set `RootRouterDelegate` instead of `BeamerRouterDelegate` as the top-most router delegate. Then, we have 2 options:
+
+- provide `homeBuilder` to `RootRouterDelegate` which will serve the same role as `MaterialApp.home`. This is useful when you need a simple app with some navigation bar.
+
+```dart
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routeInformationParser: BeamerRouteInformationParser(),
+      routerDelegate: RootRouterDelegate(
+        homeBuilder: (context, uri) => Scaffold(
+          body: Beamer(
+            locationBuilder: _locationBuilder,
+          ),
+          ...
+        ),
+      ),
+      ...
+    );
+  }
+}
+```
+
+- provide `locationBuilder` to `RootRouterDelegate` as we would to `BeamerRouterDelegate` and have `Beamer` somewhere deep within those locations (see [nested navigation example](https://github.com/slovnicki/beamer/tree/master/examples/nested_navigation)).
+
+```dart
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routeInformationParser: BeamerRouteInformationParser(),
+      routerDelegate: RootRouterDelegate(
+        locationBuilder: BeamerLocationBuilder(
+          beamLocations: [
+            HomeLocation(),
+            BooksLocation(),
+            ArticlesLocation(),
+          ],
+        ),
+      ),
+      ...
+    );
+  }
+}
+```
+
+## General Notes
+
+- When extending `BeamLocation`, two methods need to be implemented; `pathBlueprints` and `pagesBuilder`.
+  - `pagesBuilder` returns a stack of pages that will be built by `Navigator` when you beam there, and `pathBlueprints` is there for Beamer to decide which `BeamLocation` corresponds to which URI.
+  - `BeamLocation` keeps query and path parameters from URI in its `BeamState` . The `:` is necessary in `pathBlueprints` if you _might_ get path parameter from browser.
+
+- `BeamPage`'s child is an arbitrary `Widgets` that represent your app screen / page.
+  - `key` is important for `Navigator` to optimize rebuilds. This should be a unique value for "page state".
+  - `BeamPage` creates `MaterialPageRoute` by default, but other transitions can be chosen by setting `BeamPage.type` to one of available `BeamPageType`.
+
+**NOTE** that "Navigator 1.0" can be used alongside Beamer. You can easily `push` or `pop` pages with `Navigator.of(context)`, but those will not be contributing to the URI. This is often needed when some info/helper page needs to be shown that doesn't influence the browser's URL. And of course, when using Beamer on mobile, this is a non-issue as there is no URL.
 
 # Examples
 
@@ -181,11 +425,6 @@ You can define global guards (for example, authentication guard) or location gua
 
 ```dart
 BeamerRouterDelegate(
-  beamLocations: [
-    HomeLocation(),
-    LoginLocation(),
-    BooksLocation(),
-  ],
   guards: [
     BeamGuard(
       pathBlueprints: ['/books*'],
@@ -193,6 +432,7 @@ BeamerRouterDelegate(
       beamTo: (context) => LoginLocation(),
     ),
   ],
+  ...
 ),
 ```
 
@@ -393,128 +633,12 @@ class HomeScreen extends StatelessWidget {
 
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/animated_rail/example-animated-rail.gif" alt="example-animated-rail" width="240">
 
----
-# Usage
-## On Entire App
-
-In order to use Beamer on your entire app, you must (as per [official documentation](https://api.flutter.dev/flutter/widgets/Router-class.html)) construct your `*App` widget with `.router` constructor to which (along with all your regular `*App` attributes) you provide
-
-- `routerDelegate` that controls (re)building of `Navigator` pages and
-- `routeInformationParser` that decides which URI corresponds to which `Router` state/configuration, in our case - `BeamLocation`.
-
-Here you use the Beamer implementation of those - `BeamerRouterDelegate` and `BeamerRouteInformationParser`, to which you pass your `LocationBuilder`.
-In the simplest form, this is just a function which takes the current `BeamState` and returns a custom `BeamLocation` based on the URI or other state properties.
-
-```dart
-class MyApp extends StatelessWidget {
-  final routerDelegate = BeamerRouterDelegate(
-    locationBuilder: (state) {
-      if (state.uri.pathSegments.contains('books')) {
-        return BooksLocation(state);
-      }
-      return HomeLocation(state);
-    },
-  );
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerDelegate: routerDelegate,
-      routeInformationParser: BeamerRouteInformationParser(),
-      backButtonDispatcher:
-          BeamerBackButtonDispatcher(delegate: routerDelegate),
-    );
-  }
-}
-```
-
-There are also two other options available, if you don't want to define a custom `LocationBuilder` function.
-
-### With a List of BeamLocations
-
-You can use the `BeamerLocationBuilder` with a list of `BeamLocation`s. This builder will automatically select the correct location, based on the `pathBlueprints` of each `BeamLocation`. In this case define your `BeamerRouterDelegate` like this:
-
-```dart
-final routerDelegate = BeamerRouterDelegate(
-  locationBuilder: BeamerLocationBuilder(beamLocations: [
-    HomeLocation(),
-    BooksLocation(),
-  ]),
-);
-```
-
-### With a Map of Routes
-
-You can use the `SimpleLocationBuilder` with a map of routes and `WidgetBuilder`s. This completely removes the need for custom `BeamLocation`s, but also gives you the least amount of customizability. Still, wildcards and path parameters in your paths are supported as with all the other options.
-
-```dart
-final routerDelegate = BeamerRouterDelegate(
-  locationBuilder: SimpleLocationBuilder(routes: {
-    '/': (context) => HomeScreen(),
-    '/books': (context) => BooksScreen(),
-    '/books/:bookId': (context) => BookDetailsScreen(
-        bookId: context.currentBeamLocation.state.pathParameters['bookId']),
-  }),
-);
-```
-
-## Deeper in the Tree
-
-Similar to above example, but we use `RootRouterDelegate` instead of `BeamerRouterDelegate`. Then, we have 2 options:
-
-- provide `homeBuilder` to `RootRouterDelegate` which will serve the same role as `MaterialApp.home`. This is useful when you need a simple app with some navigation bar.
-
-```dart
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routeInformationParser: BeamerRouteInformationParser(),
-      routerDelegate: RootRouterDelegate(
-        homeBuilder: (context, uri) => Scaffold(
-          body: Beamer(
-            beamLocations: _beamLocations,
-          ),
-          ...
-        ),
-      ),
-      ...
-    );
-  }
-}
-```
-
-- provide `locationBuilder` to `RootRouterDelegate` as we would to `BeamerRouterDelegate` and have `Beamer` somewhere deep within those locations (see [nested navigation example](https://github.com/slovnicki/beamer/tree/master/examples/nested_navigation)).
-
-```dart
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routeInformationParser: BeamerRouteInformationParser(),
-      routerDelegate: RootRouterDelegate(
-        locationBuilder: BeamerLocationBuilder(beamLocations: [
-          HomeLocation(),
-          BooksLocation(),
-          ArticlesLocation(),
-        ]),
-      ),
-      ...
-    );
-  }
-}
-```
-
-## General Notes
-
-- When extending `BeamLocation`, two methods need to be implemented; `pathBlueprints` and `pagesBuilder`.
-  - `pagesBuilder` returns a stack of pages that will be built by `Navigator` when you beam there, and `pathBlueprints` is there for Beamer to decide which `BeamLocation` corresponds to which URI.
-  - `BeamLocation` keeps query and path parameters from URI in its `BeamState` . The `:` is necessary in `pathBlueprints` if you _might_ get path parameter from browser.
-
-- `BeamPage`'s child is an arbitrary `Widgets` that represent your app screen / page.
-  - `key` is important for `Navigator` to optimize rebuilds. This should be a unique value for "page state".
-  - `BeamPage` creates `MaterialPageRoute`, but you can extend `BeamPage` and override `createRoute` to make your own implementation instead.
-
 # Migrating
+
+## From 0.10 to 0.11
+
+- `BeamerRouterDelegate.beamLocations` is now `locationBuilder`. See `BeamerLocationBuilder` for easiest migration.
+- `Beamer` now takes `BeamerRouterDelegate`, not `BeamLocations` directly.
 
 ## From 0.9 to 0.10
 
@@ -551,4 +675,3 @@ If you notice any bugs not present in issues, please file a new issue. If you ar
 - if you have another enhancement in mind, create an issue for it first so we can discuss your idea
 
 Also, you can <a href="https://www.buymeacoffee.com/slovnicki" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="20px" width= "72px"></a> to speed up the development.
-
