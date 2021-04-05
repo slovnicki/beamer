@@ -30,6 +30,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     this.guards = const <BeamGuard>[],
     this.navigatorObservers = const <NavigatorObserver>[],
     this.transitionDelegate = const DefaultTransitionDelegate(),
+    this.onPopPage,
   }) {
     createState ??= (
       Uri uri, {
@@ -112,6 +113,15 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   /// This transition delegate will be overridden by the one in [BeamLocation],
   /// if any is set.
   final TransitionDelegate transitionDelegate;
+
+  /// Callback when `pop` is requested.
+  ///
+  /// Return `true` if pop will be handled entirely by this function.
+  /// Return `false` if beamer should finish handling the pop.
+  ///
+  /// See [build] for details on how beamer handles [Navigator.onPopPage].
+  bool Function(BuildContext context, Route<dynamic> route, dynamic result)
+      onPopPage;
 
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
@@ -314,6 +324,11 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
             if (!route.didPop(result)) {
               return false;
             }
+            final customPopResult =
+                onPopPage?.call(context, route, result) ?? false;
+            if (customPopResult) {
+              return customPopResult;
+            }
             if (_beamBackOnPop) {
               beamBack();
               _beamBackOnPop = false;
@@ -374,6 +389,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
         data: _currentLocation.state.data,
       ),
     );
+    _currentLocation.notifyListeners();
   }
 
   BeamGuard _globalGuardCheck(BuildContext context, BeamLocation location) {
