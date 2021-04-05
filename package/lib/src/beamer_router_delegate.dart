@@ -268,6 +268,12 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
 
   @override
   Widget build(BuildContext context) {
+    if (_currentLocation == null) {
+      final location = locationBuilder(createState(Uri.parse(initialPath)));
+      _beamHistory.add(location..prepare());
+      _currentLocation = _beamHistory.last;
+      _currentLocation.addListener(notify);
+    }
     BeamGuard guard = _globalGuardCheck(context, _currentLocation);
     if (guard != null && guard.showPage == null) {
       _applyGuard(guard, context);
