@@ -145,8 +145,13 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   /// Current location's effective pages.
   List<BeamPage> get currentPages => _currentPages;
 
-  /// Whether to implicitly [beamBack] instead of default pop
+  /// Whether to implicitly [beamBack] instead of default pop.
   bool _beamBackOnPop = false;
+
+  /// Which location to pop to, instead of default pop.
+  ///
+  /// This is more general than `beamBackOnPop`.
+  BeamLocation _popTo;
 
   /// Whether all the pages from location are stacked.
   /// If not (`false`), just the last page is taken.
@@ -167,11 +172,13 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   void beamTo(
     BeamLocation location, {
     bool beamBackOnPop = false,
+    BeamLocation popTo,
     bool stacked = true,
     bool replaceCurrent = false,
   }) {
     _currentLocation?.removeListener(notify);
     _beamBackOnPop = beamBackOnPop;
+    _popTo = popTo;
     _stacked = stacked;
     if ((preferUpdate &&
             location.runtimeType == _currentLocation.runtimeType) ||
@@ -204,13 +211,18 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     String uri, {
     Map<String, dynamic> data = const <String, dynamic>{},
     bool beamBackOnPop = false,
+    String popToNamed,
     bool stacked = true,
     bool replaceCurrent = false,
   }) {
     final location = locationBuilder(createState(Uri.parse(uri), data: data));
+    final popLocation = popToNamed != null
+        ? locationBuilder(createState(Uri.parse(popToNamed), data: data))
+        : null;
     beamTo(
       location,
       beamBackOnPop: beamBackOnPop,
+      popTo: popLocation,
       stacked: stacked,
       replaceCurrent: replaceCurrent,
     );
@@ -233,6 +245,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   /// Returns the success, whether the [currentLocation] was changed.
   bool beamBack() {
     _beamBackOnPop = false;
+    _popTo = null;
     _stacked = true;
     if (!canBeamBack) {
       return false;
@@ -242,6 +255,9 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     _update();
     return true;
   }
+
+  /// Remove everything except last from [beamHistory].
+  void clearHistory() => _beamHistory.removeRange(0, _beamHistory.length - 1);
 
   @override
   Uri get currentConfiguration =>
@@ -295,6 +311,11 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
             if (_beamBackOnPop) {
               beamBack();
               _beamBackOnPop = false;
+              _popTo = null;
+            } else if (_popTo != null) {
+              beamTo(_popTo, replaceCurrent: true);
+              _beamBackOnPop = false;
+              _popTo = null;
             } else {
               final lastPage = _currentPages.removeLast();
               if (lastPage is BeamPage) {

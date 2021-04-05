@@ -63,12 +63,14 @@ extension BeamerExtensions on BuildContext {
   void beamTo(
     BeamLocation location, {
     bool beamBackOnPop = false,
+    BeamLocation popTo,
     bool stacked = true,
     bool replaceCurrent = false,
   }) {
     Beamer.of(this).beamTo(
       location,
       beamBackOnPop: beamBackOnPop,
+      popTo: popTo,
       stacked: stacked,
       replaceCurrent: replaceCurrent,
     );
@@ -79,6 +81,7 @@ extension BeamerExtensions on BuildContext {
     String uri, {
     Map<String, dynamic> data = const <String, dynamic>{},
     bool beamBackOnPop = false,
+    String popToNamed,
     bool stacked = true,
     bool replaceCurrent = false,
   }) {
@@ -86,6 +89,7 @@ extension BeamerExtensions on BuildContext {
       uri,
       data: data,
       beamBackOnPop: beamBackOnPop,
+      popToNamed: popToNamed,
       stacked: stacked,
       replaceCurrent: replaceCurrent,
     );

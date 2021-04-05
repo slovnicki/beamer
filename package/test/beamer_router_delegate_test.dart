@@ -1,4 +1,5 @@
 import 'package:beamer/beamer.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'test_locations.dart';
@@ -117,5 +118,30 @@ void main() {
     router.beamTo(NoStateLocation());
     expect(router.currentLocation.state, isNotNull);
     router.beamBack();
+  });
+
+  test('clearHistory removes all but last entry (current location)', () {
+    final currentLocation = router.currentLocation;
+    expect(router.beamHistory.length, greaterThan(1));
+    router.clearHistory();
+    expect(router.beamHistory.length, equals(1));
+    expect(router.currentLocation, currentLocation);
+  });
+
+  testWidgets('popToNamed forces pop to specified location', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routeInformationParser: BeamerRouteInformationParser(),
+        routerDelegate: router,
+      ),
+    );
+    router.beamToNamed('/l1/one', popToNamed: '/l2');
+    await tester.pump();
+    final historyLength = router.beamHistory.length;
+    expect(router.currentLocation, isA<Location1>());
+    await router.popRoute();
+    await tester.pump();
+    expect(router.currentLocation, isA<Location2>());
+    expect(router.beamHistory.length, equals(historyLength));
   });
 }
