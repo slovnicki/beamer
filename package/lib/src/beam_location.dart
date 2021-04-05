@@ -6,11 +6,11 @@ import 'package:flutter/widgets.dart';
 ///
 /// Extend this class to define your locations to which you can then `beamTo`.
 abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
-  BeamLocation([T state]) {
+  BeamLocation([T? state]) {
     _state = createState(state ?? BeamState());
   }
 
-  T _state;
+  late T _state;
 
   /// A state of this location.
   ///
@@ -26,13 +26,13 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   /// for the use in [BeamerRouterDelegate.locationBuilder].
   ///
   /// Override this if you have your custom state class extending [BeamState].
-  T createState(BeamState state) => state.copyForLocation(this);
+  T createState(BeamState state) => state.copyForLocation(this) as T;
 
   /// Update a state via callback receiving the current state.
   /// If no callback is given, just notifies [BeamerRouterDelegate] to rebuild.
   ///
   /// Useful with [BeamState.copyWith].
-  void update([T Function(T) copy]) {
+  void update([T Function(T)? copy]) {
     if (copy != null) {
       state = copy(_state);
     } else {
@@ -87,7 +87,7 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   List<BeamGuard> get guards => const <BeamGuard>[];
 
   /// Will be executed before [pages] are drawn onto screen.
-  void Function() executeBefore;
+  void Function()? executeBefore;
 
   /// A transition delegate to be used by [Navigator].
   ///
@@ -96,7 +96,7 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   /// that will be used for all locations.
   ///
   /// This ransition delegate will override the one in [BeamerRouterDelegate].
-  TransitionDelegate get transitionDelegate => null;
+  TransitionDelegate? get transitionDelegate => null;
 
   /// Recreates the [uri] for this [BeamLocation]
   /// considering current value of [pathParameters] and [queryParameters].
@@ -111,7 +111,7 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
 
 /// Default location to choose if requested URI doesn't parse to any location.
 class NotFound extends BeamLocation {
-  NotFound({String path}) : super(BeamState.fromUri(Uri.parse(path)));
+  NotFound({String path = '/'}) : super(BeamState.fromUri(Uri.parse(path)));
 
   @override
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [];

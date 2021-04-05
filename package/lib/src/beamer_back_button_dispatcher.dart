@@ -6,7 +6,7 @@ import 'beamer_router_delegate.dart';
 /// to do [BeamerRouterDelegate.beamBack] when possible.
 class BeamerBackButtonDispatcher extends RootBackButtonDispatcher {
   final BeamerRouterDelegate delegate;
-  BeamerBackButtonDispatcher({@required this.delegate});
+  BeamerBackButtonDispatcher({required this.delegate});
 
   @override
   Future<bool> invokeCallback(Future<bool> defaultValue) async {

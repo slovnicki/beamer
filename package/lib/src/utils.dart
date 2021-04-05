@@ -77,7 +77,7 @@ abstract class Utils {
 
   static BeamState createBeamState(
     Uri uri, {
-    BeamLocation beamLocation,
+    BeamLocation? beamLocation,
     Map<String, dynamic> data = const <String, dynamic>{},
   }) {
     if (beamLocation != null) {

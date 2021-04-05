@@ -14,7 +14,7 @@ class BeamState {
 
   factory BeamState.fromUri(
     Uri uri, {
-    BeamLocation beamLocation,
+    BeamLocation? beamLocation,
     Map<String, dynamic> data = const <String, dynamic>{},
   }) {
     return Utils.createBeamState(
@@ -44,7 +44,7 @@ class BeamState {
   /// Custom key/value data for arbitrary use throught a beam location.
   final Map<String, dynamic> data;
 
-  Uri _uriBlueprint;
+  late Uri _uriBlueprint;
 
   /// Current URI object in the "blueprint form",
   /// as it's defined in [BeamLocation.pathBlueprints].
@@ -53,7 +53,7 @@ class BeamState {
   /// See more at [configure].
   Uri get uriBlueprint => _uriBlueprint;
 
-  Uri _uri;
+  late Uri _uri;
 
   /// Current URI object in the "real form",
   /// as it should be shown in browser's URL bar.
@@ -76,10 +76,10 @@ class BeamState {
 
   /// Returns a configured copy of this.
   BeamState copyWith({
-    List<String> pathBlueprintSegments,
-    Map<String, String> pathParameters,
-    Map<String, String> queryParameters,
-    Map<String, dynamic> data,
+    List<String>? pathBlueprintSegments,
+    Map<String, String>? pathParameters,
+    Map<String, String>? queryParameters,
+    Map<String, dynamic>? data,
   }) =>
       BeamState(
         pathBlueprintSegments:
@@ -100,7 +100,7 @@ class BeamState {
       if (pathSegments[i].isNotEmpty && pathSegments[i][0] == ':') {
         final key = pathSegments[i].substring(1);
         if (pathParameters.containsKey(key)) {
-          pathSegments[i] = pathParameters[key];
+          pathSegments[i] = pathParameters[key]!;
         }
       }
     }

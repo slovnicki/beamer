@@ -6,7 +6,7 @@ class BeamerRouteInformationParser extends RouteInformationParser<Uri> {
   @override
   SynchronousFuture<Uri> parseRouteInformation(
       RouteInformation routeInformation) {
-    return SynchronousFuture(Uri.parse(routeInformation.location));
+    return SynchronousFuture(Uri.parse(routeInformation.location ?? '/'));
   }
 
   @override

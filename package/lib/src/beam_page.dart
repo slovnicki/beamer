@@ -12,9 +12,9 @@ enum BeamPageType {
 /// A wrapper for pages / screens that will be drawn.
 class BeamPage extends Page {
   BeamPage({
-    Key key,
-    String name,
-    @required this.child,
+    LocalKey? key,
+    String? name,
+    required this.child,
     this.type = BeamPageType.material,
     this.pageRouteBuilder,
     this.keepQueryOnPop = false,
@@ -31,7 +31,7 @@ class BeamPage extends Page {
   /// A completely custom [PageRouteBuilder] to use for [createRoute].
   ///
   /// `settings` must be passed to [PageRouteBuilder.settings].
-  final PageRouteBuilder Function(RouteSettings settings, Widget child)
+  final PageRouteBuilder Function(RouteSettings settings, Widget child)?
       pageRouteBuilder;
 
   /// When this [BeamPage] pops from [Navigator] stack, whether to keep the
@@ -43,7 +43,7 @@ class BeamPage extends Page {
   @override
   Route createRoute(BuildContext context) {
     if (pageRouteBuilder != null) {
-      return pageRouteBuilder(this, child);
+      return pageRouteBuilder!(this, child);
     }
     switch (type) {
       case BeamPageType.material:

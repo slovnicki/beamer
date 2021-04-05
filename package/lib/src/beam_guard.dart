@@ -9,8 +9,8 @@ import './beam_page.dart';
 /// on screen and providing steps to be executed following a failed check.
 class BeamGuard {
   BeamGuard({
-    @required this.pathBlueprints,
-    @required this.check,
+    required this.pathBlueprints,
+    required this.check,
     this.onCheckFailed,
     this.beamTo,
     this.beamToNamed,
@@ -39,24 +39,24 @@ class BeamGuard {
   /// Arbitrary close to execute when [check] fails.
   ///
   /// This will run before and regardless of [beamTo] or [showPage].
-  void Function(BuildContext context, BeamLocation location) onCheckFailed;
+  void Function(BuildContext context, BeamLocation location)? onCheckFailed;
 
   /// If guard [check] returns false, build a location to be beamed to.
   ///
   /// [showPage] has precedence over this attribute.
-  BeamLocation Function(BuildContext context) beamTo;
+  BeamLocation Function(BuildContext context)? beamTo;
 
   /// If guard [check] returns false, beam to this uri.
   ///
   /// [showPage] has precedence over this attribute.
-  String beamToNamed;
+  String? beamToNamed;
 
   /// If guard [check] returns false, put this page onto navigation stack.
   ///
   /// When using [showPage], you probably want [replaceCurrentStack] set to `false`.
   ///
   /// This has precedence over [beamTo] and [beamToNamed].
-  BeamPage showPage;
+  BeamPage? showPage;
 
   /// Whether or not [location]s matching the [pathBlueprint]s will be blocked,
   /// or all other [location]s that don't match the [pathBlueprint]s will be.

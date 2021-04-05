@@ -6,7 +6,7 @@ import 'utils.dart';
 typedef LocationBuilder = BeamLocation Function(BeamState);
 
 class BeamerLocationBuilder implements Function {
-  BeamerLocationBuilder({@required this.beamLocations});
+  BeamerLocationBuilder({required this.beamLocations});
 
   /// List of all [BeamLocation]s that this builder handles.
   final List<BeamLocation> beamLocations;
@@ -17,12 +17,12 @@ class BeamerLocationBuilder implements Function {
 }
 
 class SimpleLocationBuilder implements Function {
-  SimpleLocationBuilder({@required this.routes, this.builder});
+  SimpleLocationBuilder({required this.routes, this.builder});
 
   /// List of all routes this builder handles.
   final Map<String, WidgetBuilder> routes;
 
-  Widget Function(BuildContext context, Widget navigator) builder;
+  Widget Function(BuildContext context, Widget navigator)? builder;
 
   BeamLocation call(BeamState state) {
     var matched = SimpleBeamLocation.chooseRoutes(state, routes.keys);
@@ -46,15 +46,11 @@ class SimpleBeamLocation extends BeamLocation {
   /// Map of all routes this location handles.
   Map<String, WidgetBuilder> routes;
 
-  Widget Function(BuildContext context, Widget navigator) navBuilder;
+  Widget Function(BuildContext context, Widget navigator)? navBuilder;
 
   @override
   Widget builder(BuildContext context, Widget navigator) {
-    if (navBuilder != null) {
-      return navBuilder(context, navigator);
-    } else {
-      return navigator;
-    }
+    return navBuilder?.call(context, navigator) ?? navigator;
   }
 
   List<String> get sortedRoutes =>
@@ -70,7 +66,7 @@ class SimpleBeamLocation extends BeamLocation {
     return sortedRoutes.map((route) {
       return BeamPage(
         key: ValueKey(filteredRoutes[route]),
-        child: routes[route](context),
+        child: routes[route]!(context),
       );
     }).toList();
   }

@@ -94,14 +94,17 @@ void main() {
     });
   });
 
-  test('stacked beam takes just last page for currentPages', () {
+  testWidgets('stacked beam takes just last page for currentPages',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routeInformationParser: BeamerRouteInformationParser(),
+        routerDelegate: router,
+      ),
+    );
     router.beamToNamed('/l1/one', stacked: false);
-    expect(
-        router.currentLocation
-            .pagesBuilder(null, router.currentLocation.state)
-            .length,
-        2);
-    //expect(router.currentPages.length, 1);
+    await tester.pump();
+    expect(router.currentPages.length, 1);
   });
 
   test('custom state can be updated', () {

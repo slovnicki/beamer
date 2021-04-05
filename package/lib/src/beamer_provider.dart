@@ -25,15 +25,15 @@ import 'package:flutter/widgets.dart';
 /// ```
 class BeamerProvider extends InheritedWidget {
   BeamerProvider({
-    Key key,
-    Widget child,
-    this.routerDelegate,
+    Key? key,
+    required this.routerDelegate,
+    required Widget child,
   }) : super(key: key, child: child);
 
   /// Responsible for beaming, updating and rebuilding the page stack.
   final BeamerRouterDelegate routerDelegate;
 
-  static BeamerProvider of(BuildContext context) =>
+  static BeamerProvider? of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<BeamerProvider>();
 
   @override

@@ -10,8 +10,8 @@ import 'beamer_provider.dart';
 /// Central place for creating, accessing and modifying a Router subtree.
 class Beamer extends StatefulWidget {
   Beamer({
-    Key key,
-    @required this.routerDelegate,
+    Key? key,
+    required this.routerDelegate,
   }) : super(key: key);
 
   /// Responsible for beaming, updating and rebuilding the page stack.
@@ -20,11 +20,11 @@ class Beamer extends StatefulWidget {
   /// Access Beamer's [routerDelegate].
   static BeamerRouterDelegate of(BuildContext context) {
     try {
-      return Router.of(context).routerDelegate;
+      return Router.of(context).routerDelegate as BeamerRouterDelegate;
     } catch (e) {
       assert(BeamerProvider.of(context) != null,
           'There was no Router nor BeamerProvider in current context. If using MaterialApp.builder, wrap the MaterialApp.router in BeamerProvider to which you pass the same routerDelegate as to MaterialApp.router.');
-      return BeamerProvider.of(context).routerDelegate;
+      return BeamerProvider.of(context)!.routerDelegate;
     }
   }
 
@@ -63,7 +63,7 @@ extension BeamerExtensions on BuildContext {
   void beamTo(
     BeamLocation location, {
     bool beamBackOnPop = false,
-    BeamLocation popTo,
+    BeamLocation? popTo,
     bool stacked = true,
     bool replaceCurrent = false,
   }) {
@@ -81,7 +81,7 @@ extension BeamerExtensions on BuildContext {
     String uri, {
     Map<String, dynamic> data = const <String, dynamic>{},
     bool beamBackOnPop = false,
-    String popToNamed,
+    String? popToNamed,
     bool stacked = true,
     bool replaceCurrent = false,
   }) {
@@ -108,5 +108,5 @@ extension BeamerExtensions on BuildContext {
   bool get canBeamBack => Beamer.of(this).canBeamBack;
 
   /// See [BeamerRouterDelegate.beamBackLocation]
-  BeamLocation get beamBackLocation => Beamer.of(this).beamBackLocation;
+  BeamLocation? get beamBackLocation => Beamer.of(this).beamBackLocation;
 }

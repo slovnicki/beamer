@@ -47,7 +47,7 @@ class CustomState extends BeamState {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, String> queryParameters = const <String, String>{},
     Map<String, dynamic> data = const <String, dynamic>{},
-    this.customVar,
+    this.customVar = '',
   }) : super(
           pathBlueprintSegments: pathBlueprintSegments,
           pathParameters: pathParameters,
@@ -59,11 +59,11 @@ class CustomState extends BeamState {
 
   @override
   CustomState copyWith({
-    List<String> pathBlueprintSegments,
-    Map<String, String> pathParameters,
-    Map<String, String> queryParameters,
-    Map<String, dynamic> data,
-    String customVar,
+    List<String>? pathBlueprintSegments,
+    Map<String, String>? pathParameters,
+    Map<String, String>? queryParameters,
+    Map<String, dynamic>? data,
+    String? customVar,
   }) =>
       CustomState(
         pathBlueprintSegments:
