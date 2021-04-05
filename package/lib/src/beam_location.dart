@@ -29,9 +29,16 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   T createState(BeamState state) => state.copyForLocation(this);
 
   /// Update a state via callback receiving the current state.
+  /// If no callback is given, just notifies [BeamerRouterDelegate] to rebuild.
   ///
   /// Useful with [BeamState.copyWith].
-  void update(T Function(T) copy) => state = copy(_state);
+  void update([T Function(T) copy]) {
+    if (copy != null) {
+      state = copy(_state);
+    } else {
+      notifyListeners();
+    }
+  }
 
   /// Gives the ability to wrap the `navigator`.
   ///
