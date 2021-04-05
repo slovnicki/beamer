@@ -1,3 +1,18 @@
+# 0.11.0
+
+- migrated to null safety
+- **BREAKING:** `Beamer` now takes `routerDelegate`, not `beamLocations` directly
+- **BREAKING:** `BeamerRouterDelegate.beamLocations` is now `locationBuilder`
+- **BREAKING:** `pagesBuilder` now also brings `state`
+- **Add** `beamToNamed` to `BeamGuard`
+- **Add** various `LocationBuilder`s
+- **Add** `transitionDelegate` to `BeamLocation` and `BeamerRouterDelegate`
+- **Add** `type` and `pageRouteBuilder` to `BeamPage`, for transition control
+- **Add** `initialPath` to `BeamerRouterDelegate`
+- **Add** `popTo`/`popToNamed` options for beaming
+- **Add** `onPopPage` to `BeamLocation`
+
+
 # 0.10.5
 
 - **Remove** `NavigationNotifier.currentLocation` (not needed)
