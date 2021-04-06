@@ -11,7 +11,8 @@ class HomeLocation extends BeamLocation {
   @override
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
-          key: ValueKey('home'),
+          key: ValueKey('home-${state.uri.path}'),
+          type: BeamPageType.noTransition,
           child: HomeScreen(),
         )
       ];
