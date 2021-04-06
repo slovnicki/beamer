@@ -1,3 +1,7 @@
+# 0.11.1
+
+- **Fix** possibly null `_currentLocation`
+
 # 0.11.0+1
 
 - add missing ToC titles
