@@ -37,19 +37,10 @@ class BeamerState extends State<Beamer> {
   BeamLocation get currentLocation => widget.routerDelegate.currentLocation;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    try {
-      widget.routerDelegate.navigationNotifier =
-          (Router.of(context).routerDelegate as BeamerRouterDelegate)
-              .navigationNotifier;
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    widget.routerDelegate.navigationNotifier ??=
+        (Router.of(context).routerDelegate as BeamerRouterDelegate)
+            .navigationNotifier;
     return Router(
       routerDelegate: widget.routerDelegate,
       backButtonDispatcher:

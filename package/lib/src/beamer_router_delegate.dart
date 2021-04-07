@@ -53,6 +53,9 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   NavigationNotifier? _navigationNotifier;
   NavigationNotifier? get navigationNotifier => _navigationNotifier;
   set navigationNotifier(NavigationNotifier? navigationNotifier) {
+    if (navigationNotifier == null) {
+      return;
+    }
     _navigationNotifier = navigationNotifier;
     final location = locationBuilder(createState!(_navigationNotifier!.uri));
     _beamHistory.add(location..prepare());
