@@ -1,6 +1,6 @@
 name: beamer
 description: A routing package that lets you navigate through guarded page stacks and URLs using the Router API.
-version: 0.11.1
+version: 0.11.2
 homepage: https://github.com/slovnicki/beamer
 repository: https://github.com/slovnicki/beamer
 

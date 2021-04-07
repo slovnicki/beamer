@@ -1,3 +1,7 @@
+# 0.11.2
+
+- **Fix** lost `navigationNotifier` on rebuilds with nested `Beamer`s
+
 # 0.11.1
 
 - **Fix** possibly null `_currentLocation`
