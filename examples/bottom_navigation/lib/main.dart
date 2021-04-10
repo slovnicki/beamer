@@ -163,8 +163,8 @@ class ArticlesLocation extends BeamLocation {
 
 // APP
 final _beamLocations = [
-  BooksLocation(BeamState()),
-  ArticlesLocation(BeamState()),
+  BooksLocation(BeamState.fromUri(Uri.parse('/books'))),
+  ArticlesLocation(BeamState.fromUri(Uri.parse('/articles'))),
 ];
 
 class BottomNavigationBarWidget extends StatefulWidget {
@@ -220,6 +220,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       routeInformationParser: BeamerRouteInformationParser(),
       routerDelegate: RootRouterDelegate(
+        initialPath: '/books',
         homeBuilder: (context, state) => Scaffold(
           body: Beamer(
             key: _beamerKey,
