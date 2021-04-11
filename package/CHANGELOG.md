@@ -1,3 +1,9 @@
+# 0.11.3
+
+- **Add** `beamBackTransitionDelegate` to `BeamerRouterDelegate`
+- **Add** `transition_delegates.dart` with some useful transition delegates
+- **Tweak** deep_location example to show this more clearly
+
 # 0.11.2
 
 - **Fix** lost `navigationNotifier` on rebuilds with nested `Beamer`s
