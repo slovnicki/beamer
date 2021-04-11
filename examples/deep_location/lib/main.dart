@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
+import 'package:flutter/scheduler.dart';
 
 // SCREENS
 class HomeScreen extends StatelessWidget {
@@ -11,8 +12,8 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Center(
         child: ElevatedButton(
-          onPressed: () => context.beamToNamed('/a/b/c/d'),
-          //onPressed: () => context.beamToNamed('/a/b/c/d', beamBackOnPop: true),
+          // onPressed: () => context.beamToNamed('/a/b/c/d'),
+          onPressed: () => context.beamToNamed('/a/b/c/d', beamBackOnPop: true),
           child: Text('Beam deep'),
         ),
       ),
@@ -72,7 +73,6 @@ class DeepLocation extends BeamLocation {
 
   @override
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
-        ...HomeLocation(state).pagesBuilder(context, state),
         if (state.uri.pathSegments.contains('a'))
           BeamPage(
             key: ValueKey('a'),
@@ -116,5 +116,6 @@ class MyApp extends StatelessWidget {
 }
 
 void main() {
+  timeDilation = 5.0;
   runApp(MyApp());
 }

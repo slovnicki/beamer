@@ -1,4 +1,5 @@
 import 'package:beamer/beamer.dart';
+import 'package:beamer/src/transition_delegates.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -32,6 +33,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     this.guards = const <BeamGuard>[],
     this.navigatorObservers = const <NavigatorObserver>[],
     this.transitionDelegate = const DefaultTransitionDelegate(),
+    this.beamBackTransitionDelegate = const ReverseTransitionDelegate(),
     this.onPopPage,
   }) {
     createState ??= (
@@ -122,6 +124,13 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   /// if any is set.
   final TransitionDelegate transitionDelegate;
 
+  /// A transition delegate to be used by [Navigator] when beaming back.
+  ///
+  /// When calling [beamBack], it's useful to animate routes in reverse order;
+  /// adding the new ones behind and then popping the current ones,
+  /// therefore, the default is [ReverseTransitionDelegate].
+  final TransitionDelegate beamBackTransitionDelegate;
+
   /// Callback when `pop` is requested.
   ///
   /// Return `true` if pop will be handled entirely by this function.
@@ -166,6 +175,9 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   /// Whether to implicitly [beamBack] instead of default pop.
   bool _beamBackOnPop = false;
 
+  /// Needed for deciding the transition delegate.
+  bool _isBeamingBack = false;
+
   /// Which location to pop to, instead of default pop.
   ///
   /// This is more general than `beamBackOnPop`.
@@ -194,6 +206,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     bool stacked = true,
     bool replaceCurrent = false,
   }) {
+    _isBeamingBack = false;
     _currentLocation.removeListener(notify);
     _beamBackOnPop = beamBackOnPop;
     _popTo = popTo;
@@ -264,6 +277,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   ///
   /// Returns the success, whether the [currentLocation] was changed.
   bool beamBack() {
+    _isBeamingBack = true;
     _beamBackOnPop = false;
     _popTo = null;
     _stacked = true;
@@ -313,8 +327,9 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
         return Navigator(
           key: navigatorKey,
           observers: navigatorObservers,
-          transitionDelegate:
-              _currentLocation.transitionDelegate ?? transitionDelegate,
+          transitionDelegate: _isBeamingBack
+              ? beamBackTransitionDelegate
+              : (_currentLocation.transitionDelegate ?? transitionDelegate),
           pages: _currentLocation is NotFound
               ? [notFoundPage!]
               : guard == null ||
@@ -335,8 +350,6 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
             }
             if (_beamBackOnPop) {
               beamBack();
-              _beamBackOnPop = false;
-              _popTo = null;
             } else if (_popTo != null) {
               beamTo(_popTo!, replaceCurrent: true);
               _beamBackOnPop = false;
