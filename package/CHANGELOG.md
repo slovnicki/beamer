@@ -1,3 +1,7 @@
+# 0.11.4
+
+- **Fix** `currentLocation` without listener after guard beam
+
 # 0.11.3
 
 - **Add** `beamBackTransitionDelegate` to `BeamerRouterDelegate`
