@@ -25,7 +25,7 @@ class BookDetailsScreen extends StatelessWidget {
               onPressed: () => context.currentBeamLocation.update(
                 (state) => state.copyWith(
                   pathBlueprintSegments: ['books', ':bookId', 'genres'],
-                  data: {'book': book},
+                  pathParameters: {'bookId': bookId},
                 ),
               ),
               child: Text('See genres'),
@@ -34,7 +34,7 @@ class BookDetailsScreen extends StatelessWidget {
               onPressed: () => context.currentBeamLocation.update(
                 (state) => state.copyWith(
                   pathBlueprintSegments: ['books', ':bookId', 'buy'],
-                  data: {'book': book},
+                  pathParameters: {'bookId': bookId},
                 ),
               ),
               child: Text('Buy'),
