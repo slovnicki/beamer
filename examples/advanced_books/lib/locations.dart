@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
 
+import 'books/data.dart';
 import './home_screen.dart';
 import './books/ui/screens.dart';
 import './articles/ui/screens.dart';
@@ -50,14 +51,16 @@ class BooksLocation extends BeamLocation {
           BeamPage(
             key: ValueKey('book-${state.pathParameters['bookId']}-buy'),
             child: BuyScreen(
-              book: state.data['book'],
+              book: books.firstWhere(
+                  (book) => book['id'] == state.pathParameters['bookId']),
             ),
           ),
         if (state.uri.pathSegments.contains('genres'))
           BeamPage(
             key: ValueKey('book-${state.pathParameters['bookId']}-genres'),
             child: GenresScreen(
-              book: state.data['book'],
+              book: books.firstWhere(
+                  (element) => element['id'] == state.pathParameters['bookId']),
             ),
           ),
         if (state.pathParameters.containsKey('genreId'))
