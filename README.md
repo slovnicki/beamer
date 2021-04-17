@@ -564,7 +564,7 @@ class HomeLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/*'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState beamState) => [
         BeamPage(
           key: ValueKey('home'),
           child: HomeScreen(),
