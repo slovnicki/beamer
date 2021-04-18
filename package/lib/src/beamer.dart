@@ -7,7 +7,7 @@ import 'beamer_back_button_dispatcher.dart';
 import 'beamer_router_delegate.dart';
 import 'beamer_provider.dart';
 
-/// Central place for creating, accessing and modifying a Router subtree.
+/// A wrapper for [Router].
 class Beamer extends StatefulWidget {
   Beamer({
     Key? key,
@@ -37,10 +37,15 @@ class BeamerState extends State<Beamer> {
   BeamLocation get currentLocation => widget.routerDelegate.currentLocation;
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routerDelegate.parent ??=
+        Router.of(context).routerDelegate as BeamerRouterDelegate;
+    routerDelegate.updateRouteInformation();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    widget.routerDelegate.navigationNotifier ??=
-        (Router.of(context).routerDelegate as BeamerRouterDelegate)
-            .navigationNotifier;
     return Router(
       routerDelegate: widget.routerDelegate,
       backButtonDispatcher:
