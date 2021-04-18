@@ -82,9 +82,6 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   /// Override this in your subclasses, if needed.
   List<BeamGuard> get guards => const <BeamGuard>[];
 
-  /// Will be executed before [pages] are drawn onto screen.
-  void Function()? executeBefore;
-
   /// A transition delegate to be used by [Navigator].
   ///
   /// This will be used only by this location, unlike
@@ -93,16 +90,6 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   ///
   /// This ransition delegate will override the one in [BeamerRouterDelegate].
   TransitionDelegate? get transitionDelegate => null;
-
-  /// Recreates the [uri] for this [BeamLocation]
-  /// considering current value of [pathParameters] and [queryParameters].
-  ///
-  /// Calls [executeBefore] if defined.
-  void prepare() {
-    //_makePath();
-    //_makeQuery();
-    executeBefore?.call();
-  }
 }
 
 /// Default location to choose if requested URI doesn't parse to any location.

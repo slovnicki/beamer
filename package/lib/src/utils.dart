@@ -25,7 +25,7 @@ abstract class Utils {
             ),
           );
           //print('returning: ${uri.pathSegments} for $beamLocation');
-          return beamLocation..prepare();
+          return beamLocation;
         }
         final uriPathSegments = List.from(uri.pathSegments);
         if (uriPathSegments.length > 1 && uriPathSegments.last == '') {
@@ -68,7 +68,7 @@ abstract class Utils {
             ),
           );
           //print('returning: ${pathSegments} for $beamLocation');
-          return beamLocation..prepare();
+          return beamLocation;
         }
       }
     }
