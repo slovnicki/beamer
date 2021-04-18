@@ -92,7 +92,7 @@ class BeamState {
   /// Constructs [uriBlueprint] and [uri] upon creation.
   void configure() {
     _uriBlueprint = Uri(
-      pathSegments: [''] + pathBlueprintSegments,
+      path: '/' + pathBlueprintSegments.join('/'),
       queryParameters: queryParameters.isEmpty ? null : queryParameters,
     );
     final pathSegments = List<String>.from(pathBlueprintSegments);
@@ -105,7 +105,7 @@ class BeamState {
       }
     }
     _uri = Uri(
-      pathSegments: [''] + pathSegments,
+      path: '/' + pathSegments.join('/'),
       queryParameters: queryParameters.isEmpty ? null : queryParameters,
     );
   }
