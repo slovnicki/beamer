@@ -9,13 +9,18 @@
 </p>
 
 <p align="center">
-<a href="https://github.com/slovnicki/beamer/commits/master"><img src="https://img.shields.io/github/commit-activity/m/slovnicki/beamer" alt="GitHub commit activity"></a>
-<a href="https://github.com/slovnicki/beamer/issues"><img src="https://img.shields.io/github/issues-raw/slovnicki/beamer" alt="GitHub open issues"></a>
-<a href="https://github.com/slovnicki/beamer/issues?q=is%3Aissue+is%3Aclosed"><img src="https://img.shields.io/github/issues-closed-raw/slovnicki/beamer" alt="GitHub closed issues"></a>
-<a href="https://github.com/slovnicki/beamer/blob/master/LICENSE"><img src="https://img.shields.io/github/license/slovnicki/beamer" alt="Licence"></a>
+<a href="https://github.com/slovnicki/beamer/commits/master"><img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/slovnicki/beamer?label=commits"></a>
+<a href="https://pub.dev/packages/beamer"><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/slovnicki/beamer"></a>
+<a href="https://github.com/slovnicki/beamer/blob/master/.github/workflows/test.yml"><img alt="GitHub forks" src="https://img.shields.io/github/forks/slovnicki/beamer"></a>
 </p>
 
 <p align="center">
+<a href="https://github.com/slovnicki/beamer/issues?q=is%3Aissue+is%3Aclosed"><img src="https://img.shields.io/github/issues-closed-raw/slovnicki/beamer" alt="GitHub closed issues"></a>
+<a href="https://github.com/slovnicki/beamer/pulls"><img alt="GitHub closed pull requests" src="https://img.shields.io/github/issues-pr-closed-raw/slovnicki/beamer"></a>
+</p>
+
+<p align="center">
+<a href="https://github.com/slovnicki/beamer/graphs/contributors"><img alt="GitHub contributors" src="https://img.shields.io/github/contributors/slovnicki/beamer"></a>
 <a href="https://discord.gg/8hDJ7tP5Mz"><img src="https://img.shields.io/discord/815722893878099978" alt="Discord"></a>
 </p>
 
@@ -35,8 +40,9 @@ Handle your application routing, synchronize it with browser URL and more. Beame
   - [Updating](#updating)
   - [Beaming Back](#beaming-back)
 - [Usage](#usage)
-  - [On Entire App](#on-entire-app)
-  - [Deeper in the Tree](#deeper-in-the-tree)
+  - [With a List of BeamLocations](#with-a-list-of-beamlocations)
+  - [With a Map of Routes](#with-a-map-of-routes)
+  - [Nested Navigation](#nested-navigation)
   - [General Notes](#general-notes)
 - [Examples](#examples)
   - [Books](#books)
@@ -44,7 +50,7 @@ Handle your application routing, synchronize it with browser URL and more. Beame
   - [Deep Location](#deep-location)
   - [Location Builder](#location-builder)
   - [Guards](#guards)
-  - [Beamer Widget](#beamer-widget)
+  - [Nested Navigation](#nested-navigation)
   - [Integration with Navigation UI Packages](#integration-with-navigation-ui-packages)
 - [Migrating](#migrating)
   - [From 0.10 to 0.11](#from-010-to-011)
@@ -53,7 +59,6 @@ Handle your application routing, synchronize it with browser URL and more. Beame
   - [From 0.4 to 0.5](#from-04-to-05)
 - [Help and Chat](#help-and-chat)
 - [Contributing](#contributing)
-
 
 # Quick Start
 
@@ -83,23 +88,33 @@ Navigating through those routes can be done with
 
 ```dart
 Beamer.of(context).beamToNamed('/books/2');
-
-// or
-context.beamToNamed('/books/2');
 ```
 
 And accessing route attributes (for example, `bookId` for building `BookDetailsScreen`) can be done with
 
 ```dart
 Beamer.of(context).currentLocation.state.pathParameters['bookId'];
-
-// or
-context.currentBeamLocation.state.pathParameters['bookId'];
 ```
 
 # Key Concepts
 
-For a fairly large app, it is recommended to use `Beamer` in its "natural" form.
+For a fairly large app, it is recommended to use `Beamer` in its "natural form", with custom `BeamLocation`s
+
+At the highest level, `Beamer` is a wrapper for `Router` and uses its own implementations for `RouterDelegate` and `RouteInformationParser`. The goal of _beamer_ is to separate the responsibility of building a page stack for `Navigator.pages` into multiple classes with custom "states", instead of one global state.
+
+For example, we would like to handle all the _profile related_ page stacks as
+
+- `[ ProfilePage ]`,
+- `[ ProfilePage, FriendsPage]`,
+- `[ ProfilePage, FriendsPage, FriendPage ]`,
+- `[ ProfilePage, SettingsPage ]`,
+- ...
+
+with some _ProfileHandler_ that knows which _state_ corresponds to which page stack and updates this state as the page stack changes. Then similarly, we would like to have a _ShopHandler_ for all the possible stacks of shop related pages.
+
+These "Handlers" are called `BeamLocation`s.
+
+`BeamLocation`s cannot work by themselves. When the `URI` comes into the app through deep-link or as initial, there must be a decision which `BeamLocation` will further handle this `URI` and build pages for the `Navigator`. This is the job of `BeamerRouterDelegate.locationBuilder` that will take the "global state" and give it to appropriate `BeamLocation` which will create and save its own "local state" from it to use it to build pages.
 
 ## BeamLocation
 
@@ -219,13 +234,11 @@ context.currentBeamLocation.update(
 
 ## Beaming Back
 
-All `BeamLocation`s that you visited are kept in `beamHistory`. Therefore, there is an ability to _beam back_ to the previous `BeamLocation`. For example, after spending some time on `/books` and `/books/3`, say you beam to `/articles` which is handled by another `BeamLocation` (e.g. `ArticlesLocation`). From there, you can get back to your previous location as it were when you left, i.e. `/books/3`.
+All `BeamState`s that were visited are kept in `beamStateHistory`. Therefore, there is an ability to _beam back_ to whichever `BeamLocation` is responsible for previous `BeamState`. For example, after spending some time on `/books` and `/books/3`, say you beam to `/articles`. From there, you can get back to your previous location as it were when you left, i.e. `/books/3`.
 
 ```dart
 context.beamBack();
 ```
-
-**NOTE** that Beamer will remove duplicate locations from `beamHistory` as you go. For example, if you visit `BooksLocation`, `ArticlesLocation` and then `BooksLocation` again, the first instance of `BooksLocation` will be removed from history and `beamHistory` will be `[ArticlesLocation,BooksLocation]` instead of `[BooksLocation,ArticlesLocation,BooksLocation]`. You can turn that off by setting `BeamerRouterDelegate.removeDuplicateHistory` to `false`.
 
 **NOTE** that Beamer can integrate Android's back button to do `beamBack` if possible when all the pages from current `BeamLocation` have been popped. This is achieved by setting a back button dispatcher in in `MaterialApp.router`.
 
@@ -233,14 +246,9 @@ context.beamBack();
 backButtonDispatcher: BeamerBackButtonDispatcher(delegate: routerDelegate)
 ```
 
-You can check whether you can beam back with `context.canBeamBack` or even inspect the location you'll be beaming back to: `context.beamBackLocation`.
-
 # Usage
 
-Lastly, we go through a couple of notes on how and where to put Beamer.
-## On Entire App
-
-To use Beamer on your entire app, you must (as per [official documentation](https://api.flutter.dev/flutter/widgets/Router-class.html)) construct your `*App` widget with `.router` constructor to which (along with all your regular `*App` attributes) you provide
+To use the full featured Beamer in your app, you must (as per [official documentation](https://api.flutter.dev/flutter/widgets/Router-class.html)) construct your `*App` widget with `.router` constructor to which (along with all your regular `*App` attributes) you provide
 
 - `routeInformationParser` that parses an incoming URI.
 - `routerDelegate` that controls (re)building of `Navigator`
@@ -273,7 +281,7 @@ class MyApp extends StatelessWidget {
 
 There are also two other options available, if you don't want to define a custom `LocationBuilder` function.
 
-### With a List of BeamLocations
+## With a List of BeamLocations
 
 You can use the `BeamerLocationBuilder` with a list of `BeamLocation`s. This builder will automatically select the correct location, based on the `pathBlueprints` of each `BeamLocation`. In this case, define your `BeamerRouterDelegate` like this:
 
@@ -288,7 +296,7 @@ final routerDelegate = BeamerRouterDelegate(
 );
 ```
 
-### With a Map of Routes
+## With a Map of Routes
 
 You can use the `SimpleLocationBuilder` with a map of routes and `WidgetBuilder`s, as mentioned in [Quick Start](#quick-start). This completely removes the need for custom `BeamLocation`s, but also gives you the least amount of customizability. Still, wildcards and path parameters in your paths are supported as with all the other options.
 
@@ -306,50 +314,38 @@ final routerDelegate = BeamerRouterDelegate(
 );
 ```
 
-## Deeper in the Tree
+## Nested Navigation
 
-If there is a need for nested navigation, `Beamer` will be put somewhere deeper in the tree. In this case, it is a **MUST** to set `RootRouterDelegate` instead of `BeamerRouterDelegate` as the top-most router delegate. Then, we have 2 options:
-
-- provide `homeBuilder` to `RootRouterDelegate` which will serve the same role as `MaterialApp.home`. This is useful when you need a simple app with some navigation bar.
+When nested navigation is needed, you can just put `Beamer` anywhere in the Widget tree where this navigation will take place. There is no limit on how many `Beamer`s an app can have. Common use case is bottom bar navigation, something like this:
 
 ```dart
 class MyApp extends StatelessWidget {
+  final _beamerKey = GlobalKey<BeamerState>();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routeInformationParser: BeamerRouteInformationParser(),
-      routerDelegate: RootRouterDelegate(
-        homeBuilder: (context, uri) => Scaffold(
-          body: Beamer(
-            locationBuilder: _locationBuilder,
-          ),
-          ...
+      routerDelegate: BeamerRouterDelegate(
+        initialPath: '/books',
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '/': (context) => Scaffold(
+              body: Beamer(
+                key: _beamerKey,
+                routerDelegate: BeamerRouterDelegate(
+                  locationBuilder: BeamerLocationBuilder(
+                    beamLocations: _beamLocations,
+                  ),
+                ),
+              ),
+              bottomNavigationBar: BottomNavigationBarWidget(
+                beamerKey: _beamerKey,
+              ),
+            ),
+          },
         ),
       ),
-      ...
-    );
-  }
-}
-```
-
-- provide `locationBuilder` to `RootRouterDelegate` as we would to `BeamerRouterDelegate` and have `Beamer` somewhere deep within those locations (see [nested navigation example](https://github.com/slovnicki/beamer/tree/master/examples/nested_navigation)).
-
-```dart
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routeInformationParser: BeamerRouteInformationParser(),
-      routerDelegate: RootRouterDelegate(
-        locationBuilder: BeamerLocationBuilder(
-          beamLocations: [
-            HomeLocation(),
-            BooksLocation(),
-            ArticlesLocation(),
-          ],
-        ),
-      ),
-      ...
     );
   }
 }
@@ -451,8 +447,7 @@ List<BeamGuard> get guards => [
   ),
 ];
 ```
-
-## Beamer Widget
+## Nested Navigation
 
 Examples of putting `Beamer`s into the Widget tree, when you need nested navigation.
 
@@ -473,22 +468,24 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routeInformationParser: BeamerRouteInformationParser(),
-      routerDelegate: RootRouterDelegate(
-        homeBuilder: (context, uri) => Scaffold(
-          body: Beamer(
-            key: _beamerKey,
-            routerDelegate: BeamerRouterDelegate(
-              locationBuilder: (state) {
-                if (state.uri.pathSegments.contains('books')) {
-                  return BooksLocation(state);
-                }
-                return ArticlesLocation(state);
-              },
+      routerDelegate: BeamerRouterDelegate(
+        initialPath: '/books',
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '/': (context) => Scaffold(
+              body: Beamer(
+                key: _beamerKey,
+                routerDelegate: BeamerRouterDelegate(
+                  locationBuilder: BeamerLocationBuilder(
+                    beamLocations: _beamLocations,
+                  ),
+                ),
+              ),
+              bottomNavigationBar: BottomNavigationBarWidget(
+                beamerKey: _beamerKey,
+              ),
             ),
-          ),
-          bottomNavigationBar: BottomNavigationBarWidget(
-            beamerKey: _beamerKey,
-          ),
+          },
         ),
       ),
     );
@@ -496,82 +493,41 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-- [Bottom navigation example with multiple Beamers](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation_multiple_beamers) (WIP)
+- [Bottom navigation example with multiple Beamers](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation_multiple_beamers)
 
 ```dart
-class MyAppState extends State<MyApp> {
-  int _currentIndex = 0;
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: IndexedStack(
-          index: _currentIndex,
-          children: [
-            Beamer(
-              routerDelegate: BeamerRouterDelegate(
-                locationBuilder: (state) => ArticlesLocation(state),
-              ),
-            ),
-            Container(
-              color: Colors.blueAccent,
-              padding: const EdgeInsets.all(32.0),
-              child: Beamer(
-                routerDelegate: BeamerRouterDelegate(
-                  locationBuilder: (state) => BooksLocation(state),
-                ),
-              ),
-            ),
-          ],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          items: [
-            BottomNavigationBarItem(label: 'A', icon: Icon(Icons.article)),
-            BottomNavigationBarItem(label: 'B', icon: Icon(Icons.book)),
-          ],
-          onTap: (index) => setState(() => _currentIndex = index),
-        ),
+    return Scaffold(
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          Beamer(routerDelegate: _routerDelegates[0]),
+          Container(
+            color: Colors.blueAccent,
+            padding: const EdgeInsets.all(32.0),
+            child: Beamer(routerDelegate: _routerDelegates[1]),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        items: [
+          BottomNavigationBarItem(label: 'A', icon: Icon(Icons.article)),
+          BottomNavigationBarItem(label: 'B', icon: Icon(Icons.book)),
+        ],
+        onTap: (index) {
+          setState(() => _currentIndex = index);
+          _routerDelegates[_currentIndex].updateRouteInformation();
+        },
       ),
     );
   }
-}
 ```
 
 - [Nested navigation example](https://github.com/slovnicki/beamer/tree/master/examples/nested_navigation)
 
 ```dart
-...
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routeInformationParser: BeamerRouteInformationParser(),
-      routerDelegate: RootRouterDelegate(
-        locationBuilder: (state) => HomeLocation(state),
-      ),
-    );
-  }
-}
-
-...
-
-
-class HomeLocation extends BeamLocation {
-  @override
-  List<String> get pathBlueprints => ['/*'];
-
-  @override
-  List<BeamPage> pagesBuilder(BuildContext context) => [
-        BeamPage(
-          key: ValueKey('home'),
-          child: HomeScreen(),
-        )
-      ];
-}
-
 ...
 
 class HomeScreen extends StatelessWidget {
@@ -580,9 +536,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Home'),
-      ),
+      appBar: AppBar(title: Text('Home')),
       body: Row(
         children: [
           Container(
@@ -590,36 +544,43 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                ElevatedButton(
-                  onPressed: () => _beamerKey.currentState.routerDelegate
-                      .beamToNamed('/books'),
+                MenuButton(
+                  beamer: _beamerKey,
+                  uri: '/books',
                   child: Text('Books'),
                 ),
                 SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () => _beamerKey.currentState.routerDelegate
-                      .beamToNamed('/articles'),
+                MenuButton(
+                  beamer: _beamerKey,
+                  uri: '/articles',
                   child: Text('Articles'),
                 ),
               ],
             ),
           ),
           Container(width: 1, color: Colors.blue),
-          Expanded(
-            child: Beamer(
-              key: _beamerKey,
-              routerDelegate: BeamerRouterDelegate(
-                locationBuilder: (state) {
-                  if (state.uri.pathSegments.contains('books')) {
+          if (context.currentBeamLocation.state.uri.path.isEmpty)
+            Expanded(
+              child: Container(
+                child: Center(
+                  child: Text('Home'),
+                ),
+              ),
+            )
+          else
+            Expanded(
+              child: Beamer(
+                key: _beamerKey,
+                routerDelegate: BeamerRouterDelegate(
+                  locationBuilder: (state) {
+                    if (state.uri.pathSegments.contains('articles')) {
+                      return ArticlesLocation(state);
+                    }
                     return BooksLocation(state);
-                  }
-                  if (state.uri.pathSegments.contains('articles')) {
-                    return ArticlesLocation(state);
-                  }
-                },
+                  },
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
@@ -636,6 +597,11 @@ class HomeScreen extends StatelessWidget {
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/animated_rail/example-animated-rail.gif" alt="example-animated-rail" width="240">
 
 # Migrating
+
+## From 0.11 to 0.12
+
+- There's no `RootRouterDelegate` any more. Just rename it to `BeamerRouterDelegate`. If you were using its `homeBuilder`, use `SimpleLocationBuilder` and  then `routes: {'/': (context) => HomeScreen()}`.
+- Behavior of `beamBack` was changed to go to previous `BeamState`, not `BeamLocation`. If this is not what you want, use `popBeamLocation()` that has the same behavior as old `beamback`.
 
 ## From 0.10 to 0.11
 
