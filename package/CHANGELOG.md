@@ -1,3 +1,9 @@
+# 0.12.0
+
+- **BREAKING**: There's no `RootRouterDelegate` any more. Just rename it to `BeamerRouterDelegate`. If you were using its `homeBuilder`, use `SimpleLocationBuilder` and  then `routes: {'/': (context) => HomeScreen()}`
+- **BREAKING**: Behavior of `beamBack()` was changed to go to previous `BeamState`, not `BeamLocation`. If this is not what you want, use `popBeamLocation()` that has the same behavior as old `beamback()`
+- **Fix**: Important [bug](https://github.com/slovnicki/beamer/issues/183) while using multiple sibling `Beamer`s
+
 # 0.11.4
 
 - **Fix** `currentLocation` without listener after guard beam
