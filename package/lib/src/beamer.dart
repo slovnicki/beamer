@@ -58,15 +58,17 @@ extension BeamerExtensions on BuildContext {
   /// See [BeamerRouterDelegate.beamTo]
   void beamTo(
     BeamLocation location, {
-    bool beamBackOnPop = false,
     BeamLocation? popTo,
+    bool beamBackOnPop = false,
+    bool popBeamLocationOnPop = false,
     bool stacked = true,
     bool replaceCurrent = false,
   }) {
     Beamer.of(this).beamTo(
       location,
-      beamBackOnPop: beamBackOnPop,
       popTo: popTo,
+      beamBackOnPop: beamBackOnPop,
+      popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
       replaceCurrent: replaceCurrent,
     );
@@ -76,16 +78,18 @@ extension BeamerExtensions on BuildContext {
   void beamToNamed(
     String uri, {
     Map<String, dynamic> data = const <String, dynamic>{},
-    bool beamBackOnPop = false,
     String? popToNamed,
+    bool beamBackOnPop = false,
+    bool popBeamLocationOnPop = false,
     bool stacked = true,
     bool replaceCurrent = false,
   }) {
     Beamer.of(this).beamToNamed(
       uri,
       data: data,
-      beamBackOnPop: beamBackOnPop,
       popToNamed: popToNamed,
+      beamBackOnPop: beamBackOnPop,
+      popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
       replaceCurrent: replaceCurrent,
     );
@@ -93,6 +97,9 @@ extension BeamerExtensions on BuildContext {
 
   /// See [BeamerRouterDelegate.beamBack]
   void beamBack() => Beamer.of(this).beamBack();
+
+  /// See [BeamerRouterDelegate.popBeamLocation]
+  void popBeamLocation() => Beamer.of(this).popBeamLocation();
 
   /// See [BeamerRouterDelegate.currentLocation]
   BeamLocation get currentBeamLocation => Beamer.of(this).currentLocation;
@@ -103,6 +110,6 @@ extension BeamerExtensions on BuildContext {
   /// See [BeamerRouterDelegate.canBeamBack]
   bool get canBeamBack => Beamer.of(this).canBeamBack;
 
-  /// See [BeamerRouterDelegate.beamBackLocation]
-  BeamLocation? get beamBackLocation => Beamer.of(this).beamBackLocation;
+  /// See [BeamerRouterDelegate.canPopBeamLocation]
+  bool get canPopBeamLocation => Beamer.of(this).canPopBeamLocation;
 }

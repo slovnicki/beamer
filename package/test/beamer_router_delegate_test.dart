@@ -46,10 +46,10 @@ void main() {
     test(
         'beaming to the same location type will not add it to history but will update current location',
         () {
-      final historyLength = router.beamHistory.length;
+      final historyLength = router.beamLocationHistory.length;
       router.beamToNamed('/l2/2?q=t&r=s', data: {'x': 'z'});
       final location = router.currentLocation;
-      expect(router.beamHistory.length, historyLength);
+      expect(router.beamLocationHistory.length, historyLength);
       expect(location.state.pathParameters.containsKey('id'), true);
       expect(location.state.pathParameters['id'], '2');
       expect(location.state.queryParameters.containsKey('q'), true);
@@ -59,40 +59,40 @@ void main() {
       expect(location.state.data, {'x': 'z'});
     });
 
-    test('beamBack leads to previous location and all helpers are correct', () {
-      expect(router.canBeamBack, true);
-      expect(router.beamBackLocation, isA<Location1>());
-      expect(router.beamBack(), true);
+    test(
+        'popBeamLocation leads to previous location and all helpers are correct',
+        () {
+      expect(router.canPopBeamLocation, true);
+      expect(router.popBeamLocation(), true);
       expect(router.currentLocation, isA<Location1>());
 
-      expect(router.canBeamBack, false);
-      expect(router.beamBackLocation, null);
-      expect(router.beamBack(), false);
+      expect(router.canPopBeamLocation, false);
+      expect(router.popBeamLocation(), false);
       expect(router.currentLocation, isA<Location1>());
     });
 
     test('duplicate locations are removed from history', () {
-      expect(router.beamHistory.length, 1);
-      expect(router.beamHistory[0], isA<Location1>());
+      expect(router.beamLocationHistory.length, 1);
+      expect(router.beamLocationHistory[0], isA<Location1>());
       router.beamToNamed('/l2');
-      expect(router.beamHistory.length, 2);
-      expect(router.beamHistory[0], isA<Location1>());
+      expect(router.beamLocationHistory.length, 2);
+      expect(router.beamLocationHistory[0], isA<Location1>());
       router.beamToNamed('/l1');
-      expect(router.beamHistory.length, 2);
-      expect(router.beamHistory[0], isA<Location2>());
+      expect(router.beamLocationHistory.length, 2);
+      expect(router.beamLocationHistory[0], isA<Location2>());
     });
 
     test(
         'beamTo replaceCurrent removes previous history state before appending new',
         () {
-      expect(router.beamHistory.length, 2);
-      expect(router.beamHistory[0], isA<Location2>());
+      expect(router.beamLocationHistory.length, 2);
+      expect(router.beamLocationHistory[0], isA<Location2>());
       expect(router.currentLocation, isA<Location1>());
       router.beamTo(
         Location2(BeamState.fromUri(Uri.parse('/l2'))),
         replaceCurrent: true,
       );
-      expect(router.beamHistory.length, 1);
+      expect(router.beamLocationHistory.length, 1);
       expect(router.currentLocation, isA<Location2>());
     });
   });
@@ -128,9 +128,9 @@ void main() {
 
   test('clearHistory removes all but last entry (current location)', () {
     final currentLocation = router.currentLocation;
-    expect(router.beamHistory.length, greaterThan(1));
-    router.clearHistory();
-    expect(router.beamHistory.length, equals(1));
+    expect(router.beamLocationHistory.length, greaterThan(1));
+    router.clearBeamLocationHistory();
+    expect(router.beamLocationHistory.length, equals(1));
     expect(router.currentLocation, currentLocation);
   });
 
@@ -143,11 +143,32 @@ void main() {
     );
     router.beamToNamed('/l1/one', popToNamed: '/l2');
     await tester.pump();
-    final historyLength = router.beamHistory.length;
+    final historyLength = router.beamLocationHistory.length;
     expect(router.currentLocation, isA<Location1>());
     await router.popRoute();
     await tester.pump();
     expect(router.currentLocation, isA<Location2>());
-    expect(router.beamHistory.length, equals(historyLength));
+    expect(router.beamLocationHistory.length, equals(historyLength));
+  });
+
+  test('beamBack leads to previous beam state and all helpers are correct', () {
+    final stateHistoryLength = router.beamStateHistory.length;
+
+    expect(router.beamStateHistory.last.uri.path, equals('/l2'));
+    expect(router.canBeamBack, true);
+    expect(router.beamBack(), true);
+    expect(router.currentLocation, isA<Location1>());
+    expect(router.beamStateHistory.length, equals(stateHistoryLength - 1));
+
+    router.beamToNamed('/l1/one');
+    router.beamToNamed('/l1/two');
+    expect(router.beamStateHistory.length, equals(stateHistoryLength + 1));
+
+    expect(router.beamBack(), true);
+    expect(router.currentLocation, isA<Location1>());
+    expect(router.beamStateHistory.length, equals(stateHistoryLength));
+    expect(router.beamBack(), true);
+    expect(router.currentLocation, isA<Location1>());
+    expect(router.beamStateHistory.length, equals(stateHistoryLength - 1));
   });
 }
