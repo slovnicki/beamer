@@ -2,6 +2,46 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import './locations.dart';
 
+class MenuButton extends StatefulWidget {
+  MenuButton({
+    @required this.beamer,
+    @required this.uri,
+    @required this.child,
+  });
+
+  final GlobalKey<BeamerState> beamer;
+  final String uri;
+  final Widget child;
+
+  @override
+  _MenuButtonState createState() => _MenuButtonState();
+}
+
+class _MenuButtonState extends State<MenuButton> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => widget
+        .beamer.currentState.routerDelegate
+        .addListener(() => setState(() {})));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final path = Beamer.of(context).currentLocation.state.uri.path;
+    return ElevatedButton(
+      onPressed: () =>
+          widget.beamer.currentState.routerDelegate.beamToNamed(widget.uri),
+      style: ButtonStyle(
+        backgroundColor: path.contains(widget.uri)
+            ? MaterialStateProperty.all<Color>(Colors.green)
+            : MaterialStateProperty.all<Color>(Colors.blue),
+      ),
+      child: widget.child,
+    );
+  }
+}
+
 class HomeScreen extends StatelessWidget {
   final _beamerKey = GlobalKey<BeamerState>();
 
@@ -18,15 +58,15 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                ElevatedButton(
-                  onPressed: () => _beamerKey.currentState.routerDelegate
-                      .beamToNamed('/books'),
+                MenuButton(
+                  beamer: _beamerKey,
+                  uri: '/books',
                   child: Text('Books'),
                 ),
                 SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () => _beamerKey.currentState.routerDelegate
-                      .beamToNamed('/articles'),
+                MenuButton(
+                  beamer: _beamerKey,
+                  uri: '/articles',
                   child: Text('Articles'),
                 ),
               ],
@@ -47,7 +87,6 @@ class HomeScreen extends StatelessWidget {
                 key: _beamerKey,
                 routerDelegate: BeamerRouterDelegate(
                   locationBuilder: (state) {
-                    print('rebuilding home ${state.uri}');
                     if (state.uri.pathSegments.contains('articles')) {
                       return ArticlesLocation(state);
                     }
@@ -78,15 +117,15 @@ class BooksScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                ElevatedButton(
-                  onPressed: () => _beamerKey.currentState.routerDelegate
-                      .beamToNamed('/books/authors'),
+                MenuButton(
+                  beamer: _beamerKey,
+                  uri: '/books/authors',
                   child: Text('Book Authors'),
                 ),
                 SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () => _beamerKey.currentState.routerDelegate
-                      .beamToNamed('/books/genres'),
+                MenuButton(
+                  beamer: _beamerKey,
+                  uri: '/books/genres',
                   child: Text('Book Genres'),
                 ),
               ],
@@ -97,10 +136,7 @@ class BooksScreen extends StatelessWidget {
             child: Beamer(
               key: _beamerKey,
               routerDelegate: BeamerRouterDelegate(
-                locationBuilder: (state) {
-                  print('rebuilding books content ${state.uri}');
-                  return BooksContentLocation(state);
-                },
+                locationBuilder: (state) => BooksContentLocation(state),
               ),
             ),
           ),
@@ -159,15 +195,15 @@ class ArticlesScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                ElevatedButton(
-                  onPressed: () => _beamerKey.currentState.routerDelegate
-                      .beamToNamed('/articles/authors'),
+                MenuButton(
+                  beamer: _beamerKey,
+                  uri: '/articles/authors',
                   child: Text('Article Authors'),
                 ),
                 SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () => _beamerKey.currentState.routerDelegate
-                      .beamToNamed('/articles/genres'),
+                MenuButton(
+                  beamer: _beamerKey,
+                  uri: '/articles/genres',
                   child: Text('Article Genres'),
                 ),
               ],
@@ -178,10 +214,7 @@ class ArticlesScreen extends StatelessWidget {
             child: Beamer(
               key: _beamerKey,
               routerDelegate: BeamerRouterDelegate(
-                locationBuilder: (state) {
-                  print('rebuilding articles content ${state.uri}');
-                  return ArticlesContentLocation(state);
-                },
+                locationBuilder: (state) => ArticlesContentLocation(state),
               ),
             ),
           ),
