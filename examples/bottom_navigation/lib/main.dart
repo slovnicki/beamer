@@ -219,23 +219,24 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routeInformationParser: BeamerRouteInformationParser(),
-      routerDelegate: RootRouterDelegate(
+      routerDelegate: BeamerRouterDelegate(
         initialPath: '/books',
-        homeBuilder: (context, state) => Scaffold(
-          body: Beamer(
-            key: _beamerKey,
-            routerDelegate: BeamerRouterDelegate(
-              locationBuilder: (state) {
-                if (state.uri.pathSegments.contains('books')) {
-                  return BooksLocation(state);
-                }
-                return ArticlesLocation(state);
-              },
-            ),
-          ),
-          bottomNavigationBar: BottomNavigationBarWidget(
-            beamerKey: _beamerKey,
-          ),
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '/': (context) => Scaffold(
+                  body: Beamer(
+                    key: _beamerKey,
+                    routerDelegate: BeamerRouterDelegate(
+                      locationBuilder: BeamerLocationBuilder(
+                        beamLocations: _beamLocations,
+                      ),
+                    ),
+                  ),
+                  bottomNavigationBar: BottomNavigationBarWidget(
+                    beamerKey: _beamerKey,
+                  ),
+                )
+          },
         ),
       ),
     );

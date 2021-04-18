@@ -11,8 +11,7 @@ class HomeLocation extends BeamLocation {
   @override
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
-          key: ValueKey('home-${state.uri.path}'),
-          type: BeamPageType.noTransition,
+          key: ValueKey('home-${state.uri}'),
           child: HomeScreen(),
         )
       ];
@@ -62,7 +61,9 @@ class BooksContentLocation extends BeamLocation {
 }
 
 class ArticlesLocation extends BeamLocation {
-  ArticlesLocation(BeamState state) : super(state);
+  ArticlesLocation(BeamState state) : super(state) {
+    print('articles with ${state.uri}');
+  }
 
   @override
   List<String> get pathBlueprints => ['/articles/*'];
@@ -77,7 +78,9 @@ class ArticlesLocation extends BeamLocation {
 }
 
 class ArticlesContentLocation extends BeamLocation {
-  ArticlesContentLocation(BeamState state) : super(state);
+  ArticlesContentLocation(BeamState state) : super(state) {
+    print('articles content with ${state.uri}');
+  }
 
   @override
   List<String> get pathBlueprints => [

@@ -117,6 +117,21 @@ class ArticleDetailsScreen extends StatelessWidget {
 }
 
 // LOCATIONS
+class HomeLocation extends BeamLocation {
+  HomeLocation(state) : super(state);
+
+  @override
+  List<String> get pathBlueprints => ['/*'];
+
+  @override
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+        BeamPage(
+          key: ValueKey('app'),
+          child: AppScreen(beamState: state),
+        ),
+      ];
+}
+
 class BooksLocation extends BeamLocation {
   BooksLocation(BeamState state) : super(state);
 
@@ -162,50 +177,83 @@ class ArticlesLocation extends BeamLocation {
 }
 
 // APP
+class AppScreen extends StatefulWidget {
+  AppScreen({this.beamState});
+
+  final BeamState beamState;
+
+  @override
+  _AppScreenState createState() => _AppScreenState();
+}
+
+class _AppScreenState extends State<AppScreen> {
+  final _routerDelegates = [
+    BeamerRouterDelegate(
+      locationBuilder: (state) => ArticlesLocation(state),
+    ),
+    BeamerRouterDelegate(
+      locationBuilder: (state) => BooksLocation(state),
+    ),
+  ];
+
+  int _currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.beamState.uri.path.contains('books') ? 1 : 0;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // body: IndexedStack(
+      //   index: _currentIndex,
+      //   children: [
+      //     Beamer(routerDelegate: _routerDelegates[0]),
+      //     Container(
+      //       color: Colors.blueAccent,
+      //       padding: const EdgeInsets.all(32.0),
+      //       child: Beamer(routerDelegate: _routerDelegates[1]),
+      //     ),
+      //   ],
+      // ),
+      body: [
+        Beamer(routerDelegate: _routerDelegates[0]),
+        Container(
+          color: Colors.blueAccent,
+          padding: const EdgeInsets.all(32.0),
+          child: Beamer(routerDelegate: _routerDelegates[1]),
+        ),
+      ][_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        items: [
+          BottomNavigationBarItem(label: 'A', icon: Icon(Icons.article)),
+          BottomNavigationBarItem(label: 'B', icon: Icon(Icons.book)),
+        ],
+        onTap: (index) {
+          setState(() => _currentIndex = index);
+          // if using IndexedStack
+          // _routerDelegates[_currentIndex].updateRouteInformation();
+        },
+      ),
+    );
+  }
+}
+
 class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => MyAppState();
 }
 
 class MyAppState extends State<MyApp> {
-  int _currentIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routeInformationParser: BeamerRouteInformationParser(),
-      routerDelegate: RootRouterDelegate(
-        homeBuilder: (context, state) {
-          return Scaffold(
-            body: IndexedStack(
-              index: _currentIndex,
-              children: [
-                Beamer(
-                  routerDelegate: BeamerRouterDelegate(
-                    locationBuilder: (state) => ArticlesLocation(state),
-                  ),
-                ),
-                Container(
-                  color: Colors.blueAccent,
-                  padding: const EdgeInsets.all(32.0),
-                  child: Beamer(
-                    routerDelegate: BeamerRouterDelegate(
-                      locationBuilder: (state) => BooksLocation(state),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-              currentIndex: _currentIndex,
-              items: [
-                BottomNavigationBarItem(label: 'A', icon: Icon(Icons.article)),
-                BottomNavigationBarItem(label: 'B', icon: Icon(Icons.book)),
-              ],
-              onTap: (index) => setState(() => _currentIndex = index),
-            ),
-          );
-        },
+      routerDelegate: BeamerRouterDelegate(
+        locationBuilder: (state) => HomeLocation(state),
       ),
     );
   }
