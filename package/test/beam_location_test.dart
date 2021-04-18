@@ -11,7 +11,6 @@ void main() {
         pathParameters: {'id': '42'},
         queryParameters: {'q': 'xxx'},
       );
-      location2.prepare();
       expect(location2.state.uri.toString(), '/l2/42?q=xxx');
     });
   });

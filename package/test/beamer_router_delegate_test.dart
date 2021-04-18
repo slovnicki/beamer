@@ -28,7 +28,7 @@ void main() {
     });
 
     test('beamTo changes locations', () {
-      router.beamTo(Location2(BeamState()));
+      router.beamTo(Location2(BeamState.fromUri(Uri.parse('/l2'))));
       expect(router.currentLocation, isA<Location2>());
     });
 
@@ -88,7 +88,10 @@ void main() {
       expect(router.beamHistory.length, 2);
       expect(router.beamHistory[0], isA<Location2>());
       expect(router.currentLocation, isA<Location1>());
-      router.beamTo(Location2(BeamState()), replaceCurrent: true);
+      router.beamTo(
+        Location2(BeamState.fromUri(Uri.parse('/l2'))),
+        replaceCurrent: true,
+      );
       expect(router.beamHistory.length, 1);
       expect(router.currentLocation, isA<Location2>());
     });
