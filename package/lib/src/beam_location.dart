@@ -17,10 +17,7 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   /// Upon beaming, it will be populated by all necessary attributes.
   /// See [BeamState].
   T get state => _state;
-  set state(T state) {
-    _state = state..configure();
-    notifyListeners();
-  }
+  set state(T state) => _state = state..configure();
 
   /// How to create state from generic [BeamState], often produced by [Beamer]
   /// for the use in [BeamerRouterDelegate.locationBuilder].
@@ -35,9 +32,8 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   void update([T Function(T)? copy]) {
     if (copy != null) {
       state = copy(_state);
-    } else {
-      notifyListeners();
     }
+    notifyListeners();
   }
 
   /// Gives the ability to wrap the `navigator`.
