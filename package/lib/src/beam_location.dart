@@ -29,11 +29,13 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   /// If no callback is given, just notifies [BeamerRouterDelegate] to rebuild.
   ///
   /// Useful with [BeamState.copyWith].
-  void update([T Function(T)? copy]) {
+  void update([T Function(T)? copy, bool rebuild = true]) {
     if (copy != null) {
       state = copy(_state);
     }
-    notifyListeners();
+    if (rebuild) {
+      notifyListeners();
+    }
   }
 
   /// Gives the ability to wrap the `navigator`.
