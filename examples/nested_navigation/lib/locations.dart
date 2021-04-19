@@ -61,9 +61,7 @@ class BooksContentLocation extends BeamLocation {
 }
 
 class ArticlesLocation extends BeamLocation {
-  ArticlesLocation(BeamState state) : super(state) {
-    print('articles with ${state.uri}');
-  }
+  ArticlesLocation(BeamState state) : super(state);
 
   @override
   List<String> get pathBlueprints => ['/articles/*'];
@@ -78,9 +76,7 @@ class ArticlesLocation extends BeamLocation {
 }
 
 class ArticlesContentLocation extends BeamLocation {
-  ArticlesContentLocation(BeamState state) : super(state) {
-    print('articles content with ${state.uri}');
-  }
+  ArticlesContentLocation(BeamState state) : super(state);
 
   @override
   List<String> get pathBlueprints => [

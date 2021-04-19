@@ -126,7 +126,7 @@ class HomeLocation extends BeamLocation {
   @override
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
-          key: ValueKey('app'),
+          key: ValueKey('app-${state.uri}'),
           child: AppScreen(beamState: state),
         ),
       ];
@@ -207,25 +207,17 @@ class _AppScreenState extends State<AppScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // body: IndexedStack(
-      //   index: _currentIndex,
-      //   children: [
-      //     Beamer(routerDelegate: _routerDelegates[0]),
-      //     Container(
-      //       color: Colors.blueAccent,
-      //       padding: const EdgeInsets.all(32.0),
-      //       child: Beamer(routerDelegate: _routerDelegates[1]),
-      //     ),
-      //   ],
-      // ),
-      body: [
-        Beamer(routerDelegate: _routerDelegates[0]),
-        Container(
-          color: Colors.blueAccent,
-          padding: const EdgeInsets.all(32.0),
-          child: Beamer(routerDelegate: _routerDelegates[1]),
-        ),
-      ][_currentIndex],
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          Beamer(routerDelegate: _routerDelegates[0]),
+          Container(
+            color: Colors.blueAccent,
+            padding: const EdgeInsets.all(32.0),
+            child: Beamer(routerDelegate: _routerDelegates[1]),
+          ),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         items: [
@@ -234,8 +226,9 @@ class _AppScreenState extends State<AppScreen> {
         ],
         onTap: (index) {
           setState(() => _currentIndex = index);
-          // if using IndexedStack
-          // _routerDelegates[_currentIndex].updateRouteInformation();
+          _routerDelegates[_currentIndex].parent?.updateRouteInformation(
+                _routerDelegates[_currentIndex].currentLocation.state.uri,
+              );
         },
       ),
     );
