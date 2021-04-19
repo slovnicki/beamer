@@ -469,8 +469,31 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     return SynchronousFuture(null);
   }
 
+  /// Used in nested navigation to propagate route to root router delegate
+  /// which will create a new history entry in browser.
+  ///
+  /// In case of non-nested navigation, this is solved via `notifyListeners`.
+  void updateRouteInformation(Uri uri) {
+    _currentLocation.update(
+      (state) => BeamState.fromUri(
+        uri,
+        beamLocation: _currentLocation,
+        data: _currentLocation.state.data,
+      ),
+      false,
+    );
+    if (_parent == null) {
+      SystemNavigator.routeInformationUpdated(
+        location: _currentLocation.state.uri.toString(),
+      );
+    } else {
+      // TODO merge (currently unsupported) relative paths
+      _parent!.updateRouteInformation(uri);
+    }
+  }
+
   void _notify() {
-    updateRouteInformation();
+    _parent?.updateRouteInformation(_currentLocation.state.uri);
     notifyListeners();
   }
 
@@ -492,7 +515,6 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
         data: _currentLocation.state.data,
       ),
     );
-    updateRouteInformation();
     _currentLocation.notifyListeners();
   }
 
@@ -521,46 +543,6 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
       state = createState!(Uri.parse(guard.beamToNamed!));
       final location = locationBuilder(_state);
       _pushHistory(location);
-    }
-  }
-
-  void updateRouteInformation() {
-    if (_parent != null) {
-      _parent!._updateParentRouteInformation(_currentLocation.state.uri);
-    } else {
-      SystemNavigator.routeInformationUpdated(
-        location: _currentLocation.state.uri.toString(),
-      );
-    }
-  }
-
-  // This should be called only on parent
-  void _updateParentRouteInformation(Uri uri) {
-    _currentLocation.state = BeamState.fromUri(
-      uri,
-      beamLocation: _currentLocation,
-      data: state.data,
-    );
-    if (_parent == null) {
-      SystemNavigator.routeInformationUpdated(location: uri.toString());
-    } else {
-      Uri fullUri;
-      if (!uri.path.startsWith('/')) {
-        // TODO! relative paths
-        if (_parent!._currentLocation.state.uri.path.contains(uri.path)) {
-          fullUri = _parent!._currentLocation.state.uri;
-        } else {
-          fullUri = Uri(
-              path: _parent!._currentLocation.state.uri.path + '/' + uri.path,
-              queryParameters: {
-                ..._parent!.currentLocation.state.uri.queryParameters,
-                ...uri.queryParameters
-              });
-        }
-      } else {
-        fullUri = Uri.parse(uri.toString());
-      }
-      _parent!._updateParentRouteInformation(fullUri);
     }
   }
 

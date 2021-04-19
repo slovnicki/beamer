@@ -41,7 +41,6 @@ class BeamerState extends State<Beamer> {
     super.didChangeDependencies();
     routerDelegate.parent ??=
         Router.of(context).routerDelegate as BeamerRouterDelegate;
-    routerDelegate.updateRouteInformation();
   }
 
   @override
