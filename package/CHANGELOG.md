@@ -1,3 +1,7 @@
+# 0.12.1
+
+- **Fix** updating browser history
+
 # 0.12.0
 
 - **BREAKING**: There's no `RootRouterDelegate` any more. Just rename it to `BeamerRouterDelegate`. If you were using its `homeBuilder`, use `SimpleLocationBuilder` and  then `routes: {'/': (context) => HomeScreen()}`
