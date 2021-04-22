@@ -59,6 +59,20 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     _parent!.addListener(_updateFromParent);
   }
 
+  /// The top-most [BeamerRouterDelegate], a parent of all.
+  ///
+  /// It will return root even when called on root.
+  BeamerRouterDelegate get root {
+    if (_parent == null) {
+      return this;
+    }
+    var root = _parent!;
+    while (root._parent != null) {
+      root = root._parent!;
+    }
+    return root;
+  }
+
   /// A builder for [BeamLocation]s.
   final LocationBuilder locationBuilder;
 

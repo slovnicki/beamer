@@ -18,14 +18,19 @@ class Beamer extends StatefulWidget {
   final BeamerRouterDelegate routerDelegate;
 
   /// Access Beamer's [routerDelegate].
-  static BeamerRouterDelegate of(BuildContext context) {
+  static BeamerRouterDelegate of(BuildContext context, {bool root = false}) {
+    BeamerRouterDelegate _delegate;
     try {
-      return Router.of(context).routerDelegate as BeamerRouterDelegate;
+      _delegate = Router.of(context).routerDelegate as BeamerRouterDelegate;
     } catch (e) {
       assert(BeamerProvider.of(context) != null,
           'There was no Router nor BeamerProvider in current context. If using MaterialApp.builder, wrap the MaterialApp.router in BeamerProvider to which you pass the same routerDelegate as to MaterialApp.router.');
       return BeamerProvider.of(context)!.routerDelegate;
     }
+    if (root) {
+      return _delegate.root;
+    }
+    return _delegate;
   }
 
   @override
