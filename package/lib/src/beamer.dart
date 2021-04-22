@@ -45,6 +45,8 @@ class BeamerState extends State<Beamer> {
 
   @override
   Widget build(BuildContext context) {
+    routerDelegate.parent ??=
+        Router.of(context).routerDelegate as BeamerRouterDelegate;
     return Router(
       routerDelegate: widget.routerDelegate,
       backButtonDispatcher:

@@ -53,9 +53,10 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   BeamerRouterDelegate? get parent => _parent;
   set parent(BeamerRouterDelegate? parent) {
     _parent = parent;
-    state = createState!(_parent!.state.uri);
+    state = createState!(_parent!.state.uri, data: parent!.state.data);
     final location = locationBuilder(_state);
     _pushHistory(location);
+    _parent!.addListener(_updateFromParent);
   }
 
   /// A builder for [BeamLocation]s.
@@ -247,6 +248,10 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     if (rebuild) {
       _notify();
     }
+    _parent?.update(
+      state: state,
+      rebuild: false,
+    );
   }
 
   /// Beams to a specific, manually configured [BeamLocation].
@@ -341,7 +346,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     _beamStateHistory.removeLast();
     final state = _beamStateHistory.removeLast();
     update(
-      state: state as T, // TODO
+      state: createState!(state.uri, data: state.data),
     );
     return true;
   }
@@ -469,6 +474,8 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     return SynchronousFuture(null);
   }
 
+  Uri? _lastReportedRoute;
+
   /// Used in nested navigation to propagate route to root router delegate
   /// which will create a new history entry in browser.
   ///
@@ -482,10 +489,15 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
       ),
       false,
     );
+    final previousState = _state.copyWith();
+    state = createState!(uri, data: _currentLocation.state.data);
     if (_parent == null) {
-      SystemNavigator.routeInformationUpdated(
-        location: _currentLocation.state.uri.toString(),
-      );
+      if (_lastReportedRoute != uri && previousState.uri != uri) {
+        SystemNavigator.routeInformationUpdated(
+          location: uri.toString(),
+        );
+        _lastReportedRoute = Uri.parse(uri.toString());
+      }
     } else {
       // TODO merge (currently unsupported) relative paths
       _parent!.updateRouteInformation(uri);
@@ -551,6 +563,20 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     _beamLocationHistory.add(location);
     _currentLocation = _beamLocationHistory.last;
     _currentLocation.addListener(_notify);
+  }
+
+  void _updateFromParent() {
+    final parentState = _parent!.state;
+    if ((parentState.uri != _currentLocation.state.uri ||
+            parentState.data != _currentLocation.state.data) &&
+        locationBuilder(parentState) is! NotFound) {
+      update(
+        state: createState!(
+          parentState.uri,
+          data: parentState.data,
+        ),
+      );
+    }
   }
 
   @override
