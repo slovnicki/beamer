@@ -32,7 +32,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
         BeamState.fromUri(uri, data: data) as T;
 
     state = createState!(Uri.parse(initialPath));
-    _currentLocation = locationBuilder(_state);
+    _currentLocation = EmptyBeamLocation();
   }
 
   late T _state;
