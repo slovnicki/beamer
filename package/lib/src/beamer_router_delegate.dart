@@ -10,6 +10,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   BeamerRouterDelegate({
     required this.locationBuilder,
     this.initialPath = '/',
+    this.listener,
     this.createState,
     this.preferUpdate = true,
     this.removeDuplicateHistory = true,
@@ -33,6 +34,10 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
 
     state = createState!(Uri.parse(initialPath));
     _currentLocation = EmptyBeamLocation();
+
+    if (listener != null) {
+      addListener(_listener);
+    }
   }
 
   late T _state;
@@ -85,6 +90,10 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   /// if there are pages in [BeamLocation.pagesBuilder] that will build
   /// when there are no path segments.
   final String initialPath;
+
+  /// The listener for this, that will be called on every navigation event
+  /// and will recieve the [state] and [currentLocation].
+  final void Function(BeamState, BeamLocation)? listener;
 
   /// Whether to prefer updating [currentLocation] if it's of the same type
   /// as the location being beamed to, instead of adding it to [beamHistory].
@@ -593,10 +602,15 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     }
   }
 
+  void _listener() {
+    listener?.call(state, currentLocation);
+  }
+
   @override
   void dispose() {
     _currentLocation.removeListener(_notify);
     parent?.removeListener(_updateFromParent);
+    removeListener(_listener);
     super.dispose();
   }
 }
