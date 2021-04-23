@@ -53,6 +53,7 @@ Handle your application routing, synchronize it with browser URL and more. Beame
   - [Nested Navigation](#nested-navigation)
   - [Integration with Navigation UI Packages](#integration-with-navigation-ui-packages)
 - [Migrating](#migrating)
+  - [From 0.11 to 0.12](#from-011-to-012)
   - [From 0.10 to 0.11](#from-010-to-011)
   - [From 0.9 to 0.10](#from-09-to-010)
   - [From 0.7 to 0.8](#from-07-to-08)
@@ -240,7 +241,7 @@ All `BeamState`s that were visited are kept in `beamStateHistory`. Therefore, th
 context.beamBack();
 ```
 
-**NOTE** that Beamer can integrate Android's back button to do `beamBack` if possible when all the pages from current `BeamLocation` have been popped. This is achieved by setting a back button dispatcher in in `MaterialApp.router`.
+**NOTE** that Beamer can integrate Android's back button to do `beamBack` if possible when all the pages from current `BeamLocation` have been popped. This is achieved by setting a back button dispatcher in `MaterialApp.router`.
 
 ```dart
 backButtonDispatcher: BeamerBackButtonDispatcher(delegate: routerDelegate)
@@ -248,7 +249,7 @@ backButtonDispatcher: BeamerBackButtonDispatcher(delegate: routerDelegate)
 
 # Usage
 
-To use the full featured Beamer in your app, you must (as per [official documentation](https://api.flutter.dev/flutter/widgets/Router-class.html)) construct your `*App` widget with `.router` constructor to which (along with all your regular `*App` attributes) you provide
+To use the full-featured Beamer in your app, you must (as per [official documentation](https://api.flutter.dev/flutter/widgets/Router-class.html)) construct your `*App` widget with `.router` constructor to which (along with all your regular `*App` attributes) you provide
 
 - `routeInformationParser` that parses an incoming URI.
 - `routerDelegate` that controls (re)building of `Navigator`
@@ -600,7 +601,7 @@ class HomeScreen extends StatelessWidget {
 
 ## From 0.11 to 0.12
 
-- There's no `RootRouterDelegate` any more. Just rename it to `BeamerRouterDelegate`. If you were using its `homeBuilder`, use `SimpleLocationBuilder` and  then `routes: {'/': (context) => HomeScreen()}`.
+- There's no `RootRouterDelegate` anymore. Just rename it to `BeamerRouterDelegate`. If you were using its `homeBuilder`, use `SimpleLocationBuilder` and  then `routes: {'/': (context) => HomeScreen()}`.
 - Behavior of `beamBack` was changed to go to previous `BeamState`, not `BeamLocation`. If this is not what you want, use `popBeamLocation()` that has the same behavior as old `beamback`.
 
 ## From 0.10 to 0.11
@@ -641,6 +642,6 @@ This package is still in early stages. To see the upcoming features, check the [
 If you notice any bugs not present in issues, please file a new issue. If you are willing to fix or enhance things yourself, you are very welcome to make a pull request. Before making a pull request:
 
 - if you wish to solve an existing issue, please let us know in issue comments first.
-- if you have another enhancement in mind, create an issue for it first so we can discuss your idea.
+- if you have another enhancement in mind, create an issue for it first, so we can discuss your idea.
 
 Also, you can <a href="https://www.buymeacoffee.com/slovnicki" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="20px" width= "72px"></a> to speed up the development.
