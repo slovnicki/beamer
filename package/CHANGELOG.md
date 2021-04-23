@@ -1,3 +1,11 @@
+# 0.12.2
+
+- **Add** `listener` attribute to `BeamerRouterDelegate`
+- **Add** `root` attribute to `BeamerRouterDelegate` and `{bool root = false}` attribute to `Beamer.of`
+- **Add** `canHandle(Uri uri)` method to `BeamLocation`
+- **Fix** Updating parent on nested navigation
+- **Fix** README typos
+
 # 0.12.1
 
 - **Fix** updating browser history
