@@ -113,6 +113,17 @@ class NotFound extends BeamLocation {
   List<String> get pathBlueprints => [''];
 }
 
+/// Empty location used to intialize a non-nullable BeamLocation variable.
+///
+/// See [BeamerRouterDelegate].
+class EmptyBeamLocation extends BeamLocation {
+  @override
+  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [];
+
+  @override
+  List<String> get pathBlueprints => [];
+}
+
 /// A beam location for [SimpleLocationBuilder], but can be used freely.
 ///
 /// Useful when needing a simple beam location with a single or few pages.
