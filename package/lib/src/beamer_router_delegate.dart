@@ -596,6 +596,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   @override
   void dispose() {
     _currentLocation.removeListener(_notify);
+    parent?.removeListener(_updateFromParent);
     super.dispose();
   }
 }
