@@ -18,12 +18,14 @@ class MenuButton extends StatefulWidget {
 }
 
 class _MenuButtonState extends State<MenuButton> {
+  void _setStateListener() => setState(() {});
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) => widget
         .beamer.currentState.routerDelegate
-        .addListener(() => setState(() {})));
+        .addListener(_setStateListener));
   }
 
   @override
@@ -39,6 +41,12 @@ class _MenuButtonState extends State<MenuButton> {
       ),
       child: widget.child,
     );
+  }
+
+  @override
+  void dispose() {
+    widget.beamer.currentState.routerDelegate.removeListener(_setStateListener);
+    super.dispose();
   }
 }
 
