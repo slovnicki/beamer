@@ -55,16 +55,16 @@ class BooksScreen extends StatelessWidget {
       body: ListView(
         children: books
             .where((book) =>
-                book['title'].toLowerCase().contains(titleQuery.toLowerCase()))
+                book['title']!.toLowerCase().contains(titleQuery.toLowerCase()))
             .map(
               (book) => ListTile(
-                title: Text(book['title']),
-                subtitle: Text(book['author']),
+                title: Text(book['title']!),
+                subtitle: Text(book['author']!),
                 //onTap: () => context.beamToNamed('/books/${book['id']}'),
                 onTap: () => context.currentBeamLocation.update(
                   (state) => state.copyWith(
                     pathBlueprintSegments: ['books', ':bookId'],
-                    pathParameters: {'bookId': book['id']},
+                    pathParameters: {'bookId': book['id']!},
                   ),
                 ),
               ),
@@ -77,7 +77,7 @@ class BooksScreen extends StatelessWidget {
 
 class BookDetailsScreen extends StatelessWidget {
   BookDetailsScreen({
-    this.bookId,
+    required this.bookId,
   }) : book = books.firstWhere((book) => book['id'] == bookId);
 
   final String bookId;
@@ -87,7 +87,7 @@ class BookDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(book['title']),
+        title: Text(book['title']!),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -119,7 +119,7 @@ class BooksLocation extends BeamLocation {
           BeamPage(
             key: ValueKey('book-${state.pathParameters['bookId']}'),
             child: BookDetailsScreen(
-              bookId: state.pathParameters['bookId'],
+              bookId: state.pathParameters['bookId']!,
             ),
           ),
       ];
