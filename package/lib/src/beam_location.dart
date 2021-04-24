@@ -166,6 +166,7 @@ class SimpleBeamLocation extends BeamLocation {
     }).toList();
   }
 
+  /// Will choose all the routes that match `state.uri` to stack their pages.
   static Map<String, String> chooseRoutes(
       BeamState state, Iterable<String> routes) {
     var matched = <String, String>{};
@@ -197,7 +198,7 @@ class SimpleBeamLocation extends BeamLocation {
       }
 
       if (checksPassed) {
-        matched[route] = path;
+        matched[route] = path + state.uri.query;
       }
     }
     return matched;
