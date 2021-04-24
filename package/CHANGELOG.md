@@ -1,3 +1,9 @@
+# 0.12.3
+
+- **Add** [authentication_bloc example](https://github.com/slovnicki/beamer/tree/master/examples/authentication_bloc)
+- **Fix** `SimpleBeamLocation` ignoring query
+- **Fix** updating delegate state on location state change
+
 # 0.12.2
 
 - **Add** `listener` attribute to `BeamerRouterDelegate`
