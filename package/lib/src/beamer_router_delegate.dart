@@ -528,6 +528,10 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   }
 
   void _notify() {
+    state = createState!(
+      _currentLocation.state.uri,
+      data: _currentLocation.state.data,
+    );
     _parent?.updateRouteInformation(_currentLocation.state.uri);
     notifyListeners();
   }
