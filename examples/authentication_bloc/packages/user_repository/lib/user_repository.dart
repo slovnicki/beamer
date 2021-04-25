@@ -19,20 +19,29 @@ class UserRepository {
 
 class User extends Equatable {
   final String id;
-  // final String email;
   final bool confirmed;
   final bool hasAccess;
 
   const User({
     required this.id,
-    // required this.email,
     this.confirmed = false,
     this.hasAccess = false,
   });
 
+  factory User.fromJson(Map<String, dynamic> json) => User(
+        id: json['id'],
+        confirmed: json['confirmed'],
+        hasAccess: json['hasAccess'],
+      );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'confirmed': confirmed,
+        'hasAccess': hasAccess,
+      };
+
   @override
   List<Object?> get props => [
-        // email,
         id,
         confirmed,
         hasAccess,
