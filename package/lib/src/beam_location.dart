@@ -198,7 +198,10 @@ class SimpleBeamLocation extends BeamLocation {
       }
 
       if (checksPassed) {
-        matched[route] = path + state.uri.query;
+        matched[route] = Uri(
+          path: '/' + path,
+          queryParameters: state.queryParameters,
+        ).toString();
       }
     }
     return matched;
