@@ -485,7 +485,9 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
 
   @override
   SynchronousFuture<void> setInitialRoutePath(Uri configuration) {
-    if (configuration.path == '/') {
+    if (_currentLocation is! EmptyBeamLocation) {
+      configuration = _currentLocation.state.uri;
+    } else if (configuration.path == '/') {
       configuration = Uri.parse(initialPath);
     }
     return setNewRoutePath(configuration);
