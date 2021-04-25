@@ -505,7 +505,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   /// which will create a new history entry in browser.
   ///
   /// In case of non-nested navigation, this is solved via `notifyListeners`.
-  void updateRouteInformation(Uri uri) {
+  void updateRouteInformation(Uri uri, {bool force = false}) {
     _currentLocation.update(
       (state) => BeamState.fromUri(
         uri,
@@ -517,7 +517,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     final previousState = _state.copyWith();
     state = createState!(uri, data: _currentLocation.state.data);
     if (_parent == null) {
-      if (_lastReportedRoute != uri && previousState.uri != uri) {
+      if (_lastReportedRoute != uri && previousState.uri != uri || force) {
         SystemNavigator.routeInformationUpdated(
           location: uri.toString(),
         );
@@ -584,6 +584,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
       state = createState!(Uri.parse(guard.beamToNamed!));
       final location = locationBuilder(_state);
       _pushHistory(location);
+      updateRouteInformation(location.state.uri, force: true);
     }
   }
 
