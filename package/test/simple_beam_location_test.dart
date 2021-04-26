@@ -64,5 +64,27 @@ void main() {
       delegate.setNewRoutePath(Uri.parse('/test/unknown'));
       expect(delegate.currentLocation, isA<SimpleBeamLocation>());
     });
+
+    test('only * will also override NotFound', () {
+      final delegate1 = BeamerRouterDelegate(
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '/*': (context) => Container(),
+          },
+        ),
+      );
+      delegate1.setNewRoutePath(Uri.parse('/test'));
+      expect(delegate1.currentLocation, isA<SimpleBeamLocation>());
+
+      final delegate2 = BeamerRouterDelegate(
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '*': (context) => Container(),
+          },
+        ),
+      );
+      delegate2.setNewRoutePath(Uri.parse('/test'));
+      expect(delegate2.currentLocation, isA<SimpleBeamLocation>());
+    });
   });
 }
