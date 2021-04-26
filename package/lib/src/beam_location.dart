@@ -174,6 +174,7 @@ class SimpleBeamLocation extends BeamLocation {
   static Map<String, String> chooseRoutes(
       BeamState state, Iterable<String> routes) {
     var matched = <String, String>{};
+    bool overrideNotFound = false;
     for (var route in routes) {
       final uriPathSegments = List.from(state.uri.pathSegments);
       if (uriPathSegments.length > 1 && uriPathSegments.last == '') {
@@ -191,8 +192,11 @@ class SimpleBeamLocation extends BeamLocation {
 
       for (int i = 0; i < routePathSegments.length; i++) {
         path += '/${uriPathSegments[i]}';
-        if (routePathSegments[i] == '*' ||
-            routePathSegments[i].startsWith(':')) {
+        if (routePathSegments[i] == '*') {
+          overrideNotFound = true;
+          continue;
+        }
+        if (routePathSegments[i].startsWith(':')) {
           continue;
         }
         if (routePathSegments[i] != uriPathSegments[i]) {
@@ -217,6 +221,6 @@ class SimpleBeamLocation extends BeamLocation {
       }
     });
 
-    return isNotFound ? {} : matched;
+    return (isNotFound && !overrideNotFound) ? {} : matched;
   }
 }

@@ -51,5 +51,18 @@ void main() {
       delegate.beamToNamed('/test/unknown-route');
       expect(delegate.currentLocation, isA<NotFound>());
     });
+
+    test('but * will override this behavior', () {
+      final delegate = BeamerRouterDelegate(
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '/': (context) => Container(),
+            '/test/*': (context) => Container(),
+          },
+        ),
+      );
+      delegate.setNewRoutePath(Uri.parse('/test/unknown'));
+      expect(delegate.currentLocation, isA<SimpleBeamLocation>());
+    });
   });
 }
