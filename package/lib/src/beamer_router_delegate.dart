@@ -438,6 +438,10 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
                     .pagesBuilder(context, _currentLocation.state)
                     .last
               ];
+        if (_currentPages.isEmpty) {
+          _currentLocation =
+              NotFound(path: _currentLocation.state.uri.toString());
+        }
         return Navigator(
           key: navigatorKey,
           observers: navigatorObservers,

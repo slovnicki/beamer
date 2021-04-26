@@ -167,6 +167,10 @@ class SimpleBeamLocation extends BeamLocation {
   }
 
   /// Will choose all the routes that match `state.uri` to stack their pages.
+  ///
+  /// If none of the selected routes has **exact** path as `state.uri`,
+  /// then nothing will be selected and [BeamerRouterDelegate] will declare
+  /// that the location is [NotFound].
   static Map<String, String> chooseRoutes(
       BeamState state, Iterable<String> routes) {
     var matched = <String, String>{};
@@ -199,11 +203,20 @@ class SimpleBeamLocation extends BeamLocation {
 
       if (checksPassed) {
         matched[route] = Uri(
-          path: '/' + path,
-          queryParameters: state.queryParameters,
+          path: path == '' ? '/' : path,
+          queryParameters:
+              state.queryParameters.isEmpty ? null : state.queryParameters,
         ).toString();
       }
     }
-    return matched;
+
+    bool isNotFound = true;
+    matched.forEach((key, value) {
+      if (Uri.parse(key).path == state.uri.path) {
+        isNotFound = false;
+      }
+    });
+
+    return isNotFound ? {} : matched;
   }
 }
