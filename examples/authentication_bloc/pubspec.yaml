@@ -6,12 +6,13 @@ publish_to: none
 version: 0.0.1
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  beamer: ^0.12.1
+  beamer:
+    path: ../../package
 
   bloc: ^7.0.0
   flutter_bloc: ^7.0.0
