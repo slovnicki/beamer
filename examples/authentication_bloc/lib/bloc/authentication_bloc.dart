@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:user_repository/user_repository.dart';
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 part 'authentication_event.dart';
 part 'authentication_state.dart';
 
-class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
+class AuthenticationBloc extends HydratedBloc<AuthenticationEvent, AuthenticationState> {
   final AuthenticationRepository _authenticationRepository;
   final UserRepository _userRepository;
 
@@ -80,4 +80,14 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       return null;
     }
   }
+
+  @override
+  AuthenticationState fromJson(Map<String, dynamic> json) => AuthenticationState._(
+        status: AuthenticationStatus.values[json['status']],
+        user: User.fromJson(json['user']),
+      );
+
+  @override
+  Map<String, dynamic> toJson(AuthenticationState state) =>
+      {'status': state.status.index, 'user': state.user.toJson()};
 }

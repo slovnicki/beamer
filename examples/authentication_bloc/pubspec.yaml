@@ -11,30 +11,19 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  beamer: ^0.12.1
 
   bloc: ^7.0.0
   flutter_bloc: ^7.0.0
   hydrated_bloc: ^7.0.0
-  equatable: ^2.0.0
   path_provider: ^2.0.1
 
-  beamer: ^0.12.1
-  enum_to_string: ^2.0.1
-  url_strategy: ^0.2.0
-
   formz: ^0.4.0-nullsafety.0
-
-  flutter_spinkit: ^5.0.0
 
   authentication_repository:
     path: packages/authentication_repository
   user_repository:
     path: packages/user_repository
-
-  shared_preferences: ^2.0.5
-
-  intl: ^0.17.0
-  tuple: ^2.0.0
 
 dev_dependencies:
   test: ^1.16.5

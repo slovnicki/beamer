@@ -10,6 +10,3 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  equatable: ^2.0.0
-  meta: ^1.1.8
-  shared_preferences: ^2.0.5

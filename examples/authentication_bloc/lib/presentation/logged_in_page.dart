@@ -18,7 +18,8 @@ class LoggedInPage extends StatelessWidget {
           ],
         ),
         body: Center(
-          child: Text('You are logged in'),
+          child: Text(
+              'You are logged in as a user with id: ${context.read<AuthenticationBloc>().state.user.id}'),
         ),
       );
 }
