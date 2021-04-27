@@ -187,7 +187,10 @@ class SimpleBeamLocation extends BeamLocation {
       }
 
       var checksPassed = true;
+      var path = '';
       for (int i = 0; i < routePathSegments.length; i++) {
+        path += '/${uriPathSegments[i]}';
+
         if (routePathSegments[i] == '*') {
           overrideNotFound = true;
           continue;
@@ -202,13 +205,17 @@ class SimpleBeamLocation extends BeamLocation {
       }
 
       if (checksPassed) {
-        matched[route] = state.uri.toString();
+        matched[route] = Uri(
+          path: path == '' ? '/' : path,
+          queryParameters:
+              state.queryParameters.isEmpty ? null : state.queryParameters,
+        ).toString();
       }
     }
 
     bool isNotFound = true;
     matched.forEach((key, value) {
-      if (Utils.urisMatch(Uri.parse(key), Uri.parse(value))) {
+      if (Utils.urisMatch(Uri.parse(key), state.uri)) {
         isNotFound = false;
       }
     });
