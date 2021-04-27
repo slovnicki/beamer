@@ -3,6 +3,8 @@ import 'package:beamer/src/transition_delegates.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'path_url_strategy_nonweb.dart'
+    if (dart.library.html) 'path_url_strategy_web.dart' as url_strategy;
 
 /// A delegate that is used by the [Router] to build the [Navigator].
 class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
@@ -405,6 +407,11 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   /// Remove everything except last from [beamLocationHistory].
   void clearBeamLocationHistory() =>
       _beamLocationHistory.removeRange(0, _beamLocationHistory.length - 1);
+
+  /// Change the strategy to use for handling browser URL to [PathUrlStrategy].
+  ///
+  /// [PathUrlStrategy] uses the browser URL's pathname to represent Beamer's route name.
+  void setPathUrlStrategy() => url_strategy.setPathUrlStrategy();
 
   @override
   Uri? get currentConfiguration =>

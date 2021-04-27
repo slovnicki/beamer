@@ -1,0 +1,3 @@
+void setPathUrlStrategy() {
+  // No-op.
+}
