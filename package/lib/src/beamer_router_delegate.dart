@@ -593,7 +593,10 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   }
 
   void _pushHistory(BeamLocation location) {
-    _beamStateHistory.add(location.state.copyWith());
+    if (_beamStateHistory.isEmpty ||
+        _beamStateHistory.last.uri != location.state.uri) {
+      _beamStateHistory.add(location.state.copyWith());
+    }
     _beamLocationHistory.add(location);
     _currentLocation = _beamLocationHistory.last;
     _currentLocation.addListener(_notify);
