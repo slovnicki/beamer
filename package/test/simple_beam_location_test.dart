@@ -14,6 +14,23 @@ void main() {
   );
   delegate.setNewRoutePath(Uri.parse('/'));
 
+  group('Keys', () {
+    testWidgets('each BeamPage has a differenet ValueKey', (tester) async {
+      await tester.pumpWidget(MaterialApp.router(
+        routeInformationParser: BeamerRouteInformationParser(),
+        routerDelegate: delegate,
+      ));
+      delegate.beamToNamed('/test');
+      await tester.pump();
+      expect(delegate.currentPages.length, 2);
+      final keysSet = <String>{};
+      for (var page in delegate.currentPages) {
+        keysSet.add((page.key as ValueKey).value);
+      }
+      expect(keysSet.length, equals(2));
+    });
+  });
+
   group('Query', () {
     test('location takes query', () {
       expect(delegate.currentLocation.state.queryParameters, equals({}));
