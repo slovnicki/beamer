@@ -1,3 +1,12 @@
+# 0.12.4
+
+- **Add** `Beamer.setPathUrlStrategy()` for removing `#` from URL
+- **Add** persistent auth state on browser refresh in [authentication_bloc example](https://github.com/slovnicki/beamer/tree/master/examples/authentication_bloc)
+- **Fix** detection of `NotFound` when using `SimpleLocationBuilder`
+- **Fix** updating route on guard actions
+- **Fix** not pushing `BeamState` in history if it's on top
+- **Fix** taking `currentLocation` on setting initial path
+
 # 0.12.3
 
 - **Add** [authentication_bloc example](https://github.com/slovnicki/beamer/tree/master/examples/authentication_bloc)
