@@ -6,6 +6,8 @@ import 'beam_location.dart';
 import 'beamer_back_button_dispatcher.dart';
 import 'beamer_router_delegate.dart';
 import 'beamer_provider.dart';
+import 'path_url_strategy_nonweb.dart'
+    if (dart.library.html) 'path_url_strategy_web.dart' as url_strategy;
 
 /// A wrapper for [Router].
 class Beamer extends StatefulWidget {
@@ -32,6 +34,11 @@ class Beamer extends StatefulWidget {
     }
     return _delegate;
   }
+
+  /// Change the strategy to use for handling browser URL to [PathUrlStrategy].
+  ///
+  /// [PathUrlStrategy] uses the browser URL's pathname to represent Beamer's route name.
+  static void setPathUrlStrategy() => url_strategy.setPathUrlStrategy();
 
   @override
   State<StatefulWidget> createState() => BeamerState();
