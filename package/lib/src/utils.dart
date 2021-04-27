@@ -130,4 +130,21 @@ abstract class Utils {
       data: data,
     );
   }
+
+  static bool urisMatch(Uri blueprint, Uri exact) {
+    final blueprintSegments = blueprint.pathSegments;
+    final exactSegment = exact.pathSegments;
+    if (blueprintSegments.length != exactSegment.length) {
+      return false;
+    }
+    for (int i = 0; i < blueprintSegments.length; i++) {
+      if (blueprintSegments[i].startsWith(':')) {
+        continue;
+      }
+      if (blueprintSegments[i] != exactSegment[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
 }

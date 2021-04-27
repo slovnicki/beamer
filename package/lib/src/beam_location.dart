@@ -166,11 +166,10 @@ class SimpleBeamLocation extends BeamLocation {
     }).toList();
   }
 
-  /// Will choose all the routes that match `state.uri` to stack their pages.
+  /// Will choose all the routes that "sub-match" `state.uri` to stack their pages.
   ///
-  /// If none of the selected routes has **exact** path as `state.uri`,
-  /// then nothing will be selected and [BeamerRouterDelegate] will declare
-  /// that the location is [NotFound].
+  /// If none of the selected routes _matches_ `state.uri`, nothing will be selected
+  /// and [BeamerRouterDelegate] will declare that the location is [NotFound].
   static Map<String, String> chooseRoutes(
       BeamState state, Iterable<String> routes) {
     var matched = <String, String>{};
@@ -188,10 +187,7 @@ class SimpleBeamLocation extends BeamLocation {
       }
 
       var checksPassed = true;
-      var path = '';
-
       for (int i = 0; i < routePathSegments.length; i++) {
-        path += '/${uriPathSegments[i]}';
         if (routePathSegments[i] == '*') {
           overrideNotFound = true;
           continue;
@@ -206,21 +202,21 @@ class SimpleBeamLocation extends BeamLocation {
       }
 
       if (checksPassed) {
-        matched[route] = Uri(
-          path: path == '' ? '/' : path,
-          queryParameters:
-              state.queryParameters.isEmpty ? null : state.queryParameters,
-        ).toString();
+        matched[route] = state.uri.toString();
       }
     }
 
     bool isNotFound = true;
     matched.forEach((key, value) {
-      if (Uri.parse(key).path == state.uri.path) {
+      if (Utils.urisMatch(Uri.parse(key), Uri.parse(value))) {
         isNotFound = false;
       }
     });
 
-    return (isNotFound && !overrideNotFound) ? {} : matched;
+    if (overrideNotFound) {
+      return matched;
+    }
+
+    return isNotFound ? {} : matched;
   }
 }
