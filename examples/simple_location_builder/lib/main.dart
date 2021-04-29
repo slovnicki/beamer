@@ -41,22 +41,19 @@ class HomeScreen extends StatelessWidget {
 class BooksScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final titleQuery =
-        Beamer.of(context).currentLocation.state.queryParameters['title'] ?? '';
     return Scaffold(
       appBar: AppBar(
         title: Text('Books'),
       ),
       body: ListView(
         children: books
-            .where((book) =>
-                book['title'].toLowerCase().contains(titleQuery.toLowerCase()))
-            .map((book) => ListTile(
-                  title: Text(book['title']),
-                  subtitle: Text(book['author']),
-                  onTap: () =>
-                      Beamer.of(context).beamToNamed('/books/${book['id']}'),
-                ))
+            .map(
+              (book) => ListTile(
+                title: Text(book['title']!),
+                subtitle: Text(book['author']!),
+                onTap: () => context.beamToNamed('/books/${book['id']}'),
+              ),
+            )
             .toList(),
       ),
     );
@@ -64,39 +61,39 @@ class BooksScreen extends StatelessWidget {
 }
 
 class BookDetailsScreen extends StatelessWidget {
-  BookDetailsScreen({this.bookId});
-
-  final String bookId;
+  const BookDetailsScreen(this.bookDetails);
+  final Map<String, String> bookDetails;
 
   @override
   Widget build(BuildContext context) {
-    final book = books.firstWhere((book) => book['id'] == bookId);
     return Scaffold(
       appBar: AppBar(
-        title: Text(book['title']),
+        title: Text(bookDetails['title']!),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text('Author: ${book['author']}'),
+        child: Text('Author: ${bookDetails['author']!}'),
       ),
     );
   }
 }
 
 // APP
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
+class MyApp extends StatelessWidget {
+  final routerDelegate = BeamerRouterDelegate(
+    locationBuilder: SimpleLocationBuilder(
+      routes: {
+        '/': (context) => HomeScreen(),
+        '/books': (context) => BooksScreen(),
+        '/books/:bookId': (context) {
+          final bookId =
+              context.currentBeamLocation.state.pathParameters['bookId'];
+          final bookDetails = books.firstWhere((book) => book['id'] == bookId);
 
-class _MyAppState extends State<MyApp> {
-  final RouterDelegate routerDelegate = BeamerRouterDelegate(
-    locationBuilder: SimpleLocationBuilder(routes: {
-      '/': (context) => HomeScreen(),
-      '/books': (context) => BooksScreen(),
-      '/books/:bookId': (context) => BookDetailsScreen(
-          bookId: context.currentBeamLocation.state.pathParameters['bookId']),
-    }),
+          return BookDetailsScreen(bookDetails);
+        }
+      },
+    ),
   );
 
   @override
@@ -109,6 +106,4 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(MyApp());
