@@ -159,6 +159,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
 
   late BeamLocation _currentLocation;
 
+  /// {@template currentLocation}
   /// Access the current [BeamLocation].
   ///
   /// Can be useful in:
@@ -174,12 +175,14 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   /// ```dart
   /// highlighted: Beamer.of(context).currentLocation is MyLocation,
   /// ```
-  ///
+  /// {@endtemplate}
   BeamLocation get currentLocation => _currentLocation;
 
   List<BeamPage> _currentPages = [];
 
+  /// {@template currentPages}
   /// Current location's effective pages.
+  /// {@endtemplate}
   List<BeamPage> get currentPages => _currentPages;
 
   /// Whether to implicitly [beamBack] instead of default pop.
@@ -277,6 +280,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     );
   }
 
+  /// {@template beamTo}
   /// Beams to a specific, manually configured [BeamLocation].
   ///
   /// For example
@@ -295,6 +299,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   /// ```
   ///
   /// See [update] for more details.
+  /// {@endtemplate}
   void beamTo(
     BeamLocation location, {
     BeamLocation? popTo,
@@ -316,6 +321,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     );
   }
 
+  /// {@template beamToNamed}
   /// Beams to [BeamLocation] that has `uri` contained within its
   /// [BeamLocation.pathBlueprintSegments].
   ///
@@ -329,6 +335,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   /// ```
   ///
   /// See [update] for more details.
+  /// {@endtemplate}
   void beamToNamed(
     String uri, {
     Map<String, dynamic> data = const <String, dynamic>{},
@@ -351,16 +358,20 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     );
   }
 
+  /// {@template canBeamBack}
   /// Whether it is possible to [beamBack],
   /// i.e. there is more than 1 state in [beamStateHistory].
+  /// {@endtemplate}
   bool get canBeamBack => _beamLocationHistory.length > 1;
 
+  /// {@template beamBack}
   /// Beams to previous state in [beamStateHistory].
   /// and **removes** the last state from history.
   ///
   /// If there is no previous state, does nothing.
   ///
   /// Returns the success, whether the [currentLocation] was changed.
+  /// {@endtemplate}
   bool beamBack() {
     if (!canBeamBack) {
       return false;
@@ -378,16 +389,20 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   void clearBeamStateHistory() =>
       _beamStateHistory.removeRange(0, _beamStateHistory.length - 1);
 
+  /// {@template canPopBeamLocation}
   /// Whether it is possible to [popBeamLocation],
   /// i.e. there is more than 1 location in [beamLocationHistory].
+  /// {@endtemplate}
   bool get canPopBeamLocation => _beamLocationHistory.length > 1;
 
+  /// {@template popBeamLocation}
   /// Beams to previous location in [beamLocationHistory]
   /// and **removes** the last location from history.
   ///
   /// If there is no previous location, does nothing.
   ///
   /// Returns the success, whether the [currentLocation] was changed.
+  /// {@endtemplate}
   bool popBeamLocation() {
     if (!canPopBeamLocation) {
       return false;
