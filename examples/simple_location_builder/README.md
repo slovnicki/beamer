@@ -1,6 +1,6 @@
 # Simple Location Builder Example
 
-An example project to showcase Beamer's `SimpleLocationBuilder`.
+An example app to showcase Beamer's `SimpleLocationBuilder`.
 
 Run `flutter create .` to generate all necessary files, if needed.
 
