@@ -473,28 +473,44 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
                       ? [guard.showPage!]
                       : _currentPages + [guard.showPage!],
           onPopPage: (route, result) {
-            if (!route.didPop(result)) {
-              return false;
-            }
-            final customPopResult =
-                onPopPage?.call(context, route, result) ?? false;
-            if (customPopResult) {
-              return customPopResult;
-            }
             if (_popState != null) {
               _isGoingBack = true;
               update(state: _popState, replaceCurrent: true);
+              return route.didPop(result);
             } else if (_popBeamLocationOnPop) {
               popBeamLocation();
+              return route.didPop(result);
             } else if (_beamBackOnPop) {
               beamBack();
-            } else {
-              final lastPage = _currentPages.removeLast();
-              if (lastPage is BeamPage) {
-                _handlePop(lastPage);
+              return route.didPop(result);
+            }
+
+            final lastPage = _currentPages.last;
+            if (lastPage is BeamPage) {
+              if (lastPage.popToNamed != null) {
+                _isGoingBack = true; // TODO #212
+                beamToNamed(lastPage.popToNamed!);
+                return route.didPop(result);
+              } else {
+                final shouldPop =
+                    lastPage.onPopPage(context, _currentLocation, lastPage);
+                if (shouldPop) {
+                  return route.didPop(result);
+                } else {
+                  return false;
+                }
               }
             }
-            return true;
+
+            final globalShouldPop =
+                onPopPage?.call(context, route, result) ?? false;
+            if (globalShouldPop) {
+              return route.didPop(result);
+            } else {
+              return false;
+            }
+
+            return route.didPop(result);
           },
         );
       },
@@ -555,27 +571,6 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     );
     _parent?.updateRouteInformation(_currentLocation.state.uri);
     notifyListeners();
-  }
-
-  void _handlePop(BeamPage page) {
-    final pathBlueprintSegments =
-        List<String>.from(_currentLocation.state.pathBlueprintSegments);
-    final pathParameters =
-        Map<String, String>.from(_currentLocation.state.pathParameters);
-    final pathSegment = pathBlueprintSegments.removeLast();
-    if (pathSegment[0] == ':') {
-      pathParameters.remove(pathSegment.substring(1));
-    }
-    _currentLocation.state = _currentLocation.createState(
-      BeamState(
-        pathBlueprintSegments: pathBlueprintSegments,
-        pathParameters: pathParameters,
-        queryParameters:
-            !page.keepQueryOnPop ? {} : _currentLocation.state.queryParameters,
-        data: _currentLocation.state.data,
-      ),
-    );
-    _currentLocation.notifyListeners();
   }
 
   BeamGuard? _checkGuard(
