@@ -32,6 +32,8 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     }) =>
         BeamState.fromUri(uri, data: data) as T;
 
+    _currentTransitionDelegate = transitionDelegate;
+
     state = createState!(Uri.parse(initialPath));
     _currentLocation = EmptyBeamLocation();
 
@@ -191,8 +193,8 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   /// Whether to implicitly [popBeamLocation] instead of default pop.
   bool _popBeamLocationOnPop = false;
 
-  /// Needed for deciding the transition delegate.
-  bool _isGoingBack = false;
+  /// Which transition delegate to use in the next rebuild.
+  late TransitionDelegate _currentTransitionDelegate;
 
   /// Which location to pop to, instead of default pop.
   ///
@@ -235,12 +237,14 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   void update({
     T? state,
     T? popState,
+    TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
     bool replaceCurrent = false,
     bool rebuild = true,
   }) {
+    _currentTransitionDelegate = transitionDelegate ?? this.transitionDelegate;
     _beamBackOnPop = beamBackOnPop;
     _popBeamLocationOnPop = popBeamLocationOnPop;
     _popState = popState;
@@ -303,17 +307,18 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   void beamTo(
     BeamLocation location, {
     BeamLocation? popTo,
+    TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
     bool replaceCurrent = false,
   }) {
-    _isGoingBack = false;
     update(
       state: createState!(location.state.uri, data: location.state.data),
       popState: popTo != null
           ? createState!(popTo.state.uri, data: popTo.state.data)
           : null,
+      transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
@@ -340,17 +345,18 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     String uri, {
     Map<String, dynamic> data = const <String, dynamic>{},
     String? popToNamed,
+    TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
     bool replaceCurrent = false,
   }) {
-    _isGoingBack = false;
     update(
       state: createState!(Uri.parse(uri), data: data),
       popState: popToNamed != null
           ? createState!(Uri.parse(popToNamed), data: data)
           : null,
+      transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
@@ -376,11 +382,11 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     if (!canBeamBack) {
       return false;
     }
-    _isGoingBack = true;
     _beamStateHistory.removeLast();
     final state = _beamStateHistory.removeLast();
     update(
       state: createState!(state.uri, data: state.data),
+      transitionDelegate: beamBackTransitionDelegate,
     );
     return true;
   }
@@ -407,13 +413,14 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     if (!canPopBeamLocation) {
       return false;
     }
-    _isGoingBack = true;
     _currentLocation.removeListener(_notify);
     _beamLocationHistory.removeLast();
     _currentLocation = _beamLocationHistory.last;
     _beamStateHistory.add(_currentLocation.state.copyWith());
     _currentLocation.addListener(_notify);
-    update();
+    update(
+      transitionDelegate: beamBackTransitionDelegate,
+    );
     return true;
   }
 
@@ -460,9 +467,8 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
         return Navigator(
           key: navigatorKey,
           observers: navigatorObservers,
-          transitionDelegate: _isGoingBack
-              ? beamBackTransitionDelegate
-              : (_currentLocation.transitionDelegate ?? transitionDelegate),
+          transitionDelegate:
+              _currentLocation.transitionDelegate ?? _currentTransitionDelegate,
           pages: _currentLocation is NotFound
               ? [notFoundPage!]
               : guard == null ||
@@ -474,8 +480,11 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
                       : _currentPages + [guard.showPage!],
           onPopPage: (route, result) {
             if (_popState != null) {
-              _isGoingBack = true;
-              update(state: _popState, replaceCurrent: true);
+              update(
+                state: _popState,
+                transitionDelegate: beamBackTransitionDelegate,
+                replaceCurrent: true,
+              );
               return route.didPop(result);
             } else if (_popBeamLocationOnPop) {
               popBeamLocation();
@@ -488,26 +497,17 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
             final lastPage = _currentPages.last;
             if (lastPage is BeamPage) {
               if (lastPage.popToNamed != null) {
-                _isGoingBack = true; // TODO #212
-                beamToNamed(lastPage.popToNamed!);
-                return route.didPop(result);
+                beamToNamed(
+                  lastPage.popToNamed!,
+                  transitionDelegate: beamBackTransitionDelegate,
+                );
               } else {
                 final shouldPop =
                     lastPage.onPopPage(context, _currentLocation, lastPage);
-                if (shouldPop) {
-                  return route.didPop(result);
-                } else {
+                if (!shouldPop) {
                   return false;
                 }
               }
-            }
-
-            final globalShouldPop =
-                onPopPage?.call(context, route, result) ?? false;
-            if (globalShouldPop) {
-              return route.didPop(result);
-            } else {
-              return false;
             }
 
             return route.didPop(result);

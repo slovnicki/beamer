@@ -72,6 +72,7 @@ extension BeamerExtensions on BuildContext {
   void beamTo(
     BeamLocation location, {
     BeamLocation? popTo,
+    TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
@@ -80,6 +81,7 @@ extension BeamerExtensions on BuildContext {
     Beamer.of(this).beamTo(
       location,
       popTo: popTo,
+      transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
@@ -92,6 +94,7 @@ extension BeamerExtensions on BuildContext {
     String uri, {
     Map<String, dynamic> data = const <String, dynamic>{},
     String? popToNamed,
+    TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
@@ -101,6 +104,7 @@ extension BeamerExtensions on BuildContext {
       uri,
       data: data,
       popToNamed: popToNamed,
+      transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
