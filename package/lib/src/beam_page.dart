@@ -44,6 +44,7 @@ class BeamPage extends Page {
     LocalKey? key,
     String? name,
     required this.child,
+    this.title,
     this.onPopPage = _defaultOnPopPage,
     this.popToNamed,
     this.type = BeamPageType.material,
@@ -53,6 +54,9 @@ class BeamPage extends Page {
 
   /// The concrete Widget representing app's screen.
   final Widget child;
+
+  /// The BeamPage's title. On the web, this is used for the browser tab title.
+  final String? title;
 
   /// Overrides the default pop by executing an arbitrary closure.
   /// Mainly used to manually update the `location` state.

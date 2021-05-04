@@ -1,6 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:beamer/src/transition_delegates.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -451,6 +452,20 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
       _currentLocation.removeListener(_notify);
       _pushHistory(notFoundRedirect!);
     }
+
+    if (kIsWeb) {
+      // Get the current BeamPage and set the browser tab title:
+      final _currentBeamPage =
+          _currentLocation.pagesBuilder(context, _currentLocation.state).last;
+      final _browserTabTitle =
+          _currentBeamPage.title ?? _currentLocation.state.uri.toString();
+      SystemChrome.setApplicationSwitcherDescription(
+          ApplicationSwitcherDescription(
+        label: _browserTabTitle,
+        primaryColor: Theme.of(context).primaryColor.value,
+      ));
+    }
+
     final navigator = Builder(
       builder: (context) {
         _currentPages = _stacked
