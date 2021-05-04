@@ -48,7 +48,7 @@ Handle your application routing, synchronize it with browser URL and more. Beame
   - [Books](#books)
   - [Advanced Books](#advanced-books)
   - [Deep Location](#deep-location)
-  - [Location Builder](#location-builder)
+  - [Provider](#provider)
   - [Guards](#guards)
   - [Nested Navigation](#nested-navigation)
   - [Integration with Navigation UI Packages](#integration-with-navigation-ui-packages)
@@ -395,15 +395,15 @@ ElevatedButton(
 ),
 ```
 
-## Location Builder
+## Provider
 
-You can override `BeamLocation.builder` to provide some data to the entire location, i.e. to all the `pages`. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/location_builder).
+You can override `BeamLocation.builder` to provide some data to the entire location, i.e. to all the `pages`. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/provider).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/location_builder/example-location-builder.gif" alt="example-location-builder"  width="260">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/provider/provider-example.gif" alt="provider-example"  width="260">
 
 ```dart
-// in your location implementation
+// In your location implementation
 @override
 Widget builder(BuildContext context, Navigator navigator) {
   return MyProvider<MyObject>(
