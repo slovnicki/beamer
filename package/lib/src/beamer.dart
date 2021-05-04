@@ -68,10 +68,11 @@ class BeamerState extends State<Beamer> {
 }
 
 extension BeamerExtensions on BuildContext {
-  /// See [BeamerRouterDelegate.beamTo]
+  /// {@macro beamTo}
   void beamTo(
     BeamLocation location, {
     BeamLocation? popTo,
+    TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
@@ -80,6 +81,7 @@ extension BeamerExtensions on BuildContext {
     Beamer.of(this).beamTo(
       location,
       popTo: popTo,
+      transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
@@ -87,11 +89,12 @@ extension BeamerExtensions on BuildContext {
     );
   }
 
-  /// See [BeamerRouterDelegate.beamToNamed]
+  /// {@macro beamToNamed}
   void beamToNamed(
     String uri, {
     Map<String, dynamic> data = const <String, dynamic>{},
     String? popToNamed,
+    TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
@@ -101,6 +104,7 @@ extension BeamerExtensions on BuildContext {
       uri,
       data: data,
       popToNamed: popToNamed,
+      transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
@@ -108,21 +112,21 @@ extension BeamerExtensions on BuildContext {
     );
   }
 
-  /// See [BeamerRouterDelegate.beamBack]
+  /// {@macro beamBack}
   void beamBack() => Beamer.of(this).beamBack();
 
-  /// See [BeamerRouterDelegate.popBeamLocation]
+  /// {@macro popBeamLocation}
   void popBeamLocation() => Beamer.of(this).popBeamLocation();
 
-  /// See [BeamerRouterDelegate.currentLocation]
+  /// {@macro currentLocation}
   BeamLocation get currentBeamLocation => Beamer.of(this).currentLocation;
 
-  /// See [BeamerRouterDelegate.currentPages]
+  /// {@macro currentPages}
   List<BeamPage> get currentBeamPages => Beamer.of(this).currentPages;
 
-  /// See [BeamerRouterDelegate.canBeamBack]
+  /// {@macro canBeamBack}
   bool get canBeamBack => Beamer.of(this).canBeamBack;
 
-  /// See [BeamerRouterDelegate.canPopBeamLocation]
+  /// {@macro canPopBeamLocation}
   bool get canPopBeamLocation => Beamer.of(this).canPopBeamLocation;
 }

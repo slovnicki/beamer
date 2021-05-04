@@ -1,4 +1,4 @@
-name: tests
+name: CI
 
 on:
   push:
@@ -9,7 +9,6 @@ on:
   pull_request:
     branches:
       - master
-      - nullsafety
     paths:
       - "package/**"
 
@@ -25,4 +24,7 @@ jobs:
         with:
           channel: dev
       - run: flutter pub get
-      - run: flutter test
+      - run: flutter test --coverage
+      - uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
