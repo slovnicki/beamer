@@ -453,19 +453,6 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
       _pushHistory(notFoundRedirect!);
     }
 
-    if (kIsWeb) {
-      // Get the current BeamPage and set the browser tab title:
-      final _currentBeamPage =
-          _currentLocation.pagesBuilder(context, _currentLocation.state).last;
-      final _browserTabTitle =
-          _currentBeamPage.title ?? _currentLocation.state.uri.toString();
-      SystemChrome.setApplicationSwitcherDescription(
-          ApplicationSwitcherDescription(
-        label: _browserTabTitle,
-        primaryColor: Theme.of(context).primaryColor.value,
-      ));
-    }
-
     final navigator = Builder(
       builder: (context) {
         _currentPages = _stacked
@@ -478,6 +465,14 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
         if (_currentPages.isEmpty) {
           _currentLocation =
               NotFound(path: _currentLocation.state.uri.toString());
+        } else if (kIsWeb) {
+          // Set the browser tab title:
+          SystemChrome.setApplicationSwitcherDescription(
+              ApplicationSwitcherDescription(
+            label: _currentPages.last.title ??
+                _currentLocation.state.uri.toString(),
+            primaryColor: Theme.of(context).primaryColor.value,
+          ));
         }
         return Navigator(
           key: navigatorKey,
