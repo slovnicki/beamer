@@ -1,5 +1,5 @@
-name: location_builder
-description: An example app to showcase Beamer's LocationBuilder.
+name: beamer_location_builder
+description: An example app to showcase Beamer's BeamerLocationBuilder and BeamLocation.
 
 publish_to: "none"
 
