@@ -369,7 +369,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   /// Whether it is possible to [beamBack],
   /// i.e. there is more than 1 state in [beamStateHistory].
   /// {@endtemplate}
-  bool get canBeamBack => _beamLocationHistory.length > 1;
+  bool get canBeamBack => _beamStateHistory.length > 1;
 
   /// {@template beamBack}
   /// Beams to previous state in [beamStateHistory].
