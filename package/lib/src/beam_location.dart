@@ -135,7 +135,7 @@ class SimpleBeamLocation extends BeamLocation {
   }) : super(state);
 
   /// Map of all routes this location handles.
-  Map<String, WidgetBuilder> routes;
+  Map<String, dynamic Function(BuildContext)> routes;
 
   /// A wrapper used as [BeamLocation.builder].
   Widget Function(BuildContext context, Widget navigator)? navBuilder;
@@ -158,11 +158,16 @@ class SimpleBeamLocation extends BeamLocation {
       ..removeWhere((key, value) => !filteredRoutes.containsKey(key));
     final sortedRoutes = activeRoutes.keys.toList()
       ..sort((a, b) => a.length - b.length);
-    return sortedRoutes.map((route) {
-      return BeamPage(
-        key: ValueKey(filteredRoutes[route]),
-        child: routes[route]!(context),
-      );
+    return sortedRoutes.map<BeamPage>((route) {
+      final routeElement = routes[route]!(context);
+      if (routeElement is BeamPage) {
+        return routeElement;
+      } else {
+        return BeamPage(
+          key: ValueKey(filteredRoutes[route]),
+          child: routeElement,
+        );
+      }
     }).toList();
   }
 

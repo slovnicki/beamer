@@ -20,7 +20,7 @@ class SimpleLocationBuilder implements Function {
   SimpleLocationBuilder({required this.routes, this.builder});
 
   /// List of all routes this builder handles.
-  final Map<String, WidgetBuilder> routes;
+  final Map<String, dynamic Function(BuildContext)> routes;
 
   /// Used as a [BeamLocation.builder].
   Widget Function(BuildContext context, Widget navigator)? builder;
