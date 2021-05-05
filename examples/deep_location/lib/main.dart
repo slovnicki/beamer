@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
-import 'package:flutter/scheduler.dart';
 
 // SCREENS
 class HomeScreen extends StatelessWidget {
@@ -12,8 +11,8 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Center(
         child: ElevatedButton(
-          // onPressed: () => context.beamToNamed('/a/b/c/d'),
-          onPressed: () => context.beamToNamed('/a/b/c/d', beamBackOnPop: true),
+          onPressed: () => context.beamToNamed('/a/b/c/d'),
+          //onPressed: () => context.beamToNamed('/a/b/c/d', beamBackOnPop: true),
           child: Text('Beam deep'),
         ),
       ),
@@ -23,13 +22,14 @@ class HomeScreen extends StatelessWidget {
 
 class SomeScreen extends StatelessWidget {
   SomeScreen(this.title);
-
   final String title;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(
+        title: Text(title),
+      ),
     );
   }
 }
@@ -38,7 +38,9 @@ class DeepestScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('4')),
+      appBar: AppBar(
+        title: Text('4'),
+      ),
       body: Center(
         child: ElevatedButton(
           onPressed: () => context.beamBack(),
@@ -51,8 +53,6 @@ class DeepestScreen extends StatelessWidget {
 
 // LOCATIONS
 class HomeLocation extends BeamLocation {
-  HomeLocation(BeamState state) : super(state);
-
   @override
   List<String> get pathBlueprints => ['/'];
 
@@ -66,13 +66,15 @@ class HomeLocation extends BeamLocation {
 }
 
 class DeepLocation extends BeamLocation {
-  DeepLocation(BeamState state) : super(state);
-
   @override
   List<String> get pathBlueprints => ['/a/b/c/d'];
 
   @override
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+        BeamPage(
+          key: ValueKey('home'),
+          child: HomeScreen(),
+        ),
         if (state.uri.pathSegments.contains('a'))
           BeamPage(
             key: ValueKey('a'),
@@ -98,24 +100,23 @@ class DeepLocation extends BeamLocation {
 
 // APP
 class MyApp extends StatelessWidget {
+  final routerDelegate = BeamerRouterDelegate(
+    locationBuilder: BeamerLocationBuilder(
+      beamLocations: [
+        HomeLocation(),
+        DeepLocation(),
+      ],
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      routerDelegate: BeamerRouterDelegate(
-        locationBuilder: (state) {
-          if (state.uri.pathSegments.contains('a')) {
-            return DeepLocation(state);
-          }
-          return HomeLocation(state);
-        },
-      ),
+      routerDelegate: routerDelegate,
       routeInformationParser: BeamerRouteInformationParser(),
     );
   }
 }
 
-void main() {
-  timeDilation = 5.0;
-  runApp(MyApp());
-}
+void main() => runApp(MyApp());
