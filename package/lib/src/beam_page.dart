@@ -8,8 +8,10 @@ import 'beam_state.dart';
 enum BeamPageType {
   material,
   cupertino,
-  noTransition,
   fadeTransition,
+  slideTransition,
+  scaleTransition,
+  noTransition,
 }
 
 /// The default pop behavior for [BeamPage].
@@ -109,11 +111,6 @@ class BeamPage extends Page {
           settings: this,
           builder: (context) => child,
         );
-      case BeamPageType.noTransition:
-        return PageRouteBuilder(
-          settings: this,
-          pageBuilder: (context, animation, secondaryAnimation) => child,
-        );
       case BeamPageType.fadeTransition:
         return PageRouteBuilder(
           settings: this,
@@ -122,6 +119,31 @@ class BeamPage extends Page {
             opacity: animation,
             child: child,
           ),
+        );
+      case BeamPageType.slideTransition:
+        return PageRouteBuilder(
+          settings: this,
+          pageBuilder: (_, __, ___) => child,
+          transitionsBuilder: (_, animation, __, child) => SlideTransition(
+            position: animation.drive(
+                Tween(begin: Offset(0, 1), end: Offset(0, 0))
+                    .chain(CurveTween(curve: Curves.ease))),
+            child: child,
+          ),
+        );
+      case BeamPageType.scaleTransition:
+        return PageRouteBuilder(
+          settings: this,
+          pageBuilder: (_, __, ___) => child,
+          transitionsBuilder: (_, animation, __, child) => ScaleTransition(
+            scale: animation,
+            child: child,
+          ),
+        );
+      case BeamPageType.noTransition:
+        return PageRouteBuilder(
+          settings: this,
+          pageBuilder: (context, animation, secondaryAnimation) => child,
         );
       default:
         return MaterialPageRoute(
