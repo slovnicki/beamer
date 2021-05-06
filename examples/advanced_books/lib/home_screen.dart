@@ -1,46 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
 
-import 'package:advanced_books/locations.dart';
-
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final booksQueryController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Home Screen'),
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () => context.beamTo(
-                    BooksLocation(
-                      BeamState(
-                        pathBlueprintSegments: ['books'],
-                      ),
-                    ),
-                  ),
-                  child: Text('Beam to books location'),
-                ),
-                ElevatedButton(
-                  onPressed: () => context.currentBeamLocation.update(
-                    (state) => state.copyWith(
-                      pathBlueprintSegments: ['books', ':bookId'],
-                      pathParameters: {'bookId': '2'},
-                    ),
-                  ),
-                  child: Text('Beam to favorite book location'),
-                ),
-              ],
-            ),
             ElevatedButton(
-              onPressed: () => context.beamToNamed('/articles'),
-              child: Text('Beam to articles location'),
+              onPressed: () => context.beamToNamed('books'),
+              child: Text('See all books'),
+            ),
+            SizedBox(height: 15),
+            SizedBox(
+              width: 250,
+              child: TextField(
+                controller: booksQueryController,
+                decoration: InputDecoration(
+                  hintText: 'Search book by title...',
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () => context.beamToNamed(
+                        'books?title=${booksQueryController.text}'),
+                  ),
+                ),
+                onSubmitted: (title) =>
+                    context.beamToNamed('books?title=$title'),
+              ),
             ),
           ],
         ),
