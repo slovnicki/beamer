@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
 
 class BooksScreen extends StatelessWidget {
-  BooksScreen({required this.title, required this.books});
-  final String title;
+  BooksScreen({required this.books, required this.title});
   final List<Map<String, dynamic>> books;
+  final String title;
 
   @override
   Widget build(BuildContext context) {

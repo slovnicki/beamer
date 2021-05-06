@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
 
 class BookDetailsScreen extends StatelessWidget {
-  BookDetailsScreen({required this.book});
+  BookDetailsScreen({required this.book, required this.title});
   final Map<String, dynamic> book;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(book['title']),
+        title: Text(title),
       ),
       body: Center(
         child: Column(

@@ -33,7 +33,7 @@ class BooksLocation extends BeamLocation {
     if (state.pathBlueprintSegments.contains('books')) {
       final _titleQuery = state.queryParameters['title'] ?? '';
       final _genreQuery = state.queryParameters['genre'] ?? '';
-      final _title = _titleQuery != ''
+      final _pageTitle = _titleQuery != ''
           ? "Books with name '$_titleQuery'"
           : _genreQuery != ''
               ? "Books with genre '$_genreQuery'"
@@ -48,10 +48,10 @@ class BooksLocation extends BeamLocation {
       beamPages.add(
         BeamPage(
           key: ValueKey('books-$_titleQuery-$_genreQuery'),
-          title: _title,
+          title: _pageTitle,
           child: BooksScreen(
-            title: _title,
             books: _books.toList(),
+            title: _pageTitle,
           ),
         ),
       );
@@ -60,12 +60,16 @@ class BooksLocation extends BeamLocation {
     if (state.pathParameters.containsKey('bookId')) {
       final _bookId = state.pathParameters['bookId'];
       final _book = books.firstWhere((book) => book['id'] == _bookId);
+      final _pageTitle = _book['title'];
 
       beamPages.add(
         BeamPage(
           key: ValueKey('book-$_bookId'),
-          title: _book['title'],
-          child: BookDetailsScreen(book: _book),
+          title: _pageTitle,
+          child: BookDetailsScreen(
+            book: _book,
+            title: _pageTitle,
+          ),
         ),
       );
     }
@@ -73,15 +77,15 @@ class BooksLocation extends BeamLocation {
     if (state.uri.pathSegments.contains('genres')) {
       final _bookId = state.pathParameters['bookId'];
       final _book = books.firstWhere((book) => book['id'] == _bookId);
-      final _title = "${_book['title']}'s Genres";
+      final _pageTitle = "${_book['title']}'s Genres";
 
       beamPages.add(
         BeamPage(
           key: ValueKey('book-$_bookId-genres'),
-          title: _title,
+          title: _pageTitle,
           child: BookGenresScreen(
             book: _book,
-            title: _title,
+            title: _pageTitle,
           ),
         ),
       );
@@ -90,15 +94,15 @@ class BooksLocation extends BeamLocation {
     if (state.uri.pathSegments.contains('buy')) {
       final _bookId = state.pathParameters['bookId'];
       final _book = books.firstWhere((book) => book['id'] == _bookId);
-      final _title = 'Buy ${_book['title']}';
+      final _pageTitle = 'Buy ${_book['title']}';
 
       beamPages.add(
         BeamPage(
           key: ValueKey('book-$_bookId-buy'),
-          title: _title,
+          title: _pageTitle,
           child: BookBuyScreen(
             book: _book,
-            title: _title,
+            title: _pageTitle,
           ),
         ),
       );
