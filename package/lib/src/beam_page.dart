@@ -101,11 +101,6 @@ class BeamPage extends Page {
       return pageRouteBuilder!(this, child);
     }
     switch (type) {
-      case BeamPageType.material:
-        return MaterialPageRoute(
-          settings: this,
-          builder: (context) => child,
-        );
       case BeamPageType.cupertino:
         return CupertinoPageRoute(
           settings: this,

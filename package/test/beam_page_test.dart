@@ -51,13 +51,11 @@ class TestLocation extends BeamLocation {
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-  final delegate = BeamerRouterDelegate(
-    locationBuilder: (state) => TestLocation(state),
-  );
-  delegate.beamToNamed('/');
-
   group('Pops', () {
+    final delegate = BeamerRouterDelegate(
+      locationBuilder: (state) => TestLocation(state),
+    );
+
     testWidgets('onPopPage returning false is not popped', (tester) async {
       await tester.pumpWidget(
         MaterialApp.router(
@@ -129,6 +127,91 @@ void main() {
       await tester.pump();
       expect(delegate.currentPages.length, 4);
       expect(delegate.currentPages.last.key, ValueKey('book-1-details'));
+    });
+  });
+
+  group('Transitions', () {
+    final delegate = BeamerRouterDelegate(
+      locationBuilder: SimpleLocationBuilder(
+        routes: {
+          '/': (context) => BeamPage(
+                key: ValueKey('/'),
+                type: BeamPageType.material,
+                child: Scaffold(body: Container(child: Text('0'))),
+              ),
+          '/1': (context) => BeamPage(
+                key: ValueKey('/1'),
+                type: BeamPageType.cupertino,
+                child: Scaffold(body: Container(child: Text('1'))),
+              ),
+          '/1/2': (context) => BeamPage(
+                key: ValueKey('/1/2'),
+                type: BeamPageType.fadeTransition,
+                child: Scaffold(body: Container(child: Text('2'))),
+              ),
+          '/1/2/3': (context) => BeamPage(
+                key: ValueKey('/1/2/3'),
+                type: BeamPageType.slideTransition,
+                child: Scaffold(body: Container(child: Text('3'))),
+              ),
+          '/1/2/3/4': (context) => BeamPage(
+                key: ValueKey('/1/2/3/4'),
+                type: BeamPageType.scaleTransition,
+                child: Scaffold(body: Container(child: Text('4'))),
+              ),
+          '/1/2/3/4/5': (context) => BeamPage(
+                key: ValueKey('/1/2/3/4/5'),
+                type: BeamPageType.noTransition,
+                child: Scaffold(body: Container(child: Text('5'))),
+              ),
+        },
+      ),
+    );
+    testWidgets('all', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerRouteInformationParser(),
+          routerDelegate: delegate,
+        ),
+      );
+      expect(find.text('0'), findsOneWidget);
+
+      delegate.beamToNamed('/1');
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 8));
+      var offset = tester.getTopLeft(find.text('1'));
+      expect(offset.dx, greaterThan(0.0));
+      expect(offset.dx, lessThan(800.0));
+      expect(offset.dy, equals(0.0));
+      expect(offset.dy, equals(0.0));
+
+      delegate.beamToNamed('/1/2');
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 8));
+      expect(find.text('2'), findsOneWidget);
+
+      delegate.beamToNamed('/1/2/3');
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 8));
+      offset = tester.getTopLeft(find.text('3'));
+      expect(offset.dx, equals(0.0));
+      expect(offset.dx, equals(0.0));
+      expect(offset.dy, greaterThan(0.0));
+      expect(offset.dy, lessThan(600.0));
+
+      delegate.beamToNamed('/1/2/3/4');
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 8));
+      offset = tester.getTopLeft(find.text('4'));
+      expect(offset.dx, greaterThan(0.0));
+      expect(offset.dx, lessThan(800.0));
+      expect(offset.dy, greaterThan(0.0));
+      expect(offset.dy, lessThan(600.0));
+
+      delegate.beamToNamed('/1/2/3/4/5');
+      await tester.pump();
+      await tester.pump();
+      expect(find.text('5'), findsOneWidget);
     });
   });
 }
