@@ -22,7 +22,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     this.transitionDelegate = const DefaultTransitionDelegate(),
     this.beamBackTransitionDelegate = const ReverseTransitionDelegate(),
     this.onPopPage,
-    this.updateBrowserTabTitle = true,
+    this.setBrowserTabTitle = true,
   }) {
     notFoundPage ??= BeamPage(
       child: Container(child: Center(child: Text('Not found'))),
@@ -149,9 +149,9 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   bool Function(BuildContext context, Route<dynamic> route, dynamic result)?
       onPopPage;
 
-  /// Whether or not the title attribute of [BeamPage] should be used
-  /// to update the browser tab title when beaming.
-  final bool updateBrowserTabTitle;
+  /// Whether the title attribute of [BeamPage] should
+  /// be used to set and update the browser tab title.
+  final bool setBrowserTabTitle;
 
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
@@ -470,7 +470,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
         if (_currentPages.isEmpty) {
           _currentLocation =
               NotFound(path: _currentLocation.state.uri.toString());
-        } else if (kIsWeb && updateBrowserTabTitle) {
+        } else if (kIsWeb && setBrowserTabTitle) {
           // Set the browser tab title:
           SystemChrome.setApplicationSwitcherDescription(
               ApplicationSwitcherDescription(
