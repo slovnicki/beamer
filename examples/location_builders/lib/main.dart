@@ -7,15 +7,17 @@ void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   final routerDelegate = BeamerRouterDelegate(
-    // As locationBuilder you can either use SimpleLocationBuilder or BeamerLocationBuilder.
+    // There are three different options of building your locations.
     // They are interchangeable, depending on personal taste (in this case).
-    // You can find both implementations in the location_builders.dart file.
     //
-    // OPTION A: SimpleLocationBuilder
+    // OPTION A:
     locationBuilder: simpleLocationBuilder,
     //
-    // OPTION B: BeamerLocationBuilder
+    // OPTION B:
     //locationBuilder: beamerLocationBuilder,
+    //
+    // OPTION C:
+    //locationBuilder: (state) => BooksLocation(state: state),
   );
 
   @override

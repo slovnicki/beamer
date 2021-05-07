@@ -4,7 +4,7 @@ import 'package:beamer/beamer.dart';
 import 'screens.dart';
 import 'data.dart';
 
-// OPTION A: SimpleLocationBuilder
+// OPTION A:
 final simpleLocationBuilder = SimpleLocationBuilder(
   routes: {
     '/': (context) => BeamPage(
@@ -31,17 +31,21 @@ final simpleLocationBuilder = SimpleLocationBuilder(
   },
 );
 
-// OPTION B: BeamerLocationBuilder
+// OPTION B:
 final beamerLocationBuilder = BeamerLocationBuilder(
   beamLocations: [
-    HomeLocation(),
     BooksLocation(),
   ],
 );
 
-class HomeLocation extends BeamLocation {
+class BooksLocation extends BeamLocation {
+  BooksLocation({BeamState? state}) : super(state);
+
   @override
-  List<String> get pathBlueprints => ['/'];
+  List<String> get pathBlueprints => [
+        '/',
+        '/books/:bookId',
+      ];
 
   @override
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) {
@@ -51,18 +55,6 @@ class HomeLocation extends BeamLocation {
         title: 'Home',
         child: HomeScreen(),
       ),
-    ];
-  }
-}
-
-class BooksLocation extends BeamLocation {
-  @override
-  List<String> get pathBlueprints => ['/books/:bookId'];
-
-  @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) {
-    return [
-      ...HomeLocation().pagesBuilder(context, state),
       if (state.uri.pathSegments.contains('books'))
         BeamPage(
           key: ValueKey('books'),
