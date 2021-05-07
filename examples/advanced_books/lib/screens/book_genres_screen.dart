@@ -17,7 +17,7 @@ class BookGenresScreen extends StatelessWidget {
           children: List<Widget>.from(
             book['genres'].map(
               (genre) => ListTile(
-                onTap: () => context.beamToNamed('books?genre=$genre'),
+                onTap: () => context.beamToNamed('/books?genre=$genre'),
                 title: Text(genre),
               ),
             ),

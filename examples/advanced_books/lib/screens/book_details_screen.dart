@@ -20,12 +20,12 @@ class BookDetailsScreen extends StatelessWidget {
             SizedBox(height: 15),
             ElevatedButton(
               onPressed: () =>
-                  context.beamToNamed('books/${book['id']}/genres'),
+                  context.beamToNamed('/books/${book['id']}/genres'),
               child: Text('See genres'),
             ),
             SizedBox(height: 15),
             ElevatedButton(
-              onPressed: () => context.beamToNamed('books/${book['id']}/buy'),
+              onPressed: () => context.beamToNamed('/books/${book['id']}/buy'),
               child: Text('Buy'),
             ),
           ],

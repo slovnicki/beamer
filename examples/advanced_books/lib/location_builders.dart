@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
 
-import 'books_data.dart' as data;
-import 'home_screen.dart';
-import 'book_screens/screens.dart';
+import 'data.dart' as data;
+import 'screens/screens.dart';
 
 // OPTION A: SimpleLocationBuilder
 final simpleLocationBuilder = SimpleLocationBuilder(
@@ -13,7 +12,7 @@ final simpleLocationBuilder = SimpleLocationBuilder(
           title: 'Home',
           child: HomeScreen(),
         ),
-    'books': (context) {
+    '/books': (context) {
       final titleQuery =
           context.currentBeamLocation.state.queryParameters['title'] ?? '';
       final genreQuery =
@@ -39,7 +38,7 @@ final simpleLocationBuilder = SimpleLocationBuilder(
         ),
       );
     },
-    'books/:bookId': (context) {
+    '/books/:bookId': (context) {
       final bookId = context.currentBeamLocation.state.pathParameters['bookId'];
       final book = data.books.firstWhere((book) => book['id'] == bookId);
       final pageTitle = book['title'];
@@ -53,7 +52,7 @@ final simpleLocationBuilder = SimpleLocationBuilder(
         ),
       );
     },
-    'books/:bookId/genres': (context) {
+    '/books/:bookId/genres': (context) {
       final bookId = context.currentBeamLocation.state.pathParameters['bookId'];
       final book = data.books.firstWhere((book) => book['id'] == bookId);
       final pageTitle = "${book['title']}'s Genres";
@@ -67,7 +66,7 @@ final simpleLocationBuilder = SimpleLocationBuilder(
         ),
       );
     },
-    'books/:bookId/buy': (context) {
+    '/books/:bookId/buy': (context) {
       final bookId = context.currentBeamLocation.state.pathParameters['bookId'];
       final book = data.books.firstWhere((book) => book['id'] == bookId);
       final pageTitle = 'Buy ${book['title']}';
@@ -109,8 +108,8 @@ class HomeLocation extends BeamLocation {
 class BooksLocation extends BeamLocation {
   @override
   List<String> get pathBlueprints => [
-        'books/:bookId/genres/:genreId',
-        'books/:bookId/buy',
+        '/books/:bookId/genres/:genreId',
+        '/books/:bookId/buy',
       ];
 
   @override

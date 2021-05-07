@@ -9,6 +9,7 @@ class MyApp extends StatelessWidget {
   final routerDelegate = BeamerRouterDelegate(
     // As locationBuilder you can either use SimpleLocationBuilder or BeamerLocationBuilder.
     // They are interchangeable, depending on personal taste (in this case).
+    // You can find both implementations in the location_builders.dart file.
     //
     // OPTION A: SimpleLocationBuilder
     locationBuilder: simpleLocationBuilder,

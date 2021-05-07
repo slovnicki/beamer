@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () => context.beamToNamed('books'),
+              onPressed: () => context.beamToNamed('/books'),
               child: Text('See all books'),
             ),
             SizedBox(height: 15),
@@ -28,11 +28,11 @@ class HomeScreen extends StatelessWidget {
                   suffixIcon: IconButton(
                     icon: Icon(Icons.search),
                     onPressed: () => context.beamToNamed(
-                        'books?title=${booksQueryController.text}'),
+                        '/books?title=${booksQueryController.text}'),
                   ),
                 ),
                 onSubmitted: (title) =>
-                    context.beamToNamed('books?title=$title'),
+                    context.beamToNamed('/books?title=$title'),
               ),
             ),
           ],
