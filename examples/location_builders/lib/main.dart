@@ -7,7 +7,7 @@ void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   final routerDelegate = BeamerRouterDelegate(
-    // There are three different options of building your locations.
+    // There are three different options of building the locations.
     // They are interchangeable, depending on personal taste (in this case).
     //
     // OPTION A:

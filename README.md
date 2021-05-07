@@ -372,7 +372,7 @@ class MyApp extends StatelessWidget {
 ## Location Builders
 
 Here is a recreation of the example app from [this article](https://medium.com/flutter/learning-flutters-new-navigation-and-routing-system-7c9068155ade) where you can learn a lot about Navigator 2.0. 
-It contains three different options of building your locations. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/location_builders).
+It contains three different options of building the locations. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/location_builders).
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer_examples/master/location_builders/example-location-builders.gif" alt="example-location-builders">
