@@ -47,7 +47,7 @@ Handle your application routing, synchronize it with browser URL and more. Beame
   - [Nested Navigation](#nested-navigation)
   - [General Notes](#general-notes)
 - [Examples](#examples)
-  - [Books](#books)
+  - [Location Builders](#location-builders)
   - [Advanced Books](#advanced-books)
   - [Deep Location](#deep-location)
   - [Provider](#provider)
@@ -270,6 +270,7 @@ class MyApp extends StatelessWidget {
       return HomeLocation(state);
     },
   );
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
@@ -368,12 +369,13 @@ class MyApp extends StatelessWidget {
 
 # Examples
 
-## Books
+## Location Builders
 
-Here is a recreation of books example from [this article](https://medium.com/flutter/learning-flutters-new-navigation-and-routing-system-7c9068155ade) where you can learn a lot about Navigator 2.0. See [Example](https://pub.dev/packages/beamer/example) for full application code of this example.
+Here is a recreation of the example app from [this article](https://medium.com/flutter/learning-flutters-new-navigation-and-routing-system-7c9068155ade) where you can learn a lot about Navigator 2.0. 
+It contains an implementation for using `Beamer`s `SimpleLocationBuilder` and `BeamerLocationBuilder`.The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/location_builders).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/resources/example-books.gif" alt="example-books" width="520">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer_examples/master/location_builders/example-location-builders.gif" alt="example-location-builders">
 
 ## Advanced Books
 
