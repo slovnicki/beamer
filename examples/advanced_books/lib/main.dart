@@ -1,35 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
 
-import 'package:advanced_books/locations.dart';
+import 'location_builders.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  final notFoundPage = BeamPage(
-    child: Scaffold(
-      body: Center(
-        child: Text('Not found'),
-      ),
-    ),
+  final routerDelegate = BeamerRouterDelegate(
+    // As locationBuilder you can either use SimpleLocationBuilder or BeamerLocationBuilder.
+    // They are interchangeable, depending on personal taste (in this case).
+    // You can find both implementations in the location_builders.dart file.
+    //
+    // OPTION A: SimpleLocationBuilder
+    locationBuilder: simpleLocationBuilder,
+    //
+    // OPTION B: BeamerLocationBuilder
+    //locationBuilder: beamerLocationBuilder,
   );
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      routerDelegate: BeamerRouterDelegate(
-        locationBuilder: (state) {
-          if (state.pathBlueprintSegments.contains('books')) {
-            return BooksLocation(state);
-          }
-          if (state.pathBlueprintSegments.contains('articles')) {
-            return ArticlesLocation(state);
-          }
-          return HomeLocation(state);
-        },
-        notFoundPage: notFoundPage,
-      ),
+      routerDelegate: routerDelegate,
       routeInformationParser: BeamerRouteInformationParser(),
     );
   }
