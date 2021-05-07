@@ -1,5 +1,5 @@
-name: simple_location_builder
-description: An example app to showcase Beamer's SimpleLocationBuilder.
+name: location_builders
+description: This example app shows the basics of using Beamer.
 
 publish_to: "none"
 
@@ -14,7 +14,7 @@ dependencies:
   beamer:
     path: ../../package
 
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.3
 
 
 dev_dependencies:
