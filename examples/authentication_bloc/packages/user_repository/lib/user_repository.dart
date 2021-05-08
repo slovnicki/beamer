@@ -8,6 +8,7 @@ class UserRepository {
 
   Future<User?> getUser() async {
     if (_user != null) return _user;
+
     return Future.delayed(
       const Duration(milliseconds: 250),
       () => _user = User(
