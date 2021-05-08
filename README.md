@@ -35,5 +35,8 @@ A Flutter package to help you handle your application routing and synchronize it
 
 - [Package Source Code and Documentation](https://github.com/slovnicki/beamer/tree/master/package)
 - [Examples of Using Beamer](https://github.com/slovnicki/beamer/tree/master/examples)
+- Articles and Videos
+    - [Explaining Flutter Nav 2.0 and Beamer](https://tobycetera.medium.com/explaining-flutter-navigator-2-0-f357509735e5)
+    - [Finally, A Better Navigator 2.0 | Beamer Package Tutorial](https://www.youtube.com/watch?v=9kIS_MUWuPA)
 - [Beamer on pub.dev](https://pub.dev/packages/beamer)
 - [Beamer Website](https://beamer.dev/)
