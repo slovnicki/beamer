@@ -93,6 +93,7 @@ class HomeLocation extends BeamLocation {
     return [
       BeamPage(
         key: ValueKey('home'),
+        title: 'Home',
         child: HomeScreen(),
       ),
     ];
@@ -116,12 +117,17 @@ class BooksLocation extends BeamLocation {
       ...HomeLocation().pagesBuilder(context, state),
       if (state.uri.pathSegments.contains('books'))
         BeamPage(
-          key: ValueKey('books-${state.queryParameters['title'] ?? ''}'),
+          key: ValueKey('books'),
+          title: 'Books',
           child: BooksScreen(),
         ),
       if (state.pathParameters.containsKey('bookId'))
         BeamPage(
           key: ValueKey('book-${state.pathParameters['bookId']}'),
+          title: context.read<Books>().books.firstWhere((book) =>
+              book['id'] ==
+              context
+                  .currentBeamLocation.state.pathParameters['bookId'])['title'],
           child: BookDetailsScreen(
             context.read<Books>().books.firstWhere((book) =>
                 book['id'] ==

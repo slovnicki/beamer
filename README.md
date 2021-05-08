@@ -404,7 +404,7 @@ ElevatedButton(
 You can override `BeamLocation.builder` to provide some data to the entire location, i.e. to all the `pages`. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/provider).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/provider/provider-example.gif" alt="provider-example"  width="260">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/provider/example-provider.gif" alt="example-provider">
 
 ```dart
 // In your location implementation

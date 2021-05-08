@@ -1,9 +1,9 @@
 # Provider Example
 
-An example app to showcase `Beamer` in combination with `Provider`.
-
-Run `flutter create .` to generate all necessary files, if needed.
+This example app shows `Beamer` in combination with [Provider](https://pub.dev/packages/provider).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer_examples/master/location_builder/example-location-builder.gif" alt="example-books" width="240">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/provider/example-provider.gif" alt="example-provider">
 </p>
+
+Run `flutter create .` to generate all necessary files, if needed.
