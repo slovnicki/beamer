@@ -40,17 +40,23 @@ class BooksBloc extends Bloc<BooksEvent, BooksState> {
         _firstTimeBooks = false;
       }
       final books = _books.map((book) => Book.fromJson(book)).toList();
+
       yield BooksLoaded(books);
     }
+
     if (event is LoadBook) {
       yield Loading();
       await Future.delayed(Duration(milliseconds: 200));
+
       try {
-        final book = _books.firstWhere(
-          (book) => book['id'] == event.bookId.toString(),
-        );
+        final book =
+            _books.firstWhere((book) => book['id'] == event.bookId.toString());
+
+        print(book);
+
         yield BookLoaded(Book.fromJson(book));
       } catch (e) {
+        print(e);
         yield BookNotFound();
       }
     }

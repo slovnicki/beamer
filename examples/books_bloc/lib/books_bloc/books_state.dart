@@ -2,19 +2,19 @@ part of 'books_bloc.dart';
 
 class Book {
   Book({
-    this.id,
-    this.title,
-    this.author,
+    required this.id,
+    required this.title,
+    required this.author,
   });
+
+  final int id;
+  final String title;
+  final String author;
 
   Book.fromJson(Map<String, dynamic> json)
       : id = int.parse(json['id']),
         title = json['title'],
         author = json['author'];
-
-  final int id;
-  final String title;
-  final String author;
 }
 
 @immutable
