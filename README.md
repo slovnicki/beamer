@@ -422,17 +422,18 @@ Widget builder(BuildContext context, Navigator navigator) {
 You can define global guards (for example, authentication guard) or location guards that keep a specific location safe. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/guards).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/guards/example-guards.gif" alt="example-guards"  width="520">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/guards/example-guards.gif" alt="example-guards">
 
 - Global Guards
 
 ```dart
 BeamerRouterDelegate(
   guards: [
+    // Redirect to /login if the user is not authenticated:
     BeamGuard(
       pathBlueprints: ['/books*'],
-      check: (context, location) => AuthenticationStateProvider.of(context).isAuthenticated.value,
-      beamTo: (context) => LoginLocation(),
+      check: (context, location) => context.isAuthenticated,
+      beamToNamed: '/login',
     ),
   ],
   ...
@@ -445,6 +446,7 @@ BeamerRouterDelegate(
 // in your location implementation
 @override
 List<BeamGuard> get guards => [
+  // Show forbiddenPage if the user tries to enter books/2:
   BeamGuard(
     pathBlueprints: ['/books/*'],
     check: (context, location) => location.pathParameters['bookId'] != '2',
