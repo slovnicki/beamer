@@ -375,7 +375,7 @@ Here is a recreation of the example app from [this article](https://medium.com/f
 It contains three different options of building the locations. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/location_builders).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer_examples/master/location_builders/example-location-builders.gif" alt="example-location-builders">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/location_builders/example-location-builders.gif" alt="example-location-builders">
 
 ## Advanced Books
 
