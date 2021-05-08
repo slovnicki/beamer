@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
+import 'package:provider/provider.dart';
 
 // DATA
 const List<Map<String, String>> books = [
@@ -32,21 +33,16 @@ class HomeScreen extends StatelessWidget {
         title: Text('Home Screen'),
       ),
       body: Center(
-        child: Column(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () => context.beamToNamed('/books'),
-                  child: Text('Beam to books location'),
-                ),
-                ElevatedButton(
-                  onPressed: () => context.beamToNamed('/books/2'),
-                  child: Text('Beam to forbidden book'),
-                ),
-              ],
+            ElevatedButton(
+              onPressed: () => context.beamToNamed('/books'),
+              child: Text('Beam to books location'),
+            ),
+            ElevatedButton(
+              onPressed: () => context.beamToNamed('/books/2'),
+              child: Text('Beam to forbidden book'),
             ),
           ],
         ),
@@ -58,20 +54,32 @@ class HomeScreen extends StatelessWidget {
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final isAuthenticated =
+        Provider.of<AuthenticationNotifier>(context).isAuthenticated;
+
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Login'),
+      ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Text('Not Authenticated!'),
-            ElevatedButton(
-              onPressed: () => AuthenticationStateProvider.of(context)
-                  .isAuthenticated
-                  .value = true,
-              child: Text('login'),
-            ),
-          ],
-        ),
+        child: isAuthenticated
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Successfully logged in.'),
+                  SizedBox(height: 15),
+                  ElevatedButton(
+                    onPressed: () => context.beamToNamed('/books'),
+                    child: Text('Beam to books location'),
+                  ),
+                ],
+              )
+            : ElevatedButton(
+                onPressed: () =>
+                    Provider.of<AuthenticationNotifier>(context, listen: false)
+                        .login(),
+                child: Text('Login'),
+              ),
       ),
     );
   }
@@ -86,11 +94,13 @@ class BooksScreen extends StatelessWidget {
       ),
       body: ListView(
         children: books
-            .map((book) => ListTile(
-                  title: Text(book['title']),
-                  subtitle: Text(book['author']),
-                  onTap: () => context.beamToNamed('/books/${book['id']}'),
-                ))
+            .map(
+              (book) => ListTile(
+                title: Text(book['title']!),
+                subtitle: Text(book['author']!),
+                onTap: () => context.beamToNamed('/books/${book['id']}'),
+              ),
+            )
             .toList(),
       ),
     );
@@ -98,39 +108,18 @@ class BooksScreen extends StatelessWidget {
 }
 
 class BookDetailsScreen extends StatelessWidget {
-  BookDetailsScreen({
-    this.bookId,
-  }) : book = books.firstWhere((book) => book['id'] == bookId);
-
-  final String bookId;
+  const BookDetailsScreen({required this.book});
   final Map<String, String> book;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(book['title']),
+        title: Text(book['title']!),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            ElevatedButton(
-              onPressed: () => context.beamToNamed(
-                '/books/$bookId/genres',
-                data: {'book': book},
-              ),
-              child: Text('See genres'),
-            ),
-            ElevatedButton(
-              onPressed: () => context.beamToNamed(
-                '/books/$bookId/buy',
-                data: {'book': book},
-              ),
-              child: Text('Buy'),
-            ),
-          ],
-        ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text('Author: ${book['author']!}'),
       ),
     );
   }
@@ -138,8 +127,6 @@ class BookDetailsScreen extends StatelessWidget {
 
 // LOCATIONS
 class HomeLocation extends BeamLocation {
-  HomeLocation(BeamState state) : super(state);
-
   @override
   List<String> get pathBlueprints => ['/'];
 
@@ -147,14 +134,13 @@ class HomeLocation extends BeamLocation {
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('home'),
+          title: 'Home',
           child: HomeScreen(),
         ),
       ];
 }
 
 class LoginLocation extends BeamLocation {
-  LoginLocation(BeamState state) : super(state);
-
   @override
   List<String> get pathBlueprints => ['/login'];
 
@@ -162,44 +148,53 @@ class LoginLocation extends BeamLocation {
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('login'),
+          title: 'Login',
           child: LoginScreen(),
         ),
       ];
 }
 
 class BooksLocation extends BeamLocation {
-  BooksLocation(BeamState state) : super(state);
-
   @override
   List<String> get pathBlueprints => ['/books/:bookId'];
 
   @override
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
-        ...HomeLocation(state).pagesBuilder(context, state),
+        ...HomeLocation().pagesBuilder(context, state),
         if (state.uri.pathSegments.contains('books'))
           BeamPage(
             key: ValueKey('books'),
+            title: 'Books',
             child: BooksScreen(),
           ),
         if (state.pathParameters.containsKey('bookId'))
           BeamPage(
             key: ValueKey('book-${state.pathParameters['bookId']}'),
+            title: books.firstWhere((book) =>
+                book['id'] ==
+                context.currentBeamLocation.state
+                    .pathParameters['bookId'])['title'],
             child: BookDetailsScreen(
-              bookId: state.pathParameters['bookId'],
-            ),
+                book: books.firstWhere((book) =>
+                    book['id'] ==
+                    context
+                        .currentBeamLocation.state.pathParameters['bookId'])),
           ),
       ];
 
   final forbiddenPage = BeamPage(
+    key: ValueKey('forbidden'),
+    title: 'Forbidden',
     child: Scaffold(
       body: Center(
-        child: Text('Forbidden'),
+        child: Text('Forbidden.'),
       ),
     ),
   );
 
   @override
   List<BeamGuard> get guards => [
+        // Show forbiddenPage if the user tries to enter books/2:
         BeamGuard(
           replaceCurrentStack: false,
           pathBlueprints: ['/books/*'],
@@ -211,74 +206,49 @@ class BooksLocation extends BeamLocation {
 }
 
 // AUTHENTICATION STATE
-class AuthenticationStateProvider extends InheritedWidget {
-  AuthenticationStateProvider({
-    Key key,
-    @required this.isAuthenticated,
-    Widget child,
-  }) : super(key: key, child: child);
+class AuthenticationNotifier extends ChangeNotifier {
+  bool _isAuthenticated = false;
 
-  final ValueNotifier<bool> isAuthenticated;
+  bool get isAuthenticated => _isAuthenticated;
 
-  static AuthenticationStateProvider of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<AuthenticationStateProvider>();
-
-  @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) => true;
+  void login() {
+    _isAuthenticated = true;
+    notifyListeners();
+  }
 }
 
 // APP
 class MyApp extends StatelessWidget {
-  final ValueNotifier<bool> _isAuthenticated = ValueNotifier<bool>(false);
-
-  final authGuard = BeamGuard(
-    pathBlueprints: ['/books*'],
-    check: (context, location) =>
-        AuthenticationStateProvider.of(context).isAuthenticated.value,
-    onCheckFailed: (context, location) => print('failed $location'),
-    beamToNamed: '/login',
-  );
-  final notFoundPage = BeamPage(
-    child: Scaffold(
-      body: Center(
-        child: Text('Not found'),
-      ),
+  final routerDelegate = BeamerRouterDelegate(
+    locationBuilder: BeamerLocationBuilder(
+      beamLocations: [
+        HomeLocation(),
+        LoginLocation(),
+        BooksLocation(),
+      ],
     ),
+    guards: [
+      // Redirect to /login if the user is not authenticated:
+      BeamGuard(
+        pathBlueprints: ['/books*'],
+        check: (context, location) =>
+            Provider.of<AuthenticationNotifier>(context).isAuthenticated,
+        beamToNamed: '/login',
+      ),
+    ],
   );
 
   @override
   Widget build(BuildContext context) {
-    final routerDelegate = BeamerRouterDelegate(
-      locationBuilder: (state) {
-        if (state.uri.pathSegments.contains('books')) {
-          return BooksLocation(state);
-        }
-        if (state.uri.pathSegments.contains('login')) {
-          return LoginLocation(state);
-        }
-        return HomeLocation(state);
-      },
-      notFoundPage: notFoundPage,
-      guards: [authGuard],
-    );
-    return ValueListenableBuilder(
-      valueListenable: _isAuthenticated,
-      builder: (context, isAuthenticated, child) {
-        return AuthenticationStateProvider(
-          isAuthenticated: _isAuthenticated,
-          child: MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            routerDelegate: routerDelegate,
-            routeInformationParser: BeamerRouteInformationParser(),
-            backButtonDispatcher:
-                BeamerBackButtonDispatcher(delegate: routerDelegate),
-          ),
-        );
-      },
+    return ChangeNotifierProvider(
+      create: (context) => AuthenticationNotifier(),
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        routerDelegate: routerDelegate,
+        routeInformationParser: BeamerRouteInformationParser(),
+      ),
     );
   }
 }
 
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(MyApp());

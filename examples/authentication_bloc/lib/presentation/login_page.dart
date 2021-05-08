@@ -1,15 +1,17 @@
-import 'package:authentication_bloc/bloc/login_bloc.dart';
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+
+import '../bloc/login_bloc.dart';
 
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: BlocProvider(
           create: (context) => LoginBloc(
-            authenticationRepository: RepositoryProvider.of<AuthenticationRepository>(context),
+            authenticationRepository:
+                RepositoryProvider.of<AuthenticationRepository>(context),
           ),
           child: Center(child: LoginForm()),
         ),
@@ -77,7 +79,8 @@ class _UsernameInput extends StatelessWidget {
       autofillHints: [AutofillHints.email, AutofillHints.username],
       autocorrect: false,
       keyboardType: TextInputType.emailAddress,
-      onChanged: (username) => context.read<LoginBloc>().add(LoginUsernameChanged(username.trim())),
+      onChanged: (username) =>
+          context.read<LoginBloc>().add(LoginUsernameChanged(username.trim())),
       decoration: InputDecoration(
         hintText: 'Username',
         errorText: username.invalid ? 'Invalid username' : null,
@@ -100,7 +103,8 @@ class _PasswordInput extends StatelessWidget {
       key: const Key('loginForm_passwordInput_textField'),
       controller: _controller,
       autofillHints: [AutofillHints.password],
-      onChanged: (password) => context.read<LoginBloc>().add(LoginPasswordChanged(password)),
+      onChanged: (password) =>
+          context.read<LoginBloc>().add(LoginPasswordChanged(password)),
       obscureText: true,
       decoration: InputDecoration(
         hintText: 'Password',

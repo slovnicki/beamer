@@ -30,6 +30,9 @@ class SomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
       ),
+      body: Center(
+        child: Text(title),
+      ),
     );
   }
 }
@@ -60,6 +63,7 @@ class HomeLocation extends BeamLocation {
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('home'),
+          title: 'Home',
           child: HomeScreen(),
         ),
       ];
@@ -71,28 +75,29 @@ class DeepLocation extends BeamLocation {
 
   @override
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
-        BeamPage(
-          key: ValueKey('home'),
-          child: HomeScreen(),
-        ),
+        ...HomeLocation().pagesBuilder(context, state),
         if (state.uri.pathSegments.contains('a'))
           BeamPage(
             key: ValueKey('a'),
+            title: 'a',
             child: SomeScreen('1'),
           ),
         if (state.uri.pathSegments.contains('b'))
           BeamPage(
             key: ValueKey('b'),
+            title: 'b',
             child: SomeScreen('2'),
           ),
         if (state.uri.pathSegments.contains('c'))
           BeamPage(
             key: ValueKey('c'),
+            title: 'c',
             child: SomeScreen('3'),
           ),
         if (state.uri.pathSegments.contains('d'))
           BeamPage(
             key: ValueKey('d'),
+            title: 'd',
             child: DeepestScreen(),
           ),
       ];

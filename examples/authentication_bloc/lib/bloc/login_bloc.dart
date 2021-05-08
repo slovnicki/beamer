@@ -4,8 +4,8 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
-import 'package:authentication_bloc/login/models/password.dart';
-import 'package:authentication_bloc/login/models/username.dart';
+
+import '../login/models/models.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
@@ -66,6 +66,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       yield _mapUsernameChangedToState(event, state);
     else if (event is LoginPasswordChanged)
       yield _mapPasswordChangedToState(event, state);
-    else if (event is LoginSubmitted) yield* _mapLoginSubmittedToState(event, state);
+    else if (event is LoginSubmitted)
+      yield* _mapLoginSubmittedToState(event, state);
   }
 }

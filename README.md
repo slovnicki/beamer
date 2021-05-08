@@ -375,7 +375,7 @@ Here is a recreation of the example app from [this article](https://medium.com/f
 It contains three different options of building the locations. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/location_builders).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer_examples/master/location_builders/example-location-builders.gif" alt="example-location-builders">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/location_builders/example-location-builders.gif" alt="example-location-builders">
 
 ## Advanced Books
 
@@ -389,7 +389,7 @@ For a step further, we add more flows to demonstrate the power of Beamer. The fu
 You can instantly beam to a location in your app that has many pages stacked (deep linking) and then pop them one by one or simply `beamBack` to where you came from. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/deep_location). Note that `beamBackOnPop` parameter of `beamToNamed` might be useful here to override `AppBar`'s `pop` with `beamBack`.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/deep_location/example-deep-location.gif" alt="example-deep-location" width="260">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/deep_location/example-deep-location.gif" alt="example-deep-location">
 
 ```dart
 ElevatedButton(
@@ -404,7 +404,7 @@ ElevatedButton(
 You can override `BeamLocation.builder` to provide some data to the entire location, i.e. to all the `pages`. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/provider).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/provider/provider-example.gif" alt="provider-example"  width="260">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/provider/example-provider.gif" alt="example-provider">
 
 ```dart
 // In your location implementation
@@ -422,17 +422,18 @@ Widget builder(BuildContext context, Navigator navigator) {
 You can define global guards (for example, authentication guard) or location guards that keep a specific location safe. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/guards).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/guards/example-guards.gif" alt="example-guards"  width="520">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/guards/example-guards.gif" alt="example-guards">
 
 - Global Guards
 
 ```dart
 BeamerRouterDelegate(
   guards: [
+    // Redirect to /login if the user is not authenticated:
     BeamGuard(
       pathBlueprints: ['/books*'],
-      check: (context, location) => AuthenticationStateProvider.of(context).isAuthenticated.value,
-      beamTo: (context) => LoginLocation(),
+      check: (context, location) => context.isAuthenticated,
+      beamToNamed: '/login',
     ),
   ],
   ...
@@ -445,6 +446,7 @@ BeamerRouterDelegate(
 // in your location implementation
 @override
 List<BeamGuard> get guards => [
+  // Show forbiddenPage if the user tries to enter books/2:
   BeamGuard(
     pathBlueprints: ['/books/*'],
     check: (context, location) => location.pathParameters['bookId'] != '2',

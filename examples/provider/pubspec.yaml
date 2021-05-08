@@ -1,4 +1,4 @@
-name: location_builder
+name: provider
 description: An example app to showcase Beamer in combination with Provider.
 
 publish_to: "none"

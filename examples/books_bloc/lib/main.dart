@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:example/books_bloc/books_bloc.dart';
+import 'books_bloc/books_bloc.dart';
 
 // SCREENS
 class HomeScreen extends StatelessWidget {
@@ -14,10 +14,9 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Center(
         child: ElevatedButton(
-          onPressed: () {
-            context.beamToNamed('/books');
-            context.read<BooksBloc>().add(LoadBooks());
-          },
+          onPressed: () => context
+            ..read<BooksBloc>().add(LoadBooks())
+            ..beamToNamed('/books'),
           child: Text('See books'),
         ),
       ),
@@ -28,34 +27,32 @@ class HomeScreen extends StatelessWidget {
 class BooksScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Books'),
-      ),
-      body: BlocBuilder<BooksBloc, BooksState>(
-        builder: (context, state) {
-          if (state is BooksLoaded) {
-            return ListView(
+    final state = context.watch<BooksBloc>().state;
+
+    return state is BooksLoaded
+        ? Scaffold(
+            appBar: AppBar(
+              title: Text('Books'),
+            ),
+            body: ListView(
               children: state.books
                   .map(
                     (book) => ListTile(
                       title: Text(book.title),
                       subtitle: Text(book.author),
-                      onTap: () {
-                        context.beamToNamed('/books/${book.id}');
-                        context.read<BooksBloc>().add(LoadBook(book.id));
-                      },
+                      onTap: () => context
+                        ..read<BooksBloc>().add(LoadBook(book.id))
+                        ..beamToNamed('/books/${book.id}'),
                     ),
                   )
                   .toList(),
-            );
-          }
-          return Center(
-            child: CircularProgressIndicator(),
+            ),
+          )
+        : Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
           );
-        },
-      ),
-    );
   }
 }
 
@@ -63,24 +60,24 @@ class BookDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<BooksBloc>().state;
-    if (state is Loading) {
-      return Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-    return Scaffold(
-      appBar: AppBar(
-        title: state is BookLoaded ? Text(state.book.title) : Text('Not Found'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: state is BookLoaded
-            ? Text('Author: ${state.book.author}')
-            : Text('Not Found'),
-      ),
-    );
+
+    return state is BookLoaded
+        ? Scaffold(
+            appBar: AppBar(
+              title: Text(state.book.title),
+            ),
+            body: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Author: ${state.book.author}'),
+            ),
+          )
+        : Scaffold(
+            body: Center(
+              child: state is BookNotFound
+                  ? Text('Book not found')
+                  : CircularProgressIndicator(),
+            ),
+          );
   }
 }
 
@@ -93,17 +90,15 @@ class BooksLocation extends BeamLocation {
   final BooksBloc _booksBloc = BooksBloc();
 
   void _listener() {
-    if (state.pathBlueprintSegments.isEmpty) {
-      return;
-    }
+    if (state.pathBlueprintSegments.isEmpty) return;
+
     final bookId = state.pathParameters.containsKey('bookId')
-        ? int.parse(state.pathParameters['bookId'])
+        ? int.parse(state.pathParameters['bookId']!)
         : null;
-    if (bookId == null) {
-      _booksBloc.add(LoadBooks());
-    } else {
-      _booksBloc.add(LoadBook(bookId));
-    }
+
+    bookId == null
+        ? _booksBloc.add(LoadBooks())
+        : _booksBloc.add(LoadBook(bookId));
   }
 
   @override
@@ -121,16 +116,19 @@ class BooksLocation extends BeamLocation {
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('home'),
+          title: 'Home',
           child: HomeScreen(),
         ),
         if (state.uri.pathSegments.contains('books'))
           BeamPage(
             key: ValueKey('books'),
+            title: 'Books',
             child: BooksScreen(),
           ),
         if (state.pathParameters.containsKey('bookId'))
           BeamPage(
             key: ValueKey('book-${state.pathParameters['bookId']}'),
+            title: 'Book Details',
             child: BookDetailsScreen(),
           ),
       ];
@@ -138,20 +136,20 @@ class BooksLocation extends BeamLocation {
 
 // APP
 class MyApp extends StatelessWidget {
-  final _routerDelegate = BeamerRouterDelegate(
+  final routerDelegate = BeamerRouterDelegate(
     locationBuilder: BeamerLocationBuilder(
       beamLocations: [
         BooksLocation(),
       ],
     ),
   );
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routerDelegate: _routerDelegate,
+      debugShowCheckedModeBanner: false,
+      routerDelegate: routerDelegate,
       routeInformationParser: BeamerRouteInformationParser(),
-      backButtonDispatcher:
-          BeamerBackButtonDispatcher(delegate: _routerDelegate),
     );
   }
 }

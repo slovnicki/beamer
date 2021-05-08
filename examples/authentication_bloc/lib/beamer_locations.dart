@@ -1,7 +1,8 @@
-import 'package:authentication_bloc/presentation/logged_in_page.dart';
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import 'package:authentication_bloc/presentation/login_page.dart';
+
+import 'presentation/logged_in_page.dart';
+import 'presentation/login_page.dart';
 
 class BeamerLocations extends BeamLocation {
   BeamerLocations(BeamState state) : super(state);
@@ -18,11 +19,13 @@ class BeamerLocations extends BeamLocation {
       if (state.uri.pathSegments.contains('login'))
         BeamPage(
           key: ValueKey('login'),
+          title: 'Login',
           child: LoginPage(),
         ),
       if (state.uri.pathSegments.contains('logged_in_page'))
         BeamPage(
           key: ValueKey('show_selection'),
+          title: 'Logged In',
           child: LoggedInPage(),
         ),
     ];

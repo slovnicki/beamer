@@ -1,9 +1,9 @@
 name: authentication_bloc
-description: A new Flutter project.
+description: Authentication bloc example app.
 
-publish_to: none
+publish_to: "none"
 
-version: 0.0.1
+version: 1.0.0+1
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -18,8 +18,7 @@ dependencies:
   flutter_bloc: ^7.0.0
   hydrated_bloc: ^7.0.0
   path_provider: ^2.0.1
-
-  formz: ^0.4.0-nullsafety.0
+  formz: ^0.4.0
 
   authentication_repository:
     path: packages/authentication_repository
@@ -27,7 +26,6 @@ dependencies:
     path: packages/user_repository
 
 dev_dependencies:
-  test: ^1.16.5
   flutter_test:
     sdk: flutter
 
