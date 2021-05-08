@@ -47,10 +47,10 @@ Handle your application routing, synchronize it with browser URL and more. Beame
   - [Nested Navigation](#nested-navigation)
   - [General Notes](#general-notes)
 - [Examples](#examples)
-  - [Books](#books)
+  - [Location Builders](#location-builders)
   - [Advanced Books](#advanced-books)
   - [Deep Location](#deep-location)
-  - [Location Builder](#location-builder)
+  - [Provider](#provider)
   - [Guards](#guards)
   - [Nested Navigation](#nested-navigation)
   - [Integration with Navigation UI Packages](#integration-with-navigation-ui-packages)
@@ -270,6 +270,7 @@ class MyApp extends StatelessWidget {
       return HomeLocation(state);
     },
   );
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
@@ -368,44 +369,45 @@ class MyApp extends StatelessWidget {
 
 # Examples
 
-## Books
+## Location Builders
 
-Here is a recreation of books example from [this article](https://medium.com/flutter/learning-flutters-new-navigation-and-routing-system-7c9068155ade) where you can learn a lot about Navigator 2.0. See [Example](https://pub.dev/packages/beamer/example) for full application code of this example.
+Here is a recreation of the example app from [this article](https://medium.com/flutter/learning-flutters-new-navigation-and-routing-system-7c9068155ade) where you can learn a lot about Navigator 2.0. 
+It contains three different options of building the locations. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/location_builders).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/resources/example-books.gif" alt="example-books" width="520">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/location_builders/example-location-builders.gif" alt="example-location-builders">
 
 ## Advanced Books
 
 For a step further, we add more flows to demonstrate the power of Beamer. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/advanced_books).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/advanced_books/example-advanced-books.gif" alt="example-advanced-books" width="520">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/advanced_books/example-advanced-books.gif" alt="example-advanced-books">
 
 ## Deep Location
 
-You can instantly beam to a location in your app that has many pages stacked (deep linking) and then pop them one by one or simply `beamBack` to where you came from. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/deep_location). Note that `beamBackOnPop` parameter of `beamTo` might be useful here to override `AppBar`'s `pop` with `beamBack`.
+You can instantly beam to a location in your app that has many pages stacked (deep linking) and then pop them one by one or simply `beamBack` to where you came from. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/deep_location). Note that `beamBackOnPop` parameter of `beamToNamed` might be useful here to override `AppBar`'s `pop` with `beamBack`.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/deep_location/example-deep-location.gif" alt="example-deep-location" width="260">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/deep_location/example-deep-location.gif" alt="example-deep-location">
 
 ```dart
 ElevatedButton(
-  onPressed: () => context.beamTo(DeepLocation('/a/b/c/d')),
-  // onPressed: () => context.beamTo(DeepLocation('/a/b/c/d'), beamBackOnPop: true),
-  child: Text('Beam deep'),
+    onPressed: () => context.beamToNamed('/a/b/c/d'),
+    //onPressed: () => context.beamToNamed('/a/b/c/d', beamBackOnPop: true),
+    child: Text('Beam deep'),
 ),
 ```
 
-## Location Builder
+## Provider
 
-You can override `BeamLocation.builder` to provide some data to the entire location, i.e. to all the `pages`. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/location_builder).
+You can override `BeamLocation.builder` to provide some data to the entire location, i.e. to all the `pages`. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/provider).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/location_builder/example-location-builder.gif" alt="example-location-builder"  width="260">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/provider/example-provider.gif" alt="example-provider">
 
 ```dart
-// in your location implementation
+// In your location implementation
 @override
 Widget builder(BuildContext context, Navigator navigator) {
   return MyProvider<MyObject>(
@@ -420,17 +422,18 @@ Widget builder(BuildContext context, Navigator navigator) {
 You can define global guards (for example, authentication guard) or location guards that keep a specific location safe. The full code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/guards).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/guards/example-guards.gif" alt="example-guards"  width="520">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/guards/example-guards.gif" alt="example-guards">
 
 - Global Guards
 
 ```dart
 BeamerRouterDelegate(
   guards: [
+    // Redirect to /login if the user is not authenticated:
     BeamGuard(
       pathBlueprints: ['/books*'],
-      check: (context, location) => AuthenticationStateProvider.of(context).isAuthenticated.value,
-      beamTo: (context) => LoginLocation(),
+      check: (context, location) => context.isAuthenticated,
+      beamToNamed: '/login',
     ),
   ],
   ...
@@ -443,6 +446,7 @@ BeamerRouterDelegate(
 // in your location implementation
 @override
 List<BeamGuard> get guards => [
+  // Show forbiddenPage if the user tries to enter books/2:
   BeamGuard(
     pathBlueprints: ['/books/*'],
     check: (context, location) => location.pathParameters['bookId'] != '2',
