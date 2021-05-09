@@ -83,7 +83,7 @@ void main() {
 
   testWidgets('Root delegate can be obtained from children', (tester) async {
     await tester.pumpWidget(app);
-    testContext!.beamToNamed('/test2/x');
+    testContext!.popToNamed('/test2/x');
     await tester.pump();
     expect(rootDelegate, isA<BeamerRouterDelegate>());
   });

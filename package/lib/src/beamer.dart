@@ -112,6 +112,27 @@ extension BeamerExtensions on BuildContext {
     );
   }
 
+  /// {@macro popToNamed}
+  void popToNamed(
+    String uri, {
+    Map<String, dynamic> data = const <String, dynamic>{},
+    String? popToNamed,
+    bool beamBackOnPop = false,
+    bool popBeamLocationOnPop = false,
+    bool stacked = true,
+    bool replaceCurrent = false,
+  }) {
+    Beamer.of(this).popToNamed(
+      uri,
+      data: data,
+      popToNamed: popToNamed,
+      beamBackOnPop: beamBackOnPop,
+      popBeamLocationOnPop: popBeamLocationOnPop,
+      stacked: stacked,
+      replaceCurrent: replaceCurrent,
+    );
+  }
+
   /// {@macro beamBack}
   void beamBack() => Beamer.of(this).beamBack();
 

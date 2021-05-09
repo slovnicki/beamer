@@ -181,4 +181,16 @@ void main() {
     expect(router.currentLocation, isA<Location2>());
     expect(router.beamStateHistory.length, 3);
   });
+
+  testWidgets('popToNamed() beams correctly', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routeInformationParser: BeamerRouteInformationParser(),
+        routerDelegate: router,
+      ),
+    );
+    router.popToNamed('/l1/one');
+    await tester.pump();
+    expect(router.currentLocation, isA<Location1>());
+  });
 }

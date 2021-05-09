@@ -370,6 +370,32 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     );
   }
 
+  /// {@template popToNamed}
+  /// Calls [beamToNamed] with a [ReverseTransitionDelegate].
+  ///
+  /// See [beamToNamed] for more details.
+  /// {@endtemplate}
+  void popToNamed(
+    String uri, {
+    Map<String, dynamic> data = const <String, dynamic>{},
+    String? popToNamed,
+    bool beamBackOnPop = false,
+    bool popBeamLocationOnPop = false,
+    bool stacked = true,
+    bool replaceCurrent = false,
+  }) {
+    beamToNamed(
+      uri,
+      data: data,
+      popToNamed: popToNamed,
+      transitionDelegate: const ReverseTransitionDelegate(),
+      beamBackOnPop: beamBackOnPop,
+      popBeamLocationOnPop: popBeamLocationOnPop,
+      stacked: stacked,
+      replaceCurrent: replaceCurrent,
+    );
+  }
+
   /// {@template canBeamBack}
   /// Whether it is possible to [beamBack],
   /// i.e. there is more than 1 state in [beamStateHistory].
