@@ -469,15 +469,9 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
 
   @override
   Widget build(BuildContext context) {
-    BeamGuard? guard = _checkGuard(guards, context, _currentLocation);
+    BeamGuard? guard = _checkGuards(guards, context, _currentLocation);
     if (guard != null && guard.showPage == null) {
       _applyGuard(guard, context);
-    }
-    if (guard == null) {
-      guard = _checkGuard(currentLocation.guards, context, _currentLocation);
-      if (guard != null && guard.showPage == null) {
-        _applyGuard(guard, context);
-      }
     }
     if ((_currentLocation is NotFound) && notFoundRedirect != null) {
       _currentLocation.removeListener(_notify);
@@ -614,7 +608,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     notifyListeners();
   }
 
-  BeamGuard? _checkGuard(
+  BeamGuard? _checkGuards(
     List<BeamGuard> guards,
     BuildContext context,
     BeamLocation location,
@@ -625,22 +619,35 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
         return guard;
       }
     }
+    for (var guard in location.guards) {
+      if (guard.shouldGuard(location) && !guard.check(context, location)) {
+        guard.onCheckFailed?.call(context, location);
+        return guard;
+      }
+    }
     return null;
   }
 
   void _applyGuard(BeamGuard guard, BuildContext context) {
+    var beamLocation;
+    if (guard.beamTo != null) {
+      beamLocation = guard.beamTo!(context);
+    } else if (guard.beamToNamed != null) {
+      state = createState!(Uri.parse(guard.beamToNamed!));
+      beamLocation = locationBuilder(_state);
+    }
+
+    final anotherGuard = _checkGuards(guards, context, beamLocation);
+    if (anotherGuard != null && anotherGuard.showPage == null) {
+      return _applyGuard(anotherGuard, context);
+    }
+
     _currentLocation.removeListener(_notify);
     if (guard.replaceCurrentStack && _beamLocationHistory.isNotEmpty) {
       _beamLocationHistory.removeLast();
     }
-    if (guard.beamTo != null) {
-      _pushHistory(guard.beamTo!(context));
-    } else if (guard.beamToNamed != null) {
-      state = createState!(Uri.parse(guard.beamToNamed!));
-      final location = locationBuilder(_state);
-      _pushHistory(location);
-      updateRouteInformation(location.state.uri, force: true);
-    }
+    _pushHistory(beamLocation);
+    updateRouteInformation(beamLocation.state.uri, force: true);
   }
 
   void _pushHistory(BeamLocation location) {
