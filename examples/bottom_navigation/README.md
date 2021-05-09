@@ -1,6 +1,8 @@
 # Bottom Navigation Example
 
-Run `flutter create .` to generate all necessary files, if needed.
+This example shows how to use `Beamer` with a bottom navigation bar.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer_examples/master/bottom_navigation/example-bottom-navigation-mobile.gif" alt="example-books" width="240">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/bottom_navigation/example-bottom-navigation.gif" alt="example-bottom-navigation">
+
+Run `flutter create .` to generate all necessary files, if needed.

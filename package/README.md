@@ -52,7 +52,9 @@ Handle your application routing, synchronize it with browser URL and more. Beame
   - [Deep Location](#deep-location)
   - [Provider](#provider)
   - [Guards](#guards)
-  - [Nested Navigation](#nested-navigation)
+  - [Bottom Navigation](#bottom-navigation)
+  - [Bottom Navigation Multiple Beamers](#bottom-navigation-multiple-beamers)
+  - [Nested Navigation](#nested-navigation-1)
   - [Integration with Navigation UI Packages](#integration-with-navigation-ui-packages)
 - [Migrating](#migrating)
   - [From 0.11 to 0.12](#from-011-to-012)
@@ -320,36 +322,43 @@ final routerDelegate = BeamerRouterDelegate(
 
 ## Nested Navigation
 
-When nested navigation is needed, you can just put `Beamer` anywhere in the Widget tree where this navigation will take place. There is no limit on how many `Beamer`s an app can have. Common use case is bottom bar navigation, something like this:
+When nested navigation is needed, you can just put `Beamer` anywhere in the Widget tree where this navigation will take place. There is no limit on how many `Beamer`s an app can have. Common use case is a bottom navigation bar ([see example](#bottom-navigation)), something like this:
 
 ```dart
 class MyApp extends StatelessWidget {
-  final _beamerKey = GlobalKey<BeamerState>();
+  final routerDelegate = BeamerRouterDelegate(
+    initialPath: '/books',
+    locationBuilder: SimpleLocationBuilder(
+      routes: {
+        '/*': (context) {
+          final beamerKey = GlobalKey<BeamerState>();
+
+          return Scaffold(
+            body: Beamer(
+              key: beamerKey,
+              routerDelegate: BeamerRouterDelegate(
+                locationBuilder: BeamerLocationBuilder(
+                  beamLocations: [
+                    BooksLocation(),
+                    ArticlesLocation(),
+                  ],
+                ),
+              ),
+            ),
+            bottomNavigationBar: BottomNavigationBarWidget(
+              beamerKey: beamerKey,
+            ),
+          );
+        }
+      },
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      routerDelegate: routerDelegate,
       routeInformationParser: BeamerRouteInformationParser(),
-      routerDelegate: BeamerRouterDelegate(
-        initialPath: '/books',
-        locationBuilder: SimpleLocationBuilder(
-          routes: {
-            '/': (context) => Scaffold(
-              body: Beamer(
-                key: _beamerKey,
-                routerDelegate: BeamerRouterDelegate(
-                  locationBuilder: BeamerLocationBuilder(
-                    beamLocations: _beamLocations,
-                  ),
-                ),
-              ),
-              bottomNavigationBar: BottomNavigationBarWidget(
-                beamerKey: _beamerKey,
-              ),
-            ),
-          },
-        ),
-      ),
     );
   }
 }
@@ -454,148 +463,27 @@ List<BeamGuard> get guards => [
   ),
 ];
 ```
-## Nested Navigation
+## Bottom Navigation
 
-Examples of putting `Beamer`s into the Widget tree, when you need nested navigation.
+An examples of putting `Beamer` into the Widget tree is when using a bottom navigation bar. The code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/bottom_navigation/example-bottom-navigation-mobile.gif" alt="example-bottom-navigation-mobile" width="240" style="margin-right: 32px">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/bottom_navigation_multiple_beamers/example-bottom-navigation-multiple-beamers.gif" alt="example-bottom-navigation-multiple-beamers" width="240">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/bottom_navigation/example-bottom-navigation.gif" alt="example-bottom-navigation">
+
+## Bottom Navigation Multiple Beamers
+
+The code for the bottom navigation example app with multiple beamers is available [here](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation_multiple_beamers)
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/bottom_navigation_multiple_beamers/example-bottom-navigation-multiple-beamers.gif" alt="example-bottom-navigation-multiple-beamers" width="520">
+
+## Nested Navigation
+
+The code for the nested navigation example app is available [here](https://github.com/slovnicki/beamer/tree/master/examples/nested_navigation)
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/nested_navigation/example-nested-navigation.gif" alt="example-nested-navigation" width="520">
 
-- [Bottom navigation example](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation)
-
-```dart
-class MyApp extends StatelessWidget {
-  final _beamerKey = GlobalKey<BeamerState>();
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routeInformationParser: BeamerRouteInformationParser(),
-      routerDelegate: BeamerRouterDelegate(
-        initialPath: '/books',
-        locationBuilder: SimpleLocationBuilder(
-          routes: {
-            '/': (context) => Scaffold(
-              body: Beamer(
-                key: _beamerKey,
-                routerDelegate: BeamerRouterDelegate(
-                  locationBuilder: BeamerLocationBuilder(
-                    beamLocations: _beamLocations,
-                  ),
-                ),
-              ),
-              bottomNavigationBar: BottomNavigationBarWidget(
-                beamerKey: _beamerKey,
-              ),
-            ),
-          },
-        ),
-      ),
-    );
-  }
-}
-```
-
-- [Bottom navigation example with multiple Beamers](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation_multiple_beamers)
-
-```dart
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: [
-          Beamer(routerDelegate: _routerDelegates[0]),
-          Container(
-            color: Colors.blueAccent,
-            padding: const EdgeInsets.all(32.0),
-            child: Beamer(routerDelegate: _routerDelegates[1]),
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        items: [
-          BottomNavigationBarItem(label: 'A', icon: Icon(Icons.article)),
-          BottomNavigationBarItem(label: 'B', icon: Icon(Icons.book)),
-        ],
-        onTap: (index) {
-          setState(() => _currentIndex = index);
-          _routerDelegates[_currentIndex].updateRouteInformation();
-        },
-      ),
-    );
-  }
-```
-
-- [Nested navigation example](https://github.com/slovnicki/beamer/tree/master/examples/nested_navigation)
-
-```dart
-...
-
-class HomeScreen extends StatelessWidget {
-  final _beamerKey = GlobalKey<BeamerState>();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Home')),
-      body: Row(
-        children: [
-          Container(
-            color: Colors.blue[300],
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                MenuButton(
-                  beamer: _beamerKey,
-                  uri: '/books',
-                  child: Text('Books'),
-                ),
-                SizedBox(height: 16.0),
-                MenuButton(
-                  beamer: _beamerKey,
-                  uri: '/articles',
-                  child: Text('Articles'),
-                ),
-              ],
-            ),
-          ),
-          Container(width: 1, color: Colors.blue),
-          if (context.currentBeamLocation.state.uri.path.isEmpty)
-            Expanded(
-              child: Container(
-                child: Center(
-                  child: Text('Home'),
-                ),
-              ),
-            )
-          else
-            Expanded(
-              child: Beamer(
-                key: _beamerKey,
-                routerDelegate: BeamerRouterDelegate(
-                  locationBuilder: (state) {
-                    if (state.uri.pathSegments.contains('articles')) {
-                      return ArticlesLocation(state);
-                    }
-                    return BooksLocation(state);
-                  },
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-```
-
----
 ## Integration with Navigation UI Packages
 
 - [Animated Rail Example](https://github.com/slovnicki/beamer/tree/master/examples/animated_rail), with [animated_rail](https://pub.dev/packages/animated_rail) package.
