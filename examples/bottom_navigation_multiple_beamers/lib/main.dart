@@ -196,8 +196,8 @@ class _AppScreenState extends State<AppScreen> {
 
   @override
   void initState() {
-    currentIndex = widget.beamState.uri.path.contains('books') ? 0 : 1;
     super.initState();
+    currentIndex = widget.beamState.uri.path.contains('books') ? 0 : 1;
   }
 
   @override
