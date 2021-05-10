@@ -87,7 +87,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
 
   /// The path to replace `/` as default initial route path upon load.
   ///
-  /// Not that (if set to anything other than `/` (default)),
+  /// Note that (if set to anything other than `/` (default)),
   /// you will not be able to navigate to `/` by manually typing
   /// it in the URL bar, because it will always be transformed to `initialPath`,
   /// but you will be able to get to `/` by popping pages with back button,
@@ -470,7 +470,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   @override
   Widget build(BuildContext context) {
     BeamGuard? guard = _checkGuards(guards, context, _currentLocation);
-    if (guard != null && guard.showPage == null) {
+    if (guard != null) {
       _applyGuard(guard, context);
     }
     if ((_currentLocation is NotFound) && notFoundRedirect != null) {
@@ -506,13 +506,11 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
               _currentLocation.transitionDelegate ?? _currentTransitionDelegate,
           pages: _currentLocation is NotFound
               ? [notFoundPage!]
-              : guard == null ||
-                      guard.beamTo != null ||
-                      guard.beamToNamed != null
-                  ? _currentPages
-                  : guard.replaceCurrentStack
+              : guard != null && guard.showPage != null
+                  ? guard.replaceCurrentStack
                       ? [guard.showPage!]
-                      : _currentPages + [guard.showPage!],
+                      : _currentPages + [guard.showPage!]
+                  : _currentPages,
           onPopPage: (route, result) {
             if (_popState != null) {
               update(
@@ -629,25 +627,38 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   }
 
   void _applyGuard(BeamGuard guard, BuildContext context) {
-    var beamLocation;
-    if (guard.beamTo != null) {
-      beamLocation = guard.beamTo!(context);
-    } else if (guard.beamToNamed != null) {
-      state = createState!(Uri.parse(guard.beamToNamed!));
-      beamLocation = locationBuilder(_state);
+    if (guard.showPage != null) {
+      return;
     }
 
-    final anotherGuard = _checkGuards(guards, context, beamLocation);
-    if (anotherGuard != null && anotherGuard.showPage == null) {
+    var redirectLocation;
+
+    if (guard.beamTo == null && guard.beamToNamed == null) {
+      _beamStateHistory.removeLast();
+      state = createState!(
+        _beamStateHistory.last.uri,
+        data: _beamStateHistory.last.data,
+      );
+      redirectLocation = locationBuilder(_state);
+    } else if (guard.beamTo != null) {
+      redirectLocation = guard.beamTo!(context);
+    } else if (guard.beamToNamed != null) {
+      state = createState!(Uri.parse(guard.beamToNamed!));
+      redirectLocation = locationBuilder(_state);
+    }
+
+    final anotherGuard = _checkGuards(guards, context, redirectLocation);
+    if (anotherGuard != null) {
       return _applyGuard(anotherGuard, context);
     }
 
     _currentLocation.removeListener(_notify);
     if (guard.replaceCurrentStack && _beamLocationHistory.isNotEmpty) {
+      _beamStateHistory.removeLast();
       _beamLocationHistory.removeLast();
     }
-    _pushHistory(beamLocation);
-    updateRouteInformation(beamLocation.state.uri, force: true);
+    _pushHistory(redirectLocation);
+    updateRouteInformation(redirectLocation.state.uri, force: true);
   }
 
   void _pushHistory(BeamLocation location) {
