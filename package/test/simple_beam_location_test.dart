@@ -12,7 +12,7 @@ void main() {
       },
     ),
   );
-  delegate.setNewRoutePath(Uri.parse('/'));
+  delegate.setNewRoutePath(BeamState.fromUri(Uri.parse('/')));
 
   group('Keys', () {
     testWidgets('each BeamPage has a differenet ValueKey', (tester) async {
@@ -89,7 +89,7 @@ void main() {
           },
         ),
       );
-      delegate1.setNewRoutePath(Uri.parse('/anything'));
+      delegate1.setNewRoutePath(BeamState.fromUri(Uri.parse('/anything')));
       expect(delegate1.currentLocation, isA<SimpleBeamLocation>());
 
       final delegate2 = BeamerRouterDelegate(
@@ -99,7 +99,7 @@ void main() {
           },
         ),
       );
-      delegate2.setNewRoutePath(Uri.parse('/anything'));
+      delegate2.setNewRoutePath(BeamState.fromUri(Uri.parse('/anything')));
       expect(delegate2.currentLocation, isA<SimpleBeamLocation>());
     });
 
@@ -111,7 +111,7 @@ void main() {
           },
         ),
       );
-      delegate1.setNewRoutePath(Uri.parse('/test/1'));
+      delegate1.setNewRoutePath(BeamState.fromUri(Uri.parse('/test/1')));
       expect(delegate1.currentLocation, isA<SimpleBeamLocation>());
     });
   });

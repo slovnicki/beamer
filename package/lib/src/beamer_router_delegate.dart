@@ -6,8 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 /// A delegate that is used by the [Router] to build the [Navigator].
-class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
-    with ChangeNotifier, PopNavigatorRouterDelegateMixin<Uri> {
+class BeamerRouterDelegate<T extends BeamState>
+    extends RouterDelegate<BeamState>
+    with ChangeNotifier, PopNavigatorRouterDelegateMixin<BeamState> {
   BeamerRouterDelegate({
     required this.locationBuilder,
     this.initialPath = '/',
@@ -28,15 +29,11 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
       child: Container(child: Center(child: Text('Not found'))),
     );
 
-    createState ??= (
-      Uri uri, {
-      Map<String, dynamic> data = const <String, dynamic>{},
-    }) =>
-        BeamState.fromUri(uri, data: data) as T;
+    createState ??= (BeamState state) => state.copyWith() as T;
 
     _currentTransitionDelegate = transitionDelegate;
 
-    state = createState!(Uri.parse(initialPath));
+    state = createState!(BeamState.fromUri(Uri.parse(initialPath)));
     _currentLocation = EmptyBeamLocation();
 
     if (listener != null) {
@@ -62,7 +59,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   BeamerRouterDelegate? get parent => _parent;
   set parent(BeamerRouterDelegate? parent) {
     _parent = parent;
-    state = createState!(_parent!.state.uri, data: parent!.state.data);
+    state = createState!(_parent!.state);
     final location = locationBuilder(_state);
     _pushHistory(location);
     _parent!.addListener(_updateFromParent);
@@ -213,11 +210,8 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
 
   /// How to create a [state] for this router delegate.
   ///
-  /// If not set, default `BeamState.fromUri(uri, data: data) as T` is used.
-  T Function(
-    Uri uri, {
-    Map<String, dynamic> data,
-  })? createState;
+  /// If not set, default `BeamState.copyWith() as T` is used.
+  T Function(BeamState state)? createState;
 
   /// Main method to update the state of this; `Beamer.of(context)`,
   ///
@@ -320,10 +314,8 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     bool replaceCurrent = false,
   }) {
     update(
-      state: createState!(location.state.uri, data: location.state.data),
-      popState: popTo != null
-          ? createState!(popTo.state.uri, data: popTo.state.data)
-          : null,
+      state: createState!(location.state),
+      popState: popTo != null ? createState!(popTo.state) : null,
       transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
@@ -358,9 +350,9 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     bool replaceCurrent = false,
   }) {
     update(
-      state: createState!(Uri.parse(uri), data: data),
+      state: createState!(BeamState.fromUri(Uri.parse(uri), data: data)),
       popState: popToNamed != null
-          ? createState!(Uri.parse(popToNamed), data: data)
+          ? createState!(BeamState.fromUri(Uri.parse(popToNamed), data: data))
           : null,
       transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
@@ -417,7 +409,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
     _beamStateHistory.removeLast();
     final state = _beamStateHistory.removeLast();
     update(
-      state: createState!(state.uri, data: state.data),
+      state: createState!(state),
       transitionDelegate: beamBackTransitionDelegate,
     );
     return true;
@@ -461,8 +453,8 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
       _beamLocationHistory.removeRange(0, _beamLocationHistory.length - 1);
 
   @override
-  Uri? get currentConfiguration =>
-      _parent == null ? _currentLocation.state.uri : null;
+  BeamState? get currentConfiguration =>
+      _parent == null ? _currentLocation.state : null;
 
   @override
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
@@ -552,18 +544,18 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   }
 
   @override
-  SynchronousFuture<void> setInitialRoutePath(Uri configuration) {
+  SynchronousFuture<void> setInitialRoutePath(BeamState beamState) {
     if (_currentLocation is! EmptyBeamLocation) {
-      configuration = _currentLocation.state.uri;
-    } else if (configuration.path == '/') {
-      configuration = Uri.parse(initialPath);
+      beamState = _currentLocation.state;
+    } else if (beamState.uri.path == '/') {
+      beamState = BeamState.fromUri(Uri.parse(initialPath));
     }
-    return setNewRoutePath(configuration);
+    return setNewRoutePath(beamState);
   }
 
   @override
-  SynchronousFuture<void> setNewRoutePath(Uri uri) {
-    update(state: createState!(uri));
+  SynchronousFuture<void> setNewRoutePath(BeamState beamState) {
+    update(state: createState!(beamState));
     return SynchronousFuture(null);
   }
 
@@ -583,7 +575,9 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
       false,
     );
     final previousState = _state.copyWith();
-    state = createState!(uri, data: _currentLocation.state.data);
+    state = createState!(
+      BeamState.fromUri(uri, data: _currentLocation.state.data),
+    );
     if (_parent == null) {
       if (_lastReportedRoute != uri && previousState.uri != uri || force) {
         SystemNavigator.routeInformationUpdated(
@@ -604,10 +598,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
   }
 
   void _notify() {
-    state = createState!(
-      _currentLocation.state.uri,
-      data: _currentLocation.state.data,
-    );
+    state = createState!(_currentLocation.state);
     _parent?.updateRouteInformation(_currentLocation.state.uri);
     notifyListeners();
   }
@@ -641,15 +632,12 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
 
     if (guard.beamTo == null && guard.beamToNamed == null) {
       _beamStateHistory.removeLast();
-      state = createState!(
-        _beamStateHistory.last.uri,
-        data: _beamStateHistory.last.data,
-      );
+      state = createState!(_beamStateHistory.last);
       redirectLocation = locationBuilder(_state);
     } else if (guard.beamTo != null) {
       redirectLocation = guard.beamTo!(context);
     } else if (guard.beamToNamed != null) {
-      state = createState!(Uri.parse(guard.beamToNamed!));
+      state = createState!(BeamState.fromUri(Uri.parse(guard.beamToNamed!)));
       redirectLocation = locationBuilder(_state);
     }
 
@@ -683,10 +671,7 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
             parentState.data != _currentLocation.state.data) &&
         locationBuilder(parentState) is! NotFound) {
       update(
-        state: createState!(
-          parentState.uri,
-          data: parentState.data,
-        ),
+        state: createState!(parentState),
       );
     }
   }

@@ -1,16 +1,33 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-/// Converts [RouteInformation] to [Uri] and vice-versa.
-class BeamerRouteInformationParser extends RouteInformationParser<Uri> {
+import 'beam_state.dart';
+
+/// Converts [RouteInformation] to [BeamState] and vice-versa.
+class BeamerRouteInformationParser extends RouteInformationParser<BeamState> {
   @override
-  SynchronousFuture<Uri> parseRouteInformation(
+  SynchronousFuture<BeamState> parseRouteInformation(
       RouteInformation routeInformation) {
-    return SynchronousFuture(Uri.parse(routeInformation.location ?? '/'));
+    final uri = Uri.parse(routeInformation.location ?? '/');
+    return SynchronousFuture(
+      BeamState.fromUri(
+        uri,
+        data: routeInformation.state == null
+            ? {}
+            : Map<String, String>.from(
+                json.decode(routeInformation.state as String),
+              ),
+      ),
+    );
   }
 
   @override
-  RouteInformation restoreRouteInformation(Uri uri) {
-    return RouteInformation(location: uri.toString());
+  RouteInformation restoreRouteInformation(BeamState beamState) {
+    return RouteInformation(
+      location: beamState.uri.toString(),
+      state: json.encode(beamState.data),
+    );
   }
 }
