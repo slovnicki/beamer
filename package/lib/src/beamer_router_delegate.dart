@@ -590,6 +590,12 @@ class BeamerRouterDelegate<T extends BeamState> extends RouterDelegate<Uri>
           location: uri.toString(),
         );
         _lastReportedRoute = Uri.parse(uri.toString());
+        if (kIsWeb && setBrowserTabTitle) {
+          SystemChrome.setApplicationSwitcherDescription(
+              ApplicationSwitcherDescription(
+            label: _currentPages.last.title ?? uri.toString(),
+          ));
+        }
       }
     } else {
       // TODO merge (currently unsupported) relative paths
