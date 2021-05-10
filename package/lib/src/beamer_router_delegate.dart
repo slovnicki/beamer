@@ -262,18 +262,7 @@ class BeamerRouterDelegate<T extends BeamState>
       } else {
         this.state = state;
       }
-      _currentLocation.removeListener(_notify);
-      if ((preferUpdate &&
-                  location.runtimeType == _currentLocation.runtimeType ||
-              replaceCurrent) &&
-          _beamLocationHistory.isNotEmpty) {
-        _beamLocationHistory.removeLast();
-      }
-      if (removeDuplicateHistory) {
-        _beamLocationHistory
-            .removeWhere((l) => l.runtimeType == location.runtimeType);
-      }
-      _pushHistory(location);
+      _pushHistory(location, replaceCurrent: replaceCurrent);
     }
     if (rebuild) {
       _notify();
@@ -527,8 +516,15 @@ class BeamerRouterDelegate<T extends BeamState>
                   transitionDelegate: beamBackTransitionDelegate,
                 );
               } else {
-                final shouldPop =
-                    lastPage.onPopPage(context, _currentLocation, lastPage);
+                final beamStateHistoryLength = _beamStateHistory.length;
+                final shouldPop = lastPage.onPopPage(
+                  context,
+                  _currentLocation,
+                  beamStateHistoryLength > 1
+                      ? _beamStateHistory[beamStateHistoryLength - 2]
+                      : null,
+                  lastPage,
+                );
                 if (!shouldPop) {
                   return false;
                 }
@@ -599,6 +595,7 @@ class BeamerRouterDelegate<T extends BeamState>
 
   void _notify() {
     state = createState!(_currentLocation.state);
+    _pushHistory(_currentLocation);
     _parent?.updateRouteInformation(_currentLocation.state.uri);
     notifyListeners();
   }
@@ -655,11 +652,23 @@ class BeamerRouterDelegate<T extends BeamState>
     updateRouteInformation(redirectLocation.state.uri, force: true);
   }
 
-  void _pushHistory(BeamLocation location) {
+  void _pushHistory(BeamLocation location, {bool replaceCurrent = false}) {
     if (_beamStateHistory.isEmpty ||
         _beamStateHistory.last.uri != location.state.uri) {
       _beamStateHistory.add(location.state.copyWith());
     }
+
+    _currentLocation.removeListener(_notify);
+    if ((preferUpdate && location.runtimeType == _currentLocation.runtimeType ||
+            replaceCurrent) &&
+        _beamLocationHistory.isNotEmpty) {
+      _beamLocationHistory.removeLast();
+    }
+    if (removeDuplicateHistory) {
+      _beamLocationHistory
+          .removeWhere((l) => l.runtimeType == location.runtimeType);
+    }
+
     _beamLocationHistory.add(location);
     _currentLocation = _beamLocationHistory.last;
     _currentLocation.addListener(_notify);

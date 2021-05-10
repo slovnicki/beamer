@@ -18,6 +18,7 @@ enum BeamPageType {
 bool _defaultOnPopPage(
   BuildContext context,
   BeamLocation location,
+  BeamState? previousBeamState,
   BeamPage page,
 ) {
   final pathBlueprintSegments =
@@ -28,15 +29,22 @@ bool _defaultOnPopPage(
   if (pathSegment[0] == ':') {
     pathParameters.remove(pathSegment.substring(1));
   }
-  location.update(
-    (state) => BeamState(
-      pathBlueprintSegments: pathBlueprintSegments,
-      pathParameters: pathParameters,
-      queryParameters:
-          !page.keepQueryOnPop ? {} : location.state.queryParameters,
-      data: location.state.data,
-    ),
+
+  var beamState = BeamState(
+    pathBlueprintSegments: pathBlueprintSegments,
+    pathParameters: pathParameters,
+    queryParameters: page.keepQueryOnPop ? location.state.queryParameters : {},
+    data: location.state.data,
   );
+
+  if (beamState.uri.path == previousBeamState?.uri.path &&
+      !page.keepQueryOnPop) {
+    beamState = beamState.copyWith(
+      queryParameters: previousBeamState?.queryParameters,
+    );
+  }
+
+  location.update((state) => beamState);
   return true;
 }
 
@@ -70,6 +78,7 @@ class BeamPage extends Page {
   final bool Function(
     BuildContext context,
     BeamLocation location,
+    BeamState? previousBeamState,
     BeamPage page,
   ) onPopPage;
 
@@ -146,13 +155,5 @@ class BeamPage extends Page {
           builder: (context) => child,
         );
     }
-  }
-
-  @override
-  int get hashCode => super.hashCode;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) || other is BeamPage && key == other.key;
   }
 }
