@@ -120,10 +120,7 @@ class ArticleDetailsScreen extends StatelessWidget {
 // LOCATIONS
 class BooksLocation extends BeamLocation {
   @override
-  List<String> get pathBlueprints => [
-        '/books',
-        '/books/:bookId',
-      ];
+  List<String> get pathBlueprints => ['/books/:bookId'];
 
   @override
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
@@ -137,13 +134,10 @@ class BooksLocation extends BeamLocation {
           BeamPage(
             key: ValueKey('book-${state.pathParameters['bookId']}'),
             title: books.firstWhere((book) =>
-                book['id'] ==
-                context.currentBeamLocation.state
-                    .pathParameters['bookId'])['title'],
+                book['id'] == state.pathParameters['bookId'])['title'],
             child: BookDetailsScreen(
-              book: books.firstWhere((book) =>
-                  book['id'] ==
-                  context.currentBeamLocation.state.pathParameters['bookId']),
+              book: books.firstWhere(
+                  (book) => book['id'] == state.pathParameters['bookId']),
             ),
           ),
       ];
@@ -151,10 +145,7 @@ class BooksLocation extends BeamLocation {
 
 class ArticlesLocation extends BeamLocation {
   @override
-  List<String> get pathBlueprints => [
-        '/articles',
-        '/articles/:articleId',
-      ];
+  List<String> get pathBlueprints => ['/articles/:articleId'];
 
   @override
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
@@ -168,14 +159,10 @@ class ArticlesLocation extends BeamLocation {
           BeamPage(
             key: ValueKey('articles-${state.pathParameters['articleId']}'),
             title: articles.firstWhere((article) =>
-                article['id'] ==
-                context.currentBeamLocation.state
-                    .pathParameters['articleId'])['title'],
+                article['id'] == state.pathParameters['articleId'])['title'],
             child: ArticleDetailsScreen(
               article: articles.firstWhere((article) =>
-                  article['id'] ==
-                  context
-                      .currentBeamLocation.state.pathParameters['articleId']),
+                  article['id'] == state.pathParameters['articleId']),
             ),
           ),
       ];

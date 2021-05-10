@@ -124,14 +124,11 @@ class BooksLocation extends BeamLocation {
       if (state.pathParameters.containsKey('bookId'))
         BeamPage(
           key: ValueKey('book-${state.pathParameters['bookId']}'),
-          title: context.read<Books>().books.firstWhere((book) =>
-              book['id'] ==
-              context
-                  .currentBeamLocation.state.pathParameters['bookId'])['title'],
+          title: context.read<Books>().books.firstWhere(
+              (book) => book['id'] == state.pathParameters['bookId'])['title'],
           child: BookDetailsScreen(
-            context.read<Books>().books.firstWhere((book) =>
-                book['id'] ==
-                context.currentBeamLocation.state.pathParameters['bookId']),
+            context.read<Books>().books.firstWhere(
+                (book) => book['id'] == state.pathParameters['bookId']),
           ),
         ),
     ];
