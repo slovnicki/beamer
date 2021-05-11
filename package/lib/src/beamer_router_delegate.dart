@@ -584,6 +584,7 @@ class BeamerRouterDelegate<T extends BeamState>
           SystemChrome.setApplicationSwitcherDescription(
               ApplicationSwitcherDescription(
             label: _currentPages.last.title ?? uri.toString(),
+            primaryColor: Colors.blue.value,
           ));
         }
       }
