@@ -224,4 +224,42 @@ void main() {
       expect(delegate.state.uri.toString(), '/1');
     });
   });
+
+  group('guards that block', () {
+    testWidgets('nothing happens when guard should just block', (tester) async {
+      final delegate = BeamerRouterDelegate(
+        initialPath: '/1',
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '/1': (context) => Text('1'),
+            '/2': (context) => Text('2'),
+          },
+        ),
+        guards: [
+          BeamGuard(
+            pathBlueprints: ['/2'],
+            check: (_, __) => false,
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(MaterialApp.router(
+        routerDelegate: delegate,
+        routeInformationParser: BeamerRouteInformationParser(),
+      ));
+
+      expect(delegate.state.uri.toString(), '/1');
+      expect(delegate.currentLocation.state.uri.toString(), '/1');
+      expect(delegate.beamLocationHistory.length, 1);
+      expect(delegate.beamStateHistory.length, 1);
+
+      delegate.beamToNamed('/2');
+      await tester.pump();
+
+      expect(delegate.state.uri.toString(), '/1');
+      expect(delegate.currentLocation.state.uri.toString(), '/1');
+      expect(delegate.beamLocationHistory.length, 1);
+      expect(delegate.beamStateHistory.length, 1);
+    });
+  });
 }

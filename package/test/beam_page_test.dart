@@ -17,7 +17,7 @@ class TestLocation extends BeamLocation {
         if (state.pathBlueprintSegments.contains('books'))
           BeamPage(
             key: ValueKey('books'),
-            onPopPage: (context, location, page) {
+            onPopPage: (context, location, previousState, page) {
               return false;
             },
             child: Container(),
@@ -31,7 +31,7 @@ class TestLocation extends BeamLocation {
         if (state.pathBlueprintSegments.contains('details'))
           BeamPage(
             key: ValueKey('book-${state.pathParameters['bookId']}-details'),
-            onPopPage: (context, location, page) {
+            onPopPage: (context, location, previousState, page) {
               location.update(
                 (state) => state.copyWith(
                   pathBlueprintSegments: ['books'],
@@ -128,6 +128,44 @@ void main() {
       expect(delegate.currentPages.length, 4);
       expect(delegate.currentPages.last.key, ValueKey('book-1-details'));
     });
+
+    testWidgets('query is kept on pop', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerRouteInformationParser(),
+          routerDelegate: delegate,
+        ),
+      );
+      delegate.beamToNamed('/books/1/details?x=y');
+      await tester.pump();
+      expect(
+        delegate.currentLocation.state.uri.path,
+        equals('/books/1/details'),
+      );
+      expect(
+        delegate.currentLocation.state.queryParameters,
+        equals({'x': 'y'}),
+      );
+
+      delegate.beamToNamed('/books/1/details/buy');
+      await tester.pump();
+      expect(
+        delegate.currentLocation.state.uri.path,
+        equals('/books/1/details/buy'),
+      );
+      expect(delegate.currentLocation.state.queryParameters, equals({}));
+
+      delegate.navigatorKey.currentState!.pop();
+      await tester.pump();
+      expect(
+        delegate.currentLocation.state.uri.path,
+        equals('/books/1/details'),
+      );
+      expect(
+        delegate.currentLocation.state.queryParameters,
+        equals({'x': 'y'}),
+      );
+    });
   });
 
   group('Transitions', () {
@@ -163,6 +201,15 @@ void main() {
                 key: ValueKey('/1/2/3/4/5'),
                 type: BeamPageType.noTransition,
                 child: Scaffold(body: Container(child: Text('5'))),
+              ),
+          '/1/2/3/4/5/6': (context) => BeamPage(
+                key: ValueKey('/1/2/3/4/5/6'),
+                pageRouteBuilder: (settings, child) => PageRouteBuilder(
+                  settings: settings,
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      child,
+                ),
+                child: Scaffold(body: Container(child: Text('6'))),
               ),
         },
       ),
@@ -212,6 +259,11 @@ void main() {
       await tester.pump();
       await tester.pump();
       expect(find.text('5'), findsOneWidget);
+
+      delegate.beamToNamed('/1/2/3/4/5/6');
+      await tester.pump();
+      await tester.pump();
+      expect(find.text('6'), findsOneWidget);
     });
   });
 }

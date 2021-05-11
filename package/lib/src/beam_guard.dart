@@ -7,6 +7,9 @@ import './beam_page.dart';
 ///
 /// Responsible for checking whether current location is allowed to be drawn
 /// on screen and providing steps to be executed following a failed check.
+///
+/// If neither `beamTo`, `beamToNamed` nor `showPage` is specified,
+/// the guard will just block navigation, i.e. nothing will happen on screen.
 class BeamGuard {
   BeamGuard({
     required this.pathBlueprints,
@@ -17,7 +20,7 @@ class BeamGuard {
     this.showPage,
     this.guardNonMatching = false,
     this.replaceCurrentStack = true,
-  }) : assert(beamTo != null || beamToNamed != null || showPage != null);
+  });
 
   /// A list of path strings that are to be guarded.
   ///

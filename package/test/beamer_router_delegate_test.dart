@@ -20,7 +20,7 @@ void main() {
       return NotFound(path: state.uri.toString());
     },
   );
-  router.setNewRoutePath(Uri.parse('/l1'));
+  router.setNewRoutePath(BeamState.fromUri(Uri.parse('/l1')));
 
   group('initialization & beaming', () {
     test('initialLocation is set', () {
