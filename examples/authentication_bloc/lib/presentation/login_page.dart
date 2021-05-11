@@ -8,14 +8,14 @@ import '../bloc/login_bloc.dart';
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: BlocProvider(
-          create: (context) => LoginBloc(
-            authenticationRepository:
-                RepositoryProvider.of<AuthenticationRepository>(context),
-          ),
-          child: Center(child: LoginForm()),
-        ),
-      );
+    body: BlocProvider(
+      create: (context) => LoginBloc(
+        authenticationRepository:
+        RepositoryProvider.of<AuthenticationRepository>(context),
+      ),
+      child: Center(child: LoginForm()),
+    ),
+  );
 }
 
 class LoginForm extends StatelessWidget {
@@ -118,16 +118,16 @@ class _LoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final status = context.select((LoginBloc bloc) => bloc.state.status);
-    return status.isSubmissionInProgress
-        ? const CircularProgressIndicator()
-        : ElevatedButton(
-            key: const Key('loginForm_continue_raisedButton'),
-            child: const Text('Login'),
-            onPressed: status.isValidated
-                ? () {
-                    context.read<LoginBloc>().add(const LoginSubmitted());
-                  }
-                : null,
-          );
+    return Center(
+      child: status.isSubmissionInProgress
+          ? const CircularProgressIndicator()
+          : ElevatedButton(
+        key: const Key('loginForm_continue_raisedButton'),
+        child: const Text('Login'),
+        onPressed: status.isValidated
+            ? () => context.read<LoginBloc>().add(const LoginSubmitted())
+            : null,
+      ),
+    );
   }
 }
