@@ -469,7 +469,7 @@ List<BeamGuard> get guards => [
 
 ## Authentication Bloc
 
-Here is an example on how to use `BeamGuard`s for an authentication flow. It uses [flutter_bloc](https://pub.dev/packages/flutter_bloc) for state management.
+Here is an example on how to use `BeamGuard`s for an authentication flow. It uses [flutter_bloc](https://pub.dev/packages/flutter_bloc) for state management. The code is available [here](https://github.com/slovnicki/beamer/tree/master/examples/authentication_bloc).
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/authentication_bloc/example-authentication-bloc.gif" alt="example-authentication-bloc">
