@@ -37,21 +37,19 @@ class MyApp extends StatelessWidget {
 
   final routerDelegate = BeamerRouterDelegate(
     guards: [
-      // Redirect to /login if the user is not authenticated:
+      // Beam to /login if the user is unauthenticated:
       BeamGuard(
-        guardNonMatching: true,
-        pathBlueprints: ['/'],
-        beamToNamed: '/login',
+        pathBlueprints: ['/logged_in_page'],
         check: (context, state) =>
             context.select((AuthenticationBloc auth) => auth.isAuthenticated()),
+        beamToNamed: '/login',
       ),
-      // Redirect to /logged_in_page if the user is authenticated:
+      // Beam to /logged_in_page if the user is authenticated:
       BeamGuard(
-        guardNonMatching: true,
         pathBlueprints: ['/login'],
-        beamToNamed: '/logged_in_page',
         check: (context, state) => context
             .select((AuthenticationBloc auth) => !auth.isAuthenticated()),
+        beamToNamed: '/logged_in_page',
       ),
     ],
     initialPath: '/login',
@@ -70,23 +68,9 @@ class MyApp extends StatelessWidget {
         child: BeamerProvider(
           routerDelegate: routerDelegate,
           child: MaterialApp.router(
-            title: 'Authentication with Bloc',
             debugShowCheckedModeBanner: false,
-            routeInformationParser: BeamerRouteInformationParser(),
             routerDelegate: routerDelegate,
-            builder: (context, child) {
-              return BlocListener<AuthenticationBloc, AuthenticationState>(
-                child: child,
-                listener: (context, state) {
-                  if (state.status == AuthenticationStatus.authenticated) {
-                    context.beamToNamed('/logged_in_page',
-                        replaceCurrent: true);
-                  } else {
-                    context.beamToNamed('/login', replaceCurrent: true);
-                  }
-                },
-              );
-            },
+            routeInformationParser: BeamerRouteInformationParser(),
           ),
         ),
       ),
