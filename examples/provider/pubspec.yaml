@@ -1,4 +1,4 @@
-name: provider
+name: provider_example
 description: An example app to showcase Beamer in combination with Provider.
 
 publish_to: "none"
