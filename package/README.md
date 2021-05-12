@@ -486,7 +486,7 @@ An examples of putting `Beamer` into the Widget tree is when using a bottom navi
 The code for the bottom navigation example app with multiple beamers is available [here](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation_multiple_beamers)
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/bottom_navigation_multiple_beamers/example-bottom-navigation-multiple-beamers.gif" alt="example-bottom-navigation-multiple-beamers" width="520">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/bottom_navigation_multiple_beamers/example-bottom-navigation-multiple-beamers.gif" alt="example-bottom-navigation-multiple-beamers">
 
 ## Nested Navigation
 
