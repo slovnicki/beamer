@@ -580,13 +580,6 @@ class BeamerRouterDelegate<T extends BeamState>
           location: uri.toString(),
         );
         _lastReportedRoute = Uri.parse(uri.toString());
-        if (kIsWeb && setBrowserTabTitle) {
-          SystemChrome.setApplicationSwitcherDescription(
-              ApplicationSwitcherDescription(
-            label: _currentPages.last.title ?? uri.toString(),
-            primaryColor: Colors.blue.value,
-          ));
-        }
       }
     } else {
       // TODO merge (currently unsupported) relative paths
