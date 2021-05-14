@@ -1,3 +1,6 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+
 import './utils.dart';
 import './beam_location.dart';
 
@@ -108,5 +111,15 @@ class BeamState {
       path: '/' + pathSegments.join('/'),
       queryParameters: queryParameters.isEmpty ? null : queryParameters,
     );
+  }
+
+  @override
+  int get hashCode => hashValues(uri, data);
+
+  @override
+  bool operator ==(Object other) {
+    return other is BeamState &&
+        other.uri == uri &&
+        mapEquals(other.data, data);
   }
 }
