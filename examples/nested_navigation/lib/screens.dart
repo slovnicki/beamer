@@ -1,12 +1,13 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import './locations.dart';
+
+import 'locations.dart';
 
 class MenuButton extends StatefulWidget {
   MenuButton({
-    @required this.beamer,
-    @required this.uri,
-    @required this.child,
+    required this.beamer,
+    required this.uri,
+    required this.child,
   });
 
   final GlobalKey<BeamerState> beamer;
@@ -23,17 +24,18 @@ class _MenuButtonState extends State<MenuButton> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => widget
-        .beamer.currentState.routerDelegate
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) => widget
+        .beamer.currentState?.routerDelegate
         .addListener(_setStateListener));
   }
 
   @override
   Widget build(BuildContext context) {
-    final path = Beamer.of(context).currentLocation.state.uri.path;
+    final path = context.currentBeamLocation.state.uri.path;
+
     return ElevatedButton(
       onPressed: () =>
-          widget.beamer.currentState.routerDelegate.beamToNamed(widget.uri),
+          widget.beamer.currentState?.routerDelegate.beamToNamed(widget.uri),
       style: ButtonStyle(
         backgroundColor: path.contains(widget.uri)
             ? MaterialStateProperty.all<Color>(Colors.green)
@@ -45,7 +47,8 @@ class _MenuButtonState extends State<MenuButton> {
 
   @override
   void dispose() {
-    widget.beamer.currentState.routerDelegate.removeListener(_setStateListener);
+    widget.beamer.currentState?.routerDelegate
+        .removeListener(_setStateListener);
     super.dispose();
   }
 }
@@ -94,12 +97,10 @@ class HomeScreen extends StatelessWidget {
               child: Beamer(
                 key: _beamerKey,
                 routerDelegate: BeamerRouterDelegate(
-                  locationBuilder: (state) {
-                    if (state.uri.pathSegments.contains('articles')) {
-                      return ArticlesLocation(state);
-                    }
-                    return BooksLocation(state);
-                  },
+                  locationBuilder: (state) =>
+                      state.uri.pathSegments.contains('articles')
+                          ? ArticlesLocation(state)
+                          : BooksLocation(state),
                 ),
               ),
             ),
