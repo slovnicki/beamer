@@ -118,7 +118,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerDelegate: routerDelegate,
-      routeInformationParser: BeamerRouteInformationParser(),
+      routeInformationParser: BeamerParser(),
       backButtonDispatcher:
           BeamerBackButtonDispatcher(delegate: routerDelegate),
     );

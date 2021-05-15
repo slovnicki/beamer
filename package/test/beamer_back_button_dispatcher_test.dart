@@ -16,7 +16,7 @@ void main() {
     final backButtonDispatcher = BeamerBackButtonDispatcher(delegate: delegate);
     await tester.pumpWidget(
       MaterialApp.router(
-        routeInformationParser: BeamerRouteInformationParser(),
+        routeInformationParser: BeamerParser(),
         routerDelegate: delegate,
         backButtonDispatcher: backButtonDispatcher,
       ),

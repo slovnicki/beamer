@@ -101,7 +101,7 @@ void main() {
       (tester) async {
     await tester.pumpWidget(
       MaterialApp.router(
-        routeInformationParser: BeamerRouteInformationParser(),
+        routeInformationParser: BeamerParser(),
         routerDelegate: router,
       ),
     );
@@ -137,7 +137,7 @@ void main() {
   testWidgets('popToNamed forces pop to specified location', (tester) async {
     await tester.pumpWidget(
       MaterialApp.router(
-        routeInformationParser: BeamerRouteInformationParser(),
+        routeInformationParser: BeamerParser(),
         routerDelegate: router,
       ),
     );
@@ -185,7 +185,7 @@ void main() {
   testWidgets('popToNamed() beams correctly', (tester) async {
     await tester.pumpWidget(
       MaterialApp.router(
-        routeInformationParser: BeamerRouteInformationParser(),
+        routeInformationParser: BeamerParser(),
         routerDelegate: router,
       ),
     );

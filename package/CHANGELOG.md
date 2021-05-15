@@ -140,7 +140,7 @@ See [migration details](https://pub.dev/packages/beamer#from-09-to-010)
 # 0.8.0
 
 - **BREAKING:** `BeamLocation.pages` is now `BeamLocation.pagesBuilder`
-- **BREAKING:** `BeamerDelegate` now takes `beamLocations` and `BeamerRouteInformationParser` nothing
+- **BREAKING:** `BeamerDelegate` now takes `beamLocations` and `BeamerParser` nothing
 - **NEW FEATURE:** `beamToNamed`
 - **NEW FEATURE:** `canBeamBack` and `beamBackLocation` helpers
 - **NEW FEATURE:** `BeamGuard.onCheckFailed`

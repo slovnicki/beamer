@@ -99,7 +99,7 @@ void main() {
       );
       await tester.pumpWidget(
         MaterialApp.router(
-          routeInformationParser: BeamerRouteInformationParser(),
+          routeInformationParser: BeamerParser(),
           routerDelegate: delegate,
         ),
       );
@@ -121,7 +121,7 @@ void main() {
     testWidgets('onPopPage returning false is not popped', (tester) async {
       await tester.pumpWidget(
         MaterialApp.router(
-          routeInformationParser: BeamerRouteInformationParser(),
+          routeInformationParser: BeamerParser(),
           routerDelegate: delegate,
         ),
       );
@@ -139,7 +139,7 @@ void main() {
     testWidgets('popToNamed pops to given URI', (tester) async {
       await tester.pumpWidget(
         MaterialApp.router(
-          routeInformationParser: BeamerRouteInformationParser(),
+          routeInformationParser: BeamerParser(),
           routerDelegate: delegate,
         ),
       );
@@ -158,7 +158,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(
         MaterialApp.router(
-          routeInformationParser: BeamerRouteInformationParser(),
+          routeInformationParser: BeamerParser(),
           routerDelegate: delegate,
         ),
       );
@@ -176,7 +176,7 @@ void main() {
     testWidgets('no customization pops normally', (tester) async {
       await tester.pumpWidget(
         MaterialApp.router(
-          routeInformationParser: BeamerRouteInformationParser(),
+          routeInformationParser: BeamerParser(),
           routerDelegate: delegate,
         ),
       );
@@ -194,7 +194,7 @@ void main() {
     testWidgets('query is kept on pop', (tester) async {
       await tester.pumpWidget(
         MaterialApp.router(
-          routeInformationParser: BeamerRouteInformationParser(),
+          routeInformationParser: BeamerParser(),
           routerDelegate: delegate,
         ),
       );
@@ -279,7 +279,7 @@ void main() {
     testWidgets('all', (tester) async {
       await tester.pumpWidget(
         MaterialApp.router(
-          routeInformationParser: BeamerRouteInformationParser(),
+          routeInformationParser: BeamerParser(),
           routerDelegate: delegate,
         ),
       );

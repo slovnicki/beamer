@@ -68,7 +68,7 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   ///
   /// Optional path segments are denoted with ':xxx' and consequently
   /// `{'xxx': <real>}` will be put to [pathParameters] by
-  /// [BeamerRouteInformationParser] upon receiving the real path from browser.
+  /// [BeamerParser] upon receiving the real path from browser.
   ///
   /// Optional path segments can be used as a mean to pass data regardless of
   /// whether there is a browser.

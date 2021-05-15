@@ -6,7 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'beam_state.dart';
 
 /// Converts [RouteInformation] to [BeamState] and vice-versa.
-class BeamerRouteInformationParser extends RouteInformationParser<BeamState> {
+class BeamerParser extends RouteInformationParser<BeamState> {
   @override
   SynchronousFuture<BeamState> parseRouteInformation(
       RouteInformation routeInformation) {

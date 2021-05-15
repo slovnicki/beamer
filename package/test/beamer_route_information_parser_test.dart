@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  final parser = BeamerRouteInformationParser();
+  final parser = BeamerParser();
 
   test('parsing from RouteInformation to BeamState', () async {
     final beamState = await parser.parseRouteInformation(

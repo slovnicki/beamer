@@ -75,7 +75,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routeInformationParser: BeamerRouteInformationParser(),
+      routeInformationParser: BeamerParser(),
       routerDelegate: BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
@@ -259,7 +259,7 @@ To use the full-featured Beamer in your app, you must (as per [official document
 - `routeInformationParser` that parses an incoming URI.
 - `routerDelegate` that controls (re)building of `Navigator`
 
-Here you use the Beamer implementation of those - `BeamerRouteInformationParser` and `BeamerDelegate`, to which you pass your `LocationBuilder`.  
+Here you use the Beamer implementation of those - `BeamerParser` and `BeamerDelegate`, to which you pass your `LocationBuilder`.  
 
 In the simplest form, `LocationBuilder` is just a function which takes the current `BeamState` and returns a custom `BeamLocation` based on the URI or other state properties.
 
@@ -278,7 +278,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerDelegate: routerDelegate,
-      routeInformationParser: BeamerRouteInformationParser(),
+      routeInformationParser: BeamerParser(),
       backButtonDispatcher:
           BeamerBackButtonDispatcher(delegate: routerDelegate),
     );
@@ -359,7 +359,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerDelegate: routerDelegate,
-      routeInformationParser: BeamerRouteInformationParser(),
+      routeInformationParser: BeamerParser(),
     );
   }
 }
@@ -528,7 +528,7 @@ The code for the nested navigation example app is available [here](https://githu
 ## From 0.7 to 0.8
 
 - rename `pages` to `pagesBuilder` in `BeamLocation`s
-- pass `beamLocations` to `BeamerDelegate` instead of `BeamerRouteInformationParser`. See [Usage](#usage)
+- pass `beamLocations` to `BeamerDelegate` instead of `BeamerParser`. See [Usage](#usage)
 ## From 0.4 to 0.5
 
 - instead of wrapping `MaterialApp` with `Beamer`, use `*App.router()`

@@ -22,7 +22,7 @@ void main() {
       ),
     ),
     child: MaterialApp.router(
-      routeInformationParser: BeamerRouteInformationParser(),
+      routeInformationParser: BeamerParser(),
       routerDelegate: BeamerDelegate(
         transitionDelegate: NoAnimationTransitionDelegate(),
         locationBuilder: SimpleLocationBuilder(

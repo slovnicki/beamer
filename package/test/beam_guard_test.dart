@@ -145,7 +145,7 @@ void main() {
 
         await tester.pumpWidget(MaterialApp.router(
           routerDelegate: router,
-          routeInformationParser: BeamerRouteInformationParser(),
+          routeInformationParser: BeamerParser(),
         ));
 
         expect(router.currentLocation, isA<Location1>());
@@ -175,7 +175,7 @@ void main() {
 
         await tester.pumpWidget(MaterialApp.router(
           routerDelegate: router,
-          routeInformationParser: BeamerRouteInformationParser(),
+          routeInformationParser: BeamerParser(),
         ));
 
         expect(router.currentLocation, isA<Location1>());
@@ -215,7 +215,7 @@ void main() {
 
       await tester.pumpWidget(MaterialApp.router(
         routerDelegate: delegate,
-        routeInformationParser: BeamerRouteInformationParser(),
+        routeInformationParser: BeamerParser(),
       ));
 
       expect(delegate.state.uri.toString(), '/1');
@@ -245,7 +245,7 @@ void main() {
 
       await tester.pumpWidget(MaterialApp.router(
         routerDelegate: delegate,
-        routeInformationParser: BeamerRouteInformationParser(),
+        routeInformationParser: BeamerParser(),
       ));
 
       expect(delegate.state.uri.toString(), '/1');

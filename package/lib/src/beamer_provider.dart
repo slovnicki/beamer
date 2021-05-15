@@ -16,7 +16,7 @@ import 'package:flutter/widgets.dart';
 ///     routerDelegate: _routerDelegate
 ///     child: MaterialApp.router(
 ///       routerDelegate: _routerDelegate,
-///       routeInformationParser: BeamerRouteInformationParser(...),
+///       routeInformationParser: BeamerParser(...),
 ///       ...
 ///     )
 ///   );

@@ -17,7 +17,7 @@ void main() {
   group('Keys', () {
     testWidgets('each BeamPage has a differenet ValueKey', (tester) async {
       await tester.pumpWidget(MaterialApp.router(
-        routeInformationParser: BeamerRouteInformationParser(),
+        routeInformationParser: BeamerParser(),
         routerDelegate: delegate,
       ));
       delegate.beamToNamed('/test');
@@ -41,7 +41,7 @@ void main() {
 
     testWidgets('location includes query in page key', (tester) async {
       await tester.pumpWidget(MaterialApp.router(
-        routeInformationParser: BeamerRouteInformationParser(),
+        routeInformationParser: BeamerParser(),
         routerDelegate: delegate,
       ));
       expect(delegate.currentPages.last.key, isA<ValueKey>());
@@ -61,7 +61,7 @@ void main() {
 
     testWidgets('delegate builds notFoundPage', (tester) async {
       await tester.pumpWidget(MaterialApp.router(
-        routeInformationParser: BeamerRouteInformationParser(),
+        routeInformationParser: BeamerParser(),
         routerDelegate: delegate,
       ));
       expect(find.text('Not found'), findsOneWidget);
