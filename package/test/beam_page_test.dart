@@ -88,6 +88,30 @@ void main() {
   });
 
   group('Pops', () {
+    testWidgets('path parameter is removed on pop', (tester) async {
+      final delegate = BeamerRouterDelegate(
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '/': (context) => Container(),
+            '/:id': (context) => Container(),
+          },
+        ),
+      );
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerRouteInformationParser(),
+          routerDelegate: delegate,
+        ),
+      );
+      delegate.beamToNamed('/my-id');
+      await tester.pump();
+      expect(delegate.currentLocation.state.pathParameters['id'], 'my-id');
+
+      delegate.navigatorKey.currentState!.pop();
+      await tester.pump();
+      expect(delegate.currentLocation.state.pathParameters, {});
+    });
+
     final delegate = BeamerRouterDelegate(
       locationBuilder: (state) => TestLocation(state),
     );
