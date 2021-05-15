@@ -89,7 +89,7 @@ class HomeLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) {
+  List<BeamPage> buildPages(BuildContext context, BeamState state) {
     return [
       BeamPage(
         key: ValueKey('home'),
@@ -112,9 +112,9 @@ class BooksLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/books/:bookId'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) {
+  List<BeamPage> buildPages(BuildContext context, BeamState state) {
     return [
-      ...HomeLocation().pagesBuilder(context, state),
+      ...HomeLocation().buildPages(context, state),
       if (state.uri.pathSegments.contains('books'))
         BeamPage(
           key: ValueKey('books'),
@@ -137,7 +137,7 @@ class BooksLocation extends BeamLocation {
 
 // APP
 class MyApp extends StatelessWidget {
-  final routerDelegate = BeamerRouterDelegate(
+  final routerDelegate = BeamerDelegate(
     locationBuilder: BeamerLocationBuilder(
       beamLocations: [
         HomeLocation(),
@@ -151,7 +151,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerDelegate: routerDelegate,
-      routeInformationParser: BeamerRouteInformationParser(),
+      routeInformationParser: BeamerParser(),
     );
   }
 }

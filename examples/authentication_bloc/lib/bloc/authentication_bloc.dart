@@ -8,11 +8,13 @@ import 'package:equatable/equatable.dart';
 part 'authentication_event.dart';
 part 'authentication_state.dart';
 
-class AuthenticationBloc extends HydratedBloc<AuthenticationEvent, AuthenticationState> {
+class AuthenticationBloc
+    extends HydratedBloc<AuthenticationEvent, AuthenticationState> {
   final AuthenticationRepository _authenticationRepository;
   final UserRepository _userRepository;
 
-  late StreamSubscription<AuthenticationStatus> _authenticationStatusSubscription;
+  late StreamSubscription<AuthenticationStatus>
+      _authenticationStatusSubscription;
 
   AuthenticationBloc({
     required authenticationRepository,
@@ -32,7 +34,8 @@ class AuthenticationBloc extends HydratedBloc<AuthenticationEvent, Authenticatio
 
   bool isAuthenticated() => state.status == AuthenticationStatus.authenticated;
 
-  void logout() => add(AuthenticationStatusChanged(AuthenticationStatus.unauthenticated));
+  void logout() =>
+      add(AuthenticationStatusChanged(AuthenticationStatus.unauthenticated));
 
   @override
   Stream<AuthenticationState> mapEventToState(
@@ -42,7 +45,8 @@ class AuthenticationBloc extends HydratedBloc<AuthenticationEvent, Authenticatio
       yield await _mapAuthenticationStatusChangedtoState(event);
     else if (event is AuthenticationUserChanged)
       yield _mapAuthenticationUserChangedToState(event);
-    else if (event is AuthenticationLogoutRequested) _authenticationRepository.logOut();
+    else if (event is AuthenticationLogoutRequested)
+      _authenticationRepository.logOut();
   }
 
   @override
@@ -68,7 +72,8 @@ class AuthenticationBloc extends HydratedBloc<AuthenticationEvent, Authenticatio
     }
   }
 
-  AuthenticationState _mapAuthenticationUserChangedToState(AuthenticationUserChanged event) =>
+  AuthenticationState _mapAuthenticationUserChangedToState(
+          AuthenticationUserChanged event) =>
       event.user != User.empty
           ? AuthenticationState.authenticated(event.user)
           : const AuthenticationState.unauthenticated();
@@ -82,7 +87,8 @@ class AuthenticationBloc extends HydratedBloc<AuthenticationEvent, Authenticatio
   }
 
   @override
-  AuthenticationState fromJson(Map<String, dynamic> json) => AuthenticationState._(
+  AuthenticationState fromJson(Map<String, dynamic> json) =>
+      AuthenticationState._(
         status: AuthenticationStatus.values[json['status']],
         user: User.fromJson(json['user']),
       );

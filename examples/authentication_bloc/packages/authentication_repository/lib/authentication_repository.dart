@@ -15,9 +15,10 @@ class AuthenticationRepository {
   }) async {
     await Future.delayed(
       const Duration(milliseconds: 250),
-      () => _controller.add(_areCredentialsValid(username: username, password: password)
-          ? AuthenticationStatus.authenticated
-          : AuthenticationStatus.unauthenticated),
+      () => _controller.add(
+          _areCredentialsValid(username: username, password: password)
+              ? AuthenticationStatus.authenticated
+              : AuthenticationStatus.unauthenticated),
     );
   }
 

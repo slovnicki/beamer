@@ -48,7 +48,7 @@ class BooksLocation extends BeamLocation {
       ];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) {
+  List<BeamPage> buildPages(BuildContext context, BeamState state) {
     return [
       BeamPage(
         key: ValueKey('home'),

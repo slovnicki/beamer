@@ -96,7 +96,7 @@ class HomeLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('home'),
           title: 'Home',
@@ -113,8 +113,8 @@ class BooksLocation extends BeamLocation {
       ];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) {
-    final beamPages = [...HomeLocation().pagesBuilder(context, state)];
+  List<BeamPage> buildPages(BuildContext context, BeamState state) {
+    final beamPages = [...HomeLocation().buildPages(context, state)];
 
     if (state.pathBlueprintSegments.contains('books')) {
       final titleQuery = state.queryParameters['title'] ?? '';

@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
   final AuthenticationRepository authenticationRepository;
   final UserRepository userRepository;
 
-  final routerDelegate = BeamerRouterDelegate(
+  final routerDelegate = BeamerDelegate(
     guards: [
       // Beam to /login if the user is unauthenticated:
       BeamGuard(
@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
           child: MaterialApp.router(
             debugShowCheckedModeBanner: false,
             routerDelegate: routerDelegate,
-            routeInformationParser: BeamerRouteInformationParser(),
+            routeInformationParser: BeamerParser(),
           ),
         ),
       ),

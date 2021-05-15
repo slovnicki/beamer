@@ -10,7 +10,7 @@ class HomeLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/*'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('home-${state.uri}'),
           title: 'Home',
@@ -26,7 +26,7 @@ class BooksLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/books/*'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('books'),
           title: 'Books',
@@ -45,7 +45,7 @@ class BooksContentLocation extends BeamLocation {
       ];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('books-home'),
           title: 'Books Home',
@@ -73,7 +73,7 @@ class ArticlesLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/articles/*'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('articles'),
           title: 'Articles',
@@ -92,7 +92,7 @@ class ArticlesContentLocation extends BeamLocation {
       ];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('articles-home'),
           title: 'Articles Home',

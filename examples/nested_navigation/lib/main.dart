@@ -6,7 +6,7 @@ import 'locations.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  final routerDelegate = BeamerRouterDelegate(
+  final routerDelegate = BeamerDelegate(
     locationBuilder: (state) => HomeLocation(state),
   );
 
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      routeInformationParser: BeamerRouteInformationParser(),
+      routeInformationParser: BeamerParser(),
       routerDelegate: routerDelegate,
     );
   }

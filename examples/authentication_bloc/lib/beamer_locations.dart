@@ -14,7 +14,7 @@ class BeamerLocations extends BeamLocation {
       ];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) {
+  List<BeamPage> buildPages(BuildContext context, BeamState state) {
     return [
       if (state.uri.pathSegments.contains('login'))
         BeamPage(

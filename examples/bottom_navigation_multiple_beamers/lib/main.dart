@@ -125,7 +125,7 @@ class BooksLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/books/:bookId'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('books'),
           title: 'Books',
@@ -152,7 +152,7 @@ class ArticlesLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/articles/:articleId'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('articles'),
           title: 'Articles',
@@ -185,7 +185,7 @@ class _AppScreenState extends State<AppScreen> {
   late int currentIndex;
 
   final routerDelegates = [
-    BeamerRouterDelegate(
+    BeamerDelegate(
       initialPath: '/books',
       locationBuilder: (state) {
         if (state.uri.path.contains('books')) {
@@ -194,7 +194,7 @@ class _AppScreenState extends State<AppScreen> {
         return NotFound(path: state.uri.toString());
       },
     ),
-    BeamerRouterDelegate(
+    BeamerDelegate(
       initialPath: '/articles',
       locationBuilder: (state) {
         if (state.uri.path.contains('articles')) {
@@ -251,7 +251,7 @@ class _AppScreenState extends State<AppScreen> {
 }
 
 class MyApp extends StatelessWidget {
-  final routerDelegate = BeamerRouterDelegate(
+  final routerDelegate = BeamerDelegate(
     initialPath: '/books',
     locationBuilder: SimpleLocationBuilder(
       routes: {
@@ -265,7 +265,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerDelegate: routerDelegate,
-      routeInformationParser: BeamerRouteInformationParser(),
+      routeInformationParser: BeamerParser(),
     );
   }
 }

@@ -6,7 +6,7 @@ import 'location_builders.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  final routerDelegate = BeamerRouterDelegate(
+  final routerDelegate = BeamerDelegate(
     // As locationBuilder you can either use SimpleLocationBuilder or BeamerLocationBuilder.
     // They are interchangeable, depending on personal taste (in this case).
     // You can find both implementations in the location_builders.dart file.
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerDelegate: routerDelegate,
-      routeInformationParser: BeamerRouteInformationParser(),
+      routeInformationParser: BeamerParser(),
     );
   }
 }

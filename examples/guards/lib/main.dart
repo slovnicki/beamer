@@ -131,7 +131,7 @@ class HomeLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('home'),
           title: 'Home',
@@ -145,7 +145,7 @@ class LoginLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/login'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('login'),
           title: 'Login',
@@ -159,8 +159,8 @@ class BooksLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/books/:bookId'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
-        ...HomeLocation().pagesBuilder(context, state),
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
+        ...HomeLocation().buildPages(context, state),
         if (state.uri.pathSegments.contains('books'))
           BeamPage(
             key: ValueKey('books'),
@@ -215,7 +215,7 @@ class AuthenticationNotifier extends ChangeNotifier {
 
 // APP
 class MyApp extends StatelessWidget {
-  final routerDelegate = BeamerRouterDelegate(
+  final routerDelegate = BeamerDelegate(
     locationBuilder: BeamerLocationBuilder(
       beamLocations: [
         HomeLocation(),
@@ -241,7 +241,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         routerDelegate: routerDelegate,
-        routeInformationParser: BeamerRouteInformationParser(),
+        routeInformationParser: BeamerParser(),
       ),
     );
   }
