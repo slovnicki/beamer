@@ -14,7 +14,7 @@ void main() {
       if (state.uri.pathSegments.contains('l2')) {
         return Location2(state);
       }
-      if (state.uri.pathSegments.contains('custom')) {
+      if (CustomStateLocation().canHandle(state.uri)) {
         return CustomStateLocation();
       }
       return NotFound(path: state.uri.toString());

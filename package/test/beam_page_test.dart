@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class TestLocation extends BeamLocation {
-  TestLocation(BeamState state) : super(state);
+  TestLocation([BeamState? state]) : super(state);
 
   @override
   List<String> get pathBlueprints => ['/books/:bookId/details/buy'];
@@ -113,7 +113,9 @@ void main() {
     });
 
     final delegate = BeamerRouterDelegate(
-      locationBuilder: (state) => TestLocation(state),
+      locationBuilder: BeamerLocationBuilder(
+        beamLocations: [TestLocation()],
+      ),
     );
 
     testWidgets('onPopPage returning false is not popped', (tester) async {
