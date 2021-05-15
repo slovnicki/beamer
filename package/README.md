@@ -46,6 +46,7 @@ Handle your application routing, synchronize it with browser URL and more. Beame
   - [With a Map of Routes](#with-a-map-of-routes)
   - [Nested Navigation](#nested-navigation)
   - [General Notes](#general-notes)
+  - [Web Tips](#web-tips)
 - [Examples](#examples)
   - [Location Builders](#location-builders)
   - [Advanced Books](#advanced-books)
@@ -58,6 +59,7 @@ Handle your application routing, synchronize it with browser URL and more. Beame
   - [Nested Navigation](#nested-navigation-1)
   - [Integration with Navigation UI Packages](#integration-with-navigation-ui-packages)
 - [Migrating](#migrating)
+  - [From 0.12 to 0.13](#from-012-to-013)
   - [From 0.11 to 0.12](#from-011-to-012)
   - [From 0.10 to 0.11](#from-010-to-011)
   - [From 0.9 to 0.10](#from-09-to-010)
@@ -68,7 +70,7 @@ Handle your application routing, synchronize it with browser URL and more. Beame
 
 # Quick Start
 
-For a simple application, `SimpleLocationBuilder` is an appropriate choice which yields the least amount of code for a functioning application:
+The simplest setup is achieved by using the `SimpleLocationBuilder` which yields the least amount of code for a functioning application:
 
 ```dart
 class MyApp extends StatelessWidget {
@@ -81,7 +83,18 @@ class MyApp extends StatelessWidget {
           routes: {
             '/': (context) => HomeScreen(),
             '/books': (context) => BooksScreen(),
-            '/books/:bookId': (context) => BookDetailsScreen()
+            '/books/:bookId': (context) {
+              final beamState = context.currentBeamLocation.state;
+              final bookId = beamState.pathParameters['bookId']!;
+              // Widgets and BeamPages can be mixed!
+              return BeamPage(
+                key: ValueKey('book-$bookId'),
+                title: 'A Book #$bookId',
+                popToNamed: '/',
+                type: BeamPageType.scaleTransition,
+                child: BookDetailsScreen(bookId),
+              );
+            }
           },
         ),
       ),
@@ -91,24 +104,33 @@ class MyApp extends StatelessWidget {
 ```
 
 Navigating through those routes can be done with
-
 ```dart
 Beamer.of(context).beamToNamed('/books/2');
 ```
 
-And accessing route attributes (for example, `bookId` for building `BookDetailsScreen`) can be done with
-
+Accessing route attributes (for example, `bookId` for building `BookDetailsScreen`) can be done with
 ```dart
 Beamer.of(context).currentLocation.state.pathParameters['bookId'];
 ```
 
+Passing additional arbitrary attributes that don' contribute to URI can be done via `data`;
+```dart
+Beamer.of(context).beamToNamed(
+  '/book/2',
+  data: {
+    'note': 'this is my favorite book',
+    'color': Colors.blue,
+  },
+);
+```
+
+For those who wish to have a full control over building a page stack, we now introduce some key concepts; `BeamLocation` and `BeamState`.
+
 # Key Concepts
 
-For a fairly large app, it is recommended to use `Beamer` in its "natural form", with custom `BeamLocation`s
+At the highest level, `Beamer` is a wrapper for `Router` and uses its own implementations for `RouterDelegate` and `RouteInformationParser`. The goal of beamer is to separate the responsibility of building a page stack for `Navigator.pages` into multiple classes with custom "states", instead of one global state.
 
-At the highest level, `Beamer` is a wrapper for `Router` and uses its own implementations for `RouterDelegate` and `RouteInformationParser`. The goal of _beamer_ is to separate the responsibility of building a page stack for `Navigator.pages` into multiple classes with custom "states", instead of one global state.
-
-For example, we would like to handle all the _profile related_ page stacks as
+For example, we would like to handle all the profile related page stacks such as
 
 - `[ ProfilePage ]`,
 - `[ ProfilePage, FriendsPage]`,
@@ -116,11 +138,19 @@ For example, we would like to handle all the _profile related_ page stacks as
 - `[ ProfilePage, SettingsPage ]`,
 - ...
 
-with some _ProfileHandler_ that knows which _state_ corresponds to which page stack and updates this state as the page stack changes. Then similarly, we would like to have a _ShopHandler_ for all the possible stacks of shop related pages.
+with some "ProfileHandler" that knows which "state" corresponds to which page stack and updates this state as the page stack changes. Then similarly, we would like to have a "ShopHandler" for all the possible stacks of shop related pages such as
+
+- `[ ShopPage ]`,
+- `[ ShopPage, CategoriesPage ]`,
+- `[ ShopPage, CategoriesPage, ItemsPage ]`,
+- `[ ShopPage, CategoriesPage, ItemsPage, ItemPage ]`,
+- `[ ShopPage, ItemsPage, ItemPage ]`,
+- `[ ShopPage, CartPage ]`,
+- ...
 
 These "Handlers" are called `BeamLocation`s.
 
-`BeamLocation`s cannot work by themselves. When the `URI` comes into the app through deep-link or as initial, there must be a decision which `BeamLocation` will further handle this `URI` and build pages for the `Navigator`. This is the job of `BeamerDelegate.locationBuilder` that will take the "global state" and give it to appropriate `BeamLocation` which will create and save its own "local state" from it to use it to build pages.
+`BeamLocation`s cannot work by themselves. When the `URI` comes into the app through deep-link, or as initial, there must be a decision which `BeamLocation` will further handle this `URI` and build pages for the `Navigator`. This is the job of `BeamerDelegate.locationBuilder` that will take the "global state" and give it to appropriate `BeamLocation` which will create and save its own "local state" from it to use it to build pages.
 
 ## BeamLocation
 
@@ -187,11 +217,11 @@ Beamer.of(context).currentLocation.update(
 class BooksLocation extends BeamLocation<MyState> {...}
 ```
 
-It is important in this case that `CustomState` has an `uri` getter which is needed for browser's URL bar.
+It is important in this case that `MyState` has an `uri` getter which is needed for browser's URL bar.
 
 ## Beaming
 
-Navigating between or within `BeamLocation`s is achieved by _beaming_. You can think of it as _teleporting_ (_beaming_) to another place in your app. Similar to `Navigator.of(context).pushReplacementNamed('/my-route')`, but Beamer is not limited to a single page, nor to a push _per se_. `BeamLocation`s hold an arbitrary stack of pages that get built when you beam there. Using Beamer can feel like using many of `Navigator`'s `push/pop` methods at once.
+Navigating between or within `BeamLocation`s is achieved by "beaming". You can think of it as teleporting (_beaming_) to another place in your app. Similar to `Navigator.of(context).pushReplacementNamed('/my-route')`, but Beamer is not limited to a single page, nor to a push per se. `BeamLocation`s hold an arbitrary stack of pages that get built when you beam there. Using Beamer can feel like using many of `Navigator`'s `push/pop` methods at once.
 
 Examples of beaming:
 
@@ -205,7 +235,7 @@ context.beamTo(MyLocation());
 ```dart
 context.beamToNamed('/books/2');
 
-// or more explicitly
+// this is equivalent to
 context.beamTo(
   BooksLocation(
     BeamState(
@@ -226,7 +256,6 @@ context.beamToNamed(
 ## Updating
 
 Once at a `BeamLocation`, it is preferable to update the current location's state. For example, for going from `/books` to `/books/3` (which are both handled by `BooksLocation`):
-
 ```dart
 context.currentBeamLocation.update(
   (state) => state.copyWith(
@@ -236,11 +265,21 @@ context.currentBeamLocation.update(
 ),
 ```
 
-**NOTE** that both beaming functions (`beamTo` and `BeamToNamed`) will have the same effect as `update` when you try to beam to a location which you're currently on, e.g. if you called `context.beamToNamed('/books/3')` instead of above code.
+To get from one `BeamLocation`'s stack to another `BeamLocation`'s stack, an `update` can be invoked on `BeamerDelegate` itself:
+```dart
+Beamer.of(context).update(
+  state: BeamState(
+    pathBlueprintSegments: ['articles', ':articleId'],
+    pathParameters: {'articleId': '1'},
+  ),
+);
+```
+
+**NOTE** that every beaming function (`beamTo`, `beamToNamed`,...) will have the same effect as `update` either on `BeamLocation` or on `BeamerDelegate`.
 
 ## Beaming Back
 
-All `BeamState`s that were visited are kept in `beamStateHistory`. Therefore, there is an ability to _beam back_ to whichever `BeamLocation` is responsible for previous `BeamState`. For example, after spending some time on `/books` and `/books/3`, say you beam to `/articles`. From there, you can get back to your previous location as it were when you left, i.e. `/books/3`.
+All `BeamState`s that were visited are kept in `beamStateHistory`. Therefore, there is an ability to beam back to whichever `BeamLocation` is responsible for previous `BeamState`. For example, after spending some time on `/books` and `/books/3`, say you beam to `/articles`. From there, you can get back to your previous location as it were when you left, i.e. `/books/3`.
 
 ```dart
 context.beamBack();
@@ -377,6 +416,11 @@ class MyApp extends StatelessWidget {
 
 **NOTE** that "Navigator 1.0" can be used alongside Beamer. You can easily `push` or `pop` pages with `Navigator.of(context)`, but those will not be contributing to the URI. This is often needed when some info/helper page needs to be shown that doesn't influence the browser's URL. And of course, when using Beamer on mobile, this is a non-issue as there is no URL.
 
+## Web Tips
+
+- removing the `#` from URL can be done by calling `Beamer.setPathUrlStrategy()` before `runApp()`.
+- `BeamPage.title` is used for setting the browser tab title by default and can be opt-out by setting `BeamerDelegate.setBrowserTabTitle` to `false`.
+
 # Examples
 
 Check out all examples [here](https://github.com/slovnicki/beamer/tree/master/examples).
@@ -503,6 +547,12 @@ The code for the nested navigation example app is available [here](https://githu
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/animated_rail/example-animated-rail.gif" alt="example-animated-rail" width="240">
 
 # Migrating
+
+## From 0.12 to 0.13
+
+- rename `BeamerRouterDelegate` to `BeamerDelegate`
+- rename `BeamerRouteInformationParser` to `BeamerParser`
+- rename `pagesBuilder` to `buildPages`
 
 ## From 0.11 to 0.12
 
