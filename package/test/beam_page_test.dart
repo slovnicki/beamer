@@ -17,7 +17,7 @@ class TestLocation extends BeamLocation {
         if (state.pathBlueprintSegments.contains('books'))
           BeamPage(
             key: ValueKey('books'),
-            onPopPage: (context, location, previousState, page) {
+            onPopPage: (context, delegate, page) {
               return false;
             },
             child: Container(),
@@ -31,8 +31,8 @@ class TestLocation extends BeamLocation {
         if (state.pathBlueprintSegments.contains('details'))
           BeamPage(
             key: ValueKey('book-${state.pathParameters['bookId']}-details'),
-            onPopPage: (context, location, previousState, page) {
-              location.update(
+            onPopPage: (context, delegate, page) {
+              delegate.currentLocation.update(
                 (state) => state.copyWith(
                   pathBlueprintSegments: ['books'],
                   pathParameters: {},

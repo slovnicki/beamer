@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'beam_location.dart';
 import 'beam_state.dart';
+import 'beamer_router_delegate.dart';
 
 /// Types for how to route should be built.
 enum BeamPageType {
@@ -17,10 +18,14 @@ enum BeamPageType {
 /// The default pop behavior for [BeamPage].
 bool _defaultOnPopPage(
   BuildContext context,
-  BeamLocation location,
-  BeamState? previousBeamState,
-  BeamPage page,
+  BeamerRouterDelegate delegate,
+  BeamPage poppedPage,
 ) {
+  final location = delegate.currentLocation;
+  final previousBeamState = delegate.beamStateHistory.length > 1
+      ? delegate.beamStateHistory[delegate.beamStateHistory.length - 2]
+      : null;
+
   final pathBlueprintSegments =
       List<String>.from(location.state.pathBlueprintSegments);
   final pathParameters =
@@ -33,12 +38,13 @@ bool _defaultOnPopPage(
   var beamState = BeamState(
     pathBlueprintSegments: pathBlueprintSegments,
     pathParameters: pathParameters,
-    queryParameters: page.keepQueryOnPop ? location.state.queryParameters : {},
+    queryParameters:
+        poppedPage.keepQueryOnPop ? location.state.queryParameters : {},
     data: location.state.data,
   );
 
   if (beamState.uri.path == previousBeamState?.uri.path &&
-      !page.keepQueryOnPop) {
+      !poppedPage.keepQueryOnPop) {
     beamState = beamState.copyWith(
       queryParameters: previousBeamState?.queryParameters,
     );
@@ -77,9 +83,8 @@ class BeamPage extends Page {
   /// More general than [popToNamed].
   final bool Function(
     BuildContext context,
-    BeamLocation location,
-    BeamState? previousBeamState,
-    BeamPage page,
+    BeamerRouterDelegate delegate,
+    BeamPage poppedPage,
   ) onPopPage;
 
   /// Overrides the default pop by beaming to specified URI string.
