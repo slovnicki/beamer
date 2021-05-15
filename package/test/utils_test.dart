@@ -57,22 +57,22 @@ void main() {
     // test('Parsed BeamLocation creates correct pages', () async {
     //   var uri = Uri.parse('/l1');
     //   var location = Utils.chooseBeamLocation(uri, beamLocations);
-    //   expect(location.pagesBuilder(null, location.state).length, 1);
+    //   expect(location.buildPages(null, location.state).length, 1);
 
     //   uri = Uri.parse('/l1?q=xxx');
     //   location = Utils.chooseBeamLocation(uri, beamLocations);
-    //   expect(location.pagesBuilder(null, location.state).length, 1);
+    //   expect(location.buildPages(null, location.state).length, 1);
 
     //   uri = Uri.parse('/l1/one');
     //   location = Utils.chooseBeamLocation(uri, beamLocations);
-    //   expect(location.pagesBuilder(null, location.state).length, 2);
-    //   expect(location.pagesBuilder(null, location.state)[1].key,
+    //   expect(location.buildPages(null, location.state).length, 2);
+    //   expect(location.buildPages(null, location.state)[1].key,
     //       ValueKey('l1-one'));
 
     //   uri = Uri.parse('/l1/two');
     //   location = Utils.chooseBeamLocation(uri, beamLocations);
-    //   expect(location.pagesBuilder(null, location.state).length, 2);
-    //   expect(location.pagesBuilder(null, location.state)[1].key,
+    //   expect(location.buildPages(null, location.state).length, 2);
+    //   expect(location.buildPages(null, location.state)[1].key,
     //       ValueKey('l1-two'));
     // });
 

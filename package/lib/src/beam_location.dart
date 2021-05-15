@@ -81,7 +81,7 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   ///
   /// `context` can be useful while building the pages.
   /// It will also contain anything injected via [builder].
-  List<BeamPage> pagesBuilder(BuildContext context, T state);
+  List<BeamPage> buildPages(BuildContext context, T state);
 
   /// Guards that will be executing [check] when this gets beamed to.
   ///
@@ -107,7 +107,7 @@ class NotFound extends BeamLocation {
   NotFound({String path = '/'}) : super(BeamState.fromUri(Uri.parse(path)));
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [];
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [];
 
   @override
   List<String> get pathBlueprints => [''];
@@ -118,7 +118,7 @@ class NotFound extends BeamLocation {
 /// See [BeamerDelegate].
 class EmptyBeamLocation extends BeamLocation {
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [];
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [];
 
   @override
   List<String> get pathBlueprints => [];
@@ -152,7 +152,7 @@ class SimpleBeamLocation extends BeamLocation {
   List<String> get pathBlueprints => routes.keys.toList();
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) {
+  List<BeamPage> buildPages(BuildContext context, BeamState state) {
     var filteredRoutes = chooseRoutes(state, routes.keys);
     final activeRoutes = Map.from(routes)
       ..removeWhere((key, value) => !filteredRoutes.containsKey(key));

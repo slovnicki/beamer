@@ -58,7 +58,7 @@
 - migrated to null safety
 - **BREAKING:** `Beamer` now takes `routerDelegate`, not `beamLocations` directly
 - **BREAKING:** `BeamerDelegate.beamLocations` is now `locationBuilder`
-- **BREAKING:** `pagesBuilder` now also brings `state`
+- **BREAKING:** `buildPages` now also brings `state`
 - **Add** `beamToNamed` to `BeamGuard`
 - **Add** various `LocationBuilder`s
 - **Add** `transitionDelegate` to `BeamLocation` and `BeamerDelegate`
@@ -139,7 +139,7 @@ See [migration details](https://pub.dev/packages/beamer#from-09-to-010)
 
 # 0.8.0
 
-- **BREAKING:** `BeamLocation.pages` is now `BeamLocation.pagesBuilder`
+- **BREAKING:** `BeamLocation.pages` is now `BeamLocation.buildPages`
 - **BREAKING:** `BeamerDelegate` now takes `beamLocations` and `BeamerParser` nothing
 - **NEW FEATURE:** `beamToNamed`
 - **NEW FEATURE:** `canBeamBack` and `beamBackLocation` helpers

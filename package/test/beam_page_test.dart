@@ -9,7 +9,7 @@ class TestLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/books/:bookId/details/buy'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('home'),
           child: Container(),

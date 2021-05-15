@@ -5,7 +5,7 @@ class Location1 extends BeamLocation {
   Location1(BeamState state) : super(state);
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('l1'),
           child: Container(),
@@ -30,7 +30,7 @@ class Location2 extends BeamLocation {
   Location2(BeamState state) : super(state);
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('l2'),
           child: Container(),
@@ -95,7 +95,7 @@ class CustomStateLocation extends BeamLocation<CustomState> {
   List<String> get pathBlueprints => ['/custom/:customVar'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, CustomState state) => [
+  List<BeamPage> buildPages(BuildContext context, CustomState state) => [
         BeamPage(
           key: ValueKey('custom-${state.customVar}'),
           child: Container(),
@@ -121,7 +121,7 @@ class NoStateLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/page'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('page'),
           child: Container(),

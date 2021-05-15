@@ -86,7 +86,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   /// you will not be able to navigate to `/` by manually typing
   /// it in the URL bar, because it will always be transformed to `initialPath`,
   /// but you will be able to get to `/` by popping pages with back button,
-  /// if there are pages in [BeamLocation.pagesBuilder] that will build
+  /// if there are pages in [BeamLocation.buildPages] that will build
   /// when there are no path segments.
   final String initialPath;
 
@@ -479,10 +479,10 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
           _currentPages = [notFoundPage!];
         } else {
           _currentPages = _stacked
-              ? _currentLocation.pagesBuilder(context, _currentLocation.state)
+              ? _currentLocation.buildPages(context, _currentLocation.state)
               : [
                   _currentLocation
-                      .pagesBuilder(context, _currentLocation.state)
+                      .buildPages(context, _currentLocation.state)
                       .last
                 ];
         }

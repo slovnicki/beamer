@@ -128,7 +128,7 @@ The most important construct in Beamer is a `BeamLocation` which represents a st
 `BeamLocation` has **3 important roles**:
 
 - know which URIs it can handle: `pathBlueprints`
-- know how to build a stack of pages: `pagesBuilder`
+- know how to build a stack of pages: `buildPages`
 - keep a `state` that provides a link between the first 2
 
 `BeamLocation` is an abstract class which needs to be extended. The purpose of having multiple `BeamLocation`s is to architecturally separate unrelated "places" in an application.
@@ -145,7 +145,7 @@ class BooksLocation extends BeamLocation {
   List<String> get pathBlueprints => ['/books/:bookId'];
 
   @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('home'),
           child: HomeScreen(),
@@ -367,8 +367,8 @@ class MyApp extends StatelessWidget {
 
 ## General Notes
 
-- When extending `BeamLocation`, two methods need to be implemented: `pathBlueprints` and `pagesBuilder`.
-  - `pagesBuilder` returns a stack of pages that will be built by `Navigator` when you beam there, and `pathBlueprints` is there for Beamer to decide which `BeamLocation` corresponds to which URI.
+- When extending `BeamLocation`, two methods need to be implemented: `pathBlueprints` and `buildPages`.
+  - `buildPages` returns a stack of pages that will be built by `Navigator` when you beam there, and `pathBlueprints` is there for Beamer to decide which `BeamLocation` corresponds to which URI.
   - `BeamLocation` keeps query and path parameters from URI in its `BeamState`. The `:` is necessary in `pathBlueprints` if you _might_ get path parameter from browser.
 
 - `BeamPage`'s child is an arbitrary `Widget` that represents your app screen / page.
@@ -513,7 +513,7 @@ The code for the nested navigation example app is available [here](https://githu
 
 - `BeamerDelegate.beamLocations` is now `locationBuilder`. See `BeamerLocationBuilder` for easiest migration.
 - `Beamer` now takes `BeamerDelegate`, not `BeamLocations` directly
-- `pagesBuilder` now also brings `state`
+- `buildPages` now also brings `state`
 
 ## From 0.9 to 0.10
 
@@ -527,7 +527,7 @@ The code for the nested navigation example app is available [here](https://githu
 
 ## From 0.7 to 0.8
 
-- rename `pages` to `pagesBuilder` in `BeamLocation`s
+- rename `pages` to `buildPages` in `BeamLocation`s
 - pass `beamLocations` to `BeamerDelegate` instead of `BeamerParser`. See [Usage](#usage)
 ## From 0.4 to 0.5
 
