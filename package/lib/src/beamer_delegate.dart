@@ -248,20 +248,19 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     T? state,
     T? popState,
     TransitionDelegate? transitionDelegate,
-    bool? beamBackOnPop,
-    bool? popBeamLocationOnPop,
-    bool? stacked,
+    bool beamBackOnPop = false,
+    bool popBeamLocationOnPop = false,
+    bool stacked = true,
     bool replaceCurrent = false,
     bool buildBeamLocation = true,
     bool rebuild = true,
   }) {
     _active = true;
     _popState = popState ?? _popState;
-    _currentTransitionDelegate =
-        transitionDelegate ?? _currentTransitionDelegate;
-    _beamBackOnPop = beamBackOnPop ?? _beamBackOnPop;
-    _popBeamLocationOnPop = popBeamLocationOnPop ?? _popBeamLocationOnPop;
-    _stacked = stacked ?? _stacked;
+    _currentTransitionDelegate = transitionDelegate ?? this.transitionDelegate;
+    _beamBackOnPop = beamBackOnPop;
+    _popBeamLocationOnPop = popBeamLocationOnPop;
+    _stacked = stacked;
 
     if (state != null) {
       this.state = state;
@@ -530,10 +529,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
             final lastPage = _currentPages.last;
             if (lastPage is BeamPage) {
               if (lastPage.popToNamed != null) {
-                beamToNamed(
-                  lastPage.popToNamed!,
-                  transitionDelegate: beamBackTransitionDelegate,
-                );
+                popToNamed(lastPage.popToNamed!);
               } else {
                 final shouldPop = lastPage.onPopPage(context, this, lastPage);
                 if (!shouldPop) {
