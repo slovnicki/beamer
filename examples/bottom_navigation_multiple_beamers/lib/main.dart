@@ -128,7 +128,6 @@ class BooksLocation extends BeamLocation {
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
         BeamPage(
           key: ValueKey('books'),
-          // todo: The browser tab title does not update when navigating to the BooksScreen.
           title: 'Books',
           type: BeamPageType.noTransition,
           child: BooksScreen(),
@@ -187,10 +186,22 @@ class _AppScreenState extends State<AppScreen> {
 
   final routerDelegates = [
     BeamerRouterDelegate(
-      locationBuilder: (state) => BooksLocation(state),
+      initialPath: '/books',
+      locationBuilder: (state) {
+        if (state.uri.path.contains('books')) {
+          return BooksLocation(state);
+        }
+        return NotFound(path: state.uri.toString());
+      },
     ),
     BeamerRouterDelegate(
-      locationBuilder: (state) => ArticlesLocation(state),
+      initialPath: '/articles',
+      locationBuilder: (state) {
+        if (state.uri.path.contains('articles')) {
+          return ArticlesLocation(state);
+        }
+        return NotFound(path: state.uri.toString());
+      },
     ),
   ];
 
@@ -198,6 +209,8 @@ class _AppScreenState extends State<AppScreen> {
   void initState() {
     super.initState();
     currentIndex = widget.beamState.uri.path.contains('books') ? 0 : 1;
+    routerDelegates[currentIndex].active();
+    routerDelegates[1 - currentIndex].active(false);
   }
 
   @override
@@ -206,11 +219,15 @@ class _AppScreenState extends State<AppScreen> {
       body: IndexedStack(
         index: currentIndex,
         children: [
-          Beamer(routerDelegate: routerDelegates[0]),
+          Beamer(
+            routerDelegate: routerDelegates[0],
+          ),
           Container(
             color: Colors.blueAccent,
             padding: const EdgeInsets.all(32.0),
-            child: Beamer(routerDelegate: routerDelegates[1]),
+            child: Beamer(
+              routerDelegate: routerDelegates[1],
+            ),
           ),
         ],
       ),
@@ -221,24 +238,12 @@ class _AppScreenState extends State<AppScreen> {
           BottomNavigationBarItem(label: 'Articles', icon: Icon(Icons.article)),
         ],
         onTap: (index) {
-          setState(() => currentIndex = index);
-
-          // todo:
-
-          // OPTION 1:
-          // Advantage: URL updates
-          // Disadvantage: pops details pages and shows pop animation
-          //
-          routerDelegates[currentIndex]
-              .beamToNamed(index == 0 ? '/books' : '/articles');
-
-          // OPTION 2:
-          // Advantage: keeps details pages
-          // Disadvantage: does not update URL
-          //
-          /*routerDelegates[currentIndex].parent?.updateRouteInformation(
-                routerDelegates[currentIndex].currentLocation.state.uri,
-              );*/
+          if (index != currentIndex) {
+            routerDelegates[currentIndex].active(false);
+            routerDelegates[1 - currentIndex].active();
+            setState(() => currentIndex = index);
+            routerDelegates[currentIndex].update(rebuild: false);
+          }
         },
       ),
     );
