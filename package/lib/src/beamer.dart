@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'beam_page.dart';
 import 'beam_location.dart';
 import 'beamer_back_button_dispatcher.dart';
-import 'beamer_router_delegate.dart';
+import 'beamer_delegate.dart';
 import 'beamer_provider.dart';
 import 'path_url_strategy_nonweb.dart'
     if (dart.library.html) 'path_url_strategy_web.dart' as url_strategy;
@@ -17,13 +17,13 @@ class Beamer extends StatefulWidget {
   }) : super(key: key);
 
   /// Responsible for beaming, updating and rebuilding the page stack.
-  final BeamerRouterDelegate routerDelegate;
+  final BeamerDelegate routerDelegate;
 
   /// Access Beamer's [routerDelegate].
-  static BeamerRouterDelegate of(BuildContext context, {bool root = false}) {
-    BeamerRouterDelegate _delegate;
+  static BeamerDelegate of(BuildContext context, {bool root = false}) {
+    BeamerDelegate _delegate;
     try {
-      _delegate = Router.of(context).routerDelegate as BeamerRouterDelegate;
+      _delegate = Router.of(context).routerDelegate as BeamerDelegate;
     } catch (e) {
       assert(BeamerProvider.of(context) != null,
           'There was no Router nor BeamerProvider in current context. If using MaterialApp.builder, wrap the MaterialApp.router in BeamerProvider to which you pass the same routerDelegate as to MaterialApp.router.');
@@ -45,20 +45,20 @@ class Beamer extends StatefulWidget {
 }
 
 class BeamerState extends State<Beamer> {
-  BeamerRouterDelegate get routerDelegate => widget.routerDelegate;
+  BeamerDelegate get routerDelegate => widget.routerDelegate;
   BeamLocation get currentLocation => widget.routerDelegate.currentLocation;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     routerDelegate.parent ??=
-        Router.of(context).routerDelegate as BeamerRouterDelegate;
+        Router.of(context).routerDelegate as BeamerDelegate;
   }
 
   @override
   Widget build(BuildContext context) {
     routerDelegate.parent ??=
-        Router.of(context).routerDelegate as BeamerRouterDelegate;
+        Router.of(context).routerDelegate as BeamerDelegate;
     return Router(
       routerDelegate: widget.routerDelegate,
       backButtonDispatcher:

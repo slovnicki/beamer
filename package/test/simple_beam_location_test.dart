@@ -4,7 +4,7 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  final delegate = BeamerRouterDelegate(
+  final delegate = BeamerDelegate(
     locationBuilder: SimpleLocationBuilder(
       routes: {
         '/': (context) => Container(),
@@ -68,7 +68,7 @@ void main() {
     });
 
     test('* in path segment will override NotFound', () {
-      final delegate = BeamerRouterDelegate(
+      final delegate = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
             '/': (context) => Container(),
@@ -82,7 +82,7 @@ void main() {
     });
 
     test('only * will override NotFound', () {
-      final delegate1 = BeamerRouterDelegate(
+      final delegate1 = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
             '/*': (context) => Container(),
@@ -92,7 +92,7 @@ void main() {
       delegate1.setNewRoutePath(BeamState.fromUri(Uri.parse('/anything')));
       expect(delegate1.currentLocation, isA<SimpleBeamLocation>());
 
-      final delegate2 = BeamerRouterDelegate(
+      final delegate2 = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
             '*': (context) => Container(),
@@ -104,7 +104,7 @@ void main() {
     });
 
     test('path parameters are not considered NotFound', () {
-      final delegate1 = BeamerRouterDelegate(
+      final delegate1 = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
             '/test/:testId': (context) => Container(),

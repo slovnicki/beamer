@@ -6,7 +6,7 @@ import 'test_locations.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  final router = BeamerRouterDelegate(
+  final router = BeamerDelegate(
     locationBuilder: (state) {
       if (state.uri.pathSegments.contains('l1')) {
         return Location1(state);

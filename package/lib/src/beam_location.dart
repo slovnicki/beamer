@@ -21,13 +21,13 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   set state(T state) => _state = state..configure();
 
   /// How to create state from generic [BeamState], often produced by [Beamer]
-  /// for the use in [BeamerRouterDelegate.locationBuilder].
+  /// for the use in [BeamerDelegate.locationBuilder].
   ///
   /// Override this if you have your custom state class extending [BeamState].
   T createState(BeamState state) => state.copyForLocation(this) as T;
 
   /// Update a state via callback receiving the current state.
-  /// If no callback is given, just notifies [BeamerRouterDelegate] to rebuild.
+  /// If no callback is given, just notifies [BeamerDelegate] to rebuild.
   ///
   /// Useful with [BeamState.copyWith].
   void update([T Function(T)? copy, bool rebuild = true]) {
@@ -41,9 +41,9 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
 
   /// Can this handle the `uri` based on its [pathBlueprints].
   ///
-  /// Can be useful in a custom [BeamerRouterDelegate.locationBuilder].
+  /// Can be useful in a custom [BeamerDelegate.locationBuilder].
   ///
-  /// Used in [BeamerRouterDelegate._updateFromParent].
+  /// Used in [BeamerDelegate._updateFromParent].
   bool canHandle(Uri uri) => Utils.canBeamLocationHandleUri(this, uri);
 
   /// Gives the ability to wrap the `navigator`.
@@ -95,10 +95,10 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   /// A transition delegate to be used by [Navigator].
   ///
   /// This will be used only by this location, unlike
-  /// [BeamerRouterDelegate.transitionDelegate]
+  /// [BeamerDelegate.transitionDelegate]
   /// that will be used for all locations.
   ///
-  /// This ransition delegate will override the one in [BeamerRouterDelegate].
+  /// This ransition delegate will override the one in [BeamerDelegate].
   TransitionDelegate? get transitionDelegate => null;
 }
 
@@ -115,7 +115,7 @@ class NotFound extends BeamLocation {
 
 /// Empty location used to intialize a non-nullable BeamLocation variable.
 ///
-/// See [BeamerRouterDelegate].
+/// See [BeamerDelegate].
 class EmptyBeamLocation extends BeamLocation {
   @override
   List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [];
@@ -174,7 +174,7 @@ class SimpleBeamLocation extends BeamLocation {
   /// Will choose all the routes that "sub-match" `state.uri` to stack their pages.
   ///
   /// If none of the selected routes _matches_ `state.uri`, nothing will be selected
-  /// and [BeamerRouterDelegate] will declare that the location is [NotFound].
+  /// and [BeamerDelegate] will declare that the location is [NotFound].
   static Map<String, String> chooseRoutes(
       BeamState state, Iterable<String> routes) {
     var matched = <String, String>{};

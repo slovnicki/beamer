@@ -11,7 +11,7 @@ void main() {
   final beamerKey = GlobalKey<BeamerState>();
 
   final app = BeamerProvider(
-    routerDelegate: BeamerRouterDelegate(
+    routerDelegate: BeamerDelegate(
       locationBuilder: SimpleLocationBuilder(
         routes: {
           '/test2/x': (context) {
@@ -23,7 +23,7 @@ void main() {
     ),
     child: MaterialApp.router(
       routeInformationParser: BeamerRouteInformationParser(),
-      routerDelegate: BeamerRouterDelegate(
+      routerDelegate: BeamerDelegate(
         transitionDelegate: NoAnimationTransitionDelegate(),
         locationBuilder: SimpleLocationBuilder(
           routes: {
@@ -41,9 +41,9 @@ void main() {
       ),
     ),
   );
-  testWidgets('Context has BeamerRouterDelegate', (tester) async {
+  testWidgets('Context has BeamerDelegate', (tester) async {
     await tester.pumpWidget(app);
-    expect(Beamer.of(testContext!), isA<BeamerRouterDelegate>());
+    expect(Beamer.of(testContext!), isA<BeamerDelegate>());
   });
 
   testWidgets('Beaming updates location state', (tester) async {
@@ -85,7 +85,7 @@ void main() {
     await tester.pumpWidget(app);
     testContext!.popToNamed('/test2/x');
     await tester.pump();
-    expect(rootDelegate, isA<BeamerRouterDelegate>());
+    expect(rootDelegate, isA<BeamerDelegate>());
   });
 
   testWidgets('Beamer can be used via key', (tester) async {

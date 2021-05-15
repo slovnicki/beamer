@@ -125,7 +125,7 @@ void main() {
 
     group('guard updates location on build', () {
       testWidgets('guard beamTo changes the location on build', (tester) async {
-        final router = BeamerRouterDelegate(
+        final router = BeamerDelegate(
           initialPath: '/l1',
           locationBuilder: (state) {
             if (state.uri.pathSegments.contains('l1')) {
@@ -156,7 +156,7 @@ void main() {
 
       testWidgets('guard beamToNamed changes the location on build',
           (tester) async {
-        final router = BeamerRouterDelegate(
+        final router = BeamerDelegate(
           initialPath: '/l1',
           locationBuilder: (state) {
             if (state.uri.pathSegments.contains('l1')) {
@@ -188,7 +188,7 @@ void main() {
 
   group('interconnected guarding', () {
     testWidgets('guards will run a recursion', (tester) async {
-      final delegate = BeamerRouterDelegate(
+      final delegate = BeamerDelegate(
         initialPath: '/1',
         locationBuilder: SimpleLocationBuilder(
           routes: {
@@ -227,7 +227,7 @@ void main() {
 
   group('guards that block', () {
     testWidgets('nothing happens when guard should just block', (tester) async {
-      final delegate = BeamerRouterDelegate(
+      final delegate = BeamerDelegate(
         initialPath: '/1',
         locationBuilder: SimpleLocationBuilder(
           routes: {

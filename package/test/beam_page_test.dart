@@ -89,7 +89,7 @@ void main() {
 
   group('Pops', () {
     testWidgets('path parameter is removed on pop', (tester) async {
-      final delegate = BeamerRouterDelegate(
+      final delegate = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
             '/': (context) => Container(),
@@ -112,7 +112,7 @@ void main() {
       expect(delegate.currentLocation.state.pathParameters, {});
     });
 
-    final delegate = BeamerRouterDelegate(
+    final delegate = BeamerDelegate(
       locationBuilder: BeamerLocationBuilder(
         beamLocations: [TestLocation()],
       ),
@@ -231,7 +231,7 @@ void main() {
   });
 
   group('Transitions', () {
-    final delegate = BeamerRouterDelegate(
+    final delegate = BeamerDelegate(
       locationBuilder: SimpleLocationBuilder(
         routes: {
           '/': (context) => BeamPage(

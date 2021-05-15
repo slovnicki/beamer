@@ -15,8 +15,8 @@
 
 # 0.12.2
 
-- **Add** `listener` attribute to `BeamerRouterDelegate`
-- **Add** `root` attribute to `BeamerRouterDelegate` and `{bool root = false}` attribute to `Beamer.of`
+- **Add** `listener` attribute to `BeamerDelegate`
+- **Add** `root` attribute to `BeamerDelegate` and `{bool root = false}` attribute to `Beamer.of`
 - **Add** `canHandle(Uri uri)` method to `BeamLocation`
 - **Fix** Updating parent on nested navigation
 - **Fix** README typos
@@ -27,7 +27,7 @@
 
 # 0.12.0
 
-- **BREAKING**: There's no `RootRouterDelegate` any more. Just rename it to `BeamerRouterDelegate`. If you were using its `homeBuilder`, use `SimpleLocationBuilder` and  then `routes: {'/': (context) => HomeScreen()}`
+- **BREAKING**: There's no `RootRouterDelegate` any more. Just rename it to `BeamerDelegate`. If you were using its `homeBuilder`, use `SimpleLocationBuilder` and  then `routes: {'/': (context) => HomeScreen()}`
 - **BREAKING**: Behavior of `beamBack()` was changed to go to previous `BeamState`, not `BeamLocation`. If this is not what you want, use `popBeamLocation()` that has the same behavior as old `beamback()`
 - **Fix**: Important [bug](https://github.com/slovnicki/beamer/issues/183) while using multiple sibling `Beamer`s
 
@@ -37,7 +37,7 @@
 
 # 0.11.3
 
-- **Add** `beamBackTransitionDelegate` to `BeamerRouterDelegate`
+- **Add** `beamBackTransitionDelegate` to `BeamerDelegate`
 - **Add** `transition_delegates.dart` with some useful transition delegates
 - **Tweak** deep_location example to show this more clearly
 
@@ -57,13 +57,13 @@
 
 - migrated to null safety
 - **BREAKING:** `Beamer` now takes `routerDelegate`, not `beamLocations` directly
-- **BREAKING:** `BeamerRouterDelegate.beamLocations` is now `locationBuilder`
+- **BREAKING:** `BeamerDelegate.beamLocations` is now `locationBuilder`
 - **BREAKING:** `pagesBuilder` now also brings `state`
 - **Add** `beamToNamed` to `BeamGuard`
 - **Add** various `LocationBuilder`s
-- **Add** `transitionDelegate` to `BeamLocation` and `BeamerRouterDelegate`
+- **Add** `transitionDelegate` to `BeamLocation` and `BeamerDelegate`
 - **Add** `type` and `pageRouteBuilder` to `BeamPage`, for transition control
-- **Add** `initialPath` to `BeamerRouterDelegate`
+- **Add** `initialPath` to `BeamerDelegate`
 - **Add** `popTo`/`popToNamed` options for beaming
 - **Add** `onPopPage` to `BeamLocation`
 
@@ -119,14 +119,14 @@ See [migration details](https://pub.dev/packages/beamer#from-09-to-010)
 
 # 0.9.0
 
-- **Add** removing duplicates in `beamHistory` + `BeamerRouterDelegate.removeDuplicateHistory`
-- **Add** implicit updates of current location + `BeamerRouterDelegate.preferUpdate`
+- **Add** removing duplicates in `beamHistory` + `BeamerDelegate.removeDuplicateHistory`
+- **Add** implicit updates of current location + `BeamerDelegate.preferUpdate`
 - **Add** more Beamer extensions to `BuildContext`
 - **Remove** the need for `back_button_interceptor` package (not that it's not good, but we realized it can be implemented more naturally)
 
 # 0.8.2
 
-- **Add** optional `notFoundRedirect` to `BeamerRouterDelegate`
+- **Add** optional `notFoundRedirect` to `BeamerDelegate`
 - **Fix** parsing URIs in the form `/path/` the same as `/path`
 
 # 0.8.1+1
@@ -140,7 +140,7 @@ See [migration details](https://pub.dev/packages/beamer#from-09-to-010)
 # 0.8.0
 
 - **BREAKING:** `BeamLocation.pages` is now `BeamLocation.pagesBuilder`
-- **BREAKING:** `BeamerRouterDelegate` now takes `beamLocations` and `BeamerRouteInformationParser` nothing
+- **BREAKING:** `BeamerDelegate` now takes `beamLocations` and `BeamerRouteInformationParser` nothing
 - **NEW FEATURE:** `beamToNamed`
 - **NEW FEATURE:** `canBeamBack` and `beamBackLocation` helpers
 - **NEW FEATURE:** `BeamGuard.onCheckFailed`
@@ -151,7 +151,7 @@ See [migration details](https://pub.dev/packages/beamer#from-09-to-010)
 
 # 0.7.0
 
-- **BREAKING:** `BeamerRouterDelegate.notFoundPage` is now `BeamPage` instead of `Widget`
+- **BREAKING:** `BeamerDelegate.notFoundPage` is now `BeamPage` instead of `Widget`
 - **BREAKING:** `BeamGuard.showPage` is now `BeamPage` instead of `Widget`
 - **NEW FEATURE:** `beamBack` now goes back through `beamHistory`
 - **NEW FEATURE:** `beamTo` can take an optional `beamBackOnPop` boolean
@@ -171,11 +171,11 @@ See [migration details](https://pub.dev/packages/beamer#from-09-to-010)
 # 0.6.3
 
 - **Add** `name` attribute to `BeamPage`
-- **Fix** `BeamerRouterDelegate` not notifying listeners on `setNewRoutePath`
+- **Fix** `BeamerDelegate` not notifying listeners on `setNewRoutePath`
 
 # 0.6.2
 
-- **Add** `navigatorObservers` attribute to `BeamerRouterDelegate`
+- **Add** `navigatorObservers` attribute to `BeamerDelegate`
 
 # 0.6.1
 

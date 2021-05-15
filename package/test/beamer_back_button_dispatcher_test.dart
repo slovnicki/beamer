@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('back button pops', (tester) async {
-    final delegate = BeamerRouterDelegate(
+    final delegate = BeamerDelegate(
       locationBuilder: SimpleLocationBuilder(
         routes: {
           '/': (context) => Container(),

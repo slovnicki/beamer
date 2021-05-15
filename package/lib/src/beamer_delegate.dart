@@ -8,10 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 /// A delegate that is used by the [Router] to build the [Navigator].
-class BeamerRouterDelegate<T extends BeamState>
-    extends RouterDelegate<BeamState>
+class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<BeamState> {
-  BeamerRouterDelegate({
+  BeamerDelegate({
     required this.locationBuilder,
     this.initialPath = '/',
     this.listener,
@@ -52,22 +51,22 @@ class BeamerRouterDelegate<T extends BeamState>
   T get state => _state.copyWith() as T;
   set state(T state) => _state = state..configure();
 
-  BeamerRouterDelegate? _parent;
+  BeamerDelegate? _parent;
 
   /// A router delegate of a parent of the [Beamer] that has this router delegate.
   ///
   /// This is not null only if multiple [Beamer]s are used;
   /// `*App.router` and at least one more [Beamer] in the Widget tree.
-  BeamerRouterDelegate? get parent => _parent;
-  set parent(BeamerRouterDelegate? parent) {
+  BeamerDelegate? get parent => _parent;
+  set parent(BeamerDelegate? parent) {
     _parent = parent!;
     _initializeFromParent();
   }
 
-  /// The top-most [BeamerRouterDelegate], a parent of all.
+  /// The top-most [BeamerDelegate], a parent of all.
   ///
   /// It will return root even when called on root.
-  BeamerRouterDelegate get root {
+  BeamerDelegate get root {
     if (_parent == null) {
       return this;
     }

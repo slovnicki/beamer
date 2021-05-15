@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'beam_location.dart';
 import 'beam_state.dart';
-import 'beamer_router_delegate.dart';
+import 'beamer_delegate.dart';
 
 /// Types for how to route should be built.
 enum BeamPageType {
@@ -18,7 +18,7 @@ enum BeamPageType {
 /// The default pop behavior for [BeamPage].
 bool _defaultOnPopPage(
   BuildContext context,
-  BeamerRouterDelegate delegate,
+  BeamerDelegate delegate,
   BeamPage poppedPage,
 ) {
   final location = delegate.currentLocation;
@@ -83,7 +83,7 @@ class BeamPage extends Page {
   /// More general than [popToNamed].
   final bool Function(
     BuildContext context,
-    BeamerRouterDelegate delegate,
+    BeamerDelegate delegate,
     BeamPage poppedPage,
   ) onPopPage;
 
