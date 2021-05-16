@@ -555,6 +555,7 @@ The code for the nested navigation example app is available [here](https://githu
 - rename `BeamerRouterDelegate` to `BeamerDelegate`
 - rename `BeamerRouteInformationParser` to `BeamerParser`
 - rename `pagesBuilder` to `buildPages`
+- rename `Beamer.of(context).currentLocation` to `Beamer.of(context).currentBeamLocation`
 
 ## From 0.11 to 0.12
 
