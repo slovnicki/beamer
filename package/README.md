@@ -279,6 +279,8 @@ Beamer.of(context).update(
 
 ## Beaming Back
 
+**NOTE:** Navigating to previous page in a page stack is done via `Navigator.of(context).pop()`. This is also what the default `AppBar`'s `BackButton` will call. If you beamed to the current page stack from some _different_ page stack, then consider `beamBack` to return to your previous configuration.
+
 All `BeamState`s that were visited are kept in `beamStateHistory`. Therefore, there is an ability to beam back to whichever `BeamLocation` is responsible for previous `BeamState`. For example, after spending some time on `/books` and `/books/3`, say you beam to `/articles`. From there, you can get back to your previous location as it were when you left, i.e. `/books/3`.
 
 ```dart
