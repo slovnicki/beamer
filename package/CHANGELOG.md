@@ -1,3 +1,22 @@
+# 0.13.0
+
+- **BREAKING:** renamed `BeamerRouterDelegate` to `BeamerDelegate`
+- **BREAKING:** renamed `BeamerRouteInformationParser` to `BeamerParser`
+- **BREAKING:** renamed `pagesBuilder` to `buildPages`
+- **BREAKING:** renamed `Beamer.of(context).currentLocation` to `Beamer.of(context).currentBeamLocation`
+- **Add:** `BeamPage.popToNamed` and `BeamPage.onPopPage` for fine control of popping
+- **Add:** `BeamPage.title` for setting the browser tab title
+- **Add:** `SimpleLocationBuilder` can now mix `BeamPage`s and `Widget`s
+- **Add:** `BeamerParser.onParse` for intercepting the parsed state on app load
+- **Add:** encoding the `data` into browser history
+- **Add:** blocking capability to `BeamGuard`s
+- **Add:** slide and scale transitions to `BeamPageType`
+- **Add:** optional `transitionDelegate` for beaming
+- **Fix:** cascade guarding
+- **Fix:** delegate listener not being called always
+- All examples improved and migrated to null-safety
+- Improved documentation
+
 # 0.12.4
 
 - **Add** `Beamer.setPathUrlStrategy()` for removing `#` from URL
