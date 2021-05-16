@@ -148,10 +148,10 @@ void main() {
           routeInformationParser: BeamerParser(),
         ));
 
-        expect(router.currentLocation, isA<Location1>());
+        expect(router.currentBeamLocation, isA<Location1>());
         router.beamToNamed('/l2');
         await tester.pump();
-        expect(router.currentLocation, isA<Location1>());
+        expect(router.currentBeamLocation, isA<Location1>());
       });
 
       testWidgets('guard beamToNamed changes the location on build',
@@ -178,10 +178,10 @@ void main() {
           routeInformationParser: BeamerParser(),
         ));
 
-        expect(router.currentLocation, isA<Location1>());
+        expect(router.currentBeamLocation, isA<Location1>());
         router.beamToNamed('/l2');
         await tester.pump();
-        expect(router.currentLocation, isA<Location1>());
+        expect(router.currentBeamLocation, isA<Location1>());
       });
     });
   });
@@ -249,7 +249,7 @@ void main() {
       ));
 
       expect(delegate.state.uri.toString(), '/1');
-      expect(delegate.currentLocation.state.uri.toString(), '/1');
+      expect(delegate.currentBeamLocation.state.uri.toString(), '/1');
       expect(delegate.beamLocationHistory.length, 1);
       expect(delegate.beamStateHistory.length, 1);
 
@@ -257,7 +257,7 @@ void main() {
       await tester.pump();
 
       expect(delegate.state.uri.toString(), '/1');
-      expect(delegate.currentLocation.state.uri.toString(), '/1');
+      expect(delegate.currentBeamLocation.state.uri.toString(), '/1');
       expect(delegate.beamLocationHistory.length, 1);
       expect(delegate.beamStateHistory.length, 1);
     });

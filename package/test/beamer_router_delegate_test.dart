@@ -24,17 +24,17 @@ void main() {
 
   group('initialization & beaming', () {
     test('initialLocation is set', () {
-      expect(router.currentLocation, isA<Location1>());
+      expect(router.currentBeamLocation, isA<Location1>());
     });
 
     test('beamTo changes locations', () {
       router.beamTo(Location2(BeamState.fromUri(Uri.parse('/l2'))));
-      expect(router.currentLocation, isA<Location2>());
+      expect(router.currentBeamLocation, isA<Location2>());
     });
 
     test('beamToNamed updates locations with correct parameters', () {
       router.beamToNamed('/l2/2?q=t', data: {'x': 'y'});
-      final location = router.currentLocation;
+      final location = router.currentBeamLocation;
       expect(location, isA<Location2>());
       expect(location.state.pathParameters.containsKey('id'), true);
       expect(location.state.pathParameters['id'], '2');
@@ -48,7 +48,7 @@ void main() {
         () {
       final historyLength = router.beamLocationHistory.length;
       router.beamToNamed('/l2/2?q=t&r=s', data: {'x': 'z'});
-      final location = router.currentLocation;
+      final location = router.currentBeamLocation;
       expect(router.beamLocationHistory.length, historyLength);
       expect(location.state.pathParameters.containsKey('id'), true);
       expect(location.state.pathParameters['id'], '2');
@@ -64,11 +64,11 @@ void main() {
         () {
       expect(router.canPopBeamLocation, true);
       expect(router.popBeamLocation(), true);
-      expect(router.currentLocation, isA<Location1>());
+      expect(router.currentBeamLocation, isA<Location1>());
 
       expect(router.canPopBeamLocation, false);
       expect(router.popBeamLocation(), false);
-      expect(router.currentLocation, isA<Location1>());
+      expect(router.currentBeamLocation, isA<Location1>());
     });
 
     test('duplicate locations are removed from history', () {
@@ -87,13 +87,13 @@ void main() {
         () {
       expect(router.beamLocationHistory.length, 2);
       expect(router.beamLocationHistory[0], isA<Location2>());
-      expect(router.currentLocation, isA<Location1>());
+      expect(router.currentBeamLocation, isA<Location1>());
       router.beamTo(
         Location2(BeamState.fromUri(Uri.parse('/l2'))),
         replaceCurrent: true,
       );
       expect(router.beamLocationHistory.length, 1);
-      expect(router.currentLocation, isA<Location2>());
+      expect(router.currentBeamLocation, isA<Location2>());
     });
   });
 
@@ -112,26 +112,26 @@ void main() {
 
   test('custom state can be updated', () {
     router.beamToNamed('/custom');
-    expect((router.currentLocation as CustomStateLocation).state.customVar,
+    expect((router.currentBeamLocation as CustomStateLocation).state.customVar,
         'test');
-    (router.currentLocation as CustomStateLocation)
+    (router.currentBeamLocation as CustomStateLocation)
         .update((state) => state.copyWith(customVar: 'test-ok'));
-    expect((router.currentLocation as CustomStateLocation).state.customVar,
+    expect((router.currentBeamLocation as CustomStateLocation).state.customVar,
         'test-ok');
   });
 
   test('beamTo works without setting the BeamState explicitly', () {
     router.beamTo(NoStateLocation());
-    expect(router.currentLocation.state, isNotNull);
+    expect(router.currentBeamLocation.state, isNotNull);
     router.beamBack();
   });
 
   test('clearHistory removes all but last entry (current location)', () {
-    final currentLocation = router.currentLocation;
+    final currentBeamLocation = router.currentBeamLocation;
     expect(router.beamLocationHistory.length, greaterThan(1));
     router.clearBeamLocationHistory();
     expect(router.beamLocationHistory.length, equals(1));
-    expect(router.currentLocation, currentLocation);
+    expect(router.currentBeamLocation, currentBeamLocation);
   });
 
   testWidgets('popToNamed forces pop to specified location', (tester) async {
@@ -144,41 +144,41 @@ void main() {
     router.beamToNamed('/l1/one', popToNamed: '/l2');
     await tester.pump();
     final historyLength = router.beamLocationHistory.length;
-    expect(router.currentLocation, isA<Location1>());
+    expect(router.currentBeamLocation, isA<Location1>());
     await router.popRoute();
     await tester.pump();
-    expect(router.currentLocation, isA<Location2>());
+    expect(router.currentBeamLocation, isA<Location2>());
     expect(router.beamLocationHistory.length, equals(historyLength));
   });
 
   test('beamBack leads to previous beam state and all helpers are correct', () {
     router.clearBeamStateHistory();
     expect(router.beamStateHistory.length, 1);
-    expect(router.currentLocation, isA<Location2>());
+    expect(router.currentBeamLocation, isA<Location2>());
 
     router.beamToNamed('/l1');
     router.beamToNamed('/l2');
 
     expect(router.beamStateHistory.length, 3);
-    expect(router.currentLocation, isA<Location2>());
+    expect(router.currentBeamLocation, isA<Location2>());
     expect(router.canBeamBack, true);
 
     router.beamToNamed('/l1/one');
     router.beamToNamed('/l1/two');
     expect(router.beamStateHistory.length, 5);
-    expect(router.currentLocation, isA<Location1>());
+    expect(router.currentBeamLocation, isA<Location1>());
 
     router.beamToNamed('/l1/two');
     expect(router.beamStateHistory.length, 5);
-    expect(router.currentLocation, isA<Location1>());
+    expect(router.currentBeamLocation, isA<Location1>());
 
     expect(router.beamBack(), true);
-    expect(router.currentLocation, isA<Location1>());
-    expect(router.currentLocation.state.uri.path, equals('/l1/one'));
+    expect(router.currentBeamLocation, isA<Location1>());
+    expect(router.currentBeamLocation.state.uri.path, equals('/l1/one'));
     expect(router.beamStateHistory.length, 4);
 
     expect(router.beamBack(), true);
-    expect(router.currentLocation, isA<Location2>());
+    expect(router.currentBeamLocation, isA<Location2>());
     expect(router.beamStateHistory.length, 3);
   });
 
@@ -191,6 +191,6 @@ void main() {
     );
     router.popToNamed('/l1/one');
     await tester.pump();
-    expect(router.currentLocation, isA<Location1>());
+    expect(router.currentBeamLocation, isA<Location1>());
   });
 }

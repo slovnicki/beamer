@@ -110,7 +110,7 @@ Beamer.of(context).beamToNamed('/books/2');
 
 Accessing route attributes (for example, `bookId` for building `BookDetailsScreen`) can be done with
 ```dart
-Beamer.of(context).currentLocation.state.pathParameters['bookId'];
+Beamer.of(context).currentBeamLocation.state.pathParameters['bookId'];
 ```
 
 Passing additional arbitrary attributes that don' contribute to URI can be done via `data`;
@@ -203,7 +203,7 @@ This is the above-mentioned `state` of `BeamLocation`. Its role is to keep vario
 Besides purely imperative navigation via e.g. `beamToNamed('/books/3')`, this also provides a method to have declarative navigation by changing the `state` of `BeamLocation`. For example:
 
 ```dart
-Beamer.of(context).currentLocation.update(
+Beamer.of(context).currentBeamLocation.update(
   (state) => state.copyWith(
     pathBlueprintSegments: ['books', ':bookId'],
     pathParameters: {'bookId': '3'},

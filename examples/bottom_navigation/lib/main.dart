@@ -184,7 +184,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       currentIndex:
-          widget.beamerKey.currentState!.currentLocation is BooksLocation
+          widget.beamerKey.currentState!.currentBeamLocation is BooksLocation
               ? 0
               : 1,
       items: [

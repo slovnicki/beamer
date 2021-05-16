@@ -23,14 +23,14 @@ void main() {
     );
     delegate.beamToNamed('/test');
     await tester.pump();
-    expect(delegate.currentLocation.state.uri.toString(), '/test');
+    expect(delegate.currentBeamLocation.state.uri.toString(), '/test');
 
     await backButtonDispatcher.invokeCallback(Future.value(true));
     await tester.pump();
-    expect(delegate.currentLocation.state.uri.toString(), '/');
+    expect(delegate.currentBeamLocation.state.uri.toString(), '/');
 
     await backButtonDispatcher.invokeCallback(Future.value(true));
     await tester.pump();
-    expect(delegate.currentLocation.state.uri.toString(), '/');
+    expect(delegate.currentBeamLocation.state.uri.toString(), '/');
   });
 }

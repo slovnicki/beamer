@@ -91,7 +91,7 @@ void main() {
   testWidgets('Beamer can be used via key', (tester) async {
     await tester.pumpWidget(app);
     expect(beamerKey.currentState, isNotNull);
-    expect(beamerKey.currentState!.currentLocation.state.uri.toString(),
+    expect(beamerKey.currentState!.currentBeamLocation.state.uri.toString(),
         '/test2/x');
   });
 

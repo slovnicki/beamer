@@ -119,7 +119,7 @@ class NotFound extends BeamLocation {
 
 /// Empty location used to intialize a non-nullable BeamLocation variable.
 ///
-/// See [BeamerDelegate.currentLocation].
+/// See [BeamerDelegate.currentBeamLocation].
 class EmptyBeamLocation extends BeamLocation {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [];

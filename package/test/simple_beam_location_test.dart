@@ -33,10 +33,10 @@ void main() {
 
   group('Query', () {
     test('location takes query', () {
-      expect(delegate.currentLocation.state.queryParameters, equals({}));
+      expect(delegate.currentBeamLocation.state.queryParameters, equals({}));
       delegate.beamToNamed('/?q=t');
-      expect(
-          delegate.currentLocation.state.queryParameters, equals({'q': 't'}));
+      expect(delegate.currentBeamLocation.state.queryParameters,
+          equals({'q': 't'}));
     });
 
     testWidgets('location includes query in page key', (tester) async {
@@ -53,10 +53,10 @@ void main() {
   group('NotFound', () {
     test('can be recognized', () {
       delegate.beamToNamed('/unknown');
-      expect(delegate.currentLocation, isA<NotFound>());
+      expect(delegate.currentBeamLocation, isA<NotFound>());
 
       delegate.beamToNamed('/test/unknown');
-      expect(delegate.currentLocation, isA<NotFound>());
+      expect(delegate.currentBeamLocation, isA<NotFound>());
     });
 
     testWidgets('delegate builds notFoundPage', (tester) async {
@@ -78,7 +78,7 @@ void main() {
       );
 
       delegate.beamToNamed('/test/anything');
-      expect(delegate.currentLocation, isA<SimpleBeamLocation>());
+      expect(delegate.currentBeamLocation, isA<SimpleBeamLocation>());
     });
 
     test('only * will override NotFound', () {
@@ -90,7 +90,7 @@ void main() {
         ),
       );
       delegate1.setNewRoutePath(BeamState.fromUri(Uri.parse('/anything')));
-      expect(delegate1.currentLocation, isA<SimpleBeamLocation>());
+      expect(delegate1.currentBeamLocation, isA<SimpleBeamLocation>());
 
       final delegate2 = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
@@ -100,7 +100,7 @@ void main() {
         ),
       );
       delegate2.setNewRoutePath(BeamState.fromUri(Uri.parse('/anything')));
-      expect(delegate2.currentLocation, isA<SimpleBeamLocation>());
+      expect(delegate2.currentBeamLocation, isA<SimpleBeamLocation>());
     });
 
     test('path parameters are not considered NotFound', () {
@@ -112,7 +112,7 @@ void main() {
         ),
       );
       delegate1.setNewRoutePath(BeamState.fromUri(Uri.parse('/test/1')));
-      expect(delegate1.currentLocation, isA<SimpleBeamLocation>());
+      expect(delegate1.currentBeamLocation, isA<SimpleBeamLocation>());
     });
   });
 }

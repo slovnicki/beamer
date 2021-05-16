@@ -21,7 +21,7 @@ bool _defaultOnPopPage(
   BeamerDelegate delegate,
   BeamPage poppedPage,
 ) {
-  final location = delegate.currentLocation;
+  final location = delegate.currentBeamLocation;
   final previousBeamState = delegate.beamStateHistory.length > 1
       ? delegate.beamStateHistory[delegate.beamStateHistory.length - 2]
       : null;
@@ -75,7 +75,7 @@ class BeamPage extends Page {
   final String? title;
 
   /// Overrides the default pop by executing an arbitrary closure.
-  /// Mainly used to manually update the [delegate.currentLocation] state.
+  /// Mainly used to manually update the [delegate.currentBeamLocation] state.
   ///
   /// [poppedPage] is this [BeamPage].
   ///

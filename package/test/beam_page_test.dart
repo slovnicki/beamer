@@ -32,7 +32,7 @@ class TestLocation extends BeamLocation {
           BeamPage(
             key: ValueKey('book-${state.pathParameters['bookId']}-details'),
             onPopPage: (context, delegate, page) {
-              delegate.currentLocation.update(
+              delegate.currentBeamLocation.update(
                 (state) => state.copyWith(
                   pathBlueprintSegments: ['books'],
                   pathParameters: {},
@@ -105,11 +105,11 @@ void main() {
       );
       delegate.beamToNamed('/my-id');
       await tester.pump();
-      expect(delegate.currentLocation.state.pathParameters['id'], 'my-id');
+      expect(delegate.currentBeamLocation.state.pathParameters['id'], 'my-id');
 
       delegate.navigatorKey.currentState!.pop();
       await tester.pump();
-      expect(delegate.currentLocation.state.pathParameters, {});
+      expect(delegate.currentBeamLocation.state.pathParameters, {});
     });
 
     final delegate = BeamerDelegate(
@@ -229,30 +229,30 @@ void main() {
       delegate.beamToNamed('/books/1/details?x=y');
       await tester.pump();
       expect(
-        delegate.currentLocation.state.uri.path,
+        delegate.currentBeamLocation.state.uri.path,
         equals('/books/1/details'),
       );
       expect(
-        delegate.currentLocation.state.queryParameters,
+        delegate.currentBeamLocation.state.queryParameters,
         equals({'x': 'y'}),
       );
 
       delegate.beamToNamed('/books/1/details/buy');
       await tester.pump();
       expect(
-        delegate.currentLocation.state.uri.path,
+        delegate.currentBeamLocation.state.uri.path,
         equals('/books/1/details/buy'),
       );
-      expect(delegate.currentLocation.state.queryParameters, equals({}));
+      expect(delegate.currentBeamLocation.state.queryParameters, equals({}));
 
       delegate.navigatorKey.currentState!.pop();
       await tester.pump();
       expect(
-        delegate.currentLocation.state.uri.path,
+        delegate.currentBeamLocation.state.uri.path,
         equals('/books/1/details'),
       );
       expect(
-        delegate.currentLocation.state.queryParameters,
+        delegate.currentBeamLocation.state.queryParameters,
         equals({'x': 'y'}),
       );
     });
