@@ -5,6 +5,10 @@ import 'utils.dart';
 
 typedef LocationBuilder = BeamLocation Function(BeamState);
 
+/// A pre-made builder to be used for [locationBuilder].
+///
+/// Determines the appropriate [BeamLocation] from the list
+/// and populates it with configured state.
 class BeamerLocationBuilder implements Function {
   BeamerLocationBuilder({required this.beamLocations});
 
@@ -16,6 +20,10 @@ class BeamerLocationBuilder implements Function {
   }
 }
 
+/// A pre-made builder to be used for [locationBuilder].
+///
+/// Creates a single [BeamLocation]; [SimpleBeamLocation]
+/// and configures its [BeamLocation.buildPages] with appropriate [routes].
 class SimpleLocationBuilder implements Function {
   SimpleLocationBuilder({required this.routes, this.builder});
 

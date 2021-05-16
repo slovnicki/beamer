@@ -3,13 +3,11 @@ import 'package:flutter/widgets.dart';
 import './beam_location.dart';
 import './beam_page.dart';
 
-/// A guard for [BeamLocation]s.
+/// Checks whether current [BeamLocation] is allowed to be beamed to
+/// and provides steps to be executed following a failed check.
 ///
-/// Responsible for checking whether current location is allowed to be drawn
-/// on screen and providing steps to be executed following a failed check.
-///
-/// If neither `beamTo`, `beamToNamed` nor `showPage` is specified,
-/// the guard will just block navigation, i.e. nothing will happen on screen.
+/// If neither [beamTo], [beamToNamed] nor [showPage] is specified,
+/// the guard will just block navigation, i.e. nothing will happen.
 class BeamGuard {
   BeamGuard({
     required this.pathBlueprints,
@@ -33,40 +31,39 @@ class BeamGuard {
   /// See [_hasMatch] for more details.
   List<String> pathBlueprints;
 
-  /// What check should guard perform on a given [location], the one that is
-  /// being tried beaming to.
+  /// What check should be performed on a given [location],
+  /// the one to which beaming has been requested.
   ///
   /// [context] is also injected to fetch data up the tree if necessary.
   bool Function(BuildContext context, BeamLocation location) check;
 
-  /// Arbitrary close to execute when [check] fails.
+  /// Arbitrary closure to execute when [check] fails.
   ///
-  /// This will run before and regardless of [beamTo] or [showPage].
+  /// This will run before and regardless of [beamTo], [beamToNamed], [showPage].
   void Function(BuildContext context, BeamLocation location)? onCheckFailed;
 
-  /// If guard [check] returns false, build a location to be beamed to.
+  /// If guard [check] returns `false`, build a [BeamLocation] to be beamed to.
   ///
   /// [showPage] has precedence over this attribute.
   BeamLocation Function(BuildContext context)? beamTo;
 
-  /// If guard [check] returns false, beam to this uri.
+  /// If guard [check] returns `false`, beam to this URI string.
   ///
   /// [showPage] has precedence over this attribute.
   String? beamToNamed;
 
-  /// If guard [check] returns false, put this page onto navigation stack.
-  ///
-  /// When using [showPage], you probably want [replaceCurrentStack] set to `false`.
+  /// If guard [check] returns `false`, put this page onto navigation stack.
   ///
   /// This has precedence over [beamTo] and [beamToNamed].
   BeamPage? showPage;
 
-  /// Whether or not [location]s matching the [pathBlueprint]s will be blocked,
-  /// or all other [location]s that don't match the [pathBlueprint]s will be.
+  /// Whether to [check] all the path blueprints defined in [pathBlueprints]
+  /// or [check] all the paths that **are not** in [pathBlueprints].
+  ///
+  /// `false` meaning former and `true` meaning latter.
   bool guardNonMatching;
 
-  /// Whether or not to replace the current location's stack of pages;
-  /// the one that is yielding a `false` [check] upon being beamed to.
+  /// Whether or not to replace the current [BeamLocation]'s stack of pages.
   final bool replaceCurrentStack;
 
   /// Matches [location]'s pathBlueprint to [pathBlueprints].
@@ -92,7 +89,7 @@ class BeamGuard {
     return false;
   }
 
-  /// Whether or not the guard should check access to the [location].
+  /// Whether or not the guard should [check] the [location].
   bool shouldGuard(BeamLocation location) {
     return guardNonMatching ? !_hasMatch(location) : _hasMatch(location);
   }

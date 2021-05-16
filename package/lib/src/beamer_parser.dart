@@ -11,6 +11,10 @@ class BeamerParser extends RouteInformationParser<BeamState> {
 
   static BeamState _identity(BeamState state) => state;
 
+  /// A custom closure to execute after route information has been parsed
+  /// into a [BeamState], but before returning it (i.e. before navigation happens).
+  ///
+  /// Can be used to inspect and modify the parsed route information.
   final BeamState Function(BeamState) onParse;
 
   @override

@@ -1,14 +1,14 @@
 import 'package:beamer/beamer.dart';
 
 abstract class Utils {
-  /// Traverses `beamLocations` and returns the one whose one of
-  /// `pathBlueprints` contains the `uri`, ignoring concrete path parameters.
+  /// Traverses [beamLocations] and returns the one whose one of
+  /// `pathBlueprints` contains the [uri], ignoring concrete path parameters.
   ///
   /// Upon finding such [BeamLocation], configures it with
-  /// `pathParameters` and `queryParameters` from `uri`.
+  /// `pathParameters` and `queryParameters` from [uri].
   ///
-  /// If `beamLocations` don't contain a match, [NotFound] will be returned
-  /// configured with `uri`.
+  /// If [beamLocations] don't contain a match, [NotFound] will be returned
+  /// configured with [uri].
   static BeamLocation chooseBeamLocation(
     Uri uri,
     List<BeamLocation> beamLocations, {
@@ -29,7 +29,7 @@ abstract class Utils {
     return NotFound(path: uri.path);
   }
 
-  /// Can a `beamLocation`, depending on its `pathBlueprints` handle the `uri`.
+  /// Can a [beamLocation], depending on its `pathBlueprints`, handle the [uri].
   ///
   /// Used in [BeamLocation.canHandle] and [chooseBeamLocation].
   static bool canBeamLocationHandleUri(BeamLocation beamLocation, Uri uri) {
@@ -66,7 +66,7 @@ abstract class Utils {
     return false;
   }
 
-  /// Creates a state for [BeamLocation] based on incoming `uri`.
+  /// Creates a state for [BeamLocation] based on incoming [uri].
   ///
   /// Used in [BeamState.copyForLocation].
   static BeamState createBeamState(

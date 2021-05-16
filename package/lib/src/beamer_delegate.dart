@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 /// A delegate that is used by the [Router] to build the [Navigator].
+///
+/// This is "the beamer", the one that does the actual beaming.
 class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<BeamState> {
   BeamerDelegate({
@@ -44,16 +46,16 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
 
   late T _state;
 
-  /// A state of this router delegate. This is the `state` that goes into
+  /// A state of this delegate. This is the `state` that goes into
   /// [locationBuilder] to build an appropriate [BeamLocation].
   ///
-  /// Most common way to modify this state is via [update].
+  /// A way to modify this state is via [update].
   T get state => _state.copyWith() as T;
   set state(T state) => _state = state..configure();
 
   BeamerDelegate? _parent;
 
-  /// A router delegate of a parent of the [Beamer] that has this router delegate.
+  /// A delegate of a parent of the [Beamer] that has this delegate.
   ///
   /// This is not null only if multiple [Beamer]s are used;
   /// `*App.router` and at least one more [Beamer] in the Widget tree.
@@ -78,6 +80,42 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   }
 
   /// A builder for [BeamLocation]s.
+  ///
+  /// There are 3 ways of builfing an appropriate [BeamLocation] which will in
+  /// turn build a stack of pages that should go into [Navigator.pages].
+  ///
+  ///   1. Custom closure
+  /// ```dart
+  /// locationBuilder: (state) {
+  ///   if (state.uri.pathSegments.contains('l1')) {
+  ///     return Location1(state);
+  ///   }
+  ///   if (state.uri.pathSegments.contains('l2')) {
+  ///     return Location2(state);
+  ///   }
+  ///   return NotFound(path: state.uri.toString());
+  /// },
+  /// ```
+  ///
+  ///   2. [BeamerLocationBuilder]; chooses appropriate [BeamLocation] itself
+  /// ```dart
+  /// locationBuilder: BeamerLocationBuilder(
+  ///   beamLocations: [
+  ///     Location1(),
+  ///     Location2(),
+  ///   ],
+  /// ),
+  /// ```
+  ///
+  ///   3. [SimpleLocationBuilder]; a Map of routes
+  /// ```dart
+  /// locationBuilder: SimpleLocationBuilder(
+  ///   routes: {
+  ///     '/': (context) => HomeScreen(),
+  ///     '/another': (context) => AnotherScreen(),
+  ///   },
+  /// ),
+  /// ```
   final LocationBuilder locationBuilder;
 
   /// The path to replace `/` as default initial route path upon load.
@@ -95,15 +133,16 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   final void Function(BeamState, BeamLocation)? listener;
 
   /// Whether to prefer updating [currentLocation] if it's of the same type
-  /// as the location being beamed to, instead of adding it to [beamHistory].
+  /// as the [BeamLocation] being beamed to,
+  /// instead of adding it to [beamLocationHistory].
   ///
-  /// See how this is used at [beamTo] implementation.
+  /// See how this is used at [_pushHistory] implementation.
   final bool preferUpdate;
 
-  /// Whether to remove locations from history if they are the same type
-  /// as the location beaing beamed to.
+  /// Whether to remove [BeamLocation]s from [beamLocationHistory]
+  /// if they are the same type as the location being beamed to.
   ///
-  /// See how this is used at [beamTo] implementation.
+  /// See how this is used at [_pushHistory] implementation.
   final bool removeDuplicateHistory;
 
   /// Page to show when no [BeamLocation] supports the incoming URI.
@@ -119,13 +158,15 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   /// and stack of pages will be updated as is configured in [BeamGuard].
   final List<BeamGuard> guards;
 
-  /// The list of observers for the [Navigator] created for this app.
+  /// The list of observers for the [Navigator].
   final List<NavigatorObserver> navigatorObservers;
 
   /// A transition delegate to be used by [Navigator].
   ///
   /// This transition delegate will be overridden by the one in [BeamLocation],
   /// if any is set.
+  ///
+  /// See [Navigator.transitionDelegate].
   final TransitionDelegate transitionDelegate;
 
   /// A transition delegate to be used by [Navigator] when beaming back.
@@ -152,31 +193,32 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
 
   final List<BeamState> _beamStateHistory = [];
 
-  /// The history of beaming.
+  /// The history of beaming states.
+  ///
+  /// [BeamState] is inserted on every beaming event, if it differs from last.
+  ///
+  /// See [_pushHistory].
   List<BeamState> get beamStateHistory => _beamStateHistory;
 
   final List<BeamLocation> _beamLocationHistory = [];
 
-  /// The history of visited [BeamLocation]s.
+  /// The history of [BeamLocation]s.
+  ///
+  /// [BeamLocation] is inserted differently depending on configuration of
+  /// [preferUpdate], [replaceCurrent], [removeDuplicateHistory].
+  ///
+  /// See [_pushHistory].
   List<BeamLocation> get beamLocationHistory => _beamLocationHistory;
 
   late BeamLocation _currentLocation;
 
   /// {@template currentLocation}
-  /// Access the current [BeamLocation].
+  /// A [BeamLocation] that is currently responsible for providing a page stack
+  /// via [BeamLocation.buildPages] and holds the current [BeamState].
   ///
-  /// Can be useful in:
-  ///
-  /// * extracting location properties when building Widgets:
-  ///
+  /// Usually obtained via
   /// ```dart
-  /// final queryParameters = Beamer.of(context).currentLocation.queryParameters;
-  /// ```
-  ///
-  /// * to check which navigation button should be highlighted:
-  ///
-  /// ```dart
-  /// highlighted: Beamer.of(context).currentLocation is MyLocation,
+  /// Beamer.of(context).currentLocation
   /// ```
   /// {@endtemplate}
   BeamLocation get currentLocation => _currentLocation;
@@ -184,7 +226,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   List<BeamPage> _currentPages = [];
 
   /// {@template currentPages}
-  /// Current location's effective pages.
+  /// [currentLocation]'s "effective" pages, the ones that were built.
   /// {@endtemplate}
   List<BeamPage> get currentPages => _currentPages;
 
@@ -194,56 +236,63 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   /// Whether to implicitly [popBeamLocation] instead of default pop.
   bool _popBeamLocationOnPop = false;
 
-  /// Which transition delegate to use in the next rebuild.
+  /// Which transition delegate to use in the next build.
   late TransitionDelegate _currentTransitionDelegate;
 
   /// Which location to pop to, instead of default pop.
   ///
-  /// This is more general than `beamBackOnPop`.
+  /// This is more general than [_beamBackOnPop].
   T? _popState;
 
-  /// Whether all the pages from location are stacked.
+  /// Whether all the pages from [currentLocation] are stacked.
   /// If not (`false`), just the last page is taken.
   bool _stacked = true;
 
-  /// How to create a [state] for this router delegate.
-  ///
-  /// If not set, default `BeamState.copyWith() as T` is used.
+  /// How to create a [state] for this delegate.
   T Function(BeamState state)? createState;
 
-  /// If `false`, does not report the route until next `update`.
+  /// If `false`, does not report the route until next [update].
   bool _active = true;
 
   /// When not active, does not report the route.
   ///
   /// Useful when having sibling beamers that are both build at the same time.
-  /// Upon `update` becomes active.
+  /// Becomes active on next [update].
   void active([bool? value]) => _active = value ?? true;
 
-  /// Main method to update the state of this; `Beamer.of(context)`,
+  /// Main method to update the [state] of this; `Beamer.of(context)`,
   ///
   /// This "top-level" [update] is generally used for navigation
   /// _between_ [BeamLocation]s and not _within_ a specific [BeamLocation].
   /// For latter purpose, see [BeamLocation.update].
   /// Nevertheless, [update] **will** work for navigation within [BeamLocation].
+  /// Calling [update] will run the [locationBuilder].
   ///
-  /// _Imperative_ [beamTo] or [beamToNamed] and [popToNamed]
-  /// all call [update] to really do the update.
+  /// ```dart
+  /// Beamer.of(context).update(
+  ///   state: BeamState.fromUri(Uri.parse('/xx')),
+  /// );
+  /// ```
   ///
-  /// If `beamBackOnPop` is set to `true`,
-  /// default pop action will triger `beamBack` instead.
+  /// **[beamTo] and [beamToNamed] call [update] to really do the update.**
   ///
-  /// `popState` is more general than `beamBackOnPop`,
+  /// [transitionDelegate] determines how a new stack of pages replaces current.
+  /// See [Navigator.transitionDelegate].
+  ///
+  /// If [beamBackOnPop] is set to `true`,
+  /// default pop action will triger [beamBack] instead.
+  ///
+  /// [popState] is more general than [beamBackOnPop],
   /// and can beam you anywhere; whatever it resolves to during build.
   ///
-  /// If `stacked` is set to `false`,
+  /// If [stacked] is set to `false`,
   /// only the location's last page will be shown.
   ///
-  /// If `replaceCurrent` is set to `true`,
+  /// If [replaceCurrent] is set to `true`,
   /// new location will replace the last one in the stack.
   ///
-  /// If `rebuild` is set to `false`,
-  /// `build` will not occur, but state and browser URL will be updated.
+  /// If [rebuild] is set to `false`,
+  /// [build] will not occur, but [state] and browser URL will be updated.
   void update({
     T? state,
     T? popState,
@@ -288,7 +337,6 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   /// Beams to a specific, manually configured [BeamLocation].
   ///
   /// For example
-  ///
   /// ```dart
   /// Beamer.of(context).beamTo(
   ///   Location2(
@@ -326,11 +374,10 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   }
 
   /// {@template beamToNamed}
-  /// Beams to [BeamLocation] that has `uri` contained within its
+  /// Beams to [BeamLocation] that has [uri] contained within its
   /// [BeamLocation.pathBlueprintSegments].
   ///
   /// For example
-  ///
   /// ```dart
   /// Beamer.of(context).beamToNamed(
   ///   '/user/1/transactions?perPage=10',
@@ -401,7 +448,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   ///
   /// If there is no previous state, does nothing.
   ///
-  /// Returns the success, whether the [currentLocation] was changed.
+  /// Returns the success, whether the [state] updated.
   /// {@endtemplate}
   bool beamBack() {
     if (!canBeamBack) {
@@ -416,7 +463,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     return true;
   }
 
-  /// Remove everything except last from [_beamStateHistory].
+  /// Remove everything except last from [beamStateHistory].
   void clearBeamStateHistory() =>
       _beamStateHistory.removeRange(0, _beamStateHistory.length - 1);
 
@@ -562,6 +609,11 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     return SynchronousFuture(null);
   }
 
+  /// Pass this call to [root] which notifies the platform for a [state] change.
+  ///
+  /// On Web, creates a new browser history entry and update URL
+  ///
+  /// See [SystemNavigator.routeInformationUpdated].
   void updateRouteInformation(BeamState state) {
     if (parent == null) {
       SystemNavigator.routeInformationUpdated(

@@ -54,7 +54,7 @@ bool _defaultOnPopPage(
   return true;
 }
 
-/// A wrapper for pages / screens that will be drawn.
+/// A wrapper for screens in a navigation stack.
 class BeamPage extends Page {
   BeamPage({
     LocalKey? key,
@@ -75,12 +75,14 @@ class BeamPage extends Page {
   final String? title;
 
   /// Overrides the default pop by executing an arbitrary closure.
-  /// Mainly used to manually update the `location` state.
+  /// Mainly used to manually update the [delegate.currentLocation] state.
+  ///
+  /// [poppedPage] is this [BeamPage].
   ///
   /// Return `false` (rarely used) to prevent **any** navigation from happening,
   /// otherwise return `true`.
   ///
-  /// More general than [popToNamed].
+  /// More powerful than [popToNamed].
   final bool Function(
     BuildContext context,
     BeamerDelegate delegate,
@@ -99,7 +101,7 @@ class BeamPage extends Page {
 
   /// A completely custom [PageRouteBuilder] to use for [createRoute].
   ///
-  /// `settings` must be passed to [PageRouteBuilder.settings].
+  /// [settings] must be passed to [PageRouteBuilder.settings].
   final PageRouteBuilder Function(RouteSettings settings, Widget child)?
       pageRouteBuilder;
 
