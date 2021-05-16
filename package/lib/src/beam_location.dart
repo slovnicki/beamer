@@ -110,7 +110,7 @@ class NotFound extends BeamLocation {
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [];
 
   @override
-  List<String> get pathBlueprints => [''];
+  List<String> get pathBlueprints => [];
 }
 
 /// Empty location used to intialize a non-nullable BeamLocation variable.

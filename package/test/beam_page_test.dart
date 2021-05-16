@@ -191,6 +191,34 @@ void main() {
       expect(delegate.currentPages.last.key, ValueKey('book-1-details'));
     });
 
+    testWidgets('subsequent pops work', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: delegate,
+        ),
+      );
+      delegate.beamToNamed('/books/1/details');
+      await tester.pump();
+      expect(delegate.currentPages.length, 4);
+      expect(delegate.currentPages.last.key, ValueKey('book-1-details'));
+
+      delegate.navigatorKey.currentState!.pop();
+      await tester.pump();
+      expect(delegate.currentPages.length, 2);
+      expect(delegate.currentPages.last.key, ValueKey('books'));
+
+      delegate.beamToNamed('/books/1/details');
+      await tester.pump();
+      expect(delegate.currentPages.length, 4);
+      expect(delegate.currentPages.last.key, ValueKey('book-1-details'));
+
+      delegate.navigatorKey.currentState!.pop();
+      await tester.pump();
+      expect(delegate.currentPages.length, 2);
+      expect(delegate.currentPages.last.key, ValueKey('books'));
+    });
+
     testWidgets('query is kept on pop', (tester) async {
       await tester.pumpWidget(
         MaterialApp.router(

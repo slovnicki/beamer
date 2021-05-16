@@ -94,4 +94,67 @@ void main() {
     expect(beamerKey.currentState!.currentLocation.state.uri.toString(),
         '/test2/x');
   });
+
+  testWidgets('3 layers deep recursively finds root', (tester) async {
+    BuildContext? testContext;
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routeInformationParser: BeamerParser(),
+        routerDelegate: BeamerDelegate(
+          locationBuilder: SimpleLocationBuilder(
+            routes: {
+              '/': (context) => Beamer(
+                    routerDelegate: BeamerDelegate(
+                      locationBuilder: SimpleLocationBuilder(
+                        routes: {
+                          '/': (context) => Beamer(
+                                routerDelegate: BeamerDelegate(
+                                  locationBuilder: SimpleLocationBuilder(
+                                    routes: {
+                                      '/': (context) {
+                                        testContext = context;
+                                        Beamer.of(context).active(false);
+                                        return Container();
+                                      },
+                                    },
+                                  ),
+                                ),
+                              ),
+                        },
+                      ),
+                    ),
+                  ),
+            },
+          ),
+        ),
+      ),
+    );
+    expect(Beamer.of(testContext!, root: true), isA<BeamerDelegate>());
+  });
+
+  testWidgets('Beamer in builder can be accessed with BeamerProvider',
+      (tester) async {
+    BuildContext? testContext;
+    final delegate = BeamerDelegate(
+      locationBuilder: SimpleLocationBuilder(
+        routes: {
+          '/': (context) => Container(),
+        },
+      ),
+    );
+    await tester.pumpWidget(
+      BeamerProvider(
+        routerDelegate: delegate,
+        child: MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: delegate,
+          builder: (context, child) {
+            testContext = context;
+            return child!;
+          },
+        ),
+      ),
+    );
+    expect(Beamer.of(testContext!), isA<BeamerDelegate>());
+  });
 }
