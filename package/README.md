@@ -113,7 +113,7 @@ Accessing route attributes (for example, `bookId` for building `BookDetailsScree
 Beamer.of(context).currentBeamLocation.state.pathParameters['bookId'];
 ```
 
-Passing additional arbitrary attributes that don' contribute to URI can be done via `data`;
+Passing additional arbitrary attributes that don't contribute to URI can be done via `data`;
 ```dart
 Beamer.of(context).beamToNamed(
   '/book/2',
