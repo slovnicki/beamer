@@ -1,3 +1,7 @@
+# 0.13.1
+
+- **Fix:** correctly updating delegate after applying guards
+
 # 0.13.0
 
 - **BREAKING:** renamed `BeamerRouterDelegate` to `BeamerDelegate`
