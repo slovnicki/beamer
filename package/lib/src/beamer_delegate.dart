@@ -675,7 +675,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
       _beamLocationHistory.removeLast();
     }
     _pushHistory(redirectLocation);
-    updateRouteInformation(_currentBeamLocation.state);
+    _updateFromLocation(rebuild: false);
   }
 
   void _pushHistory(BeamLocation location, {bool replaceCurrent = false}) {
@@ -711,10 +711,11 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     _pushHistory(location);
   }
 
-  void _updateFromLocation() {
+  void _updateFromLocation({bool rebuild = true}) {
     update(
       state: createState!(_currentBeamLocation.state),
       buildBeamLocation: false,
+      rebuild: rebuild,
     );
   }
 
