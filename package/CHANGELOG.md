@@ -1,3 +1,11 @@
+# 0.13.2
+
+- **Add:** `BeamerDelegate.notFoundRedirectNamed`
+- **Add:** public static `BeamPage.defaultOnPopPage`
+- **Fix:** top-level guard updating URL
+- Improved guards example
+- Improved README Quick Start
+
 # 0.13.1
 
 - **Fix:** correctly updating delegate after applying guards
