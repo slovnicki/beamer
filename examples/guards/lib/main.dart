@@ -173,8 +173,9 @@ class BooksLocation extends BeamLocation {
             title: books.firstWhere((book) =>
                 book['id'] == state.pathParameters['bookId'])['title'],
             child: BookDetailsScreen(
-                book: books.firstWhere(
-                    (book) => book['id'] == state.pathParameters['bookId'])),
+              book: books.firstWhere(
+                  (book) => book['id'] == state.pathParameters['bookId']),
+            ),
           ),
       ];
 
@@ -224,11 +225,11 @@ class MyApp extends StatelessWidget {
       ],
     ),
     guards: [
-      // Redirect to /login if the user is not authenticated:
+      // Guard /books/* by beaming to /login if the user is unauthenticated:
       BeamGuard(
-        pathBlueprints: ['/books*'],
+        pathBlueprints: ['/books/*'],
         check: (context, location) =>
-            Provider.of<AuthenticationNotifier>(context).isAuthenticated,
+            context.watch<AuthenticationNotifier>().isAuthenticated,
         beamToNamed: '/login',
       ),
     ],

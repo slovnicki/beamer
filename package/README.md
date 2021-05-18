@@ -487,9 +487,9 @@ You can define global guards (for example, authentication guard) or location gua
 ```dart
 BeamerDelegate(
   guards: [
-    // Redirect to /login if the user is not authenticated:
+    // Guard /books/* by beaming to /login if the user is unauthenticated:
     BeamGuard(
-      pathBlueprints: ['/books*'],
+      pathBlueprints: ['/books/*'],
       check: (context, location) => context.isAuthenticated,
       beamToNamed: '/login',
     ),
