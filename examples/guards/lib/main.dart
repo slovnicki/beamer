@@ -229,7 +229,7 @@ class MyApp extends StatelessWidget {
       BeamGuard(
         pathBlueprints: ['/books/*'],
         check: (context, location) =>
-            context.watch<AuthenticationNotifier>().isAuthenticated,
+            context.read<AuthenticationNotifier>().isAuthenticated,
         beamToNamed: '/login',
       ),
     ],
