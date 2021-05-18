@@ -487,9 +487,9 @@ You can define global guards (for example, authentication guard) or location gua
 ```dart
 BeamerDelegate(
   guards: [
-    // Redirect to /login if the user is not authenticated:
+    // Guard /books/* by beaming to /login if the user is unauthenticated:
     BeamGuard(
-      pathBlueprints: ['/books*'],
+      pathBlueprints: ['/books/*'],
       check: (context, location) => context.isAuthenticated,
       beamToNamed: '/login',
     ),
@@ -539,7 +539,7 @@ The code for the bottom navigation example app with multiple beamers is availabl
 The code for the nested navigation example app is available [here](https://github.com/slovnicki/beamer/tree/master/examples/nested_navigation)
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/nested_navigation/example-nested-navigation.gif" alt="example-nested-navigation" width="520">
+<img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/nested_navigation/example-nested-navigation.gif" alt="example-nested-navigation">
 
 ## Integration with Navigation UI Packages
 

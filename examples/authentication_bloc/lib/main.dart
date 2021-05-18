@@ -37,14 +37,14 @@ class MyApp extends StatelessWidget {
 
   final routerDelegate = BeamerDelegate(
     guards: [
-      // Beam to /login if the user is unauthenticated:
+      // Guard /logged_in_page by beaming to /login if the user is unauthenticated:
       BeamGuard(
         pathBlueprints: ['/logged_in_page'],
         check: (context, state) =>
             context.select((AuthenticationBloc auth) => auth.isAuthenticated()),
         beamToNamed: '/login',
       ),
-      // Beam to /logged_in_page if the user is authenticated:
+      // Guard /login by beaming to /logged_in_page if the user is authenticated:
       BeamGuard(
         pathBlueprints: ['/login'],
         check: (context, state) => context
