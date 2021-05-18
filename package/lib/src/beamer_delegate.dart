@@ -21,6 +21,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     this.removeDuplicateHistory = true,
     this.notFoundPage,
     this.notFoundRedirect,
+    this.notFoundRedirectNamed,
     this.guards = const <BeamGuard>[],
     this.navigatorObservers = const <NavigatorObserver>[],
     this.transitionDelegate = const DefaultTransitionDelegate(),
@@ -150,6 +151,9 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
 
   /// [BeamLocation] to redirect to when no [BeamLocation] supports the incoming URI.
   final BeamLocation? notFoundRedirect;
+
+  /// URI string to redirect to when no [BeamLocation] supports the incoming URI.
+  final String? notFoundRedirectNamed;
 
   /// Guards that will be executing [check] on [currentBeamLocation] candidate.
   ///
@@ -513,9 +517,22 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     if (guard != null) {
       _applyGuard(guard, context);
     }
-    if ((_currentBeamLocation is NotFound) && notFoundRedirect != null) {
-      _currentBeamLocation.removeListener(_updateFromLocation);
-      _pushHistory(notFoundRedirect!);
+    if (_currentBeamLocation is NotFound) {
+      if (notFoundRedirect == null && notFoundRedirectNamed == null) {
+        // do nothing, pass on NotFound
+      } else {
+        var redirectBeamLocation;
+        if (notFoundRedirect != null) {
+          redirectBeamLocation = notFoundRedirect!;
+        } else if (notFoundRedirectNamed != null) {
+          redirectBeamLocation = locationBuilder(
+            BeamState.fromUri(Uri.parse(notFoundRedirectNamed!)),
+          );
+        }
+        _currentBeamLocation.removeListener(_updateFromLocation);
+        _pushHistory(redirectBeamLocation);
+        _updateFromLocation(rebuild: false);
+      }
     }
 
     final navigator = Builder(

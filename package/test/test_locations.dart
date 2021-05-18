@@ -2,7 +2,7 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 
 class Location1 extends BeamLocation {
-  Location1(BeamState state) : super(state);
+  Location1([BeamState? state]) : super(state);
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [

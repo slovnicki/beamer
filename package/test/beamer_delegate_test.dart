@@ -193,4 +193,48 @@ void main() {
     await tester.pump();
     expect(router.currentBeamLocation, isA<Location1>());
   });
+
+  testWidgets('notFoundRedirect works', (tester) async {
+    final delegate = BeamerDelegate(
+      locationBuilder: BeamerLocationBuilder(
+        beamLocations: [
+          Location1(),
+          CustomStateLocation(),
+        ],
+      ),
+      notFoundRedirect: Location1(BeamState()),
+    );
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routeInformationParser: BeamerParser(),
+        routerDelegate: delegate,
+      ),
+    );
+    delegate.beamToNamed('/xxx');
+    await tester.pump();
+    expect(delegate.currentBeamLocation, isA<Location1>());
+    expect(delegate.state.uri.toString(), '/');
+  });
+
+  testWidgets('notFoundRedirectNamed works', (tester) async {
+    final delegate = BeamerDelegate(
+      locationBuilder: BeamerLocationBuilder(
+        beamLocations: [
+          Location1(),
+          CustomStateLocation(),
+        ],
+      ),
+      notFoundRedirectNamed: '/',
+    );
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routeInformationParser: BeamerParser(),
+        routerDelegate: delegate,
+      ),
+    );
+    delegate.beamToNamed('/xxx');
+    await tester.pump();
+    expect(delegate.currentBeamLocation, isA<Location1>());
+    expect(delegate.state.uri.toString(), '/');
+  });
 }
