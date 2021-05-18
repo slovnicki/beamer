@@ -74,30 +74,35 @@ The simplest setup is achieved by using the `SimpleLocationBuilder` which yields
 
 ```dart
 class MyApp extends StatelessWidget {
+  final routerDelegate = BeamerDelegate(
+    locationBuilder: SimpleLocationBuilder(
+      routes: {
+        // Return either Widgets or BeamPages if more customization is needed
+        '/': (context) => HomeScreen(),
+        '/books': (context) => BooksScreen(),
+        '/books/:bookId': (context) {
+          // Extract the current BeamState which holds route information
+          final beamState = context.currentBeamLocation.state;
+          // Take the parameter of interest
+          final bookId = beamState.pathParameters['bookId']!;
+          // Return a Widget or wrap it in a BeamPage for more flexibility
+          return BeamPage(
+            key: ValueKey('book-$bookId'),
+            title: 'A Book #$bookId',
+            popToNamed: '/',
+            type: BeamPageType.scaleTransition,
+            child: BookDetailsScreen(bookId),
+          );
+        }
+      },
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routeInformationParser: BeamerParser(),
-      routerDelegate: BeamerDelegate(
-        locationBuilder: SimpleLocationBuilder(
-          routes: {
-            '/': (context) => HomeScreen(),
-            '/books': (context) => BooksScreen(),
-            '/books/:bookId': (context) {
-              final beamState = context.currentBeamLocation.state;
-              final bookId = beamState.pathParameters['bookId']!;
-              // Widgets and BeamPages can be mixed!
-              return BeamPage(
-                key: ValueKey('book-$bookId'),
-                title: 'A Book #$bookId',
-                popToNamed: '/',
-                type: BeamPageType.scaleTransition,
-                child: BookDetailsScreen(bookId),
-              );
-            }
-          },
-        ),
-      ),
+      routerDelegate: routerDelegate,
     );
   }
 }
