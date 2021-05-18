@@ -15,45 +15,6 @@ enum BeamPageType {
   noTransition,
 }
 
-/// The default pop behavior for [BeamPage].
-bool _defaultOnPopPage(
-  BuildContext context,
-  BeamerDelegate delegate,
-  BeamPage poppedPage,
-) {
-  final location = delegate.currentBeamLocation;
-  final previousBeamState = delegate.beamStateHistory.length > 1
-      ? delegate.beamStateHistory[delegate.beamStateHistory.length - 2]
-      : null;
-
-  final pathBlueprintSegments =
-      List<String>.from(location.state.pathBlueprintSegments);
-  final pathParameters =
-      Map<String, String>.from(location.state.pathParameters);
-  final pathSegment = pathBlueprintSegments.removeLast();
-  if (pathSegment[0] == ':') {
-    pathParameters.remove(pathSegment.substring(1));
-  }
-
-  var beamState = BeamState(
-    pathBlueprintSegments: pathBlueprintSegments,
-    pathParameters: pathParameters,
-    queryParameters:
-        poppedPage.keepQueryOnPop ? location.state.queryParameters : {},
-    data: location.state.data,
-  );
-
-  if (beamState.uri.path == previousBeamState?.uri.path &&
-      !poppedPage.keepQueryOnPop) {
-    beamState = beamState.copyWith(
-      queryParameters: previousBeamState?.queryParameters,
-    );
-  }
-
-  location.update((state) => beamState);
-  return true;
-}
-
 /// A wrapper for screens in a navigation stack.
 class BeamPage extends Page {
   BeamPage({
@@ -61,12 +22,51 @@ class BeamPage extends Page {
     String? name,
     required this.child,
     this.title,
-    this.onPopPage = _defaultOnPopPage,
+    this.onPopPage = defaultOnPopPage,
     this.popToNamed,
     this.type = BeamPageType.material,
     this.pageRouteBuilder,
     this.keepQueryOnPop = false,
   }) : super(key: key, name: name);
+
+  /// The default pop behavior for [BeamPage].
+  static bool defaultOnPopPage(
+    BuildContext context,
+    BeamerDelegate delegate,
+    BeamPage poppedPage,
+  ) {
+    final location = delegate.currentBeamLocation;
+    final previousBeamState = delegate.beamStateHistory.length > 1
+        ? delegate.beamStateHistory[delegate.beamStateHistory.length - 2]
+        : null;
+
+    final pathBlueprintSegments =
+        List<String>.from(location.state.pathBlueprintSegments);
+    final pathParameters =
+        Map<String, String>.from(location.state.pathParameters);
+    final pathSegment = pathBlueprintSegments.removeLast();
+    if (pathSegment[0] == ':') {
+      pathParameters.remove(pathSegment.substring(1));
+    }
+
+    var beamState = BeamState(
+      pathBlueprintSegments: pathBlueprintSegments,
+      pathParameters: pathParameters,
+      queryParameters:
+          poppedPage.keepQueryOnPop ? location.state.queryParameters : {},
+      data: location.state.data,
+    );
+
+    if (beamState.uri.path == previousBeamState?.uri.path &&
+        !poppedPage.keepQueryOnPop) {
+      beamState = beamState.copyWith(
+        queryParameters: previousBeamState?.queryParameters,
+      );
+    }
+
+    location.update((state) => beamState);
+    return true;
+  }
 
   /// The concrete Widget representing app's screen.
   final Widget child;
