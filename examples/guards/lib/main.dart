@@ -193,10 +193,8 @@ class BooksLocation extends BeamLocation {
   List<BeamGuard> get guards => [
         // Show forbiddenPage if the user tries to enter books/2:
         BeamGuard(
-          replaceCurrentStack: false,
-          pathBlueprints: ['/books/*'],
-          check: (context, location) =>
-              location.state.pathParameters['bookId'] != '2',
+          pathBlueprints: ['/books/2'],
+          check: (context, location) => false,
           showPage: forbiddenPage,
         ),
       ];
