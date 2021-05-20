@@ -1,0 +1,31 @@
+name: authentication_riverpod
+description: A new Flutter application.
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+    sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+    flutter:
+        sdk: flutter
+
+    # our hero
+    beamer: ^0.13.2
+
+    # riverpod stuff
+    flutter_riverpod: ^0.14.0+3
+    flutter_hooks: ^0.17.0
+    hooks_riverpod: ^0.14.0+4
+    equatable: ^2.0.2
+
+    cupertino_icons: ^1.0.2
+
+dev_dependencies:
+    flutter_test:
+        sdk: flutter
+
+flutter:
+    uses-material-design: true
