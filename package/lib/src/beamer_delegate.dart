@@ -581,30 +581,27 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
                 transitionDelegate: beamBackTransitionDelegate,
                 replaceCurrent: true,
               );
-              return route.didPop(result);
             } else if (_popBeamLocationOnPop) {
               final didPopBeamLocation = popBeamLocation();
               if (!didPopBeamLocation) {
                 return false;
               }
-              return route.didPop(result);
             } else if (_beamBackOnPop) {
               beamBack();
               final didBeamBack = beamBack();
               if (!didBeamBack) {
                 return false;
               }
-              return route.didPop(result);
-            }
-
-            final lastPage = _currentPages.last;
-            if (lastPage is BeamPage) {
-              if (lastPage.popToNamed != null) {
-                popToNamed(lastPage.popToNamed!);
-              } else {
-                final shouldPop = lastPage.onPopPage(context, this, lastPage);
-                if (!shouldPop) {
-                  return false;
+            } else {
+              final lastPage = _currentPages.last;
+              if (lastPage is BeamPage) {
+                if (lastPage.popToNamed != null) {
+                  popToNamed(lastPage.popToNamed!);
+                } else {
+                  final shouldPop = lastPage.onPopPage(context, this, lastPage);
+                  if (!shouldPop) {
+                    return false;
+                  }
                 }
               }
             }
