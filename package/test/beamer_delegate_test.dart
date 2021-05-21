@@ -237,4 +237,40 @@ void main() {
     expect(delegate.currentBeamLocation, isA<Location1>());
     expect(delegate.state.uri.toString(), '/');
   });
+
+  testWidgets("popping drawer doesn't change BeamState", (tester) async {
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+    final delegate = BeamerDelegate(
+      locationBuilder: SimpleLocationBuilder(
+        routes: {
+          '/': (context) => Container(),
+          '/test': (context) => Scaffold(
+                key: scaffoldKey,
+                drawer: Drawer(),
+                body: Container(),
+              ),
+        },
+      ),
+    );
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routeInformationParser: BeamerParser(),
+        routerDelegate: delegate,
+      ),
+    );
+    delegate.beamToNamed('/test');
+    await tester.pump();
+    expect(scaffoldKey.currentState?.isDrawerOpen, isFalse);
+    expect(delegate.state.uri.path, '/test');
+
+    scaffoldKey.currentState?.openDrawer();
+    await tester.pump();
+    expect(scaffoldKey.currentState?.isDrawerOpen, isTrue);
+    expect(delegate.state.uri.path, '/test');
+
+    delegate.navigatorKey.currentState?.pop();
+    await tester.pump();
+    expect(scaffoldKey.currentState?.isDrawerOpen, isFalse);
+    expect(delegate.state.uri.path, '/test');
+  });
 }

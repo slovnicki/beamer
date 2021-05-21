@@ -569,6 +569,12 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
                   : _currentPages + [guard.showPage!]
               : _currentPages,
           onPopPage: (route, result) {
+            if (route.willHandlePopInternally) {
+              if (!route.didPop(result)) {
+                return false;
+              }
+            }
+
             if (_popState != null) {
               update(
                 state: _popState,
