@@ -256,6 +256,49 @@ void main() {
         equals({'x': 'y'}),
       );
     });
+
+    testWidgets('popBeamLocationOnPop does nothing in single location case',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: delegate,
+        ),
+      );
+      delegate.beamToNamed('/books/1', popBeamLocationOnPop: true);
+      await tester.pump();
+      expect(delegate.currentPages.length, 3);
+      expect(delegate.currentPages.last.key, ValueKey('book-1'));
+
+      delegate.navigatorKey.currentState!.pop();
+      await tester.pump();
+      expect(delegate.currentPages.length, 3);
+      expect(delegate.currentPages.last.key, ValueKey('book-1'));
+    });
+
+    testWidgets('beamBackOnPop works', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: delegate,
+        ),
+      );
+      delegate.beamToNamed('/books/1');
+      await tester.pump();
+      expect(delegate.currentPages.length, 3);
+      expect(delegate.currentPages.last.key, ValueKey('book-1'));
+
+      delegate.beamToNamed('/books/2', beamBackOnPop: true);
+      await tester.pump();
+      expect(delegate.currentPages.length, 3);
+      expect(delegate.currentPages.last.key, ValueKey('book-2'));
+
+      delegate.navigatorKey.currentState!.pop();
+      await tester.pump();
+      expect(delegate.currentPages.length, 3);
+      expect(delegate.currentPages.last.key, ValueKey('book-1'));
+      expect(delegate.state.uri.path, '/books/1');
+    });
   });
 
   group('Transitions', () {

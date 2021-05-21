@@ -587,7 +587,6 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
                 return false;
               }
             } else if (_beamBackOnPop) {
-              beamBack();
               final didBeamBack = beamBack();
               if (!didBeamBack) {
                 return false;
