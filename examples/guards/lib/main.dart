@@ -223,9 +223,9 @@ class MyApp extends StatelessWidget {
       ],
     ),
     guards: [
-      // Guard /books/* by beaming to /login if the user is unauthenticated:
+      // Guard /books and /books/* by beaming to /login if the user is unauthenticated:
       BeamGuard(
-        pathBlueprints: ['/books/*'],
+        pathBlueprints: ['/books', '/books/*'],
         check: (context, location) =>
             context.read<AuthenticationNotifier>().isAuthenticated,
         beamToNamed: '/login',
