@@ -46,7 +46,7 @@ Handle your application routing, synchronize it with browser URL and more. Beame
   - [With a Map of Routes](#with-a-map-of-routes)
   - [Nested Navigation](#nested-navigation)
   - [General Notes](#general-notes)
-  - [Web Tips](#web-tips)
+  - [Tips and Common Issues](#tips-and-common-issues)
 - [Examples](#examples)
   - [Location Builders](#location-builders)
   - [Advanced Books](#advanced-books)
@@ -423,10 +423,11 @@ class MyApp extends StatelessWidget {
 
 **NOTE** that "Navigator 1.0" can be used alongside Beamer. You can easily `push` or `pop` pages with `Navigator.of(context)`, but those will not be contributing to the URI. This is often needed when some info/helper page needs to be shown that doesn't influence the browser's URL. And of course, when using Beamer on mobile, this is a non-issue as there is no URL.
 
-## Web Tips
+## Tips and Common Issues
 
 - removing the `#` from URL can be done by calling `Beamer.setPathUrlStrategy()` before `runApp()`.
 - `BeamPage.title` is used for setting the browser tab title by default and can be opt-out by setting `BeamerDelegate.setBrowserTabTitle` to `false`.
+- [Losing state on hot reload](https://github.com/slovnicki/beamer/issues/193)
 
 # Examples
 
@@ -540,6 +541,8 @@ The code for the bottom navigation example app with multiple beamers is availabl
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/bottom_navigation_multiple_beamers/example-bottom-navigation-multiple-beamers.gif" alt="example-bottom-navigation-multiple-beamers">
 
 ## Nested Navigation
+
+**NOTE:** In all nested `Beamer`s, full paths must be specified when defining `BeamLocation`s and beaming. (support for relative paths is in progress)
 
 The code for the nested navigation example app is available [here](https://github.com/slovnicki/beamer/tree/master/examples/nested_navigation)
 
