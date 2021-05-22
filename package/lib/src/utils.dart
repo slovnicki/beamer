@@ -132,17 +132,15 @@ abstract class Utils {
           }
         } else {
           final regexp = pathBlueprint as RegExp;
-          final beamLocationPathBlueprintSegments =
-              Uri.parse(pathBlueprint.toString()).pathSegments;
-
           var pathParameters = <String, String>{};
-          for (int i = 0; i < uri.pathSegments.length; i++) {
-            if (beamLocationPathBlueprintSegments[i][0] == ':') {
-              pathParameters[beamLocationPathBlueprintSegments[i]
-                  .substring(1)] = uri.pathSegments[i];
-            }
-          }
-          if (regexp.hasMatch(uri.toString())) {
+          final url = uri.toString();
+
+          if (regexp.hasMatch(url)) {
+            regexp.allMatches(url).forEach((match) {
+              match.groupNames.forEach((groupName) {
+                pathParameters[groupName] = match.namedGroup(groupName) ?? '';
+              });
+            });
             return BeamState(
               pathBlueprintSegments: uri.pathSegments,
               pathParameters: pathParameters,

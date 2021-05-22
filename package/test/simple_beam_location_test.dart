@@ -8,8 +8,11 @@ void main() {
     locationBuilder: SimpleLocationBuilder(
       routes: {
         '/': (context) => Container(),
-        RegExp('\/test'): (context) => Container(),
-        // '/test': (context) => Container(),
+        RegExp('/test'): (context) => Container(),
+        RegExp('/path-param/(?<test>[a-z]+)'): (context) => Text(
+              context.currentBeamLocation.state.pathParameters['test'] ??
+                  'failure',
+            )
       },
     ),
   );
@@ -115,6 +118,14 @@ void main() {
       );
       delegate1.setNewRoutePath(BeamState.fromUri(Uri.parse('/test/1')));
       expect(delegate1.currentBeamLocation, isA<SimpleBeamLocation>());
+    });
+  });
+
+  group('RegExp', () {
+    test('can utilize path parameters', () {
+      delegate.beamToNamed('/path-param/success');
+      expect(
+          delegate.currentBeamLocation.state.pathParameters, contains('test'));
     });
   });
 }
