@@ -29,7 +29,7 @@ class BeamGuard {
   /// use '/books*'.
   ///
   /// See [_hasMatch] for more details.
-  List<String> pathBlueprints;
+  List<dynamic> pathBlueprints;
 
   /// What check should be performed on a given [location],
   /// the one to which beaming has been requested.
@@ -73,17 +73,22 @@ class BeamGuard {
   /// Else, they must be equal.
   bool _hasMatch(BeamLocation location) {
     for (var pathBlueprint in pathBlueprints) {
-      final asteriskIndex = pathBlueprint.indexOf('*');
-      if (asteriskIndex != -1) {
-        if (location.state.uri
-            .toString()
-            .contains(pathBlueprint.substring(0, asteriskIndex))) {
-          return true;
+      if (pathBlueprint is String) {
+        final asteriskIndex = pathBlueprint.indexOf('*');
+        if (asteriskIndex != -1) {
+          if (location.state.uri
+              .toString()
+              .contains(pathBlueprint.substring(0, asteriskIndex))) {
+            return true;
+          }
+        } else {
+          if (pathBlueprint == location.state.uri.toString()) {
+            return true;
+          }
         }
       } else {
-        if (pathBlueprint == location.state.uri.toString()) {
-          return true;
-        }
+        final regexp = pathBlueprint as RegExp;
+        return regexp.hasMatch(location.state.uri.toString());
       }
     }
     return false;
