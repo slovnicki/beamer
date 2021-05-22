@@ -1,3 +1,11 @@
+# 0.13.3
+
+- **Add:** [authentication_riverpod](https://github.com/slovnicki/beamer/tree/master/examples/authentication_riverpod) example
+- **Add:** "Tips and Common Issues" to README
+- **Fix:** Drawer pop
+- **Fix:** `beamBackOnPop:true` while beaming
+- Make `beamStateHistory` and `beamLocationHistory` public
+
 # 0.13.2
 
 - **Add:** `BeamerDelegate.notFoundRedirectNamed`
