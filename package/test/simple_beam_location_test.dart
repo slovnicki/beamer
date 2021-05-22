@@ -8,7 +8,8 @@ void main() {
     locationBuilder: SimpleLocationBuilder(
       routes: {
         '/': (context) => Container(),
-        '/test': (context) => Container(),
+        RegExp('\/test'): (context) => Container(),
+        // '/test': (context) => Container(),
       },
     ),
   );
@@ -23,7 +24,7 @@ void main() {
       delegate.beamToNamed('/test');
       await tester.pump();
       expect(delegate.currentPages.length, 2);
-      final keysSet = <String>{};
+      final keysSet = <dynamic>{};
       for (var page in delegate.currentPages) {
         keysSet.add((page.key as ValueKey).value);
       }
@@ -55,7 +56,7 @@ void main() {
       delegate.beamToNamed('/unknown');
       expect(delegate.currentBeamLocation, isA<NotFound>());
 
-      delegate.beamToNamed('/test/unknown');
+      delegate.beamToNamed('/Test/unknown');
       expect(delegate.currentBeamLocation, isA<NotFound>());
     });
 
@@ -64,6 +65,7 @@ void main() {
         routeInformationParser: BeamerParser(),
         routerDelegate: delegate,
       ));
+      delegate.beamToNamed('/not-found');
       expect(find.text('Not found'), findsOneWidget);
     });
 
