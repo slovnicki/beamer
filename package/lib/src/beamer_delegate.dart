@@ -389,7 +389,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   /// {@endtemplate}
   void beamToNamed(
     String uri, {
-    Map<String, dynamic> data = const <String, dynamic>{},
+    Map<String, dynamic>? data,
     String? popToNamed,
     TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
@@ -397,10 +397,12 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     bool stacked = true,
     bool replaceCurrent = false,
   }) {
+    final beamData = data ?? _currentBeamLocation.state.data;
     update(
-      state: createState!(BeamState.fromUri(Uri.parse(uri), data: data)),
+      state: createState!(BeamState.fromUri(Uri.parse(uri), data: beamData)),
       popState: popToNamed != null
-          ? createState!(BeamState.fromUri(Uri.parse(popToNamed), data: data))
+          ? createState!(
+              BeamState.fromUri(Uri.parse(popToNamed), data: beamData))
           : null,
       transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
@@ -417,7 +419,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   /// {@endtemplate}
   void popToNamed(
     String uri, {
-    Map<String, dynamic> data = const <String, dynamic>{},
+    Map<String, dynamic>? data,
     String? popToNamed,
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,

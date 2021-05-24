@@ -93,7 +93,7 @@ extension BeamerExtensions on BuildContext {
   /// {@macro beamToNamed}
   void beamToNamed(
     String uri, {
-    Map<String, dynamic> data = const <String, dynamic>{},
+    Map<String, dynamic>? data,
     String? popToNamed,
     TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
@@ -116,7 +116,7 @@ extension BeamerExtensions on BuildContext {
   /// {@macro popToNamed}
   void popToNamed(
     String uri, {
-    Map<String, dynamic> data = const <String, dynamic>{},
+    Map<String, dynamic>? data,
     String? popToNamed,
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
