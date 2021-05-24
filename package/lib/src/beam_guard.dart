@@ -1,3 +1,4 @@
+import 'package:beamer/src/utils.dart';
 import 'package:flutter/widgets.dart';
 
 import './beam_location.dart';
@@ -20,8 +21,9 @@ class BeamGuard {
     this.replaceCurrentStack = true,
   });
 
-  /// A list of path strings that are to be guarded.
+  /// A list of path strings or regular expressions (using dart's RegExp class) that are to be guarded.
   ///
+  ///For strings:
   /// Asterisk wildcard is supported to denote "anything".
   ///
   /// For example, '/books/*' will match '/books/1', '/books/2/genres', etc.
@@ -29,6 +31,13 @@ class BeamGuard {
   /// use '/books*'.
   ///
   /// See [_hasMatch] for more details.
+  ///
+  /// For RegExp
+  /// You can use RegExp instances and the delegate will check for a match using [RegExp.hasMatch]
+  ///
+  /// For example, `RegExp('/books/')` will match '/books/1', '/books/2/genres', etc.
+  /// but will not match '/books'. To match '/books' and everythin after it,
+  /// use `RegExp('/books')`
   List<dynamic> pathBlueprints;
 
   /// What check should be performed on a given [location],
@@ -87,7 +96,7 @@ class BeamGuard {
           }
         }
       } else {
-        final regexp = pathBlueprint as RegExp;
+        final regexp = Utils.tryCastToRegExp(pathBlueprint);
         return regexp.hasMatch(location.state.uri.toString());
       }
     }

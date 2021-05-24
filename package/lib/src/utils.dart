@@ -1,4 +1,5 @@
 import 'package:beamer/beamer.dart';
+import 'package:flutter/material.dart';
 
 abstract class Utils {
   /// Traverses [beamLocations] and returns the one whose one of
@@ -178,6 +179,19 @@ abstract class Utils {
     } else {
       blueprint = blueprint as RegExp;
       return blueprint.hasMatch(exact.toString());
+    }
+  }
+
+  static RegExp tryCastToRegExp(dynamic pathBlueprint) {
+    try {
+      return pathBlueprint as RegExp;
+    } on TypeError catch (_) {
+      throw FlutterError.fromParts([
+        DiagnosticsNode.message('Path blueprint can either be:',
+            level: DiagnosticLevel.summary),
+        DiagnosticsNode.message('1. String'),
+        DiagnosticsNode.message('2. RegExp instance')
+      ]);
     }
   }
 }

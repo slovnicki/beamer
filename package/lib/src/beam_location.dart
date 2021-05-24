@@ -69,13 +69,19 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
 
   /// Represents the "form" of URI paths supported by this [BeamLocation].
   ///
-  /// Optional path segments are denoted with ':xxx' and consequently
+  /// You can pass in either a String or a RegExp. Beware of using greedy regular
+  /// expressions as this might lead to unexpected behaviour.
+  ///
+  /// For strings, optional path segments are denoted with ':xxx' and consequently
   /// `{'xxx': <real>}` will be put to [pathParameters].
+  /// For regular expressions we use named groups as optional path segments, following
+  /// regex is tested to be effective in most cases `RegExp('/test/(?<test>[a-z]+){0,1}')`
+  /// This will put `{'test': <real>}` to [pathParameters]. Note that we use the name from the regex group.
   ///
   /// Optional path segments can be used as a mean to pass data regardless of
   /// whether there is a browser.
   ///
-  /// For example: '/books/:id'.
+  /// For example: '/books/:id' or using regex `RegExp('/test/(?<test>[a-z]+){0,1}')`
   List<dynamic> get pathBlueprints;
 
   /// Creates and returns the list of pages to be built by the [Navigator]
@@ -231,7 +237,7 @@ class SimpleBeamLocation extends BeamLocation {
           ).toString();
         }
       } else {
-        final regexp = route as RegExp;
+        final regexp = Utils.tryCastToRegExp(route);
         if (regexp.hasMatch(state.uri.toString())) {
           final path = state.uri.toString();
           matched[regexp] = Uri(
