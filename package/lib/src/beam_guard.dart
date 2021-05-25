@@ -36,7 +36,7 @@ class BeamGuard {
   /// You can use RegExp instances and the delegate will check for a match using [RegExp.hasMatch]
   ///
   /// For example, `RegExp('/books/')` will match '/books/1', '/books/2/genres', etc.
-  /// but will not match '/books'. To match '/books' and everythin after it,
+  /// but will not match '/books'. To match '/books' and everything after it,
   /// use `RegExp('/books')`
   List<dynamic> pathBlueprints;
 

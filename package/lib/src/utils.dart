@@ -65,7 +65,7 @@ abstract class Utils {
           return true;
         }
       } else {
-        final regexp = pathBlueprint as RegExp;
+        final regexp = tryCastToRegExp(pathBlueprint);
         return regexp.hasMatch(uri.toString());
       }
     }
@@ -132,7 +132,7 @@ abstract class Utils {
             );
           }
         } else {
-          final regexp = pathBlueprint as RegExp;
+          final regexp = tryCastToRegExp(pathBlueprint);
           var pathParameters = <String, String>{};
           final url = uri.toString();
 
@@ -182,6 +182,8 @@ abstract class Utils {
     }
   }
 
+  /// Wraps the casting of pathBlueprint to RegExp inside a try-catch
+  /// and throws a nice FlutterError.
   static RegExp tryCastToRegExp(dynamic pathBlueprint) {
     try {
       return pathBlueprint as RegExp;
