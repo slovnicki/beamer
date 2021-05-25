@@ -69,14 +69,20 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
 
   /// Represents the "form" of URI paths supported by this [BeamLocation].
   ///
-  /// Optional path segments are denoted with ':xxx' and consequently
+  /// You can pass in either a String or a RegExp. Beware of using greedy regular
+  /// expressions as this might lead to unexpected behaviour.
+  ///
+  /// For strings, optional path segments are denoted with ':xxx' and consequently
   /// `{'xxx': <real>}` will be put to [pathParameters].
+  /// For regular expressions we use named groups as optional path segments, following
+  /// regex is tested to be effective in most cases `RegExp('/test/(?<test>[a-z]+){0,1}')`
+  /// This will put `{'test': <real>}` to [pathParameters]. Note that we use the name from the regex group.
   ///
   /// Optional path segments can be used as a mean to pass data regardless of
   /// whether there is a browser.
   ///
-  /// For example: '/books/:id'.
-  List<String> get pathBlueprints;
+  /// For example: '/books/:id' or using regex `RegExp('/test/(?<test>[a-z]+){0,1}')`
+  List<dynamic> get pathBlueprints;
 
   /// Creates and returns the list of pages to be built by the [Navigator]
   /// when this [BeamLocation] is beamed to or internally inferred.
@@ -139,7 +145,7 @@ class SimpleBeamLocation extends BeamLocation {
   }) : super(state);
 
   /// Map of all routes this location handles.
-  Map<String, dynamic Function(BuildContext)> routes;
+  Map<dynamic, dynamic Function(BuildContext)> routes;
 
   /// A wrapper used as [BeamLocation.builder].
   Widget Function(BuildContext context, Widget navigator)? navBuilder;
@@ -149,11 +155,20 @@ class SimpleBeamLocation extends BeamLocation {
     return navBuilder?.call(context, navigator) ?? navigator;
   }
 
-  List<String> get sortedRoutes =>
-      routes.keys.toList()..sort((a, b) => a.length - b.length);
+  int _compareKeys(dynamic a, dynamic b) {
+    // try-catch a CastError
+    try {
+      return (a as String).length - (b as String).length;
+    } on TypeError {
+      return 1;
+    }
+  }
+
+  List<dynamic> get sortedRoutes =>
+      routes.keys.toList()..sort((a, b) => _compareKeys(a, b));
 
   @override
-  List<String> get pathBlueprints => routes.keys.toList();
+  List<dynamic> get pathBlueprints => routes.keys.toList();
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
@@ -161,7 +176,7 @@ class SimpleBeamLocation extends BeamLocation {
     final activeRoutes = Map.from(routes)
       ..removeWhere((key, value) => !filteredRoutes.containsKey(key));
     final sortedRoutes = activeRoutes.keys.toList()
-      ..sort((a, b) => a.length - b.length);
+      ..sort((a, b) => _compareKeys(a, b));
     return sortedRoutes.map<BeamPage>((route) {
       final routeElement = routes[route]!(context);
       if (routeElement is BeamPage) {
@@ -179,52 +194,64 @@ class SimpleBeamLocation extends BeamLocation {
   ///
   /// If none of the routes _matches_ [state.uri], nothing will be selected
   /// and [BeamerDelegate] will declare that the location is [NotFound].
-  static Map<String, String> chooseRoutes(
-      BeamState state, Iterable<String> routes) {
-    var matched = <String, String>{};
+  static Map<dynamic, String> chooseRoutes(
+      BeamState state, Iterable<dynamic> routes) {
+    var matched = <dynamic, String>{};
     bool overrideNotFound = false;
     for (var route in routes) {
-      final uriPathSegments = List.from(state.uri.pathSegments);
-      if (uriPathSegments.length > 1 && uriPathSegments.last == '') {
-        uriPathSegments.removeLast();
-      }
+      if (route is String) {
+        final uriPathSegments = List.from(state.uri.pathSegments);
+        if (uriPathSegments.length > 1 && uriPathSegments.last == '') {
+          uriPathSegments.removeLast();
+        }
 
-      final routePathSegments = Uri.parse(route).pathSegments;
+        final routePathSegments = Uri.parse(route).pathSegments;
 
-      if (uriPathSegments.length < routePathSegments.length) {
-        continue;
-      }
-
-      var checksPassed = true;
-      var path = '';
-      for (int i = 0; i < routePathSegments.length; i++) {
-        path += '/${uriPathSegments[i]}';
-
-        if (routePathSegments[i] == '*') {
-          overrideNotFound = true;
+        if (uriPathSegments.length < routePathSegments.length) {
           continue;
         }
-        if (routePathSegments[i].startsWith(':')) {
-          continue;
-        }
-        if (routePathSegments[i] != uriPathSegments[i]) {
-          checksPassed = false;
-          break;
-        }
-      }
 
-      if (checksPassed) {
-        matched[route] = Uri(
-          path: path == '' ? '/' : path,
-          queryParameters:
-              state.queryParameters.isEmpty ? null : state.queryParameters,
-        ).toString();
+        var checksPassed = true;
+        var path = '';
+        for (int i = 0; i < routePathSegments.length; i++) {
+          path += '/${uriPathSegments[i]}';
+
+          if (routePathSegments[i] == '*') {
+            overrideNotFound = true;
+            continue;
+          }
+          if (routePathSegments[i].startsWith(':')) {
+            continue;
+          }
+          if (routePathSegments[i] != uriPathSegments[i]) {
+            checksPassed = false;
+            break;
+          }
+        }
+
+        if (checksPassed) {
+          matched[route] = Uri(
+            path: path == '' ? '/' : path,
+            queryParameters:
+                state.queryParameters.isEmpty ? null : state.queryParameters,
+          ).toString();
+        }
+      } else {
+        final regexp = Utils.tryCastToRegExp(route);
+        if (regexp.hasMatch(state.uri.toString())) {
+          final path = state.uri.toString();
+          matched[regexp] = Uri(
+            path: path == '' ? '/' : path,
+            queryParameters:
+                state.queryParameters.isEmpty ? null : state.queryParameters,
+          ).toString();
+        }
       }
     }
 
     bool isNotFound = true;
     matched.forEach((key, value) {
-      if (Utils.urisMatch(Uri.parse(key), state.uri)) {
+      if (Utils.urisMatch(key, state.uri)) {
         isNotFound = false;
       }
     });

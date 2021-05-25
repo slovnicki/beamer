@@ -19,10 +19,34 @@ void main() {
       expect(guard.shouldGuard(testLocation), isTrue);
     });
 
+    test(
+        'is true if the location has a blueprint matching the guard using regexp',
+        () {
+      final guard = BeamGuard(
+        pathBlueprints: [RegExp(pathBlueprint)],
+        check: (_, __) => true,
+        beamTo: (context) => Location2(BeamState()),
+      );
+
+      expect(guard.shouldGuard(testLocation), isTrue);
+    });
+
     test("is false if the location doesn't have a blueprint matching the guard",
         () {
       final guard = BeamGuard(
         pathBlueprints: ['/not-a-match'],
+        check: (_, __) => true,
+        beamTo: (context) => Location2(BeamState()),
+      );
+
+      expect(guard.shouldGuard(testLocation), isFalse);
+    });
+
+    test(
+        "is false if the location doesn't have a blueprint matching the guard using regexp",
+        () {
+      final guard = BeamGuard(
+        pathBlueprints: [RegExp('/not-a-match')],
         check: (_, __) => true,
         beamTo: (context) => Location2(BeamState()),
       );
@@ -47,11 +71,37 @@ void main() {
         expect(guard.shouldGuard(testLocation), isTrue);
       });
 
+      test(
+          'is true if the location has a match up to the wildcard using regexp',
+          () {
+        final guard = BeamGuard(
+          pathBlueprints: [RegExp('(\/[a-z]*|[0-9]*\/one)')],
+          check: (_, __) => true,
+          beamTo: (context) => Location2(BeamState()),
+        );
+
+        expect(guard.shouldGuard(testLocation), isTrue);
+      });
+
       test("is false if the location doesn't have a match against the wildcard",
           () {
         final guard = BeamGuard(
           pathBlueprints: [
             '/not-a-match/*',
+          ],
+          check: (_, __) => true,
+          beamTo: (context) => Location2(BeamState()),
+        );
+
+        expect(guard.shouldGuard(testLocation), isFalse);
+      });
+
+      test(
+          "is false if the location doesn't have a match against the wildcard using regexp",
+          () {
+        final guard = BeamGuard(
+          pathBlueprints: [
+            RegExp('(/[a-z]*[0-9]/no-match)'),
           ],
           check: (_, __) => true,
           beamTo: (context) => Location2(BeamState()),
@@ -75,11 +125,37 @@ void main() {
         expect(guard.shouldGuard(testLocation), isFalse);
       });
 
+      test('is false if the location has a blueprint matching the guard using regexp', () {
+        final guard = BeamGuard(
+          pathBlueprints: [
+            RegExp(pathBlueprint),
+          ],
+          check: (_, __) => true,
+          beamTo: (context) => Location2(BeamState()),
+          guardNonMatching: true,
+        );
+
+        expect(guard.shouldGuard(testLocation), isFalse);
+      });
+
       test(
           "is true if the location doesn't have a blueprint matching the guard",
           () {
         final guard = BeamGuard(
           pathBlueprints: ['/not-a-match'],
+          check: (_, __) => true,
+          beamTo: (context) => Location2(BeamState()),
+          guardNonMatching: true,
+        );
+
+        expect(guard.shouldGuard(testLocation), isTrue);
+      });
+
+      test(
+          "is true if the location doesn't have a blueprint matching the guard using regexp",
+          () {
+        final guard = BeamGuard(
+          pathBlueprints: [RegExp('/not-a-match')],
           check: (_, __) => true,
           beamTo: (context) => Location2(BeamState()),
           guardNonMatching: true,
@@ -106,12 +182,40 @@ void main() {
           expect(guard.shouldGuard(testLocation), isFalse);
         });
 
+        test('is false if the location has a match up to the wildcard using regexp', () {
+          final guard = BeamGuard(
+            pathBlueprints: [
+              RegExp('/[a-z]+'),
+            ],
+            check: (_, __) => true,
+            beamTo: (context) => Location2(BeamState()),
+            guardNonMatching: true,
+          );
+
+          expect(guard.shouldGuard(testLocation), isFalse);
+        });
+
         test(
             "is true if the location doesn't have a match against the wildcard",
             () {
           final guard = BeamGuard(
             pathBlueprints: [
               '/not-a-match/*',
+            ],
+            check: (_, __) => true,
+            beamTo: (context) => Location2(BeamState()),
+            guardNonMatching: true,
+          );
+
+          expect(guard.shouldGuard(testLocation), isTrue);
+        });
+
+        test(
+            "is true if the location doesn't have a match against the wildcard using regexp",
+            () {
+          final guard = BeamGuard(
+            pathBlueprints: [
+              RegExp('/not-a-match/[a-z]+'),
             ],
             check: (_, __) => true,
             beamTo: (context) => Location2(BeamState()),
