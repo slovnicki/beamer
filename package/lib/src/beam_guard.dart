@@ -1,3 +1,4 @@
+import 'package:beamer/src/utils.dart';
 import 'package:flutter/widgets.dart';
 
 import './beam_location.dart';
@@ -20,8 +21,9 @@ class BeamGuard {
     this.replaceCurrentStack = true,
   });
 
-  /// A list of path strings that are to be guarded.
+  /// A list of path strings or regular expressions (using dart's RegExp class) that are to be guarded.
   ///
+  ///For strings:
   /// Asterisk wildcard is supported to denote "anything".
   ///
   /// For example, '/books/*' will match '/books/1', '/books/2/genres', etc.
@@ -29,7 +31,14 @@ class BeamGuard {
   /// use '/books*'.
   ///
   /// See [_hasMatch] for more details.
-  List<String> pathBlueprints;
+  ///
+  /// For RegExp
+  /// You can use RegExp instances and the delegate will check for a match using [RegExp.hasMatch]
+  ///
+  /// For example, `RegExp('/books/')` will match '/books/1', '/books/2/genres', etc.
+  /// but will not match '/books'. To match '/books' and everything after it,
+  /// use `RegExp('/books')`
+  List<dynamic> pathBlueprints;
 
   /// What check should be performed on a given [location],
   /// the one to which beaming has been requested.
@@ -73,17 +82,22 @@ class BeamGuard {
   /// Else, they must be equal.
   bool _hasMatch(BeamLocation location) {
     for (var pathBlueprint in pathBlueprints) {
-      final asteriskIndex = pathBlueprint.indexOf('*');
-      if (asteriskIndex != -1) {
-        if (location.state.uri
-            .toString()
-            .contains(pathBlueprint.substring(0, asteriskIndex))) {
-          return true;
+      if (pathBlueprint is String) {
+        final asteriskIndex = pathBlueprint.indexOf('*');
+        if (asteriskIndex != -1) {
+          if (location.state.uri
+              .toString()
+              .contains(pathBlueprint.substring(0, asteriskIndex))) {
+            return true;
+          }
+        } else {
+          if (pathBlueprint == location.state.uri.toString()) {
+            return true;
+          }
         }
       } else {
-        if (pathBlueprint == location.state.uri.toString()) {
-          return true;
-        }
+        final regexp = Utils.tryCastToRegExp(pathBlueprint);
+        return regexp.hasMatch(location.state.uri.toString());
       }
     }
     return false;
