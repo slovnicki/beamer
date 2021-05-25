@@ -177,7 +177,7 @@ abstract class Utils {
       }
       return true;
     } else {
-      blueprint = blueprint as RegExp;
+      blueprint = tryCastToRegExp(blueprint);
       return blueprint.hasMatch(exact.toString());
     }
   }
