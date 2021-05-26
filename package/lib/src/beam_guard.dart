@@ -79,9 +79,8 @@ class BeamGuard {
   ///
   /// If asterisk is present, it is enough that the pre-asterisk substring is
   /// contained within location's pathBlueprint.
-  /// If the uri has a query, it is enough that the pre-query substring is
-  /// equal to the pathBlueprint.
-  /// Else, they must be equal.
+  /// Else, the path (i.e. the pre-query substring) of the location's uri
+  /// must be equal to the pathBlueprint.
   bool _hasMatch(BeamLocation location) {
     for (var pathBlueprint in pathBlueprints) {
       if (pathBlueprint is String) {
@@ -99,7 +98,7 @@ class BeamGuard {
         }
       } else {
         final regexp = Utils.tryCastToRegExp(pathBlueprint);
-        return regexp.hasMatch(location.state.uri.toString());
+        return regexp.hasMatch(location.state.uri.path);
       }
     }
     return false;
