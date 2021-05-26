@@ -7,8 +7,10 @@ import 'test_locations.dart';
 void main() {
   final pathBlueprint = '/l1/one';
   final testLocation = Location1(BeamState.fromUri(Uri.parse(pathBlueprint)));
+  final testLocationWithQuery =
+      Location1(BeamState.fromUri(Uri.parse(pathBlueprint + '?query=true')));
 
-  group('shouldBlock', () {
+  group('shouldGuard', () {
     test('is true if the location has a blueprint matching the guard', () {
       final guard = BeamGuard(
         pathBlueprints: [pathBlueprint],
@@ -17,6 +19,18 @@ void main() {
       );
 
       expect(guard.shouldGuard(testLocation), isTrue);
+    });
+
+    test(
+        'is true if the location (which has a query part) has a blueprint matching the guard',
+        () {
+      final guard = BeamGuard(
+        pathBlueprints: [pathBlueprint],
+        check: (_, __) => true,
+        beamTo: (context) => Location2(BeamState()),
+      );
+
+      expect(guard.shouldGuard(testLocationWithQuery), isTrue);
     });
 
     test(
@@ -31,6 +45,18 @@ void main() {
       expect(guard.shouldGuard(testLocation), isTrue);
     });
 
+    test(
+        'is true if the location (which has a query part) has a blueprint matching the guard using regexp',
+        () {
+      final guard = BeamGuard(
+        pathBlueprints: [RegExp(pathBlueprint)],
+        check: (_, __) => true,
+        beamTo: (context) => Location2(BeamState()),
+      );
+
+      expect(guard.shouldGuard(testLocationWithQuery), isTrue);
+    });
+
     test("is false if the location doesn't have a blueprint matching the guard",
         () {
       final guard = BeamGuard(
@@ -43,6 +69,18 @@ void main() {
     });
 
     test(
+        "is false if the location (which has a query part) doesn't have a blueprint matching the guard",
+        () {
+      final guard = BeamGuard(
+        pathBlueprints: ['/not-a-match'],
+        check: (_, __) => true,
+        beamTo: (context) => Location2(BeamState()),
+      );
+
+      expect(guard.shouldGuard(testLocationWithQuery), isFalse);
+    });
+
+    test(
         "is false if the location doesn't have a blueprint matching the guard using regexp",
         () {
       final guard = BeamGuard(
@@ -52,6 +90,18 @@ void main() {
       );
 
       expect(guard.shouldGuard(testLocation), isFalse);
+    });
+
+    test(
+        "is false if the location (which has a query part) doesn't have a blueprint matching the guard using regexp",
+        () {
+      final guard = BeamGuard(
+        pathBlueprints: ['/not-a-match'],
+        check: (_, __) => true,
+        beamTo: (context) => Location2(BeamState()),
+      );
+
+      expect(guard.shouldGuard(testLocationWithQuery), isFalse);
     });
 
     group('with wildcards', () {

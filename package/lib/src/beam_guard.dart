@@ -23,7 +23,7 @@ class BeamGuard {
 
   /// A list of path strings or regular expressions (using dart's RegExp class) that are to be guarded.
   ///
-  ///For strings:
+  /// For strings:
   /// Asterisk wildcard is supported to denote "anything".
   ///
   /// For example, '/books/*' will match '/books/1', '/books/2/genres', etc.
@@ -32,7 +32,7 @@ class BeamGuard {
   ///
   /// See [_hasMatch] for more details.
   ///
-  /// For RegExp
+  /// For RegExp:
   /// You can use RegExp instances and the delegate will check for a match using [RegExp.hasMatch]
   ///
   /// For example, `RegExp('/books/')` will match '/books/1', '/books/2/genres', etc.
@@ -79,6 +79,8 @@ class BeamGuard {
   ///
   /// If asterisk is present, it is enough that the pre-asterisk substring is
   /// contained within location's pathBlueprint.
+  /// If the uri has a query, it is enough that the pre-query substring is
+  /// equal to the pathBlueprint.
   /// Else, they must be equal.
   bool _hasMatch(BeamLocation location) {
     for (var pathBlueprint in pathBlueprints) {
@@ -91,8 +93,18 @@ class BeamGuard {
             return true;
           }
         } else {
-          if (pathBlueprint == location.state.uri.toString()) {
-            return true;
+          if (location.state.uri.hasQuery) {
+            final questionMarkIndex =
+                location.state.uri.toString().indexOf('?');
+
+            if (pathBlueprint ==
+                location.state.uri.toString().substring(0, questionMarkIndex)) {
+              return true;
+            }
+          } else {
+            if (pathBlueprint == location.state.uri.toString()) {
+              return true;
+            }
           }
         }
       } else {
