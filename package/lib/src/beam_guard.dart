@@ -93,18 +93,8 @@ class BeamGuard {
             return true;
           }
         } else {
-          if (location.state.uri.hasQuery) {
-            final questionMarkIndex =
-                location.state.uri.toString().indexOf('?');
-
-            if (pathBlueprint ==
-                location.state.uri.toString().substring(0, questionMarkIndex)) {
-              return true;
-            }
-          } else {
-            if (pathBlueprint == location.state.uri.toString()) {
-              return true;
-            }
+          if (pathBlueprint == location.state.uri.path) {
+            return true;
           }
         }
       } else {
