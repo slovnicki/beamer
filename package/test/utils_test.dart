@@ -1,6 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:beamer/src/beam_location.dart';
 import 'package:beamer/src/utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'test_locations.dart';
@@ -10,12 +11,18 @@ void main() {
     Location1(BeamState()),
     Location2(BeamState()),
     CustomStateLocation(),
+    RegExpLocation(),
+    AsteriskLocation(),
   ];
 
   group('chooseBeamLocation', () {
     test('Uri is parsed to BeamLocation', () async {
       var uri = Uri.parse('/l1');
       var location = Utils.chooseBeamLocation(uri, beamLocations);
+      expect(location, isA<Location1>());
+
+      uri = Uri.parse('/l1/');
+      location = Utils.chooseBeamLocation(uri, beamLocations);
       expect(location, isA<Location1>());
 
       uri = Uri.parse('/l1?q=xxx');
@@ -37,6 +44,26 @@ void main() {
       uri = Uri.parse('/l2/123?q=xxx');
       location = Utils.chooseBeamLocation(uri, beamLocations);
       expect(location, isA<Location2>());
+
+      uri = Uri.parse('/reg');
+      location = Utils.chooseBeamLocation(uri, beamLocations);
+      expect(location, isA<RegExpLocation>());
+
+      uri = Uri.parse('/reg/');
+      location = Utils.chooseBeamLocation(uri, beamLocations);
+      expect(location, isA<RegExpLocation>());
+
+      uri = Uri.parse('/anything');
+      location = Utils.chooseBeamLocation(uri, beamLocations);
+      expect(location, isA<AsteriskLocation>());
+
+      uri = Uri.parse('/anything/');
+      location = Utils.chooseBeamLocation(uri, beamLocations);
+      expect(location, isA<AsteriskLocation>());
+
+      uri = Uri.parse('/anything/can/be/here');
+      location = Utils.chooseBeamLocation(uri, beamLocations);
+      expect(location, isA<AsteriskLocation>());
     });
 
     test('Parsed BeamLocation carries URL parameters', () async {
@@ -54,28 +81,6 @@ void main() {
       expect(location.state.queryParameters, {'q': 'xxx'});
     });
 
-    // test('Parsed BeamLocation creates correct pages', () async {
-    //   var uri = Uri.parse('/l1');
-    //   var location = Utils.chooseBeamLocation(uri, beamLocations);
-    //   expect(location.buildPages(null, location.state).length, 1);
-
-    //   uri = Uri.parse('/l1?q=xxx');
-    //   location = Utils.chooseBeamLocation(uri, beamLocations);
-    //   expect(location.buildPages(null, location.state).length, 1);
-
-    //   uri = Uri.parse('/l1/one');
-    //   location = Utils.chooseBeamLocation(uri, beamLocations);
-    //   expect(location.buildPages(null, location.state).length, 2);
-    //   expect(location.buildPages(null, location.state)[1].key,
-    //       ValueKey('l1-one'));
-
-    //   uri = Uri.parse('/l1/two');
-    //   location = Utils.chooseBeamLocation(uri, beamLocations);
-    //   expect(location.buildPages(null, location.state).length, 2);
-    //   expect(location.buildPages(null, location.state)[1].key,
-    //       ValueKey('l1-two'));
-    // });
-
     test('Unknown URI yields NotFound location', () async {
       var uri = Uri.parse('/x');
       var location = Utils.chooseBeamLocation(uri, beamLocations);
@@ -88,5 +93,12 @@ void main() {
       expect(location, isA<CustomStateLocation>());
       expect((location as CustomStateLocation).state.customVar, 'test');
     });
+  });
+
+  test('tryCastToRegExp throws', () {
+    expect(
+      () => Utils.tryCastToRegExp('not-regexp'),
+      throwsA(isA<FlutterError>()),
+    );
   });
 }

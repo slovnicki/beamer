@@ -12,11 +12,24 @@ void main() {
         RegExp('/path-param/(?<test>[a-z]+)'): (context) => Text(
               context.currentBeamLocation.state.pathParameters['test'] ??
                   'failure',
-            )
+            ),
       },
     ),
   );
   delegate.setNewRoutePath(BeamState.fromUri(Uri.parse('/')));
+
+  group('General', () {
+    testWidgets('/ can be at the end of URI and will be ignored when matching',
+        (tester) async {
+      await tester.pumpWidget(MaterialApp.router(
+        routeInformationParser: BeamerParser(),
+        routerDelegate: delegate,
+      ));
+      delegate.beamToNamed('/test/');
+      await tester.pump();
+      expect(delegate.currentPages.length, 2);
+    });
+  });
 
   group('Keys', () {
     testWidgets('each BeamPage has a differenet ValueKey', (tester) async {

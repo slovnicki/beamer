@@ -128,3 +128,33 @@ class NoStateLocation extends BeamLocation {
         )
       ];
 }
+
+class RegExpLocation extends BeamLocation {
+  RegExpLocation([BeamState? state]) : super(state);
+
+  @override
+  List get pathBlueprints => [RegExp('/reg')];
+
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
+        BeamPage(
+          key: ValueKey('reg'),
+          child: Container(),
+        )
+      ];
+}
+
+class AsteriskLocation extends BeamLocation {
+  AsteriskLocation([BeamState? state]) : super(state);
+
+  @override
+  List get pathBlueprints => ['/anything/*'];
+
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
+        BeamPage(
+          key: ValueKey('anything'),
+          child: Container(),
+        )
+      ];
+}
