@@ -452,14 +452,14 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   ///
   /// Returns the success, whether the [state] updated.
   /// {@endtemplate}
-  bool beamBack() {
+  bool beamBack({Map<String, dynamic>? data}) {
     if (!canBeamBack) {
       return false;
     }
     beamStateHistory.removeLast();
     final state = beamStateHistory.removeLast();
     update(
-      state: createState!(state),
+      state: createState!(state.copyWith(data: data)),
       transitionDelegate: beamBackTransitionDelegate,
     );
     return true;

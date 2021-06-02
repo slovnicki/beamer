@@ -184,6 +184,34 @@ void main() {
     expect(delegate.beamStateHistory.length, 3);
   });
 
+  test('beamBack keeps data and can override it', () {
+    delegate.clearBeamStateHistory();
+    expect(delegate.beamStateHistory.length, 1);
+    expect(delegate.currentBeamLocation, isA<Location2>());
+
+    delegate.beamToNamed('/l1', data: {'x': 'y'});
+    delegate.beamToNamed('/l2');
+
+    expect(delegate.beamBack(), true);
+    expect(delegate.state, delegate.currentBeamLocation.state);
+    expect(delegate.state.uri.path, '/l1');
+    expect(delegate.state.data, {'x': 'y'});
+
+    delegate.beamToNamed('/l2');
+
+    expect(delegate.beamBack(), true);
+    expect(delegate.state, delegate.currentBeamLocation.state);
+    expect(delegate.state.uri.path, '/l1');
+    expect(delegate.state.data, {'x': 'y'});
+
+    delegate.beamToNamed('/l2');
+
+    expect(delegate.beamBack(data: {'xx': 'yy'}), true);
+    expect(delegate.state, delegate.currentBeamLocation.state);
+    expect(delegate.state.uri.path, '/l1');
+    expect(delegate.state.data, {'xx': 'yy'});
+  });
+
   testWidgets('popToNamed() beams correctly', (tester) async {
     await tester.pumpWidget(
       MaterialApp.router(

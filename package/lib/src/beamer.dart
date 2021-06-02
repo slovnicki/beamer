@@ -135,7 +135,8 @@ extension BeamerExtensions on BuildContext {
   }
 
   /// {@macro beamBack}
-  void beamBack() => Beamer.of(this).beamBack();
+  void beamBack({Map<String, dynamic>? data}) =>
+      Beamer.of(this).beamBack(data: data);
 
   /// {@macro popBeamLocation}
   void popBeamLocation() => Beamer.of(this).popBeamLocation();
