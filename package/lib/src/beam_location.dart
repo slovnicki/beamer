@@ -164,9 +164,6 @@ class SimpleBeamLocation extends BeamLocation {
     }
   }
 
-  List<dynamic> get sortedRoutes =>
-      routes.keys.toList()..sort((a, b) => _compareKeys(a, b));
-
   @override
   List<dynamic> get pathBlueprints => routes.keys.toList();
 
