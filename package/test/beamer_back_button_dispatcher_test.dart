@@ -9,8 +9,8 @@ void main() {
       final delegate = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '/': (context) => Container(),
-            '/test': (context) => Container(),
+            '/': (context, state) => Container(),
+            '/test': (context, state) => Container(),
           },
         ),
       );
@@ -40,8 +40,8 @@ void main() {
       final delegate = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '/': (context) => Container(),
-            '/test': (context) => Container(),
+            '/': (context, state) => Container(),
+            '/test': (context, state) => Container(),
           },
         ),
       );
@@ -68,8 +68,8 @@ void main() {
       final delegate = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '/': (context) => Container(),
-            '/test': (context) => Container(),
+            '/': (context, state) => Container(),
+            '/test': (context, state) => Container(),
           },
         ),
       );
@@ -99,15 +99,15 @@ void main() {
       final childDelegate = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '/': (context) => Container(),
-            '/test': (context) => Container(),
+            '/': (context, state) => Container(),
+            '/test': (context, state) => Container(),
           },
         ),
       );
       final delegate = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '*': (context) => Beamer(
+            '*': (context, state) => Beamer(
                   routerDelegate: childDelegate,
                 ),
           },
@@ -136,15 +136,15 @@ void main() {
       final childDelegate = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '/': (context) => Container(),
-            '/test': (context) => Container(),
+            '/': (context, state) => Container(),
+            '/test': (context, state) => Container(),
           },
         ),
       );
       final delegate = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '*': (context) => Beamer(
+            '*': (context, state) => Beamer(
                   routerDelegate: childDelegate,
                 ),
           },
@@ -175,8 +175,8 @@ void main() {
       final childDelegate = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '/': (context) => Container(),
-            '/test': (context) => Container(),
+            '/': (context, state) => Container(),
+            '/test': (context, state) => Container(),
           },
         ),
       );
@@ -184,7 +184,7 @@ void main() {
       final delegate = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '*': (context) => Beamer(
+            '*': (context, state) => Beamer(
                   routerDelegate: childDelegate,
                   backButtonDispatcher: BeamerChildBackButtonDispatcher(
                     parent: rootBackButtonDispatcher,
@@ -222,8 +222,8 @@ void main() {
       final childDelegate = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '/': (context) => Container(),
-            '/test': (context) => Container(),
+            '/': (context, state) => Container(),
+            '/test': (context, state) => Container(),
           },
         ),
       );
@@ -231,7 +231,7 @@ void main() {
       final delegate = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '*': (context) => Beamer(
+            '*': (context, state) => Beamer(
                   routerDelegate: childDelegate,
                   backButtonDispatcher: BeamerChildBackButtonDispatcher(
                     parent: rootBackButtonDispatcher,

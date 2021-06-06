@@ -145,7 +145,7 @@ class SimpleBeamLocation extends BeamLocation {
   }) : super(state);
 
   /// Map of all routes this location handles.
-  Map<dynamic, dynamic Function(BuildContext)> routes;
+  Map<dynamic, dynamic Function(BuildContext, BeamState)> routes;
 
   /// A wrapper used as [BeamLocation.builder].
   Widget Function(BuildContext context, Widget navigator)? navBuilder;
@@ -175,7 +175,7 @@ class SimpleBeamLocation extends BeamLocation {
     final sortedRoutes = activeRoutes.keys.toList()
       ..sort((a, b) => _compareKeys(a, b));
     return sortedRoutes.map<BeamPage>((route) {
-      final routeElement = routes[route]!(context);
+      final routeElement = routes[route]!(context, state);
       if (routeElement is BeamPage) {
         return routeElement;
       } else {

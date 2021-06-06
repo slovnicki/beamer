@@ -273,8 +273,8 @@ void main() {
     final delegate = BeamerDelegate(
       locationBuilder: SimpleLocationBuilder(
         routes: {
-          '/': (context) => Container(),
-          '/test': (context) => Scaffold(
+          '/': (context, state) => Container(),
+          '/test': (context, state) => Scaffold(
                 key: scaffoldKey,
                 drawer: Drawer(),
                 body: Container(),
@@ -368,16 +368,16 @@ void main() {
       final childDelegate = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '/': (context) => Container(),
-            '/test': (context) => Container(),
-            '/test2': (context) => Container(),
+            '/': (context, state) => Container(),
+            '/test': (context, state) => Container(),
+            '/test2': (context, state) => Container(),
           },
         ),
       );
       final rootDelegate = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '*': (context) => BeamPage(
+            '*': (context, state) => BeamPage(
                   key: ValueKey('always-the-same'),
                   child: Beamer(
                     routerDelegate: childDelegate,
@@ -412,16 +412,16 @@ void main() {
         updateFromParent: false,
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '/': (context) => Container(),
-            '/test': (context) => Container(),
-            '/test2': (context) => Container(),
+            '/': (context, state) => Container(),
+            '/test': (context, state) => Container(),
+            '/test2': (context, state) => Container(),
           },
         ),
       );
       final rootDelegate = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '*': (context) => BeamPage(
+            '*': (context, state) => BeamPage(
                   key: ValueKey('always-the-same'),
                   child: Beamer(
                     routerDelegate: childDelegate,

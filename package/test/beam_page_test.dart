@@ -92,8 +92,8 @@ void main() {
       final delegate = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '/': (context) => Container(),
-            '/:id': (context) => Container(),
+            '/': (context, state) => Container(),
+            '/:id': (context, state) => Container(),
           },
         ),
       );
@@ -305,37 +305,37 @@ void main() {
     final delegate = BeamerDelegate(
       locationBuilder: SimpleLocationBuilder(
         routes: {
-          '/': (context) => BeamPage(
+          '/': (context, state) => BeamPage(
                 key: ValueKey('/'),
                 type: BeamPageType.material,
                 child: Scaffold(body: Container(child: Text('0'))),
               ),
-          '/1': (context) => BeamPage(
+          '/1': (context, state) => BeamPage(
                 key: ValueKey('/1'),
                 type: BeamPageType.cupertino,
                 child: Scaffold(body: Container(child: Text('1'))),
               ),
-          '/1/2': (context) => BeamPage(
+          '/1/2': (context, state) => BeamPage(
                 key: ValueKey('/1/2'),
                 type: BeamPageType.fadeTransition,
                 child: Scaffold(body: Container(child: Text('2'))),
               ),
-          '/1/2/3': (context) => BeamPage(
+          '/1/2/3': (context, state) => BeamPage(
                 key: ValueKey('/1/2/3'),
                 type: BeamPageType.slideTransition,
                 child: Scaffold(body: Container(child: Text('3'))),
               ),
-          '/1/2/3/4': (context) => BeamPage(
+          '/1/2/3/4': (context, state) => BeamPage(
                 key: ValueKey('/1/2/3/4'),
                 type: BeamPageType.scaleTransition,
                 child: Scaffold(body: Container(child: Text('4'))),
               ),
-          '/1/2/3/4/5': (context) => BeamPage(
+          '/1/2/3/4/5': (context, state) => BeamPage(
                 key: ValueKey('/1/2/3/4/5'),
                 type: BeamPageType.noTransition,
                 child: Scaffold(body: Container(child: Text('5'))),
               ),
-          '/1/2/3/4/5/6': (context) => BeamPage(
+          '/1/2/3/4/5/6': (context, state) => BeamPage(
                 key: ValueKey('/1/2/3/4/5/6'),
                 pageRouteBuilder: (settings, child) => PageRouteBuilder(
                   settings: settings,

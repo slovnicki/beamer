@@ -7,11 +7,10 @@ void main() {
   final delegate = BeamerDelegate(
     locationBuilder: SimpleLocationBuilder(
       routes: {
-        '/': (context) => Container(),
-        RegExp('/test'): (context) => Container(),
-        RegExp('/path-param/(?<test>[a-z]+)'): (context) => Text(
-              context.currentBeamLocation.state.pathParameters['test'] ??
-                  'failure',
+        '/': (context, state) => Container(),
+        RegExp('/test'): (context, state) => Container(),
+        RegExp('/path-param/(?<test>[a-z]+)'): (context, state) => Text(
+              state.pathParameters['test'] ?? 'failure',
             ),
       },
     ),
@@ -89,8 +88,8 @@ void main() {
       final delegate = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '/': (context) => Container(),
-            '/test/*': (context) => Container(),
+            '/': (context, state) => Container(),
+            '/test/*': (context, state) => Container(),
           },
         ),
       );
@@ -103,7 +102,7 @@ void main() {
       final delegate1 = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '/*': (context) => Container(),
+            '/*': (context, state) => Container(),
           },
         ),
       );
@@ -113,7 +112,7 @@ void main() {
       final delegate2 = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '*': (context) => Container(),
+            '*': (context, state) => Container(),
           },
         ),
       );
@@ -125,7 +124,7 @@ void main() {
       final delegate1 = BeamerDelegate(
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '/test/:testId': (context) => Container(),
+            '/test/:testId': (context, state) => Container(),
           },
         ),
       );

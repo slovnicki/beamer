@@ -14,7 +14,7 @@ void main() {
     routerDelegate: BeamerDelegate(
       locationBuilder: SimpleLocationBuilder(
         routes: {
-          '/test2/x': (context) {
+          '/test2/x': (context, state) {
             rootDelegate = Beamer.of(context, root: true);
             return Container();
           },
@@ -27,12 +27,12 @@ void main() {
         transitionDelegate: NoAnimationTransitionDelegate(),
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '/': (context) {
+            '/': (context, state) {
               testContext = context;
               return Container();
             },
-            '/test': (context) => Container(),
-            '/test2/*': (context) => Beamer(
+            '/test': (context, state) => Container(),
+            '/test2/*': (context, state) => Beamer(
                   key: beamerKey,
                   routerDelegate: BeamerProvider.of(context)!.routerDelegate,
                 ),
@@ -103,15 +103,15 @@ void main() {
         routerDelegate: BeamerDelegate(
           locationBuilder: SimpleLocationBuilder(
             routes: {
-              '/': (context) => Beamer(
+              '/': (context, state) => Beamer(
                     routerDelegate: BeamerDelegate(
                       locationBuilder: SimpleLocationBuilder(
                         routes: {
-                          '/': (context) => Beamer(
+                          '/': (context, state) => Beamer(
                                 routerDelegate: BeamerDelegate(
                                   locationBuilder: SimpleLocationBuilder(
                                     routes: {
-                                      '/': (context) {
+                                      '/': (context, state) {
                                         testContext = context;
                                         Beamer.of(context).active = false;
                                         return Container();
@@ -138,7 +138,7 @@ void main() {
     final delegate = BeamerDelegate(
       locationBuilder: SimpleLocationBuilder(
         routes: {
-          '/': (context) => Container(),
+          '/': (context, state) => Container(),
         },
       ),
     );

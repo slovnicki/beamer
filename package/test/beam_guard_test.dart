@@ -175,7 +175,9 @@ void main() {
         expect(guard.shouldGuard(testLocation), isFalse);
       });
 
-      test('is false if the location has a blueprint matching the guard using regexp', () {
+      test(
+          'is false if the location has a blueprint matching the guard using regexp',
+          () {
         final guard = BeamGuard(
           pathBlueprints: [
             RegExp(pathBlueprint),
@@ -232,7 +234,9 @@ void main() {
           expect(guard.shouldGuard(testLocation), isFalse);
         });
 
-        test('is false if the location has a match up to the wildcard using regexp', () {
+        test(
+            'is false if the location has a match up to the wildcard using regexp',
+            () {
           final guard = BeamGuard(
             pathBlueprints: [
               RegExp('/[a-z]+'),
@@ -346,9 +350,9 @@ void main() {
         initialPath: '/1',
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '/1': (context) => Text('1'),
-            '/2': (context) => Text('2'),
-            '/3': (context) => Text('3'),
+            '/1': (context, state) => Text('1'),
+            '/2': (context, state) => Text('2'),
+            '/3': (context, state) => Text('3'),
           },
         ),
         guards: [
@@ -385,8 +389,8 @@ void main() {
         initialPath: '/1',
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '/1': (context) => Text('1'),
-            '/2': (context) => Text('2'),
+            '/1': (context, state) => Text('1'),
+            '/2': (context, state) => Text('2'),
           },
         ),
         guards: [
