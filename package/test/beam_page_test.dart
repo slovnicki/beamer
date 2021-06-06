@@ -107,7 +107,7 @@ void main() {
       await tester.pump();
       expect(delegate.currentBeamLocation.state.pathParameters['id'], 'my-id');
 
-      delegate.navigatorKey.currentState!.pop();
+      delegate.navigator.pop();
       await tester.pump();
       expect(delegate.currentBeamLocation.state.pathParameters, {});
     });
@@ -130,7 +130,7 @@ void main() {
       expect(delegate.currentPages.length, 2);
       expect(delegate.currentPages.last.key, ValueKey('books'));
 
-      delegate.navigatorKey.currentState!.pop();
+      delegate.navigator.pop();
       await tester.pump();
       expect(delegate.currentPages.length, 2);
       expect(delegate.currentPages.last.key, ValueKey('books'));
@@ -148,7 +148,7 @@ void main() {
       expect(delegate.currentPages.length, 3);
       expect(delegate.currentPages.last.key, ValueKey('book-1'));
 
-      delegate.navigatorKey.currentState!.pop();
+      delegate.navigator.pop();
       await tester.pump();
       expect(delegate.currentPages.length, 1);
       expect(delegate.currentPages.last.key, ValueKey('home'));
@@ -167,7 +167,7 @@ void main() {
       expect(delegate.currentPages.length, 4);
       expect(delegate.currentPages.last.key, ValueKey('book-1-details'));
 
-      delegate.navigatorKey.currentState!.pop();
+      delegate.navigator.pop();
       await tester.pump();
       expect(delegate.currentPages.length, 2);
       expect(delegate.currentPages.last.key, ValueKey('books'));
@@ -185,7 +185,7 @@ void main() {
       expect(delegate.currentPages.length, 5);
       expect(delegate.currentPages.last.key, ValueKey('book-1-buy'));
 
-      delegate.navigatorKey.currentState!.pop();
+      delegate.navigator.pop();
       await tester.pump();
       expect(delegate.currentPages.length, 4);
       expect(delegate.currentPages.last.key, ValueKey('book-1-details'));
@@ -203,7 +203,7 @@ void main() {
       expect(delegate.currentPages.length, 4);
       expect(delegate.currentPages.last.key, ValueKey('book-1-details'));
 
-      delegate.navigatorKey.currentState!.pop();
+      delegate.navigator.pop();
       await tester.pump();
       expect(delegate.currentPages.length, 2);
       expect(delegate.currentPages.last.key, ValueKey('books'));
@@ -213,7 +213,7 @@ void main() {
       expect(delegate.currentPages.length, 4);
       expect(delegate.currentPages.last.key, ValueKey('book-1-details'));
 
-      delegate.navigatorKey.currentState!.pop();
+      delegate.navigator.pop();
       await tester.pump();
       expect(delegate.currentPages.length, 2);
       expect(delegate.currentPages.last.key, ValueKey('books'));
@@ -245,7 +245,7 @@ void main() {
       );
       expect(delegate.currentBeamLocation.state.queryParameters, equals({}));
 
-      delegate.navigatorKey.currentState!.pop();
+      delegate.navigator.pop();
       await tester.pump();
       expect(
         delegate.currentBeamLocation.state.uri.path,
@@ -270,7 +270,7 @@ void main() {
       expect(delegate.currentPages.length, 3);
       expect(delegate.currentPages.last.key, ValueKey('book-1'));
 
-      delegate.navigatorKey.currentState!.pop();
+      delegate.navigator.pop();
       await tester.pump();
       expect(delegate.currentPages.length, 3);
       expect(delegate.currentPages.last.key, ValueKey('book-1'));
@@ -293,7 +293,7 @@ void main() {
       expect(delegate.currentPages.length, 3);
       expect(delegate.currentPages.last.key, ValueKey('book-2'));
 
-      delegate.navigatorKey.currentState!.pop();
+      delegate.navigator.pop();
       await tester.pump();
       expect(delegate.currentPages.length, 3);
       expect(delegate.currentPages.last.key, ValueKey('book-1'));

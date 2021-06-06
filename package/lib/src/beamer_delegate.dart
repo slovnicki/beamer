@@ -270,6 +270,15 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   /// Becomes active on next [update].
   bool active = true;
 
+  /// The [Navigator] that belongs to this [BeamerDelegate].
+  ///
+  /// Useful for popping dialogs without accessing [BuildContext]:
+  ///
+  /// ```dart
+  /// beamerDelegate.navigator.pop();
+  /// ```
+  NavigatorState get navigator => _navigatorKey.currentState!;
+
   /// Main method to update the [state] of this; `Beamer.of(context)`,
   ///
   /// This "top-level" [update] is generally used for navigation
