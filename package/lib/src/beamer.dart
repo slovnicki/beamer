@@ -166,8 +166,15 @@ extension BeamerExtensions on BuildContext {
   /// {@macro currentPages}
   List<BeamPage> get currentBeamPages => Beamer.of(this).currentPages;
 
+  /// {@macro beamStateHistory}
+  List<BeamState> get beamStateHistory => Beamer.of(this).beamStateHistory;
+
   /// {@macro canBeamBack}
   bool get canBeamBack => Beamer.of(this).canBeamBack;
+
+  /// {@macro beamLocationHistory}
+  List<BeamLocation> get beamLocationHistory =>
+      Beamer.of(this).beamLocationHistory;
 
   /// {@macro canPopBeamLocation}
   bool get canPopBeamLocation => Beamer.of(this).canPopBeamLocation;

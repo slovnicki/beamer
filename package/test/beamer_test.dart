@@ -157,4 +157,11 @@ void main() {
     );
     expect(Beamer.of(testContext!), isA<BeamerDelegate>());
   });
+
+  testWidgets('histories are accessible through context extension methods',
+      (tester) async {
+    await tester.pumpWidget(app);
+    expect(testContext!.beamStateHistory.length, greaterThan(0));
+    expect(testContext!.beamLocationHistory.length, greaterThan(0));
+  });
 }

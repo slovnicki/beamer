@@ -204,19 +204,23 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
 
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
+  /// {@template beamStateHistory}
   /// The history of beaming states.
   ///
   /// [BeamState] is inserted on every beaming event, if it differs from last.
   ///
   /// See [_pushHistory].
+  /// {@endtemplate}
   final List<BeamState> beamStateHistory = [];
 
+  /// {@template beamLocationHistory}
   /// The history of [BeamLocation]s.
   ///
   /// [BeamLocation] is inserted differently depending on configuration of
   /// [preferUpdate], [replaceCurrent], [removeDuplicateHistory].
   ///
   /// See [_pushHistory].
+  /// {@endtemplate}
   final List<BeamLocation> beamLocationHistory = [];
 
   late BeamLocation _currentBeamLocation;
