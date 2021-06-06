@@ -14,10 +14,22 @@ class Beamer extends StatefulWidget {
   Beamer({
     Key? key,
     required this.routerDelegate,
+    this.createBackButtonDispatcher = true,
+    this.backButtonDispatcher,
   }) : super(key: key);
 
   /// Responsible for beaming, updating and rebuilding the page stack.
   final BeamerDelegate routerDelegate;
+
+  /// Whether to create a [BeamerChildBackButtonDispatcher] automatically
+  /// if the [backButtonDispatcher] is not set but parent has it.
+  final bool createBackButtonDispatcher;
+
+  /// Define how Android's back button should behave.
+  ///
+  /// Use [BeamerChildBackButtonDispatcher]
+  /// instead of [BeamerBackButtonDispatcher].
+  final BackButtonDispatcher? backButtonDispatcher;
 
   /// Access Beamer's [routerDelegate].
   static BeamerDelegate of(BuildContext context, {bool root = false}) {
@@ -58,12 +70,19 @@ class BeamerState extends State<Beamer> {
 
   @override
   Widget build(BuildContext context) {
-    routerDelegate.parent ??=
-        Router.of(context).routerDelegate as BeamerDelegate;
+    final parent = Router.of(context);
+    routerDelegate.parent ??= parent.routerDelegate as BeamerDelegate;
+    final backButtonDispatcher = widget.backButtonDispatcher ??
+        ((parent.backButtonDispatcher is BeamerBackButtonDispatcher &&
+                widget.createBackButtonDispatcher)
+            ? BeamerChildBackButtonDispatcher(
+                parent: parent.backButtonDispatcher!,
+                delegate: routerDelegate,
+              )
+            : null);
     return Router(
-      routerDelegate: widget.routerDelegate,
-      backButtonDispatcher:
-          BeamerBackButtonDispatcher(delegate: widget.routerDelegate),
+      routerDelegate: routerDelegate,
+      backButtonDispatcher: backButtonDispatcher?..takePriority(),
     );
   }
 }
