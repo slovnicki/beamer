@@ -99,10 +99,10 @@ class BeamPage extends Page {
   /// See [BeamPageType] for available types.
   final BeamPageType type;
 
-  /// A completely custom [PageRouteBuilder] to use for [createRoute].
+  /// A builder for custom [PageRoute] to use in [createRoute].
   ///
-  /// [settings] must be passed to [PageRouteBuilder.settings].
-  final PageRouteBuilder Function(RouteSettings settings, Widget child)?
+  /// [settings] must be passed to [PageRoute.settings].
+  final PageRoute Function(RouteSettings settings, Widget child)?
       pageRouteBuilder;
 
   /// When this [BeamPage] pops from [Navigator] stack, whether to keep the
