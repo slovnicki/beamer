@@ -252,13 +252,10 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   T Function(BeamState state)? createState;
 
   /// If `false`, does not report the route until next [update].
-  bool _active = true;
-
-  /// When not active, does not report the route.
   ///
   /// Useful when having sibling beamers that are both build at the same time.
   /// Becomes active on next [update].
-  void active([bool? value]) => _active = value ?? true;
+  bool active = true;
 
   /// Main method to update the [state] of this; `Beamer.of(context)`,
   ///
@@ -304,7 +301,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     bool buildBeamLocation = true,
     bool rebuild = true,
   }) {
-    _active = true;
+    active = true;
     _popState = popState ?? _popState;
     _currentTransitionDelegate = transitionDelegate ?? this.transitionDelegate;
     _beamBackOnPop = beamBackOnPop;
@@ -457,7 +454,9 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
       return false;
     }
     beamStateHistory.removeLast();
+    _parent?.beamStateHistory.removeLast();
     final state = beamStateHistory.removeLast();
+    _parent?.beamStateHistory.removeLast();
     update(
       state: createState!(state),
       transitionDelegate: beamBackTransitionDelegate,
@@ -548,7 +547,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
                       .last
                 ];
         }
-        if (_active && kIsWeb && setBrowserTabTitle) {
+        if (active && kIsWeb && setBrowserTabTitle) {
           SystemChrome.setApplicationSwitcherDescription(
               ApplicationSwitcherDescription(
             label: _currentPages.last.title ??

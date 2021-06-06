@@ -113,7 +113,7 @@ void main() {
                                     routes: {
                                       '/': (context) {
                                         testContext = context;
-                                        Beamer.of(context).active(false);
+                                        Beamer.of(context).active = false;
                                         return Container();
                                       },
                                     },
