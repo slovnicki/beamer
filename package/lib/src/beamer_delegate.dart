@@ -28,6 +28,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     this.beamBackTransitionDelegate = const ReverseTransitionDelegate(),
     this.onPopPage,
     this.setBrowserTabTitle = true,
+    this.updateFromParent = true,
   }) {
     notFoundPage ??= BeamPage(
       title: 'Not found',
@@ -64,6 +65,9 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   set parent(BeamerDelegate? parent) {
     _parent = parent!;
     _initializeFromParent();
+    if (updateFromParent) {
+      _parent!.addListener(_updateFromParent);
+    }
   }
 
   /// The top-most [BeamerDelegate], a parent of all.
@@ -193,6 +197,11 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   /// be used to set and update the browser tab title.
   final bool setBrowserTabTitle;
 
+  /// Whether to call [update] when parent notifies listeners.
+  ///
+  /// This means that navigation can be done either on parent or on this
+  final bool updateFromParent;
+
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   /// The history of beaming states.
@@ -300,6 +309,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     bool replaceCurrent = false,
     bool buildBeamLocation = true,
     bool rebuild = true,
+    bool updateParent = true,
   }) {
     active = true;
     _popState = popState ?? _popState;
@@ -317,7 +327,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
       listener?.call(this.state, _currentBeamLocation);
     }
 
-    if (state != _parent?.state) {
+    if (state != _parent?.state && updateParent) {
       _parent?.update(
         state: this.state.copyWith(),
         rebuild: false,
@@ -724,6 +734,14 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     _pushHistory(location);
   }
 
+  void _updateFromParent({bool rebuild = true}) {
+    update(
+      state: createState!(_parent!.state),
+      rebuild: rebuild,
+      updateParent: false,
+    );
+  }
+
   void _updateFromLocation({bool rebuild = true}) {
     update(
       state: createState!(_currentBeamLocation.state),
@@ -734,6 +752,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
 
   @override
   void dispose() {
+    _parent?.removeListener(_updateFromParent);
     _currentBeamLocation.removeListener(_updateFromLocation);
     super.dispose();
   }

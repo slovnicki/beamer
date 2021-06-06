@@ -362,4 +362,92 @@ void main() {
       expect(delegate.currentBeamLocation.state.data, {});
     });
   });
+
+  group('Updating from parent', () {
+    testWidgets('navigation on parent updates nested Beamer', (tester) async {
+      final childDelegate = BeamerDelegate(
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '/': (context) => Container(),
+            '/test': (context) => Container(),
+            '/test2': (context) => Container(),
+          },
+        ),
+      );
+      final rootDelegate = BeamerDelegate(
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '*': (context) => BeamPage(
+                  key: ValueKey('always-the-same'),
+                  child: Beamer(
+                    routerDelegate: childDelegate,
+                  ),
+                ),
+          },
+        ),
+      );
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: rootDelegate,
+        ),
+      );
+
+      rootDelegate.beamToNamed('/test');
+      await tester.pump();
+      expect(rootDelegate.state.uri.toString(), '/test');
+      expect(childDelegate.state.uri.toString(), '/test');
+      expect(childDelegate.beamStateHistory.length, 1);
+
+      rootDelegate.beamToNamed('/test2');
+      await tester.pump();
+      expect(rootDelegate.state.uri.toString(), '/test2');
+      expect(childDelegate.state.uri.toString(), '/test2');
+      expect(childDelegate.beamStateHistory.length, 2);
+    });
+
+    testWidgets("navigation on parent doesn't update nested Beamer",
+        (tester) async {
+      final childDelegate = BeamerDelegate(
+        updateFromParent: false,
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '/': (context) => Container(),
+            '/test': (context) => Container(),
+            '/test2': (context) => Container(),
+          },
+        ),
+      );
+      final rootDelegate = BeamerDelegate(
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '*': (context) => BeamPage(
+                  key: ValueKey('always-the-same'),
+                  child: Beamer(
+                    routerDelegate: childDelegate,
+                  ),
+                ),
+          },
+        ),
+      );
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: rootDelegate,
+        ),
+      );
+
+      rootDelegate.beamToNamed('/test'); // initial will update
+      await tester.pump();
+      expect(rootDelegate.state.uri.toString(), '/test');
+      expect(childDelegate.state.uri.toString(), '/test');
+      expect(childDelegate.beamStateHistory.length, 1);
+
+      rootDelegate.beamToNamed('/test2');
+      await tester.pump();
+      expect(rootDelegate.state.uri.toString(), '/test2');
+      expect(childDelegate.state.uri.toString(), '/test');
+      expect(childDelegate.beamStateHistory.length, 1);
+    });
+  });
 }
