@@ -180,21 +180,38 @@ class BottomNavigationBarWidget extends StatefulWidget {
 }
 
 class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
+  late BeamerDelegate _beamerDelegate;
+  int _currentIndex = 0;
+
+  void _setStateListener() => setState(() {});
+
+  @override
+  void initState() {
+    super.initState();
+    _beamerDelegate = widget.beamerKey.currentState!.routerDelegate;
+    _beamerDelegate.addListener(_setStateListener);
+  }
+
   @override
   Widget build(BuildContext context) {
+    _currentIndex =
+        _beamerDelegate.currentBeamLocation is BooksLocation ? 0 : 1;
     return BottomNavigationBar(
-      currentIndex:
-          widget.beamerKey.currentState!.currentBeamLocation is BooksLocation
-              ? 0
-              : 1,
+      currentIndex: _currentIndex,
       items: [
         BottomNavigationBarItem(label: 'Books', icon: Icon(Icons.book)),
         BottomNavigationBarItem(label: 'Articles', icon: Icon(Icons.article)),
       ],
-      onTap: (index) => setState(() => widget
-          .beamerKey.currentState?.routerDelegate
-          .beamToNamed(index == 0 ? '/books' : 'articles')),
+      onTap: (index) => _beamerDelegate.beamToNamed(
+        index == 0 ? '/books' : 'articles',
+      ),
     );
+  }
+
+  @override
+  void dispose() {
+    _beamerDelegate.removeListener(_setStateListener);
+    super.dispose();
   }
 }
 
@@ -203,9 +220,8 @@ class MyApp extends StatelessWidget {
     initialPath: '/books',
     locationBuilder: SimpleLocationBuilder(
       routes: {
-        '/*': (context) {
+        '*': (context) {
           final beamerKey = GlobalKey<BeamerState>();
-
           return Scaffold(
             body: Beamer(
               key: beamerKey,
@@ -233,6 +249,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routerDelegate: routerDelegate,
       routeInformationParser: BeamerParser(),
+      backButtonDispatcher: BeamerBackButtonDispatcher(
+        delegate: routerDelegate,
+      ),
     );
   }
 }

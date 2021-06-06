@@ -174,9 +174,6 @@ class ArticlesLocation extends BeamLocation {
 
 // APP
 class AppScreen extends StatefulWidget {
-  AppScreen({required this.beamState});
-  final BeamState beamState;
-
   @override
   _AppScreenState createState() => _AppScreenState();
 }
@@ -205,16 +202,27 @@ class _AppScreenState extends State<AppScreen> {
     ),
   ];
 
+  void _setStateListener() => setState(() {});
+
   @override
-  void initState() {
-    super.initState();
-    currentIndex = widget.beamState.uri.path.contains('books') ? 0 : 1;
-    routerDelegates[currentIndex].active();
-    routerDelegates[1 - currentIndex].active(false);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Beamer.of(context).addListener(_setStateListener);
   }
 
   @override
   Widget build(BuildContext context) {
+    final beamState = Beamer.of(context).state;
+    currentIndex = beamState.uri.path.contains('books') ? 0 : 1;
+
+    routerDelegates[currentIndex].active = true;
+    routerDelegates[1 - currentIndex].active = false;
+
+    routerDelegates[currentIndex].update(
+      state: beamState,
+      rebuild: false,
+    );
+
     return Scaffold(
       body: IndexedStack(
         index: currentIndex,
@@ -239,14 +247,22 @@ class _AppScreenState extends State<AppScreen> {
         ],
         onTap: (index) {
           if (index != currentIndex) {
-            routerDelegates[currentIndex].active(false);
-            routerDelegates[1 - currentIndex].active();
+            routerDelegates[currentIndex].active = false;
+            routerDelegates[1 - currentIndex].active = true;
+
             setState(() => currentIndex = index);
+
             routerDelegates[currentIndex].update(rebuild: false);
           }
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    Beamer.of(context).removeListener(_setStateListener);
+    super.dispose();
   }
 }
 
@@ -255,7 +271,7 @@ class MyApp extends StatelessWidget {
     initialPath: '/books',
     locationBuilder: SimpleLocationBuilder(
       routes: {
-        '/*': (context) => AppScreen(beamState: Beamer.of(context).state),
+        '*': (context) => AppScreen(),
       },
     ),
   );
@@ -266,6 +282,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routerDelegate: routerDelegate,
       routeInformationParser: BeamerParser(),
+      backButtonDispatcher: BeamerBackButtonDispatcher(
+        delegate: routerDelegate,
+      ),
     );
   }
 }
