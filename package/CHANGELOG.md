@@ -1,3 +1,5 @@
+# 0.15.0
+- **BREAKING:** The property `pageRouteBuilder` in `BeamPage` is replaced with a new property `routeBuilder` which works with any RouteBuilder not just PageRouteBuilders.
 # 0.14.1
 
 - **Add:** `updateParent` (default `true`) to `BeamerDelegate`
