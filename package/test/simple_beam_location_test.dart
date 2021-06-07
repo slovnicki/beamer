@@ -28,6 +28,28 @@ void main() {
       await tester.pump();
       expect(delegate.currentPages.length, 2);
     });
+
+    testWidgets(
+        '/ can be at the end of URI and will be ignored when matching, without RegExp',
+        (tester) async {
+      final delegate = BeamerDelegate(
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '/': (context, state) => Container(),
+            '/test': (context, state) => Container(),
+          },
+        ),
+      );
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: delegate,
+        ),
+      );
+      delegate.beamToNamed('/test/');
+      await tester.pump();
+      expect(delegate.currentPages.length, 2);
+    });
   });
 
   group('Keys', () {

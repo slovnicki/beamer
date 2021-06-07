@@ -42,7 +42,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
 
     _currentTransitionDelegate = transitionDelegate;
 
-    state = createState!(BeamState.fromUri(Uri.parse(initialPath)));
+    state = createState!(BeamState.fromUriString(initialPath));
     _currentBeamLocation = EmptyBeamLocation();
   }
 
@@ -289,7 +289,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   ///
   /// ```dart
   /// Beamer.of(context).update(
-  ///   state: BeamState.fromUri(Uri.parse('/xx')),
+  ///   state: BeamState.fromUriString('/xx'),
   /// );
   /// ```
   ///
@@ -419,10 +419,9 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   }) {
     final beamData = data ?? _currentBeamLocation.state.data;
     update(
-      state: createState!(BeamState.fromUri(Uri.parse(uri), data: beamData)),
+      state: createState!(BeamState.fromUriString(uri, data: beamData)),
       popState: popToNamed != null
-          ? createState!(
-              BeamState.fromUri(Uri.parse(popToNamed), data: beamData))
+          ? createState!(BeamState.fromUriString(popToNamed, data: beamData))
           : null,
       transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
@@ -545,7 +544,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
           redirectBeamLocation = notFoundRedirect!;
         } else if (notFoundRedirectNamed != null) {
           redirectBeamLocation = locationBuilder(
-            BeamState.fromUri(Uri.parse(notFoundRedirectNamed!)),
+            BeamState.fromUriString(notFoundRedirectNamed!),
           );
         }
         _currentBeamLocation.removeListener(_updateFromLocation);
@@ -637,7 +636,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     if (_currentBeamLocation is! EmptyBeamLocation) {
       beamState = _currentBeamLocation.state;
     } else if (beamState.uri.path == '/') {
-      beamState = BeamState.fromUri(Uri.parse(initialPath));
+      beamState = BeamState.fromUriString(initialPath);
     }
     return setNewRoutePath(beamState);
   }
@@ -692,7 +691,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     } else if (guard.beamTo != null) {
       redirectLocation = guard.beamTo!(context);
     } else if (guard.beamToNamed != null) {
-      state = createState!(BeamState.fromUri(Uri.parse(guard.beamToNamed!)));
+      state = createState!(BeamState.fromUriString(guard.beamToNamed!));
       redirectLocation = locationBuilder(_state);
     }
 
@@ -748,7 +747,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     state = createState!(_parent!.state);
     var location = locationBuilder(state);
     if (location is NotFound) {
-      state = createState!(BeamState.fromUri(Uri.parse(initialPath)));
+      state = createState!(BeamState.fromUriString(initialPath));
       location = locationBuilder(state);
     }
     _pushHistory(location);

@@ -196,4 +196,14 @@ abstract class Utils {
       ]);
     }
   }
+
+  /// Removes the trailing / in an URI String and returns the result.
+  ///
+  /// If there is no trailing /, returns the input.
+  static String trimmed(String uri) {
+    if (uri.length > 1 && uri.endsWith('/')) {
+      return uri.substring(0, uri.length - 1);
+    }
+    return uri;
+  }
 }

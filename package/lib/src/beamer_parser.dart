@@ -20,9 +20,8 @@ class BeamerParser extends RouteInformationParser<BeamState> {
   @override
   SynchronousFuture<BeamState> parseRouteInformation(
       RouteInformation routeInformation) {
-    final uri = Uri.parse(routeInformation.location ?? '/');
-    final beamState = BeamState.fromUri(
-      uri,
+    final beamState = BeamState.fromUriString(
+      routeInformation.location ?? '/',
       data: routeInformation.state == null
           ? {}
           : Map<String, String>.from(

@@ -114,7 +114,7 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
 
 /// Default location to choose if requested URI doesn't parse to any location.
 class NotFound extends BeamLocation {
-  NotFound({String path = '/'}) : super(BeamState.fromUri(Uri.parse(path)));
+  NotFound({String path = '/'}) : super(BeamState.fromUriString(path));
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [];
@@ -198,10 +198,6 @@ class SimpleBeamLocation extends BeamLocation {
     for (var route in routes) {
       if (route is String) {
         final uriPathSegments = List.from(state.uri.pathSegments);
-        if (uriPathSegments.length > 1 && uriPathSegments.last == '') {
-          uriPathSegments.removeLast();
-        }
-
         final routePathSegments = Uri.parse(route).pathSegments;
 
         if (uriPathSegments.length < routePathSegments.length) {

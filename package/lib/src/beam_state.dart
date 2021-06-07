@@ -35,6 +35,26 @@ class BeamState {
     );
   }
 
+  /// Creates a [BeamState] from given [uriString] and optional [data].
+  ///
+  /// If [beamLocation] is given, then it will take into consideration
+  /// its path blueprints to populate the [pathParameters] attribute.
+  ///
+  /// See [BeamState.fromUri].
+  factory BeamState.fromUriString(
+    String uriString, {
+    BeamLocation? beamLocation,
+    Map<String, dynamic> data = const <String, dynamic>{},
+  }) {
+    uriString = Utils.trimmed(uriString);
+    final uri = Uri.parse(uriString);
+    return BeamState.fromUri(
+      uri,
+      beamLocation: beamLocation,
+      data: data,
+    );
+  }
+
   /// Path segments of the current URI,
   /// in the form as it's defined in [BeamLocation.pathBlueprints].
   ///
