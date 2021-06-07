@@ -476,10 +476,9 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     if (!canBeamBack) {
       return false;
     }
-    beamStateHistory.removeLast();
-    _parent?.beamStateHistory.removeLast();
-    final state = beamStateHistory.removeLast();
-    _parent?.beamStateHistory.removeLast();
+    removeLastBeamState();
+    // has to exist because canbeamBack
+    final state = removeLastBeamState()!;
     update(
       state: createState!(state.copyWith(data: data)),
       transitionDelegate: beamBackTransitionDelegate,
@@ -687,8 +686,8 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     var redirectLocation;
 
     if (guard.beamTo == null && guard.beamToNamed == null) {
-      beamStateHistory.removeLast();
-      state = createState!(beamStateHistory.last);
+      final lastState = removeLastBeamState();
+      state = createState!(lastState!);
       redirectLocation = locationBuilder(_state);
     } else if (guard.beamTo != null) {
       redirectLocation = guard.beamTo!(context);
@@ -704,7 +703,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
 
     _currentBeamLocation.removeListener(_updateFromLocation);
     if (guard.replaceCurrentStack && beamLocationHistory.isNotEmpty) {
-      beamStateHistory.removeLast();
+      removeLastBeamState();
       beamLocationHistory.removeLast();
     }
     _pushHistory(redirectLocation);
@@ -735,6 +734,14 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     beamLocationHistory.add(location);
     _currentBeamLocation = beamLocationHistory.last;
     _currentBeamLocation.addListener(_updateFromLocation);
+  }
+
+  BeamState? removeLastBeamState() {
+    if (beamStateHistory.isEmpty) {
+      return null;
+    }
+    _parent?.removeLastBeamState();
+    return beamStateHistory.removeLast();
   }
 
   void _initializeFromParent() {

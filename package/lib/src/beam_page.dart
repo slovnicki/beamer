@@ -64,6 +64,8 @@ class BeamPage extends Page {
       );
     }
 
+    delegate.removeLastBeamState();
+
     location.update((state) => beamState);
     return true;
   }
