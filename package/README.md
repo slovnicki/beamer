@@ -60,6 +60,7 @@ Handle your application routing, synchronize it with browser URL and more. Beame
   - [Nested Navigation](#nested-navigation-1)
   - [Integration with Navigation UI Packages](#integration-with-navigation-ui-packages)
 - [Migrating](#migrating)
+  - [From 0.13 to 0.14](#from-013-to-014)
   - [From 0.12 to 0.13](#from-012-to-013)
   - [From 0.11 to 0.12](#from-011-to-012)
   - [From 0.10 to 0.11](#from-010-to-011)
@@ -588,6 +589,33 @@ The code for the nested navigation example app is available [here](https://githu
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/animated_rail/example-animated-rail.gif" alt="example-animated-rail" width="240">
 
 # Migrating
+
+## From 0.13 to 0.14
+
+Instead of
+
+```dart
+locationBuilder: SimpleLocationBuilder(
+  routes: {
+    '/': (context) => MyWidget(),
+    '/another': (context) {
+      final state = context.currentBeamLocation.state;
+      return AnotherThatNeedsState(state);
+    }
+  }
+)
+```
+
+now we have
+
+```dart
+locationBuilder: SimpleLocationBuilder(
+  routes: {
+    '/': (context, state) => MyWidget(),
+    '/another': (context, state) => AnotherThatNeedsState(state)
+  }
+)
+```
 
 ## From 0.12 to 0.13
 
