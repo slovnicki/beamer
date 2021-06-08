@@ -41,6 +41,7 @@ Handle your application routing, synchronize it with browser URL and more. Beame
   - [Beaming](#beaming)
   - [Updating](#updating)
   - [Beaming Back](#beaming-back)
+  - [Guards](#guards)
 - [Usage](#usage)
   - [With a List of BeamLocations](#with-a-list-of-beamlocations)
   - [With a Map of Routes](#with-a-map-of-routes)
@@ -296,6 +297,39 @@ context.beamBack();
 
 ```dart
 backButtonDispatcher: BeamerBackButtonDispatcher(delegate: routerDelegate)
+```
+
+## Guards
+
+To guard specific routes, e.g. from un-authenticated users, global `BeamGuard`s can be set up via `BeamerDelegate.guards` attribute. A most common example would be the `BeamGuard` that guards any route that **is not** `/login` and redirects to `/login` if the user is not authenticated:
+
+```dart
+BeamGuard(
+  pathBlueprints: ['/login'],
+  guardNonMatching: true,
+  check: (context, location) => context.isUserAuthenticated(),
+  beamToNamed: '/login',
+)
+```
+
+Note the usage of `guardNonMatching` in this example. This is important because guards (there can be many of them, each guarding different aspects) will run in recursion on the output of previously applied guard until a "safe" route is reached. A common mistake is to setup a guard with `pathBlueprints: ['*']` to guard everything, but everything also includes `/login` (which should be a "safe" route) and this leads to an infinite loop:
+
+- check `/login`
+- user not authenticated
+- beam to `/login`
+- check `/login`
+- user not authenticated
+- beam to `/login`
+- ...
+
+Of course, `guardNonMatching` needs not to be used always. Sometimes we wish to guard just a few routes that can be specified. Here is an example of a guard that has the same role as above, implemented with `guardNonMatching: false` (default):
+
+```dart
+BeamGuard(
+  pathBlueprints: ['/profile/*', '/orders/*'],
+  check: (context, location) => context.isUserAuthenticated(),
+  beamToNamed: '/login',
+)
 ```
 
 # Usage
