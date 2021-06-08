@@ -79,13 +79,11 @@ class MyApp extends StatelessWidget {
     locationBuilder: SimpleLocationBuilder(
       routes: {
         // Return either Widgets or BeamPages if more customization is needed
-        '/': (context) => HomeScreen(),
-        '/books': (context) => BooksScreen(),
-        '/books/:bookId': (context) {
-          // Extract the current BeamState which holds route information
-          final beamState = context.currentBeamLocation.state;
-          // Take the parameter of interest
-          final bookId = beamState.pathParameters['bookId']!;
+        '/': (context, state) => HomeScreen(),
+        '/books': (context, state) => BooksScreen(),
+        '/books/:bookId': (context, state) {
+          // Take the parameter of interest from BeamState
+          final bookId = state.pathParameters['bookId']!;
           // Return a Widget or wrap it in a BeamPage for more flexibility
           return BeamPage(
             key: ValueKey('book-$bookId'),
@@ -385,17 +383,16 @@ final routerDelegate = BeamerDelegate(
 
 ## With a Map of Routes
 
-You can use the `SimpleLocationBuilder` with a map of routes and `WidgetBuilder`s, as mentioned in [Quick Start](#quick-start). This completely removes the need for custom `BeamLocation`s, but also gives you the least amount of customizability. Still, wildcards and path parameters in your paths are supported as with all the other options.
+You can use the `SimpleLocationBuilder` with a map of routes, as mentioned in [Quick Start](#quick-start). This completely removes the need for custom `BeamLocation`s, but also gives you the least amount of customizability. Still, wildcards and path parameters in your paths are supported as with all the other options.
 
 ```dart
 final routerDelegate = BeamerDelegate(
   locationBuilder: SimpleLocationBuilder(
     routes: {
-      '/': (context) => HomeScreen(),
-      '/books': (context) => BooksScreen(),
-      '/books/:bookId': (context) => BookDetailsScreen(
-        bookId: context.currentBeamLocation.state.pathParameters['bookId'],
-      ),
+      '/': (context, state) => HomeScreen(),
+      '/books': (context, state) => BooksScreen(),
+      '/books/:bookId': (context, state) =>
+        BookDetailsScreen(bookId: state.pathParameters['bookId']),
     },
   ),
 );
@@ -411,7 +408,7 @@ class MyApp extends StatelessWidget {
     initialPath: '/books',
     locationBuilder: SimpleLocationBuilder(
       routes: {
-        '/*': (context) {
+        '/*': (context, state) {
           final beamerKey = GlobalKey<BeamerState>();
 
           return Scaffold(

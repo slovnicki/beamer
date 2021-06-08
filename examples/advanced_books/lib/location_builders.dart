@@ -7,16 +7,14 @@ import 'screens/screens.dart';
 // OPTION A: SimpleLocationBuilder
 final simpleLocationBuilder = SimpleLocationBuilder(
   routes: {
-    '/': (context) => BeamPage(
+    '/': (context, state) => BeamPage(
           key: ValueKey('home'),
           title: 'Home',
           child: HomeScreen(),
         ),
-    '/books': (context) {
-      final titleQuery =
-          context.currentBeamLocation.state.queryParameters['title'] ?? '';
-      final genreQuery =
-          context.currentBeamLocation.state.queryParameters['genre'] ?? '';
+    '/books': (context, state) {
+      final titleQuery = state.queryParameters['title'] ?? '';
+      final genreQuery = state.queryParameters['genre'] ?? '';
       final pageTitle = titleQuery != ''
           ? "Books with name '$titleQuery'"
           : genreQuery != ''
@@ -38,8 +36,8 @@ final simpleLocationBuilder = SimpleLocationBuilder(
         ),
       );
     },
-    '/books/:bookId': (context) {
-      final bookId = context.currentBeamLocation.state.pathParameters['bookId'];
+    '/books/:bookId': (context, state) {
+      final bookId = state.pathParameters['bookId'];
       final book = data.books.firstWhere((book) => book['id'] == bookId);
       final pageTitle = book['title'];
 
@@ -52,8 +50,8 @@ final simpleLocationBuilder = SimpleLocationBuilder(
         ),
       );
     },
-    '/books/:bookId/genres': (context) {
-      final bookId = context.currentBeamLocation.state.pathParameters['bookId'];
+    '/books/:bookId/genres': (context, state) {
+      final bookId = state.pathParameters['bookId'];
       final book = data.books.firstWhere((book) => book['id'] == bookId);
       final pageTitle = "${book['title']}'s Genres";
 
@@ -66,8 +64,8 @@ final simpleLocationBuilder = SimpleLocationBuilder(
         ),
       );
     },
-    '/books/:bookId/buy': (context) {
-      final bookId = context.currentBeamLocation.state.pathParameters['bookId'];
+    '/books/:bookId/buy': (context, state) {
+      final bookId = state.pathParameters['bookId'];
       final book = data.books.firstWhere((book) => book['id'] == bookId);
       final pageTitle = 'Buy ${book['title']}';
 

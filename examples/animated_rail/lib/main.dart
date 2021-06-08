@@ -15,7 +15,7 @@ class TestLocation extends BeamLocation {
   List<String> get pathBlueprints => ['$pathBlueprint/:page'];
 
   @override
-  List<BeamPage> buildPages(BuildContext context) => [
+  List<BeamPage> pagesBuilder(BuildContext context) => [
         BeamPage(
           key: ValueKey('$pathBlueprint'),
           child: FirstPage(
