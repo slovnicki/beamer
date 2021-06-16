@@ -15,6 +15,22 @@ void main() {
     AsteriskLocation(),
   ];
 
+  group('createBeamState', () {
+    test('uri and uriBlueprint are correct without BeamLocation', () {
+      final uri = Uri.parse('/l2/123');
+      final state = Utils.createBeamState(uri);
+      expect(state.uri.path, '/l2/123');
+      expect(state.uriBlueprint.path, '/l2/123');
+    });
+
+    test('uri and uriBlueprint are correct with BeamLocation', () {
+      final uri = Uri.parse('/l2/123');
+      final state = Utils.createBeamState(uri, beamLocation: beamLocations[1]);
+      expect(state.uri.path, '/l2/123');
+      expect(state.uriBlueprint.path, '/l2/:id');
+    });
+  });
+
   group('chooseBeamLocation', () {
     test('Uri is parsed to BeamLocation', () async {
       var uri = Uri.parse('/l1');
@@ -44,6 +60,8 @@ void main() {
       uri = Uri.parse('/l2/123?q=xxx');
       location = Utils.chooseBeamLocation(uri, beamLocations);
       expect(location, isA<Location2>());
+      expect(location.state.uri.path, '/l2/123');
+      expect(location.state.uriBlueprint.path, '/l2/:id');
 
       uri = Uri.parse('/reg');
       location = Utils.chooseBeamLocation(uri, beamLocations);
