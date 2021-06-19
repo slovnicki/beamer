@@ -636,7 +636,9 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     if (_currentBeamLocation is! EmptyBeamLocation) {
       beamState = _currentBeamLocation.state;
     } else if (beamState.uri.path == '/') {
-      beamState = BeamState.fromUriString(initialPath);
+      beamState = BeamState.fromUri(
+        Uri(path: initialPath, queryParameters: beamState.queryParameters),
+      );
     }
     return setNewRoutePath(beamState);
   }
