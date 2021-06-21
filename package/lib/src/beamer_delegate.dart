@@ -29,6 +29,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     this.onPopPage,
     this.setBrowserTabTitle = true,
     this.updateFromParent = true,
+    this.updateParent = true,
   }) {
     notFoundPage ??= BeamPage(
       title: 'Not found',
@@ -202,6 +203,11 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   /// This means that navigation can be done either on parent or on this
   final bool updateFromParent;
 
+  /// Whether to call [update] on [parent] when [state] is updated.
+  ///
+  /// This means that parent's [beamStateHistory] will be in sync.
+  final bool updateParent;
+
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   /// {@template beamStateHistory}
@@ -340,12 +346,15 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
       listener?.call(this.state, _currentBeamLocation);
     }
 
-    if (state != _parent?.state && updateParent) {
+    if (this.updateParent && updateParent && state != _parent?.state) {
       _parent?.update(
-        state: this.state.copyWith(),
+        state: this.state,
         rebuild: false,
       );
-      _parent?.updateRouteInformation(this.state.copyWith());
+    }
+
+    if (!rebuild || !updateParent) {
+      updateRouteInformation(this.state);
     }
 
     if (rebuild) {
@@ -655,13 +664,13 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   ///
   /// See [SystemNavigator.routeInformationUpdated].
   void updateRouteInformation(BeamState state) {
-    if (parent == null) {
+    if (_parent == null) {
       SystemNavigator.routeInformationUpdated(
         location: state.uri.toString(),
         state: json.encode(state.data),
       );
     } else {
-      parent!.updateRouteInformation(state);
+      _parent!.updateRouteInformation(state);
     }
   }
 
@@ -709,9 +718,6 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     }
     _pushHistory(redirectLocation);
     _updateFromLocation(rebuild: false);
-    if (_parent == null) {
-      updateRouteInformation(_currentBeamLocation.state);
-    }
   }
 
   void _pushHistory(BeamLocation location, {bool replaceCurrent = false}) {
@@ -741,7 +747,9 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     if (beamStateHistory.isEmpty) {
       return null;
     }
-    _parent?.removeLastBeamState();
+    if (updateParent) {
+      _parent?.removeLastBeamState();
+    }
     return beamStateHistory.removeLast();
   }
 
