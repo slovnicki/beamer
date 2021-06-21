@@ -1,3 +1,8 @@
+# 0.14.1
+
+- **Add:** `updateParent` (default `true`) to `BeamerDelegate`
+- **Fix:** ignoring query on initial path
+
 # 0.14.0
 
 - **BREAKING:** `routes` in `SimpleLocationBuilder` now also bring the `state`
