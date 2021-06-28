@@ -25,7 +25,7 @@ class BeamPage extends Page {
     this.onPopPage = defaultOnPopPage,
     this.popToNamed,
     this.type = BeamPageType.material,
-    this.pageRouteBuilder,
+    this.routeBuilder,
     this.keepQueryOnPop = false,
   }) : super(key: key, name: name);
 
@@ -101,11 +101,12 @@ class BeamPage extends Page {
   /// See [BeamPageType] for available types.
   final BeamPageType type;
 
-  /// A builder for custom [PageRoute] to use in [createRoute].
+  /// A builder for custom [Route] to use in [createRoute].
   ///
   /// [settings] must be passed to [PageRoute.settings].
-  final PageRoute Function(RouteSettings settings, Widget child)?
-      pageRouteBuilder;
+  /// [child] is the child of this [BeamPage]
+  final Route Function(RouteSettings settings, Widget child)?
+      routeBuilder;
 
   /// When this [BeamPage] pops from [Navigator] stack, whether to keep the
   /// query parameters within current [BeamLocation].
@@ -115,8 +116,8 @@ class BeamPage extends Page {
 
   @override
   Route createRoute(BuildContext context) {
-    if (pageRouteBuilder != null) {
-      return pageRouteBuilder!(this, child);
+    if (routeBuilder != null) {
+      return routeBuilder!(this, child);
     }
     switch (type) {
       case BeamPageType.cupertino:

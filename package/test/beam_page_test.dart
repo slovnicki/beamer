@@ -409,12 +409,12 @@ void main() {
               ),
           '/1/2/3/4/5/6': (context, state) => BeamPage(
                 key: ValueKey('/1/2/3/4/5/6'),
-                pageRouteBuilder: (settings, child) => PageRouteBuilder(
+                routeBuilder: (settings, child) => PageRouteBuilder(
                   settings: settings,
                   pageBuilder: (context, animation, secondaryAnimation) =>
-                      child,
+                      Scaffold(body: Row(children: [Text('6'),child]))
                 ),
-                child: Scaffold(body: Container(child: Text('6'))),
+                child: Text('Child'),
               ),
         },
       ),
@@ -469,6 +469,7 @@ void main() {
       await tester.pump();
       await tester.pump();
       expect(find.text('6'), findsOneWidget);
+      expect(find.text('Child'), findsOneWidget);
     });
   });
 }
