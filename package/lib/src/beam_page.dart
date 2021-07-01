@@ -26,6 +26,7 @@ class BeamPage extends Page {
     this.popToNamed,
     this.type = BeamPageType.material,
     this.routeBuilder,
+    this.fullScreenDialog = false,
     this.keepQueryOnPop = false,
   }) : super(key: key, name: name);
 
@@ -108,6 +109,11 @@ class BeamPage extends Page {
   final Route Function(RouteSettings settings, Widget child)?
       routeBuilder;
 
+  /// Whether to present current [BeamPage] in fullscreen
+  ///
+  /// On iOS the transitions animate differently when it's presented in fullscreen
+  final bool fullScreenDialog;
+
   /// When this [BeamPage] pops from [Navigator] stack, whether to keep the
   /// query parameters within current [BeamLocation].
   ///
@@ -122,11 +128,13 @@ class BeamPage extends Page {
     switch (type) {
       case BeamPageType.cupertino:
         return CupertinoPageRoute(
+          fullscreenDialog: fullScreenDialog,
           settings: this,
           builder: (context) => child,
         );
       case BeamPageType.fadeTransition:
         return PageRouteBuilder(
+          fullscreenDialog: fullScreenDialog,
           settings: this,
           pageBuilder: (_, __, ___) => child,
           transitionsBuilder: (_, animation, __, child) => FadeTransition(
@@ -136,6 +144,7 @@ class BeamPage extends Page {
         );
       case BeamPageType.slideTransition:
         return PageRouteBuilder(
+          fullscreenDialog: fullScreenDialog,
           settings: this,
           pageBuilder: (_, __, ___) => child,
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
@@ -147,6 +156,7 @@ class BeamPage extends Page {
         );
       case BeamPageType.scaleTransition:
         return PageRouteBuilder(
+          fullscreenDialog: fullScreenDialog,
           settings: this,
           pageBuilder: (_, __, ___) => child,
           transitionsBuilder: (_, animation, __, child) => ScaleTransition(
@@ -156,11 +166,13 @@ class BeamPage extends Page {
         );
       case BeamPageType.noTransition:
         return PageRouteBuilder(
+          fullscreenDialog: fullScreenDialog,
           settings: this,
           pageBuilder: (context, animation, secondaryAnimation) => child,
         );
       default:
         return MaterialPageRoute(
+          fullscreenDialog: fullScreenDialog,
           settings: this,
           builder: (context) => child,
         );
