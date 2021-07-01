@@ -109,9 +109,9 @@ class BeamPage extends Page {
   final Route Function(RouteSettings settings, Widget child)?
       routeBuilder;
 
-  /// Whether to present current [BeamPage] in fullscreen
+  /// Whether to present current [BeamPage] as a fullscreen dialog
   ///
-  /// On iOS the transitions animate differently when it's presented in fullscreen
+  /// On iOS, dialog transitions animate differently and are also not closeable with the back swipe gesture
   final bool fullScreenDialog;
 
   /// When this [BeamPage] pops from [Navigator] stack, whether to keep the
