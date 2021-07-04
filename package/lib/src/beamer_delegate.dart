@@ -454,6 +454,11 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     bool stacked = true,
     bool replaceCurrent = false,
   }) {
+    final popState = BeamState.fromUriString(uri);
+    final index = beamStateHistory.lastIndexOf(popState);
+    if (index != -1) {
+      beamStateHistory.removeRange(index, beamStateHistory.length);
+    }
     beamToNamed(
       uri,
       data: data,

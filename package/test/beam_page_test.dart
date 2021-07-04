@@ -154,6 +154,23 @@ void main() {
       expect(delegate.currentPages.last.key, ValueKey('home'));
     });
 
+    testWidgets('popToNamed clears history', (tester) async {
+      delegate.beamStateHistory.clear();
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: delegate,
+        ),
+      );
+      delegate.beamToNamed('/books/1');
+      await tester.pump();
+      expect(delegate.beamStateHistory.length, 2);
+
+      delegate.navigator.pop();
+      await tester.pump();
+      expect(delegate.beamStateHistory.length, 1);
+    });
+
     testWidgets('onPopPage that updates location pops correctly',
         (tester) async {
       await tester.pumpWidget(
