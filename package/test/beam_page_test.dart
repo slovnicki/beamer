@@ -412,7 +412,7 @@ void main() {
                 routeBuilder: (settings, child) => PageRouteBuilder(
                   settings: settings,
                   pageBuilder: (context, animation, secondaryAnimation) =>
-                      Scaffold(body: Row(children: [Text('6'),child]))
+                      Scaffold(body: Row(children: [Text('6'), child])),
                 ),
                 child: Text('Child'),
               ),

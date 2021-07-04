@@ -106,8 +106,7 @@ class BeamPage extends Page {
   ///
   /// [settings] must be passed to [PageRoute.settings].
   /// [child] is the child of this [BeamPage]
-  final Route Function(RouteSettings settings, Widget child)?
-      routeBuilder;
+  final Route Function(RouteSettings settings, Widget child)? routeBuilder;
 
   /// Whether to present current [BeamPage] as a fullscreen dialog
   ///
