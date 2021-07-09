@@ -3,6 +3,17 @@ import 'package:beamer/beamer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+class SplashScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+}
+
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -66,22 +77,22 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _routerDelegate = BeamerDelegate(
-      initialPath: _user != null ? '/loggedin' : '/login',
+      initialPath: '/splash',
       locationBuilder: SimpleLocationBuilder(
         routes: {
+          '/splash': (context, state) => SplashScreen(),
           '/login': (context, state) => LoginScreen(),
           '/loggedin': (context, state) => LoggedInScreen(),
         },
       ),
       guards: [
         BeamGuard(
-          pathBlueprints: ['/login'],
-          guardNonMatching: true,
+          pathBlueprints: ['/splash', '/loggedin'],
           check: (context, location) => _user != null,
           beamToNamed: '/login',
         ),
         BeamGuard(
-          pathBlueprints: ['/login'],
+          pathBlueprints: ['/splash', '/login'],
           check: (context, location) => _user == null,
           beamToNamed: '/loggedin',
         ),
