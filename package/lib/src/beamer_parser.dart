@@ -32,10 +32,10 @@ class BeamerParser extends RouteInformationParser<BeamState> {
   }
 
   @override
-  RouteInformation restoreRouteInformation(BeamState beamState) {
+  RouteInformation restoreRouteInformation(BeamState configuration) {
     return RouteInformation(
-      location: beamState.uri.toString(),
-      state: json.encode(beamState.data),
+      location: configuration.uri.toString(),
+      state: json.encode(configuration.data),
     );
   }
 }

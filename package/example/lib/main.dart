@@ -22,16 +22,18 @@ const List<Map<String, String>> books = [
 
 // SCREENS
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Screen'),
+        title: const Text('Home Screen'),
       ),
       body: Center(
         child: ElevatedButton(
           onPressed: () => context.beamToNamed('/books'),
-          child: Text('See books'),
+          child: const Text('See books'),
         ),
       ),
     );
@@ -39,11 +41,13 @@ class HomeScreen extends StatelessWidget {
 }
 
 class BooksScreen extends StatelessWidget {
+  const BooksScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Books'),
+        title: const Text('Books'),
       ),
       body: ListView(
         children: books
@@ -61,7 +65,9 @@ class BooksScreen extends StatelessWidget {
 }
 
 class BookDetailsScreen extends StatelessWidget {
-  const BookDetailsScreen(this.bookDetails);
+  const BookDetailsScreen({Key? key, required this.bookDetails})
+      : super(key: key);
+
   final Map<String, String> bookDetails;
 
   @override
@@ -87,12 +93,12 @@ class BooksLocation extends BeamLocation {
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
-        BeamPage(
+        const BeamPage(
           key: ValueKey('home'),
           child: HomeScreen(),
         ),
         if (state.uri.pathSegments.contains('books'))
-          BeamPage(
+          const BeamPage(
             key: ValueKey('books'),
             child: BooksScreen(),
           ),
@@ -100,7 +106,7 @@ class BooksLocation extends BeamLocation {
           BeamPage(
             key: ValueKey('book-${state.pathParameters['bookId']}'),
             child: BookDetailsScreen(
-              books.firstWhere(
+              bookDetails: books.firstWhere(
                   (book) => book['id'] == state.pathParameters['bookId']!),
             ),
           ),
@@ -109,6 +115,8 @@ class BooksLocation extends BeamLocation {
 
 // APP
 class MyApp extends StatelessWidget {
+  MyApp({Key? key}) : super(key: key);
+
   final routerDelegate = BeamerDelegate(
     locationBuilder: (state) => BooksLocation(state),
   );

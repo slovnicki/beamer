@@ -276,7 +276,7 @@ void main() {
           '/': (context, state) => Container(),
           '/test': (context, state) => Scaffold(
                 key: scaffoldKey,
-                drawer: Drawer(),
+                drawer: const Drawer(),
                 body: Container(),
               ),
         },
@@ -378,7 +378,7 @@ void main() {
         locationBuilder: SimpleLocationBuilder(
           routes: {
             '*': (context, state) => BeamPage(
-                  key: ValueKey('always-the-same'),
+                  key: const ValueKey('always-the-same'),
                   child: Beamer(
                     routerDelegate: childDelegate,
                   ),
@@ -422,7 +422,7 @@ void main() {
         locationBuilder: SimpleLocationBuilder(
           routes: {
             '*': (context, state) => BeamPage(
-                  key: ValueKey('always-the-same'),
+                  key: const ValueKey('always-the-same'),
                   child: Beamer(
                     routerDelegate: childDelegate,
                   ),

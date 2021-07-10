@@ -7,7 +7,6 @@
 <a href="https://codecov.io/gh/slovnicki/beamer">
 <img src="https://codecov.io/gh/slovnicki/beamer/branch/master/graph/badge.svg?token=TO09CQU09C"/>
 </a>
-<a href="https://github.com/google/pedantic"><img src="https://dart-lang.github.io/linter/lints/style-pedantic.svg" alt="style"></a>
 </p>
 
 <p align="center">

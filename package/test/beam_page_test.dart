@@ -11,12 +11,12 @@ class TestLocation extends BeamLocation {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
-          key: ValueKey('home'),
+          key: const ValueKey('home'),
           child: Container(),
         ),
         if (state.pathBlueprintSegments.contains('books'))
           BeamPage(
-            key: ValueKey('books'),
+            key: const ValueKey('books'),
             onPopPage: (context, delegate, page) {
               return false;
             },
@@ -128,12 +128,12 @@ void main() {
       delegate.beamToNamed('/books');
       await tester.pump();
       expect(delegate.currentPages.length, 2);
-      expect(delegate.currentPages.last.key, ValueKey('books'));
+      expect(delegate.currentPages.last.key, const ValueKey('books'));
 
       delegate.navigator.pop();
       await tester.pump();
       expect(delegate.currentPages.length, 2);
-      expect(delegate.currentPages.last.key, ValueKey('books'));
+      expect(delegate.currentPages.last.key, const ValueKey('books'));
     });
 
     testWidgets('popToNamed pops to given URI', (tester) async {
@@ -146,12 +146,12 @@ void main() {
       delegate.beamToNamed('/books/1');
       await tester.pump();
       expect(delegate.currentPages.length, 3);
-      expect(delegate.currentPages.last.key, ValueKey('book-1'));
+      expect(delegate.currentPages.last.key, const ValueKey('book-1'));
 
       delegate.navigator.pop();
       await tester.pump();
       expect(delegate.currentPages.length, 1);
-      expect(delegate.currentPages.last.key, ValueKey('home'));
+      expect(delegate.currentPages.last.key, const ValueKey('home'));
     });
 
     testWidgets('popToNamed clears history', (tester) async {
@@ -182,12 +182,12 @@ void main() {
       delegate.beamToNamed('/books/1/details');
       await tester.pump();
       expect(delegate.currentPages.length, 4);
-      expect(delegate.currentPages.last.key, ValueKey('book-1-details'));
+      expect(delegate.currentPages.last.key, const ValueKey('book-1-details'));
 
       delegate.navigator.pop();
       await tester.pump();
       expect(delegate.currentPages.length, 2);
-      expect(delegate.currentPages.last.key, ValueKey('books'));
+      expect(delegate.currentPages.last.key, const ValueKey('books'));
     });
 
     testWidgets('no customization pops normally', (tester) async {
@@ -200,12 +200,12 @@ void main() {
       delegate.beamToNamed('/books/1/details/buy');
       await tester.pump();
       expect(delegate.currentPages.length, 5);
-      expect(delegate.currentPages.last.key, ValueKey('book-1-buy'));
+      expect(delegate.currentPages.last.key, const ValueKey('book-1-buy'));
 
       delegate.navigator.pop();
       await tester.pump();
       expect(delegate.currentPages.length, 4);
-      expect(delegate.currentPages.last.key, ValueKey('book-1-details'));
+      expect(delegate.currentPages.last.key, const ValueKey('book-1-details'));
     });
 
     testWidgets('subsequent pops work', (tester) async {
@@ -218,22 +218,22 @@ void main() {
       delegate.beamToNamed('/books/1/details');
       await tester.pump();
       expect(delegate.currentPages.length, 4);
-      expect(delegate.currentPages.last.key, ValueKey('book-1-details'));
+      expect(delegate.currentPages.last.key, const ValueKey('book-1-details'));
 
       delegate.navigator.pop();
       await tester.pump();
       expect(delegate.currentPages.length, 2);
-      expect(delegate.currentPages.last.key, ValueKey('books'));
+      expect(delegate.currentPages.last.key, const ValueKey('books'));
 
       delegate.beamToNamed('/books/1/details');
       await tester.pump();
       expect(delegate.currentPages.length, 4);
-      expect(delegate.currentPages.last.key, ValueKey('book-1-details'));
+      expect(delegate.currentPages.last.key, const ValueKey('book-1-details'));
 
       delegate.navigator.pop();
       await tester.pump();
       expect(delegate.currentPages.length, 2);
-      expect(delegate.currentPages.last.key, ValueKey('books'));
+      expect(delegate.currentPages.last.key, const ValueKey('books'));
     });
 
     testWidgets('query is kept on pop', (tester) async {
@@ -285,12 +285,12 @@ void main() {
       delegate.beamToNamed('/books/1', popBeamLocationOnPop: true);
       await tester.pump();
       expect(delegate.currentPages.length, 3);
-      expect(delegate.currentPages.last.key, ValueKey('book-1'));
+      expect(delegate.currentPages.last.key, const ValueKey('book-1'));
 
       delegate.navigator.pop();
       await tester.pump();
       expect(delegate.currentPages.length, 3);
-      expect(delegate.currentPages.last.key, ValueKey('book-1'));
+      expect(delegate.currentPages.last.key, const ValueKey('book-1'));
     });
 
     testWidgets('beamBackOnPop works', (tester) async {
@@ -303,17 +303,17 @@ void main() {
       delegate.beamToNamed('/books/1');
       await tester.pump();
       expect(delegate.currentPages.length, 3);
-      expect(delegate.currentPages.last.key, ValueKey('book-1'));
+      expect(delegate.currentPages.last.key, const ValueKey('book-1'));
 
       delegate.beamToNamed('/books/2', beamBackOnPop: true);
       await tester.pump();
       expect(delegate.currentPages.length, 3);
-      expect(delegate.currentPages.last.key, ValueKey('book-2'));
+      expect(delegate.currentPages.last.key, const ValueKey('book-2'));
 
       delegate.navigator.pop();
       await tester.pump();
       expect(delegate.currentPages.length, 3);
-      expect(delegate.currentPages.last.key, ValueKey('book-1'));
+      expect(delegate.currentPages.last.key, const ValueKey('book-1'));
       expect(delegate.state.uri.path, '/books/1');
     });
 
@@ -394,44 +394,44 @@ void main() {
     final delegate = BeamerDelegate(
       locationBuilder: SimpleLocationBuilder(
         routes: {
-          '/': (context, state) => BeamPage(
+          '/': (context, state) => const BeamPage(
                 key: ValueKey('/'),
                 type: BeamPageType.material,
-                child: Scaffold(body: Container(child: Text('0'))),
+                child: Scaffold(body: Text('0')),
               ),
-          '/1': (context, state) => BeamPage(
+          '/1': (context, state) => const BeamPage(
                 key: ValueKey('/1'),
                 type: BeamPageType.cupertino,
-                child: Scaffold(body: Container(child: Text('1'))),
+                child: Scaffold(body: Text('1')),
               ),
-          '/1/2': (context, state) => BeamPage(
+          '/1/2': (context, state) => const BeamPage(
                 key: ValueKey('/1/2'),
                 type: BeamPageType.fadeTransition,
-                child: Scaffold(body: Container(child: Text('2'))),
+                child: Scaffold(body: Text('2')),
               ),
-          '/1/2/3': (context, state) => BeamPage(
+          '/1/2/3': (context, state) => const BeamPage(
                 key: ValueKey('/1/2/3'),
                 type: BeamPageType.slideTransition,
-                child: Scaffold(body: Container(child: Text('3'))),
+                child: Scaffold(body: Text('3')),
               ),
-          '/1/2/3/4': (context, state) => BeamPage(
+          '/1/2/3/4': (context, state) => const BeamPage(
                 key: ValueKey('/1/2/3/4'),
                 type: BeamPageType.scaleTransition,
-                child: Scaffold(body: Container(child: Text('4'))),
+                child: Scaffold(body: Text('4')),
               ),
-          '/1/2/3/4/5': (context, state) => BeamPage(
+          '/1/2/3/4/5': (context, state) => const BeamPage(
                 key: ValueKey('/1/2/3/4/5'),
                 type: BeamPageType.noTransition,
-                child: Scaffold(body: Container(child: Text('5'))),
+                child: Scaffold(body: Text('5')),
               ),
           '/1/2/3/4/5/6': (context, state) => BeamPage(
-                key: ValueKey('/1/2/3/4/5/6'),
+                key: const ValueKey('/1/2/3/4/5/6'),
                 routeBuilder: (settings, child) => PageRouteBuilder(
                   settings: settings,
                   pageBuilder: (context, animation, secondaryAnimation) =>
-                      Scaffold(body: Row(children: [Text('6'), child])),
+                      Scaffold(body: Row(children: [const Text('6'), child])),
                 ),
-                child: Text('Child'),
+                child: const Text('Child'),
               ),
         },
       ),

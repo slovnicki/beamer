@@ -11,7 +11,7 @@ import 'path_url_strategy_nonweb.dart'
 
 /// A wrapper for [Router].
 class Beamer extends StatefulWidget {
-  Beamer({
+  const Beamer({
     Key? key,
     required this.routerDelegate,
     this.createBackButtonDispatcher = true,

@@ -138,9 +138,9 @@ abstract class Utils {
 
           if (regexp.hasMatch(url)) {
             regexp.allMatches(url).forEach((match) {
-              match.groupNames.forEach((groupName) {
+              for (String groupName in match.groupNames) {
                 pathParameters[groupName] = match.namedGroup(groupName) ?? '';
-              });
+              }
             });
             return BeamState(
               pathBlueprintSegments: uri.pathSegments,

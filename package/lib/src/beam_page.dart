@@ -17,7 +17,7 @@ enum BeamPageType {
 
 /// A wrapper for screens in a navigation stack.
 class BeamPage extends Page {
-  BeamPage({
+  const BeamPage({
     LocalKey? key,
     String? name,
     required this.child,
@@ -148,7 +148,7 @@ class BeamPage extends Page {
           pageBuilder: (_, __, ___) => child,
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
             position: animation.drive(
-                Tween(begin: Offset(0, 1), end: Offset(0, 0))
+                Tween(begin: const Offset(0, 1), end: const Offset(0, 0))
                     .chain(CurveTween(curve: Curves.ease))),
             child: child,
           ),

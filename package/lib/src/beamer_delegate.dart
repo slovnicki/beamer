@@ -31,9 +31,9 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     this.updateFromParent = true,
     this.updateParent = true,
   }) {
-    notFoundPage ??= BeamPage(
+    notFoundPage ??= const BeamPage(
       title: 'Not found',
-      child: Container(child: Center(child: Text('Not found'))),
+      child: Scaffold(body: Center(child: Text('Not found'))),
     );
 
     createState ??= (BeamState state) => BeamState.fromUri(
@@ -553,7 +553,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
       if (notFoundRedirect == null && notFoundRedirectNamed == null) {
         // do nothing, pass on NotFound
       } else {
-        var redirectBeamLocation;
+        late BeamLocation redirectBeamLocation;
         if (notFoundRedirect != null) {
           redirectBeamLocation = notFoundRedirect!;
         } else if (notFoundRedirectNamed != null) {
@@ -646,20 +646,20 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
   }
 
   @override
-  SynchronousFuture<void> setInitialRoutePath(BeamState beamState) {
+  SynchronousFuture<void> setInitialRoutePath(BeamState configuration) {
     if (_currentBeamLocation is! EmptyBeamLocation) {
-      beamState = _currentBeamLocation.state;
-    } else if (beamState.uri.path == '/') {
-      beamState = BeamState.fromUri(
-        Uri(path: initialPath, queryParameters: beamState.queryParameters),
+      configuration = _currentBeamLocation.state;
+    } else if (configuration.uri.path == '/') {
+      configuration = BeamState.fromUri(
+        Uri(path: initialPath, queryParameters: configuration.queryParameters),
       );
     }
-    return setNewRoutePath(beamState);
+    return setNewRoutePath(configuration);
   }
 
   @override
-  SynchronousFuture<void> setNewRoutePath(BeamState beamState) {
-    update(state: createState!(beamState));
+  SynchronousFuture<void> setNewRoutePath(BeamState configuration) {
+    update(state: createState!(configuration));
     return SynchronousFuture(null);
   }
 
@@ -698,7 +698,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
       return;
     }
 
-    var redirectLocation;
+    late BeamLocation redirectLocation;
 
     if (guard.beamTo == null && guard.beamToNamed == null) {
       final lastState = removeLastBeamState();

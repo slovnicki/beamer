@@ -6,7 +6,7 @@ void main() {
   Beamer.setPathUrlStrategy();
 
   BuildContext? testContext;
-  var rootDelegate;
+  late BeamerDelegate rootDelegate;
 
   final beamerKey = GlobalKey<BeamerState>();
 
@@ -24,7 +24,7 @@ void main() {
     child: MaterialApp.router(
       routeInformationParser: BeamerParser(),
       routerDelegate: BeamerDelegate(
-        transitionDelegate: NoAnimationTransitionDelegate(),
+        transitionDelegate: const NoAnimationTransitionDelegate(),
         locationBuilder: SimpleLocationBuilder(
           routes: {
             '/': (context, state) {

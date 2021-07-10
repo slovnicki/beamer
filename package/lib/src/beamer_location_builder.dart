@@ -9,7 +9,7 @@ typedef LocationBuilder = BeamLocation Function(BeamState);
 ///
 /// Determines the appropriate [BeamLocation] from the list
 /// and populates it with configured state.
-class BeamerLocationBuilder implements Function {
+class BeamerLocationBuilder {
   BeamerLocationBuilder({required this.beamLocations});
 
   /// List of all [BeamLocation]s that this builder handles.
@@ -24,7 +24,7 @@ class BeamerLocationBuilder implements Function {
 ///
 /// Creates a single [BeamLocation]; [SimpleBeamLocation]
 /// and configures its [BeamLocation.buildPages] with appropriate [routes].
-class SimpleLocationBuilder implements Function {
+class SimpleLocationBuilder {
   SimpleLocationBuilder({required this.routes, this.builder});
 
   /// List of all routes this builder handles.

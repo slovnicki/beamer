@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'test_locations.dart';
 
 void main() {
-  final pathBlueprint = '/l1/one';
+  const pathBlueprint = '/l1/one';
   final testLocation = Location1(BeamState.fromUri(Uri.parse(pathBlueprint)));
   final testLocationWithQuery =
       Location1(BeamState.fromUri(Uri.parse(pathBlueprint + '?query=true')));
@@ -125,7 +125,7 @@ void main() {
           'is true if the location has a match up to the wildcard using regexp',
           () {
         final guard = BeamGuard(
-          pathBlueprints: [RegExp('(\/[a-z]*|[0-9]*\/one)')],
+          pathBlueprints: [RegExp('(/[a-z]*|[0-9]*/one)')],
           check: (_, __) => true,
           beamTo: (context) => Location2(BeamState()),
         );
@@ -350,9 +350,9 @@ void main() {
         initialPath: '/1',
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '/1': (context, state) => Text('1'),
-            '/2': (context, state) => Text('2'),
-            '/3': (context, state) => Text('3'),
+            '/1': (context, state) => const Text('1'),
+            '/2': (context, state) => const Text('2'),
+            '/3': (context, state) => const Text('3'),
           },
         ),
         guards: [
@@ -389,8 +389,8 @@ void main() {
         initialPath: '/1',
         locationBuilder: SimpleLocationBuilder(
           routes: {
-            '/1': (context, state) => Text('1'),
-            '/2': (context, state) => Text('2'),
+            '/1': (context, state) => const Text('1'),
+            '/2': (context, state) => const Text('2'),
           },
         ),
         guards: [

@@ -7,17 +7,17 @@ class Location1 extends BeamLocation {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
-          key: ValueKey('l1'),
+          key: const ValueKey('l1'),
           child: Container(),
         ),
         if (state.pathBlueprintSegments.contains('one'))
           BeamPage(
-            key: ValueKey('l1-one'),
+            key: const ValueKey('l1-one'),
             child: Container(),
           ),
         if (state.pathBlueprintSegments.contains('two'))
           BeamPage(
-            key: ValueKey('l1-two'),
+            key: const ValueKey('l1-two'),
             child: Container(),
           )
       ];
@@ -32,7 +32,7 @@ class Location2 extends BeamLocation {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
-          key: ValueKey('l2'),
+          key: const ValueKey('l2'),
           child: Container(),
         )
       ];
@@ -123,7 +123,7 @@ class NoStateLocation extends BeamLocation {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
-          key: ValueKey('page'),
+          key: const ValueKey('page'),
           child: Container(),
         )
       ];
@@ -138,7 +138,7 @@ class RegExpLocation extends BeamLocation {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
-          key: ValueKey('reg'),
+          key: const ValueKey('reg'),
           child: Container(),
         )
       ];
@@ -153,7 +153,7 @@ class AsteriskLocation extends BeamLocation {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
-          key: ValueKey('anything'),
+          key: const ValueKey('anything'),
           child: Container(),
         )
       ];

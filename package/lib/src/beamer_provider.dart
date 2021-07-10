@@ -24,7 +24,7 @@ import 'package:flutter/widgets.dart';
 ///
 /// ```
 class BeamerProvider extends InheritedWidget {
-  BeamerProvider({
+  const BeamerProvider({
     Key? key,
     required this.routerDelegate,
     required Widget child,

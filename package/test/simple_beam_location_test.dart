@@ -84,7 +84,7 @@ void main() {
       ));
       expect(delegate.currentPages.last.key, isA<ValueKey>());
       expect((delegate.currentPages.last.key as ValueKey).value,
-          equals(ValueKey('/?q=t').value));
+          equals(const ValueKey('/?q=t').value));
     });
   });
 
