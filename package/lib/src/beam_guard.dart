@@ -38,7 +38,7 @@ class BeamGuard {
   /// For example, `RegExp('/books/')` will match '/books/1', '/books/2/genres', etc.
   /// but will not match '/books'. To match '/books' and everything after it,
   /// use `RegExp('/books')`
-  final List<dynamic> pathBlueprints;
+  final List<Pattern> pathBlueprints;
 
   /// What check should be performed on a given [location],
   /// the one to which beaming has been requested.
@@ -83,7 +83,7 @@ class BeamGuard {
   /// Else, the path (i.e. the pre-query substring) of the location's uri
   /// must be equal to the pathBlueprint.
   bool _hasMatch(BeamLocation location) {
-    for (var pathBlueprint in pathBlueprints) {
+    for (final pathBlueprint in pathBlueprints) {
       if (pathBlueprint is String) {
         final asteriskIndex = pathBlueprint.indexOf('*');
         if (asteriskIndex != -1) {

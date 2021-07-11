@@ -133,7 +133,7 @@ class RegExpLocation extends BeamLocation {
   RegExpLocation([BeamState? state]) : super(state);
 
   @override
-  List get pathBlueprints => [RegExp('/reg')];
+  List<Pattern> get pathBlueprints => [RegExp('/reg')];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
@@ -148,7 +148,7 @@ class AsteriskLocation extends BeamLocation {
   AsteriskLocation([BeamState? state]) : super(state);
 
   @override
-  List get pathBlueprints => ['/anything/*'];
+  List<Pattern> get pathBlueprints => ['/anything/*'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
