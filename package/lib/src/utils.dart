@@ -15,7 +15,7 @@ abstract class Utils {
     List<BeamLocation> beamLocations, {
     Map<String, dynamic> data = const <String, dynamic>{},
   }) {
-    for (var beamLocation in beamLocations) {
+    for (final beamLocation in beamLocations) {
       if (canBeamLocationHandleUri(beamLocation, uri)) {
         return beamLocation
           ..state = beamLocation.createState(
@@ -34,12 +34,12 @@ abstract class Utils {
   ///
   /// Used in [BeamLocation.canHandle] and [chooseBeamLocation].
   static bool canBeamLocationHandleUri(BeamLocation beamLocation, Uri uri) {
-    for (var pathBlueprint in beamLocation.pathBlueprints) {
+    for (final pathBlueprint in beamLocation.pathBlueprints) {
       if (pathBlueprint is String) {
         if (pathBlueprint == uri.path || pathBlueprint == '/*') {
           return true;
         }
-        final uriPathSegments = List.from(uri.pathSegments);
+        final uriPathSegments = uri.pathSegments.toList();
         if (uriPathSegments.length > 1 && uriPathSegments.last == '') {
           uriPathSegments.removeLast();
         }
@@ -82,7 +82,7 @@ abstract class Utils {
   }) {
     if (beamLocation != null) {
       // TODO: abstract this and reuse in canBeamLocationHandleUri
-      for (var pathBlueprint in beamLocation.pathBlueprints) {
+      for (final pathBlueprint in beamLocation.pathBlueprints) {
         if (pathBlueprint is String) {
           if (pathBlueprint == uri.path || pathBlueprint == '/*') {
             BeamState(
@@ -91,14 +91,14 @@ abstract class Utils {
               data: data,
             );
           }
-          final uriPathSegments = List.from(uri.pathSegments);
+          final uriPathSegments = uri.pathSegments.toList();
           if (uriPathSegments.length > 1 && uriPathSegments.last == '') {
             uriPathSegments.removeLast();
           }
           final beamLocationPathBlueprintSegments =
               Uri.parse(pathBlueprint).pathSegments;
           var pathSegments = <String>[];
-          var pathParameters = <String, String>{};
+          final pathParameters = <String, String>{};
           if (uriPathSegments.length >
                   beamLocationPathBlueprintSegments.length &&
               !beamLocationPathBlueprintSegments.contains('*')) {
@@ -107,7 +107,7 @@ abstract class Utils {
           var checksPassed = true;
           for (int i = 0; i < uriPathSegments.length; i++) {
             if (beamLocationPathBlueprintSegments[i] == '*') {
-              pathSegments = List<String>.from(uriPathSegments);
+              pathSegments = uriPathSegments.toList();
               checksPassed = true;
               break;
             }
@@ -133,12 +133,12 @@ abstract class Utils {
           }
         } else {
           final regexp = tryCastToRegExp(pathBlueprint);
-          var pathParameters = <String, String>{};
+          final pathParameters = <String, String>{};
           final url = uri.toString();
 
           if (regexp.hasMatch(url)) {
             regexp.allMatches(url).forEach((match) {
-              for (String groupName in match.groupNames) {
+              for (final groupName in match.groupNames) {
                 pathParameters[groupName] = match.namedGroup(groupName) ?? '';
               }
             });
@@ -159,10 +159,10 @@ abstract class Utils {
     );
   }
 
-  static bool urisMatch(dynamic blueprint, Uri exact) {
+  static bool urisMatch(Pattern blueprint, Uri exact) {
     if (blueprint is String) {
-      blueprint = Uri.parse(blueprint);
-      final blueprintSegments = blueprint.pathSegments;
+      final uriBlueprint = Uri.parse(blueprint);
+      final blueprintSegments = uriBlueprint.pathSegments;
       final exactSegment = exact.pathSegments;
       if (blueprintSegments.length != exactSegment.length) {
         return false;
@@ -177,14 +177,14 @@ abstract class Utils {
       }
       return true;
     } else {
-      blueprint = tryCastToRegExp(blueprint);
-      return blueprint.hasMatch(exact.toString());
+      final regExpBlueprint = tryCastToRegExp(blueprint);
+      return regExpBlueprint.hasMatch(exact.toString());
     }
   }
 
   /// Wraps the casting of pathBlueprint to RegExp inside a try-catch
   /// and throws a nice FlutterError.
-  static RegExp tryCastToRegExp(dynamic pathBlueprint) {
+  static RegExp tryCastToRegExp(Pattern pathBlueprint) {
     try {
       return pathBlueprint as RegExp;
     } on TypeError catch (_) {

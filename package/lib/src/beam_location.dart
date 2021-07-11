@@ -23,6 +23,7 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   /// Upon beaming, it will be populated by all necessary attributes.
   /// See [BeamState].
   T get state => _state;
+
   set state(T state) => _state = state..configure();
 
   /// How to create state from generic [BeamState], that is produced
@@ -82,7 +83,7 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   /// whether there is a browser.
   ///
   /// For example: '/books/:id' or using regex `RegExp('/test/(?<test>[a-z]+){0,1}')`
-  List<dynamic> get pathBlueprints;
+  List<Pattern> get pathBlueprints;
 
   /// Creates and returns the list of pages to be built by the [Navigator]
   /// when this [BeamLocation] is beamed to or internally inferred.
@@ -145,7 +146,7 @@ class SimpleBeamLocation extends BeamLocation {
   }) : super(state);
 
   /// Map of all routes this location handles.
-  Map<dynamic, dynamic Function(BuildContext, BeamState)> routes;
+  Map<Pattern, dynamic Function(BuildContext, BeamState)> routes;
 
   /// A wrapper used as [BeamLocation.builder].
   Widget Function(BuildContext context, Widget navigator)? navBuilder;
@@ -165,12 +166,12 @@ class SimpleBeamLocation extends BeamLocation {
   }
 
   @override
-  List<dynamic> get pathBlueprints => routes.keys.toList();
+  List<Pattern> get pathBlueprints => routes.keys.toList();
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
-    var filteredRoutes = chooseRoutes(state, routes.keys);
-    final activeRoutes = Map.from(routes)
+    final filteredRoutes = chooseRoutes(state, routes.keys);
+    final activeRoutes = Map.of(routes)
       ..removeWhere((key, value) => !filteredRoutes.containsKey(key));
     final sortedRoutes = activeRoutes.keys.toList()
       ..sort((a, b) => _compareKeys(a, b));
@@ -191,13 +192,13 @@ class SimpleBeamLocation extends BeamLocation {
   ///
   /// If none of the routes _matches_ [state.uri], nothing will be selected
   /// and [BeamerDelegate] will declare that the location is [NotFound].
-  static Map<dynamic, String> chooseRoutes(
-      BeamState state, Iterable<dynamic> routes) {
-    var matched = <dynamic, String>{};
+  static Map<Pattern, String> chooseRoutes(
+      BeamState state, Iterable<Pattern> routes) {
+    final matched = <Pattern, String>{};
     bool overrideNotFound = false;
-    for (var route in routes) {
+    for (final route in routes) {
       if (route is String) {
-        final uriPathSegments = List.from(state.uri.pathSegments);
+        final uriPathSegments = state.uri.pathSegments.toList();
         final routePathSegments = Uri.parse(route).pathSegments;
 
         if (uriPathSegments.length < routePathSegments.length) {

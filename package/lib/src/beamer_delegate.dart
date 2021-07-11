@@ -684,7 +684,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
     BuildContext context,
     BeamLocation location,
   ) {
-    for (var guard in guards + location.guards) {
+    for (final guard in guards + location.guards) {
       if (guard.shouldGuard(location) && !guard.check(context, location)) {
         guard.onCheckFailed?.call(context, location);
         return guard;

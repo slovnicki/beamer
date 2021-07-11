@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -13,7 +15,10 @@ class BeamState {
     this.pathParameters = const <String, String>{},
     this.queryParameters = const <String, String>{},
     this.data = const <String, dynamic>{},
-  }) {
+  }) : assert(() {
+          json.encode(data);
+          return true;
+        }()) {
     configure();
   }
 
@@ -126,7 +131,7 @@ class BeamState {
       path: '/' + pathBlueprintSegments.join('/'),
       queryParameters: queryParameters.isEmpty ? null : queryParameters,
     );
-    final pathSegments = List<String>.from(pathBlueprintSegments);
+    final pathSegments = pathBlueprintSegments.toList();
     for (int i = 0; i < pathSegments.length; i++) {
       if (pathSegments[i].isNotEmpty && pathSegments[i][0] == ':') {
         final key = pathSegments[i].substring(1);
