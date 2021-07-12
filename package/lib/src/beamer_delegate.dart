@@ -87,7 +87,7 @@ class BeamerDelegate<T extends BeamState> extends RouterDelegate<BeamState>
 
   /// A builder for [BeamLocation]s.
   ///
-  /// There are 3 ways of builfing an appropriate [BeamLocation] which will in
+  /// There are 3 ways of building an appropriate [BeamLocation] which will in
   /// turn build a stack of pages that should go into [Navigator.pages].
   ///
   ///   1. Custom closure
