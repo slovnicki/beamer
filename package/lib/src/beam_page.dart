@@ -127,6 +127,7 @@ class BeamPage extends Page {
     switch (type) {
       case BeamPageType.cupertino:
         return CupertinoPageRoute(
+          title: title,
           fullscreenDialog: fullScreenDialog,
           settings: this,
           builder: (context) => child,
