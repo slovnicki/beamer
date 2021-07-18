@@ -398,6 +398,47 @@ void main() {
       expect(
           (delegate.currentBeamLocation.state as BeamState).uri.path, '/test');
     });
+
+    testWidgets('pageles', (tester) async {
+      final delegate = BeamerDelegate(
+        transitionDelegate: const NoAnimationTransitionDelegate(),
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '/': (context, state) => const Scaffold(body: Text('0')),
+            '/1': (context, state) => BeamPage(
+                  key: const ValueKey('/1'),
+                  child: Scaffold(
+                    body: ElevatedButton(
+                      onPressed: () => showDialog(
+                        context: Beamer.of(context).navigator.context,
+                        builder: (context) => const Text('1.1'),
+                      ),
+                      child: const Text('1'),
+                    ),
+                  ),
+                ),
+          },
+        ),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: delegate,
+        ),
+      );
+      expect(find.text('0'), findsOneWidget);
+
+      delegate.beamToNamed('/1');
+      await tester.pump();
+      await tester.tap(find.text('1'));
+      await tester.pump();
+      expect(find.text('1.1'), findsOneWidget);
+      delegate.navigator.pop();
+      await tester.pump();
+      expect(find.text('1.1'), findsNothing);
+      expect(delegate.configuration.location, '/1');
+    });
   });
 
   group('Transitions', () {
@@ -446,7 +487,7 @@ void main() {
         },
       ),
     );
-    testWidgets('all', (tester) async {
+    testWidgets('page based', (tester) async {
       await tester.pumpWidget(
         MaterialApp.router(
           routeInformationParser: BeamerParser(),
@@ -497,6 +538,93 @@ void main() {
       await tester.pump();
       expect(find.text('6'), findsOneWidget);
       expect(find.text('Child'), findsOneWidget);
+    });
+
+    testWidgets('pageless no animation transition', (tester) async {
+      final delegate = BeamerDelegate(
+        transitionDelegate: const NoAnimationTransitionDelegate(),
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '/': (context, state) => const Scaffold(body: Text('0')),
+            '/1': (context, state) => BeamPage(
+                  key: const ValueKey('/1'),
+                  child: Scaffold(
+                    body: ElevatedButton(
+                      onPressed: () => showDialog(
+                        context: Beamer.of(context).navigator.context,
+                        builder: (context) => const Text('1.1'),
+                      ),
+                      child: const Text('1'),
+                    ),
+                  ),
+                ),
+          },
+        ),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: delegate,
+        ),
+      );
+      expect(find.text('0'), findsOneWidget);
+
+      delegate.beamToNamed('/1');
+      await tester.pump();
+      await tester.tap(find.text('1'));
+      await tester.pump();
+      expect(find.text('1.1'), findsOneWidget);
+      delegate.beamToNamed('/');
+      await tester.pump();
+      await tester.pump();
+      expect(find.text('1.1'), findsNothing);
+      expect(find.text('0'), findsOneWidget);
+      expect(delegate.configuration.location, '/');
+    });
+
+    testWidgets('pageless reverse transition', (tester) async {
+      final delegate = BeamerDelegate(
+        transitionDelegate: const ReverseTransitionDelegate(),
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '/': (context, state) => const Scaffold(body: Text('0')),
+            '/1': (context, state) => BeamPage(
+                  key: const ValueKey('/1'),
+                  child: Scaffold(
+                    body: ElevatedButton(
+                      onPressed: () => showDialog(
+                        context: Beamer.of(context).navigator.context,
+                        builder: (context) => const Text('1.1'),
+                      ),
+                      child: const Text('1'),
+                    ),
+                  ),
+                ),
+          },
+        ),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: delegate,
+        ),
+      );
+      expect(find.text('0'), findsOneWidget);
+
+      delegate.beamToNamed('/1');
+      await tester.pump();
+      await tester.tap(find.text('1'));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      expect(find.text('1.1'), findsOneWidget);
+      delegate.beamToNamed('/');
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      expect(find.text('1.1'), findsNothing);
+      expect(find.text('0'), findsOneWidget);
+      expect(delegate.configuration.location, '/');
     });
   });
 }
