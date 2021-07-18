@@ -89,7 +89,7 @@ class BooksLocation extends BeamLocation<BeamState> {
   BooksLocation(RouteInformation routeInformation) : super(routeInformation);
 
   @override
-  List<String> get pathBlueprints => ['/books/:bookId'];
+  List<Pattern> get pathBlueprints => ['/books/:bookId'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [

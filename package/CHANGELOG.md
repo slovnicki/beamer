@@ -6,6 +6,15 @@
     - `super()` constructor on `BeamLocation` now takes optional `RouteInformation` instead of `BeamState`
     - in order to continue using custom `BeamLocation`s with `BeamState` state, generic type has to be specified; `class MyBeamLocation extends BeamLocation<BeamState>`
 - **BREAKING:** The property `pageRouteBuilder` in `BeamPage` is replaced with a new property `routeBuilder` which works with any `RouteBuilder` not just `PageRouteBuilder`.
+- **BREAKING:** `BeamLocation.pathBlueprints` is now `List<Pattern>` instead of `List<dynamic>`
+- **Add:** [firebase_core example](https://github.com/slovnicki/beamer/tree/master/examples/firebase_core)
+- **Add:** [firebase_auth example](https://github.com/slovnicki/beamer/tree/master/examples/firebase_auth)
+- **Add:** `fullScreenDialog` property to `BeamPage`
+- **Add:** flutter_lints
+- **Add:** a [presentation](https://github.com/slovnicki/beamer/blob/master/resources/navigator-2.0-and-beamer.pdf) resource about beamer
+- **Fix:** clearing history range when using `popToNamed`
+- **Fix:** passing `BeamPage.title` to `CupertinoPageRoute`s
+
 # 0.14.1
 
 - **Add:** `updateParent` (default `true`) to `BeamerDelegate`
