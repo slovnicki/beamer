@@ -2,14 +2,15 @@ import 'package:beamer/beamer.dart';
 import 'package:beamer/src/beam_location.dart';
 import 'package:beamer/src/utils.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'test_locations.dart';
 
 void main() {
-  final beamLocations = [
-    Location1(BeamState()),
-    Location2(BeamState()),
+  final List<BeamLocation> beamLocations = [
+    Location1(),
+    Location2(const RouteInformation()),
     CustomStateLocation(),
     RegExpLocation(),
     AsteriskLocation(),
@@ -60,8 +61,8 @@ void main() {
       uri = Uri.parse('/l2/123?q=xxx');
       location = Utils.chooseBeamLocation(uri, beamLocations);
       expect(location, isA<Location2>());
-      expect(location.state.uri.path, '/l2/123');
-      expect(location.state.uriBlueprint.path, '/l2/:id');
+      expect((location.state as BeamState).uri.path, '/l2/123');
+      expect((location.state as BeamState).uriBlueprint.path, '/l2/:id');
 
       uri = Uri.parse('/reg');
       location = Utils.chooseBeamLocation(uri, beamLocations);
@@ -87,16 +88,16 @@ void main() {
     test('Parsed BeamLocation carries URL parameters', () async {
       var uri = Uri.parse('/l2');
       var location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location.state.pathParameters, {});
+      expect((location.state as BeamState).pathParameters, {});
 
       uri = Uri.parse('/l2/123');
       location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location.state.pathParameters, {'id': '123'});
+      expect((location.state as BeamState).pathParameters, {'id': '123'});
 
       uri = Uri.parse('/l2/123?q=xxx');
       location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location.state.pathParameters, {'id': '123'});
-      expect(location.state.queryParameters, {'q': 'xxx'});
+      expect((location.state as BeamState).pathParameters, {'id': '123'});
+      expect((location.state as BeamState).queryParameters, {'q': 'xxx'});
     });
 
     test('Unknown URI yields NotFound location', () async {
@@ -106,8 +107,13 @@ void main() {
     });
 
     test('Custom state is created', () {
-      final uri = Uri.parse('/custom');
-      final location = Utils.chooseBeamLocation(uri, beamLocations);
+      var uri = Uri.parse('/custom');
+      var location = Utils.chooseBeamLocation(uri, beamLocations);
+      expect(location, isA<CustomStateLocation>());
+      expect((location as CustomStateLocation).state.customVar, '');
+
+      uri = Uri.parse('/custom/test');
+      location = Utils.chooseBeamLocation(uri, beamLocations);
       expect(location, isA<CustomStateLocation>());
       expect((location as CustomStateLocation).state.customVar, 'test');
     });

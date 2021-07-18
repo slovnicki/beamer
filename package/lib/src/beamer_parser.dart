@@ -1,41 +1,23 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import 'beam_state.dart';
+/// Parses [RouteInformation] into a type that [BeamerDelegate] will understand,
+/// which is again [RouteInformation].
+class BeamerParser extends RouteInformationParser<RouteInformation> {
+  BeamerParser({this.onParse});
 
-/// Converts [RouteInformation] to [BeamState] and vice-versa.
-class BeamerParser extends RouteInformationParser<BeamState> {
-  BeamerParser({this.onParse = _identity});
-
-  static BeamState _identity(BeamState state) => state;
-
-  /// A custom closure to execute after route information has been parsed
-  /// into a [BeamState], but before returning it (i.e. before navigation happens).
-  ///
-  /// Can be used to inspect and modify the parsed route information.
-  final BeamState Function(BeamState) onParse;
+  /// Used to inspect and/or modify the parsed [RouteInformation]
+  /// before returning it for [BeamerDelegate] to use.
+  final RouteInformation Function(RouteInformation)? onParse;
 
   @override
-  SynchronousFuture<BeamState> parseRouteInformation(
-      RouteInformation routeInformation) {
-    final beamState = BeamState.fromUriString(
-      routeInformation.location ?? '/',
-      data: routeInformation.state == null
-          ? {}
-          : Map<String, String>.from(
-              json.decode(routeInformation.state as String),
-            ),
-    );
-    return SynchronousFuture(onParse(beamState));
-  }
+  SynchronousFuture<RouteInformation> parseRouteInformation(
+          RouteInformation routeInformation) =>
+      SynchronousFuture(
+        onParse?.call(routeInformation) ?? routeInformation,
+      );
 
   @override
-  RouteInformation restoreRouteInformation(BeamState configuration) {
-    return RouteInformation(
-      location: configuration.uri.toString(),
-      state: json.encode(configuration.data),
-    );
-  }
+  RouteInformation restoreRouteInformation(RouteInformation configuration) =>
+      configuration;
 }

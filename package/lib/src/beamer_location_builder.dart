@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../beamer.dart';
 import 'utils.dart';
 
-typedef LocationBuilder = BeamLocation Function(BeamState);
+typedef LocationBuilder = BeamLocation Function(RouteInformation);
 
 /// A pre-made builder to be used for [locationBuilder].
 ///
@@ -15,8 +15,12 @@ class BeamerLocationBuilder {
   /// List of all [BeamLocation]s that this builder handles.
   final List<BeamLocation> beamLocations;
 
-  BeamLocation call(BeamState state) {
-    return Utils.chooseBeamLocation(state.uri, beamLocations, data: state.data);
+  BeamLocation call(RouteInformation routeInformation) {
+    return Utils.chooseBeamLocation(
+      Uri.parse(routeInformation.location ?? '/'),
+      beamLocations,
+      data: {'state': routeInformation.state},
+    );
   }
 }
 
@@ -33,17 +37,18 @@ class SimpleLocationBuilder {
   /// Used as a [BeamLocation.builder].
   Widget Function(BuildContext context, Widget navigator)? builder;
 
-  BeamLocation call(BeamState state) {
-    final matched = SimpleBeamLocation.chooseRoutes(state, routes.keys);
+  BeamLocation call(RouteInformation routeInformation) {
+    final matched =
+        SimpleBeamLocation.chooseRoutes(routeInformation, routes.keys);
     if (matched.isNotEmpty) {
       return SimpleBeamLocation(
-        state: state,
+        routeInformation: routeInformation,
         routes: Map.fromEntries(
             routes.entries.where((e) => matched.containsKey(e.key))),
         navBuilder: builder,
       );
     } else {
-      return NotFound(path: state.uri.path);
+      return NotFound(path: routeInformation.location ?? '/');
     }
   }
 }

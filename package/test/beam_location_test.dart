@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'test_locations.dart';
 
 void main() {
-  final location2 = Location2(BeamState(pathBlueprintSegments: ['l2', ':id']));
+  final location2 = Location2(const RouteInformation(location: '/l2/1'));
   group('prepare', () {
     test('BeamLocation can create valid URI', () {
       location2.state = location2.state.copyWith(

@@ -7,27 +7,27 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   final parser = BeamerParser();
 
-  test('parsing from RouteInformation to BeamState', () async {
-    final beamState = await parser.parseRouteInformation(
-      RouteInformation(
+  test('parsing from RouteInformation to RouteInformation', () async {
+    final routeInformation = await parser.parseRouteInformation(
+      const RouteInformation(
         location: '/test',
-        state: json.encode({'x': 'y'}),
-      ),
-    );
-
-    expect(beamState.uri.path, equals('/test'));
-    expect(beamState.data, equals({'x': 'y'}));
-  });
-
-  test('parsing from BeamState to RouteInformation', () {
-    final routeInformation = parser.restoreRouteInformation(
-      BeamState.fromUri(
-        Uri.parse('/test'),
-        data: {'x': 'y'},
+        state: {'x': 'y'},
       ),
     );
 
     expect(routeInformation.location, equals('/test'));
-    expect(routeInformation.state, equals(json.encode({'x': 'y'})));
+    expect(routeInformation.state, equals({'x': 'y'}));
+  });
+
+  test('parsing from RouteInformation to RouteInformation', () {
+    final routeInformation = parser.restoreRouteInformation(
+      const RouteInformation(
+        location: '/test',
+        state: {'x': 'y'},
+      ),
+    );
+
+    expect(routeInformation.location, equals('/test'));
+    expect(routeInformation.state, equals({'x': 'y'}));
   });
 }

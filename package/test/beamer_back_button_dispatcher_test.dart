@@ -25,15 +25,16 @@ void main() {
       );
       delegate.beamToNamed('/test');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.uri.toString(), '/test');
+      expect(delegate.currentBeamLocation.state.routeInformation.location,
+          '/test');
 
       await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.uri.toString(), '/');
+      expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
 
       await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.uri.toString(), '/');
+      expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
     });
 
     testWidgets('back button beams back', (tester) async {
@@ -57,11 +58,12 @@ void main() {
       delegate.beamToNamed('/test');
       delegate.beamToNamed('/');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.uri.toString(), '/');
+      expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
 
       await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.uri.toString(), '/test');
+      expect(delegate.currentBeamLocation.state.routeInformation.location,
+          '/test');
     });
 
     testWidgets('onBack has priority', (tester) async {
@@ -86,11 +88,13 @@ void main() {
       );
       delegate.beamToNamed('/test');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.uri.toString(), '/test');
+      expect(delegate.currentBeamLocation.state.routeInformation.location,
+          '/test');
 
       await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.uri.toString(), '/test');
+      expect(delegate.currentBeamLocation.state.routeInformation.location,
+          '/test');
     });
   });
 
@@ -125,11 +129,12 @@ void main() {
       );
       delegate.beamToNamed('/test');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.uri.toString(), '/test');
+      expect(delegate.currentBeamLocation.state.routeInformation.location,
+          '/test');
 
       await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.uri.toString(), '/');
+      expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
     });
 
     testWidgets('back button beams back', (tester) async {
@@ -164,11 +169,12 @@ void main() {
       await tester.pump();
       childDelegate.beamToNamed('/');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.uri.toString(), '/');
+      expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
 
       await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.uri.toString(), '/test');
+      expect(delegate.currentBeamLocation.state.routeInformation.location,
+          '/test');
     });
 
     testWidgets('onBack has priority', (tester) async {
@@ -208,11 +214,13 @@ void main() {
       );
       delegate.beamToNamed('/test');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.uri.toString(), '/test');
+      expect(delegate.currentBeamLocation.state.routeInformation.location,
+          '/test');
 
       await rootBackButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.uri.toString(), '/test');
+      expect(delegate.currentBeamLocation.state.routeInformation.location,
+          '/test');
       final value =
           await rootBackButtonDispatcher.invokeCallback(Future.value(false));
       expect(value, true);
@@ -255,7 +263,7 @@ void main() {
       delegate.beamToNamed('/test');
       await tester.pump();
       await rootBackButtonDispatcher.invokeCallback(Future.value(false));
-      expect(delegate.currentBeamLocation.state.uri.toString(), '/');
+      expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
     });
   });
 }

@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'beam_location.dart';
-import 'beam_state.dart';
-import 'beamer_delegate.dart';
+import '../beamer.dart';
 
 /// Types for how to route should be built.
 enum BeamPageType {
@@ -36,38 +34,39 @@ class BeamPage extends Page {
     BeamerDelegate delegate,
     BeamPage poppedPage,
   ) {
-    final location = delegate.currentBeamLocation;
-    final previousBeamState = delegate.beamStateHistory.length > 1
-        ? delegate.beamStateHistory[delegate.beamStateHistory.length - 2]
+    final beamLocation = delegate.currentBeamLocation;
+    final previousRouteInformation = delegate.routeHistory.length > 1
+        ? delegate.routeHistory[delegate.routeHistory.length - 2]
+        : null;
+    final previousUri = previousRouteInformation != null
+        ? Uri.parse(previousRouteInformation.location ?? '/')
         : null;
 
-    final pathBlueprintSegments =
-        List<String>.from(location.state.pathBlueprintSegments);
-    final pathParameters =
-        Map<String, String>.from(location.state.pathParameters);
-    final pathSegment = pathBlueprintSegments.removeLast();
-    if (pathSegment[0] == ':') {
-      pathParameters.remove(pathSegment.substring(1));
-    }
+    final location = beamLocation.state.routeInformation.location ?? '/';
+    final pathSegments = Uri.parse(location).pathSegments;
+    final queryParameters = Uri.parse(location).queryParameters;
+    var popUri = Uri(
+      pathSegments: List.from(pathSegments)..removeLast(),
+      queryParameters: poppedPage.keepQueryOnPop ? queryParameters : null,
+    );
+    final popUriPath = '/' + popUri.path;
 
-    var beamState = BeamState(
-      pathBlueprintSegments: pathBlueprintSegments,
-      pathParameters: pathParameters,
+    popUri = Uri(
+      pathSegments: popUri.pathSegments,
       queryParameters:
-          poppedPage.keepQueryOnPop ? location.state.queryParameters : {},
-      data: location.state.data,
+          (popUriPath == previousUri?.path && !poppedPage.keepQueryOnPop)
+              ? previousUri?.queryParameters
+              : popUri.queryParameters,
     );
 
-    if (beamState.uri.path == previousBeamState?.uri.path &&
-        !poppedPage.keepQueryOnPop) {
-      beamState = beamState.copyWith(
-        queryParameters: previousBeamState?.queryParameters,
-      );
-    }
+    delegate.removeLastRouteInformation();
+    delegate.update(
+      configuration: delegate.configuration.copyWith(
+        location:
+            popUriPath + (popUri.query.isNotEmpty ? '?${popUri.query}' : ''),
+      ),
+    );
 
-    delegate.removeLastBeamState();
-
-    location.update((state) => beamState);
     return true;
   }
 

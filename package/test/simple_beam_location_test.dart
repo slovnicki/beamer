@@ -15,7 +15,7 @@ void main() {
       },
     ),
   );
-  delegate.setNewRoutePath(BeamState.fromUri(Uri.parse('/')));
+  delegate.setNewRoutePath(const RouteInformation(location: '/'));
 
   group('General', () {
     testWidgets('/ can be at the end of URI and will be ignored when matching',
@@ -71,9 +71,10 @@ void main() {
 
   group('Query', () {
     test('location takes query', () {
-      expect(delegate.currentBeamLocation.state.queryParameters, equals({}));
+      expect((delegate.currentBeamLocation.state as BeamState).queryParameters,
+          equals({}));
       delegate.beamToNamed('/?q=t');
-      expect(delegate.currentBeamLocation.state.queryParameters,
+      expect((delegate.currentBeamLocation.state as BeamState).queryParameters,
           equals({'q': 't'}));
     });
 
@@ -128,7 +129,7 @@ void main() {
           },
         ),
       );
-      delegate1.setNewRoutePath(BeamState.fromUri(Uri.parse('/anything')));
+      delegate1.setNewRoutePath(const RouteInformation(location: '/anything'));
       expect(delegate1.currentBeamLocation, isA<SimpleBeamLocation>());
 
       final delegate2 = BeamerDelegate(
@@ -138,7 +139,7 @@ void main() {
           },
         ),
       );
-      delegate2.setNewRoutePath(BeamState.fromUri(Uri.parse('/anything')));
+      delegate2.setNewRoutePath(const RouteInformation(location: '/anything'));
       expect(delegate2.currentBeamLocation, isA<SimpleBeamLocation>());
     });
 
@@ -150,7 +151,7 @@ void main() {
           },
         ),
       );
-      delegate1.setNewRoutePath(BeamState.fromUri(Uri.parse('/test/1')));
+      delegate1.setNewRoutePath(const RouteInformation(location: '/test/1'));
       expect(delegate1.currentBeamLocation, isA<SimpleBeamLocation>());
     });
   });
@@ -158,8 +159,8 @@ void main() {
   group('RegExp', () {
     test('can utilize path parameters', () {
       delegate.beamToNamed('/path-param/success');
-      expect(
-          delegate.currentBeamLocation.state.pathParameters, contains('test'));
+      expect((delegate.currentBeamLocation.state as BeamState).pathParameters,
+          contains('test'));
     });
   });
 }

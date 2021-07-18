@@ -50,8 +50,12 @@ void main() {
     await tester.pumpWidget(app);
     testContext!.beamToNamed('/test');
     await tester.pump();
-    expect(testContext!.currentBeamLocation.state.uri.toString(), '/test');
-    expect(testContext!.currentBeamLocation.state.uriBlueprint.toString(),
+    expect(testContext!.currentBeamLocation.state.routeInformation.location,
+        '/test');
+    expect(
+        (testContext!.currentBeamLocation.state as BeamState)
+            .uriBlueprint
+            .toString(),
         '/test');
     expect(testContext!.currentBeamPages.length, 2);
   });
@@ -60,13 +64,14 @@ void main() {
       'beamStateHistory contains multiple entries and beamBack is possible',
       (tester) async {
     await tester.pumpWidget(app);
-    expect(Beamer.of(testContext!).beamStateHistory.length, 2);
+    expect(Beamer.of(testContext!).routeHistory.length, 2);
     expect(testContext!.canBeamBack, true);
     testContext!.beamBack();
     await tester.pump();
-    expect(Beamer.of(testContext!).beamStateHistory.length, 1);
+    expect(Beamer.of(testContext!).routeHistory.length, 1);
     expect(testContext!.canBeamBack, false);
-    expect(testContext!.currentBeamLocation.state.uri.toString(), '/');
+    expect(
+        testContext!.currentBeamLocation.state.routeInformation.location, '/');
   });
 
   testWidgets(
@@ -91,7 +96,9 @@ void main() {
   testWidgets('Beamer can be used via key', (tester) async {
     await tester.pumpWidget(app);
     expect(beamerKey.currentState, isNotNull);
-    expect(beamerKey.currentState!.currentBeamLocation.state.uri.toString(),
+    expect(
+        beamerKey
+            .currentState!.currentBeamLocation.state.routeInformation.location,
         '/test2/x');
   });
 
@@ -161,7 +168,7 @@ void main() {
   testWidgets('histories are accessible through context extension methods',
       (tester) async {
     await tester.pumpWidget(app);
-    expect(testContext!.beamStateHistory.length, greaterThan(0));
+    expect(testContext!.routeHistory.length, greaterThan(0));
     expect(testContext!.beamLocationHistory.length, greaterThan(0));
   });
 }

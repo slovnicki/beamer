@@ -11,26 +11,26 @@ import 'package:flutter/widgets.dart';
 ///   * keeping a [state] that provides the link between the first 2
 ///
 /// Extend this class to define your locations to which you can then beam to.
-abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
-  BeamLocation([T? state]) {
-    _state = createState(state ?? BeamState());
+abstract class BeamLocation<T extends RouteInformationSerializable>
+    extends ChangeNotifier {
+  BeamLocation([RouteInformation? routeInformation]) {
+    state = createState(
+      routeInformation ?? const RouteInformation(location: '/'),
+    );
   }
-
-  late T _state;
 
   /// A state of this location.
   ///
   /// Upon beaming, it will be populated by all necessary attributes.
   /// See [BeamState].
-  T get state => _state;
-
-  set state(T state) => _state = state..configure();
+  late T state;
 
   /// How to create state from generic [BeamState], that is produced
   /// by [BeamerDelegate] and passed via [BeamerDelegate.locationBuilder].
   ///
   /// Override this if you have your custom state class extending [BeamState].
-  T createState(BeamState state) => state.copyForLocation(this) as T;
+  T createState(RouteInformation routeInformation) =>
+      BeamState.fromRouteInformation(routeInformation, beamLocation: this) as T;
 
   /// Update a state via callback receiving the current state.
   /// If no callback is given, just notifies [BeamerDelegate] to rebuild.
@@ -38,7 +38,7 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
   /// Useful with [BeamState.copyWith].
   void update([T Function(T)? copy, bool rebuild = true]) {
     if (copy != null) {
-      state = copy(_state);
+      state = copy(state);
     }
     if (rebuild) {
       notifyListeners();
@@ -114,8 +114,8 @@ abstract class BeamLocation<T extends BeamState> extends ChangeNotifier {
 }
 
 /// Default location to choose if requested URI doesn't parse to any location.
-class NotFound extends BeamLocation {
-  NotFound({String path = '/'}) : super(BeamState.fromUriString(path));
+class NotFound extends BeamLocation<BeamState> {
+  NotFound({String path = '/'}) : super(RouteInformation(location: path));
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [];
@@ -127,7 +127,7 @@ class NotFound extends BeamLocation {
 /// Empty location used to intialize a non-nullable BeamLocation variable.
 ///
 /// See [BeamerDelegate.currentBeamLocation].
-class EmptyBeamLocation extends BeamLocation {
+class EmptyBeamLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [];
 
@@ -138,12 +138,12 @@ class EmptyBeamLocation extends BeamLocation {
 /// A beam location for [SimpleLocationBuilder], but can be used freely.
 ///
 /// Useful when needing a simple beam location with a single or few pages.
-class SimpleBeamLocation extends BeamLocation {
+class SimpleBeamLocation extends BeamLocation<BeamState> {
   SimpleBeamLocation({
-    required BeamState state,
+    required RouteInformation routeInformation,
     required this.routes,
     this.navBuilder,
-  }) : super(state);
+  }) : super(routeInformation);
 
   /// Map of all routes this location handles.
   Map<Pattern, dynamic Function(BuildContext, BeamState)> routes;
@@ -170,7 +170,7 @@ class SimpleBeamLocation extends BeamLocation {
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
-    final filteredRoutes = chooseRoutes(state, routes.keys);
+    final filteredRoutes = chooseRoutes(state.routeInformation, routes.keys);
     final activeRoutes = Map.of(routes)
       ..removeWhere((key, value) => !filteredRoutes.containsKey(key));
     final sortedRoutes = activeRoutes.keys.toList()
@@ -193,12 +193,13 @@ class SimpleBeamLocation extends BeamLocation {
   /// If none of the routes _matches_ [state.uri], nothing will be selected
   /// and [BeamerDelegate] will declare that the location is [NotFound].
   static Map<Pattern, String> chooseRoutes(
-      BeamState state, Iterable<Pattern> routes) {
+      RouteInformation routeInformation, Iterable<Pattern> routes) {
     final matched = <Pattern, String>{};
     bool overrideNotFound = false;
+    final uri = Uri.parse(routeInformation.location ?? '/');
     for (final route in routes) {
       if (route is String) {
-        final uriPathSegments = state.uri.pathSegments.toList();
+        final uriPathSegments = uri.pathSegments.toList();
         final routePathSegments = Uri.parse(route).pathSegments;
 
         if (uriPathSegments.length < routePathSegments.length) {
@@ -227,17 +228,17 @@ class SimpleBeamLocation extends BeamLocation {
           matched[route] = Uri(
             path: path == '' ? '/' : path,
             queryParameters:
-                state.queryParameters.isEmpty ? null : state.queryParameters,
+                uri.queryParameters.isEmpty ? null : uri.queryParameters,
           ).toString();
         }
       } else {
         final regexp = Utils.tryCastToRegExp(route);
-        if (regexp.hasMatch(state.uri.toString())) {
-          final path = state.uri.toString();
+        if (regexp.hasMatch(uri.toString())) {
+          final path = uri.toString();
           matched[regexp] = Uri(
             path: path == '' ? '/' : path,
             queryParameters:
-                state.queryParameters.isEmpty ? null : state.queryParameters,
+                uri.queryParameters.isEmpty ? null : uri.queryParameters,
           ).toString();
         }
       }
@@ -245,7 +246,7 @@ class SimpleBeamLocation extends BeamLocation {
 
     bool isNotFound = true;
     matched.forEach((key, value) {
-      if (Utils.urisMatch(key, state.uri)) {
+      if (Utils.urisMatch(key, uri)) {
         isNotFound = false;
       }
     });

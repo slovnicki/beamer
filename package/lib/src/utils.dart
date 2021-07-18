@@ -19,10 +19,9 @@ abstract class Utils {
       if (canBeamLocationHandleUri(beamLocation, uri)) {
         return beamLocation
           ..state = beamLocation.createState(
-            BeamState(
-              pathBlueprintSegments: uri.pathSegments,
-              queryParameters: uri.queryParameters,
-              data: data,
+            RouteInformation(
+              location: uri.toString(),
+              state: data,
             ),
           );
       }
@@ -200,7 +199,10 @@ abstract class Utils {
   /// Removes the trailing / in an URI String and returns the result.
   ///
   /// If there is no trailing /, returns the input.
-  static String trimmed(String uri) {
+  static String trimmed(String? uri) {
+    if (uri == null) {
+      return '/';
+    }
     if (uri.length > 1 && uri.endsWith('/')) {
       return uri.substring(0, uri.length - 1);
     }

@@ -6,10 +6,16 @@ import 'package:flutter/widgets.dart';
 import './utils.dart';
 import './beam_location.dart';
 
+mixin RouteInformationSerializable<T> {
+  T fromRouteInformation(RouteInformation routeInformation);
+  RouteInformation toRouteInformation();
+  RouteInformation get routeInformation => toRouteInformation();
+}
+
 /// A state for [BeamerDelegate] and [BeamLocation].
 ///
 /// Helps in building the pages and creates an URI.
-class BeamState {
+class BeamState with RouteInformationSerializable<BeamState> {
   BeamState({
     this.pathBlueprintSegments = const <String>[],
     this.pathParameters = const <String, String>{},
@@ -57,6 +63,27 @@ class BeamState {
       uri,
       beamLocation: beamLocation,
       data: data,
+    );
+  }
+
+  /// Creates a [BeamState] from given [routeInformation].
+  ///
+  /// If [beamLocation] is given, then it will take into consideration
+  /// its path blueprints to populate the [pathParameters] attribute.
+  ///
+  /// See [BeamState.fromUri].
+  factory BeamState.fromRouteInformation(
+    RouteInformation routeInformation, {
+    BeamLocation? beamLocation,
+  }) {
+    return BeamState.fromUri(
+      Uri.parse(routeInformation.location ?? '/'),
+      beamLocation: beamLocation,
+      data: routeInformation.state is Map<String, dynamic>
+          ? routeInformation.state as Map<String, dynamic>
+          : {
+              'state': routeInformation.state,
+            },
     );
   }
 
@@ -145,6 +172,23 @@ class BeamState {
       queryParameters: queryParameters.isEmpty ? null : queryParameters,
     );
   }
+
+  @override
+  BeamState fromRouteInformation(RouteInformation routeInformation) =>
+      BeamState.fromUriString(
+        routeInformation.location ?? '/',
+        data: routeInformation.state is Map<String, dynamic>
+            ? routeInformation.state as Map<String, dynamic>
+            : {
+                'state': routeInformation.state,
+              },
+      );
+
+  @override
+  RouteInformation toRouteInformation() => RouteInformation(
+        location: uri.toString(),
+        state: data,
+      );
 
   @override
   int get hashCode => hashValues(uri, data);

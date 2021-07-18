@@ -84,22 +84,24 @@ class BeamGuard {
   /// must be equal to the pathBlueprint.
   bool _hasMatch(BeamLocation location) {
     for (final pathBlueprint in pathBlueprints) {
+      final path =
+          Uri.parse(location.state.routeInformation.location ?? '/').path;
       if (pathBlueprint is String) {
         final asteriskIndex = pathBlueprint.indexOf('*');
         if (asteriskIndex != -1) {
-          if (location.state.uri
+          if (location.state.routeInformation.location
               .toString()
               .contains(pathBlueprint.substring(0, asteriskIndex))) {
             return true;
           }
         } else {
-          if (pathBlueprint == location.state.uri.path) {
+          if (pathBlueprint == path) {
             return true;
           }
         }
       } else {
         final regexp = Utils.tryCastToRegExp(pathBlueprint);
-        return regexp.hasMatch(location.state.uri.path);
+        return regexp.hasMatch(path);
       }
     }
     return false;
