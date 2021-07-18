@@ -1,5 +1,11 @@
 # 0.15.0
-- **BREAKING:** The property `pageRouteBuilder` in `BeamPage` is replaced with a new property `routeBuilder` which works with any RouteBuilder not just PageRouteBuilders.
+
+- **BREAKING:** "top-level state", the one in `BeamerDelegate` is now `RouteInformation` instead of `BeamState`
+    - `BeamerDelegate.state` doesn't exist anymore and is replaced with `BeamerDelegate.configuration` which is `RouteInformation` and not `BeamState`
+    - `locationBuilder` now works with `RouteInformation` instead of `BeamState`
+    - `super()` constructor on `BeamLocation` now takes optional `RouteInformation` instead of `BeamState`
+    - in order to continue using custom `BeamLocation`s with `BeamState` state, generic type has to be specified; `class MyBeamLocation extends BeamLocation<BeamState>`
+- **BREAKING:** The property `pageRouteBuilder` in `BeamPage` is replaced with a new property `routeBuilder` which works with any `RouteBuilder` not just `PageRouteBuilder`.
 # 0.14.1
 
 - **Add:** `updateParent` (default `true`) to `BeamerDelegate`

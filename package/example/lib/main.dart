@@ -85,8 +85,8 @@ class BookDetailsScreen extends StatelessWidget {
 }
 
 // LOCATIONS
-class BooksLocation extends BeamLocation {
-  BooksLocation(BeamState state) : super(state);
+class BooksLocation extends BeamLocation<BeamState> {
+  BooksLocation(RouteInformation routeInformation) : super(routeInformation);
 
   @override
   List<String> get pathBlueprints => ['/books/:bookId'];
@@ -118,7 +118,7 @@ class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
 
   final routerDelegate = BeamerDelegate(
-    locationBuilder: (state) => BooksLocation(state),
+    locationBuilder: (routeInformation) => BooksLocation(routeInformation),
   );
 
   @override
