@@ -17,7 +17,8 @@ class MyApp extends StatelessWidget {
     //locationBuilder: beamerLocationBuilder,
     //
     // OPTION C:
-    //locationBuilder: (state) => BooksLocation(state: state),
+    // locationBuilder: (routeInformation) =>
+    //     BooksLocation(routeInformation: routeInformation),
   );
 
   @override

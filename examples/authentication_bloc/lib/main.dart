@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
       ),
     ],
     initialPath: '/login',
-    locationBuilder: (state) => BeamerLocations(state),
+    locationBuilder: (routeInformation) => BeamerLocations(routeInformation),
   );
 
   @override

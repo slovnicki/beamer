@@ -118,7 +118,7 @@ class ArticleDetailsScreen extends StatelessWidget {
 }
 
 // LOCATIONS
-class BooksLocation extends BeamLocation {
+class BooksLocation extends BeamLocation<BeamState> {
   @override
   List<String> get pathBlueprints => ['/books/:bookId'];
 
@@ -143,7 +143,7 @@ class BooksLocation extends BeamLocation {
       ];
 }
 
-class ArticlesLocation extends BeamLocation {
+class ArticlesLocation extends BeamLocation<BeamState> {
   @override
   List<String> get pathBlueprints => ['/articles/:articleId'];
 

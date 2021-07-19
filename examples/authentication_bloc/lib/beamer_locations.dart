@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'presentation/logged_in_page.dart';
 import 'presentation/login_page.dart';
 
-class BeamerLocations extends BeamLocation {
-  BeamerLocations(BeamState state) : super(state);
+class BeamerLocations extends BeamLocation<BeamState> {
+  BeamerLocations(RouteInformation routeInformation) : super(routeInformation);
 
   @override
   List<String> get pathBlueprints => [

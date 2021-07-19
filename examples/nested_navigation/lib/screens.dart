@@ -31,7 +31,7 @@ class _MenuButtonState extends State<MenuButton> {
 
   @override
   Widget build(BuildContext context) {
-    final path = context.currentBeamLocation.state.uri.path;
+    final path = (context.currentBeamLocation.state as BeamState).uri.path;
 
     return ElevatedButton(
       onPressed: () =>
@@ -84,7 +84,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           Container(width: 1, color: Colors.blue),
-          if (context.currentBeamLocation.state.uri.path.isEmpty)
+          if ((context.currentBeamLocation.state as BeamState).uri.path.isEmpty)
             Expanded(
               child: Container(
                 child: Center(
@@ -97,10 +97,10 @@ class HomeScreen extends StatelessWidget {
               child: Beamer(
                 key: _beamerKey,
                 routerDelegate: BeamerDelegate(
-                  locationBuilder: (state) =>
-                      state.uri.pathSegments.contains('articles')
-                          ? ArticlesLocation(state)
-                          : BooksLocation(state),
+                  locationBuilder: (routeInformation) =>
+                      routeInformation.location!.contains('articles')
+                          ? ArticlesLocation(routeInformation)
+                          : BooksLocation(routeInformation),
                 ),
               ),
             ),
@@ -145,7 +145,8 @@ class BooksScreen extends StatelessWidget {
             child: Beamer(
               key: _beamerKey,
               routerDelegate: BeamerDelegate(
-                locationBuilder: (state) => BooksContentLocation(state),
+                locationBuilder: (routeInformation) =>
+                    BooksContentLocation(routeInformation),
               ),
             ),
           ),
@@ -223,7 +224,8 @@ class ArticlesScreen extends StatelessWidget {
             child: Beamer(
               key: _beamerKey,
               routerDelegate: BeamerDelegate(
-                locationBuilder: (state) => ArticlesContentLocation(state),
+                locationBuilder: (routeInformation) =>
+                    ArticlesContentLocation(routeInformation),
               ),
             ),
           ),

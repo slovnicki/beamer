@@ -55,7 +55,7 @@ class DeepestScreen extends StatelessWidget {
 }
 
 // LOCATIONS
-class HomeLocation extends BeamLocation {
+class HomeLocation extends BeamLocation<BeamState> {
   @override
   List<String> get pathBlueprints => ['/'];
 
@@ -69,7 +69,7 @@ class HomeLocation extends BeamLocation {
       ];
 }
 
-class DeepLocation extends BeamLocation {
+class DeepLocation extends BeamLocation<BeamState> {
   @override
   List<String> get pathBlueprints => ['/a/b/c/d'];
 

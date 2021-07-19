@@ -3,9 +3,8 @@ import 'package:flutter/widgets.dart';
 
 import 'screens.dart';
 
-class HomeLocation extends BeamLocation {
-  HomeLocation(BeamState state) : super(state);
-
+class HomeLocation extends BeamLocation<BeamState> {
+  HomeLocation(RouteInformation routeInformation) : super(routeInformation);
   @override
   List<String> get pathBlueprints => ['/*'];
 
@@ -19,8 +18,8 @@ class HomeLocation extends BeamLocation {
       ];
 }
 
-class BooksLocation extends BeamLocation {
-  BooksLocation(BeamState state) : super(state);
+class BooksLocation extends BeamLocation<BeamState> {
+  BooksLocation(RouteInformation routeInformation) : super(routeInformation);
 
   @override
   List<String> get pathBlueprints => ['/books/*'];
@@ -35,8 +34,9 @@ class BooksLocation extends BeamLocation {
       ];
 }
 
-class BooksContentLocation extends BeamLocation {
-  BooksContentLocation(BeamState state) : super(state);
+class BooksContentLocation extends BeamLocation<BeamState> {
+  BooksContentLocation(RouteInformation routeInformation)
+      : super(routeInformation);
 
   @override
   List<String> get pathBlueprints => [
@@ -66,8 +66,8 @@ class BooksContentLocation extends BeamLocation {
       ];
 }
 
-class ArticlesLocation extends BeamLocation {
-  ArticlesLocation(BeamState state) : super(state);
+class ArticlesLocation extends BeamLocation<BeamState> {
+  ArticlesLocation(RouteInformation routeInformation) : super(routeInformation);
 
   @override
   List<String> get pathBlueprints => ['/articles/*'];
@@ -82,8 +82,9 @@ class ArticlesLocation extends BeamLocation {
       ];
 }
 
-class ArticlesContentLocation extends BeamLocation {
-  ArticlesContentLocation(BeamState state) : super(state);
+class ArticlesContentLocation extends BeamLocation<BeamState> {
+  ArticlesContentLocation(RouteInformation routeInformation)
+      : super(routeInformation);
 
   @override
   List<String> get pathBlueprints => [

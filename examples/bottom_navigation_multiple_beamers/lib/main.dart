@@ -118,8 +118,8 @@ class ArticleDetailsScreen extends StatelessWidget {
 }
 
 // LOCATIONS
-class BooksLocation extends BeamLocation {
-  BooksLocation(BeamState state) : super(state);
+class BooksLocation extends BeamLocation<BeamState> {
+  BooksLocation(RouteInformation routeInformation) : super(routeInformation);
 
   @override
   List<String> get pathBlueprints => ['/books/:bookId'];
@@ -145,8 +145,8 @@ class BooksLocation extends BeamLocation {
       ];
 }
 
-class ArticlesLocation extends BeamLocation {
-  ArticlesLocation(BeamState state) : super(state);
+class ArticlesLocation extends BeamLocation<BeamState> {
+  ArticlesLocation(RouteInformation routeInformation) : super(routeInformation);
 
   @override
   List<String> get pathBlueprints => ['/articles/:articleId'];
@@ -184,20 +184,20 @@ class _AppScreenState extends State<AppScreen> {
   final routerDelegates = [
     BeamerDelegate(
       initialPath: '/books',
-      locationBuilder: (state) {
-        if (state.uri.path.contains('books')) {
-          return BooksLocation(state);
+      locationBuilder: (routeInformation) {
+        if (routeInformation.location!.contains('books')) {
+          return BooksLocation(routeInformation);
         }
-        return NotFound(path: state.uri.toString());
+        return NotFound(path: routeInformation.location!);
       },
     ),
     BeamerDelegate(
       initialPath: '/articles',
-      locationBuilder: (state) {
-        if (state.uri.path.contains('articles')) {
-          return ArticlesLocation(state);
+      locationBuilder: (routeInformation) {
+        if (routeInformation.location!.contains('articles')) {
+          return ArticlesLocation(routeInformation);
         }
-        return NotFound(path: state.uri.toString());
+        return NotFound(path: routeInformation.location!);
       },
     ),
   ];
@@ -212,14 +212,14 @@ class _AppScreenState extends State<AppScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final beamState = Beamer.of(context).state;
-    currentIndex = beamState.uri.path.contains('books') ? 0 : 1;
+    final uriString = Beamer.of(context).configuration.location!;
+    currentIndex = uriString.contains('books') ? 0 : 1;
 
     routerDelegates[currentIndex].active = true;
     routerDelegates[1 - currentIndex].active = false;
 
     routerDelegates[currentIndex].update(
-      state: beamState,
+      configuration: RouteInformation(location: uriString),
       rebuild: false,
     );
 

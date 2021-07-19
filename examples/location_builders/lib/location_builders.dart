@@ -20,7 +20,8 @@ final simpleLocationBuilder = SimpleLocationBuilder(
     '/books/:bookId': (context, state) {
       final book = books.firstWhere((book) =>
           book['id'] ==
-          context.currentBeamLocation.state.pathParameters['bookId']);
+          (context.currentBeamLocation.state as BeamState)
+              .pathParameters['bookId']);
 
       return BeamPage(
         key: ValueKey('book-${book['id']}'),
@@ -38,8 +39,8 @@ final beamerLocationBuilder = BeamerLocationBuilder(
   ],
 );
 
-class BooksLocation extends BeamLocation {
-  BooksLocation({BeamState? state}) : super(state);
+class BooksLocation extends BeamLocation<BeamState> {
+  BooksLocation({RouteInformation? routeInformation}) : super(routeInformation);
 
   @override
   List<String> get pathBlueprints => [

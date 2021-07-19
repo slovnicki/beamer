@@ -89,7 +89,7 @@ final beamerLocationBuilder = BeamerLocationBuilder(
   ],
 );
 
-class HomeLocation extends BeamLocation {
+class HomeLocation extends BeamLocation<BeamState> {
   @override
   List<String> get pathBlueprints => ['/'];
 
@@ -103,7 +103,7 @@ class HomeLocation extends BeamLocation {
       ];
 }
 
-class BooksLocation extends BeamLocation {
+class BooksLocation extends BeamLocation<BeamState> {
   @override
   List<String> get pathBlueprints => [
         '/books/:bookId/genres/:genreId',

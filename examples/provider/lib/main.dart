@@ -84,7 +84,7 @@ class BookDetailsScreen extends StatelessWidget {
 }
 
 // LOCATIONS
-class HomeLocation extends BeamLocation {
+class HomeLocation extends BeamLocation<BeamState> {
   @override
   List<String> get pathBlueprints => ['/'];
 
@@ -100,7 +100,7 @@ class HomeLocation extends BeamLocation {
   }
 }
 
-class BooksLocation extends BeamLocation {
+class BooksLocation extends BeamLocation<BeamState> {
   @override
   Widget builder(BuildContext context, Widget navigator) =>
       ChangeNotifierProvider(

@@ -86,7 +86,8 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
         padding: const EdgeInsets.all(8.0),
         child: GestureDetector(
           onTap: () => context.currentBeamLocation.update(
-            (state) => state.copyWith(queryParameters: {'buy': 'true'}),
+            (state) =>
+                (state as BeamState).copyWith(queryParameters: {'buy': 'true'}),
           ),
           child: Text('Author: ${widget.book['author']}'),
         ),
@@ -96,8 +97,8 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 }
 
 // LOCATIONS
-class BooksLocation extends BeamLocation {
-  BooksLocation(BeamState state) : super(state);
+class BooksLocation extends BeamLocation<BeamState> {
+  BooksLocation(RouteInformation routeInformation) : super(routeInformation);
 
   @override
   List<String> get pathBlueprints => ['/books/:bookId'];
@@ -117,7 +118,6 @@ class BooksLocation extends BeamLocation {
           BeamPage(
             key: ValueKey('book-${state.pathParameters['bookId']}'),
             child: BookDetailsScreen(bookId: state.pathParameters['bookId']!),
-            
           ),
         if (state.queryParameters.containsKey('buy'))
           BeamPage(
@@ -131,7 +131,7 @@ class BooksLocation extends BeamLocation {
                 // when the dialog is dismissed, we only want to pop the `buy=true` query parameter
                 // instead of also popping the bookId.
                 delegate.currentBeamLocation.update(
-                  (state) => state.copyWith(queryParameters: {}), 
+                  (state) => (state as BeamState).copyWith(queryParameters: {}),
                 );
                 return true;
               },
@@ -145,7 +145,7 @@ class BooksLocation extends BeamLocation {
 // APP
 class MyApp extends StatelessWidget {
   final routerDelegate = BeamerDelegate(
-    locationBuilder: (state) => BooksLocation(state),
+    locationBuilder: (routeInformation) => BooksLocation(routeInformation),
   );
 
   @override

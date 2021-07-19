@@ -82,7 +82,7 @@ class BookDetailsScreen extends StatelessWidget {
 }
 
 // LOCATIONS
-class BooksLocation extends BeamLocation {
+class BooksLocation extends BeamLocation<BeamState> {
   BooksLocation() : super() {
     addListener(_listener);
   }
