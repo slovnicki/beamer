@@ -470,4 +470,57 @@ void main() {
       expect(childDelegate.routeHistory.length, 1);
     });
   });
+
+  testWidgets(
+      "updating route information without updating parent or rebuilding",
+      (tester) async {
+    final childDelegate = BeamerDelegate(
+      updateParent: false,
+      locationBuilder: SimpleLocationBuilder(
+        routes: {
+          '/': (context, state) => Container(),
+          '/test': (context, state) => Container(),
+          '/test2': (context, state) => Container(),
+        },
+      ),
+    );
+    final rootDelegate = BeamerDelegate(
+      locationBuilder: SimpleLocationBuilder(
+        routes: {
+          '*': (context, state) => BeamPage(
+                key: const ValueKey('always-the-same'),
+                child: Beamer(
+                  routerDelegate: childDelegate,
+                ),
+              ),
+        },
+      ),
+    );
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routeInformationParser: BeamerParser(),
+        routerDelegate: rootDelegate,
+      ),
+    );
+
+    rootDelegate.beamToNamed('/test');
+    await tester.pump();
+
+    expect(rootDelegate.configuration.location, '/test');
+    expect(childDelegate.configuration.location, '/test');
+    expect(childDelegate.parent, rootDelegate);
+
+    childDelegate.beamToNamed('/test2');
+    await tester.pump();
+
+    expect(rootDelegate.configuration.location, '/test');
+    expect(childDelegate.configuration.location, '/test2');
+
+    childDelegate.update(
+      configuration: const RouteInformation(location: '/xx'),
+      rebuild: false,
+    );
+    expect(rootDelegate.configuration.location, '/test');
+    expect(childDelegate.configuration.location, '/xx');
+  });
 }
