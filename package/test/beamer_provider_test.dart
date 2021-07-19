@@ -7,10 +7,7 @@ void main() {
     final delegate = BeamerDelegate(
       locationBuilder: SimpleLocationBuilder(
         routes: {
-          '/': (context, state) => ElevatedButton(
-                onPressed: () {},
-                child: const Text('X'),
-              ),
+          '/': (context, state) => Container(),
         },
       ),
     );
@@ -29,10 +26,7 @@ void main() {
     final delegate2 = BeamerDelegate(
       locationBuilder: SimpleLocationBuilder(
         routes: {
-          '/': (context, state) => ElevatedButton(
-                onPressed: () {},
-                child: const Text('X'),
-              ),
+          '/': (context, state) => Container(),
         },
       ),
     );
