@@ -343,16 +343,19 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       listener?.call(this.configuration, _currentBeamLocation);
     }
 
+    bool parentDidUpdate = false;
     if (this.updateParent &&
         updateParent &&
-        configuration != _parent?.configuration) {
+        (configuration?.location != _parent?.configuration.location ||
+            configuration?.state != _parent?.configuration.state)) {
       _parent?.update(
         configuration: this.configuration.copyWith(),
         rebuild: false,
       );
+      parentDidUpdate = true;
     }
 
-    if (!rebuild || !updateParent) {
+    if (!rebuild && !parentDidUpdate) {
       updateRouteInformation(this.configuration);
     }
 
