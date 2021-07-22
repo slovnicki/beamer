@@ -175,26 +175,27 @@ class MyApp extends StatelessWidget {
               state.queryParameters['tab'] == 'articles' ? 1 : 0;
           return HomeScreen(initialIndex: initialIndex);
         },
-        '/books/:bookId': (context, state) => BeamPage(
-              key: ValueKey('book-${state.pathParameters['bookId']}'),
-              title: books.firstWhere((book) =>
-                  book['id'] == state.pathParameters['bookId'])['title'],
-              child: BookDetailsScreen(
-                book: books.firstWhere(
-                    (book) => book['id'] == state.pathParameters['bookId']),
-              ),
-              popToNamed: '/?tab=books',
-            ),
-        'articles/:articleId': (context, state) => BeamPage(
-              key: ValueKey('articles-${state.pathParameters['articleId']}'),
-              title: articles.firstWhere((article) =>
-                  article['id'] == state.pathParameters['articleId'])['title'],
-              child: ArticleDetailsScreen(
-                article: articles.firstWhere((article) =>
-                    article['id'] == state.pathParameters['articleId']),
-              ),
-              popToNamed: '/?tab=articles',
-            ),
+        '/books/:bookId': (context, state) {
+          final bookId = state.pathParameters['bookId'];
+          final book = books.firstWhere((book) => book['id'] == bookId);
+          return BeamPage(
+            key: ValueKey('book-$bookId'),
+            title: book['title'],
+            child: BookDetailsScreen(book: book),
+            popToNamed: '/?tab=books',
+          );
+        },
+        'articles/:articleId': (context, state) {
+          final articleId = state.pathParameters['articleId'];
+          final article =
+              articles.firstWhere((article) => article['id'] == articleId);
+          return BeamPage(
+            key: ValueKey('articles-$articleId'),
+            title: article['title'],
+            child: ArticleDetailsScreen(article: article),
+            popToNamed: '/?tab=articles',
+          );
+        },
       },
     ),
   );
