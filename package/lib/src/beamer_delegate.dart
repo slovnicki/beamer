@@ -344,11 +344,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     }
 
     bool parentDidUpdate = false;
-    if (this.updateParent &&
+    if (parent != null &&
+        this.updateParent &&
         updateParent &&
         (configuration?.location != _parent?.configuration.location ||
             configuration?.state != _parent?.configuration.state)) {
-      _parent?.update(
+      _parent!.update(
         configuration: this.configuration.copyWith(),
         rebuild: false,
       );
@@ -541,7 +542,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   @override
   RouteInformation? get currentConfiguration =>
-      _parent == null ? _currentBeamLocation.state.routeInformation : null;
+      _parent == null ? configuration.copyWith() : null;
 
   @override
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
