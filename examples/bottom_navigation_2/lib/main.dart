@@ -39,6 +39,54 @@ const List<Map<String, String>> articles = [
 ];
 
 // SCREENS
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key, required this.initialIndex}) : super(key: key);
+
+  final int initialIndex;
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: IndexedStack(
+          index: _currentIndex,
+          children: [
+            BooksScreen(),
+            ArticlesScreen(),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          items: [
+            BottomNavigationBarItem(label: 'Books', icon: Icon(Icons.book)),
+            BottomNavigationBarItem(
+                label: 'Articles', icon: Icon(Icons.article)),
+          ],
+          onTap: (index) {
+            Beamer.of(context).update(
+              configuration: RouteInformation(
+                location: index == 0 ? '/?tab=books' : '/?tab=articles',
+              ),
+              rebuild: false,
+            );
+            setState(() => _currentIndex = index);
+          },
+        ));
+  }
+}
+
 class BooksScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -117,92 +165,7 @@ class ArticleDetailsScreen extends StatelessWidget {
   }
 }
 
-// LOCATIONS
-class BooksLocation extends BeamLocation<BeamState> {
-  @override
-  List<String> get pathBlueprints => ['/books/:bookId'];
-
-  @override
-  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
-        BeamPage(
-          key: ValueKey('books'),
-          title: 'Books',
-          type: BeamPageType.noTransition,
-          child: BooksScreen(),
-        ),
-        if (state.pathParameters.containsKey('bookId'))
-          BeamPage(
-            key: ValueKey('book-${state.pathParameters['bookId']}'),
-            title: books.firstWhere((book) =>
-                book['id'] == state.pathParameters['bookId'])['title'],
-            child: BookDetailsScreen(
-              book: books.firstWhere(
-                  (book) => book['id'] == state.pathParameters['bookId']),
-            ),
-          ),
-      ];
-}
-
-class ArticlesLocation extends BeamLocation<BeamState> {
-  @override
-  List<String> get pathBlueprints => ['/articles/:articleId'];
-
-  @override
-  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
-        BeamPage(
-          key: ValueKey('articles'),
-          title: 'Articles',
-          type: BeamPageType.noTransition,
-          child: ArticlesScreen(),
-        ),
-        if (state.pathParameters.containsKey('articleId'))
-          BeamPage(
-            key: ValueKey('articles-${state.pathParameters['articleId']}'),
-            title: articles.firstWhere((article) =>
-                article['id'] == state.pathParameters['articleId'])['title'],
-            child: ArticleDetailsScreen(
-              article: articles.firstWhere((article) =>
-                  article['id'] == state.pathParameters['articleId']),
-            ),
-          ),
-      ];
-}
-
 // APP
-class BottomNavigationBarWidget extends StatefulWidget {
-  BottomNavigationBarWidget({required this.initialIndex});
-
-  final int initialIndex;
-
-  @override
-  _BottomNavigationBarWidgetState createState() =>
-      _BottomNavigationBarWidgetState();
-}
-
-class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
-  int _currentIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _currentIndex = widget.initialIndex;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      currentIndex: _currentIndex,
-      items: [
-        BottomNavigationBarItem(label: 'Books', icon: Icon(Icons.book)),
-        BottomNavigationBarItem(label: 'Articles', icon: Icon(Icons.article)),
-      ],
-      onTap: (index) => context.beamToNamed(
-        index == 0 ? '/?tab=books' : '/?tab=articles',
-      ),
-    );
-  }
-}
-
 class MyApp extends StatelessWidget {
   final routerDelegate = BeamerDelegate(
     locationBuilder: SimpleLocationBuilder(
@@ -210,18 +173,7 @@ class MyApp extends StatelessWidget {
         '/': (context, state) {
           final initialIndex =
               state.queryParameters['tab'] == 'articles' ? 1 : 0;
-          return Scaffold(
-            body: IndexedStack(
-              index: initialIndex,
-              children: [
-                BooksScreen(),
-                ArticlesScreen(),
-              ],
-            ),
-            bottomNavigationBar: BottomNavigationBarWidget(
-              initialIndex: initialIndex,
-            ),
-          );
+          return HomeScreen(initialIndex: initialIndex);
         },
         '/books/:bookId': (context, state) => BeamPage(
               key: ValueKey('book-${state.pathParameters['bookId']}'),
