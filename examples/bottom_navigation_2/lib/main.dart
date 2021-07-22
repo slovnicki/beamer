@@ -182,7 +182,15 @@ class MyApp extends StatelessWidget {
             key: ValueKey('book-$bookId'),
             title: book['title'],
             child: BookDetailsScreen(book: book),
-            popToNamed: '/?tab=books',
+            onPopPage: (context, delegate, page) {
+              delegate.update(
+                configuration: RouteInformation(
+                  location: '/?tab=books',
+                ),
+                rebuild: false,
+              );
+              return true;
+            },
           );
         },
         'articles/:articleId': (context, state) {
@@ -193,7 +201,15 @@ class MyApp extends StatelessWidget {
             key: ValueKey('articles-$articleId'),
             title: article['title'],
             child: ArticleDetailsScreen(article: article),
-            popToNamed: '/?tab=articles',
+            onPopPage: (context, delegate, page) {
+              delegate.update(
+                configuration: RouteInformation(
+                  location: '/?tab=articles',
+                ),
+                rebuild: false,
+              );
+              return true;
+            },
           );
         },
       },
