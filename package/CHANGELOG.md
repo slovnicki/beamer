@@ -1,6 +1,7 @@
 # 
 
-- **BREAKING** BeamerDelegate.listener has been renamed to BeamerDelegate.routeListener
+- **BREAKING** `BeamerDelegate.listener` has been renamed to `BeamerDelegate.routeListener`
+- **Add** `BeamerDelegate.buildListener`, which is called after the pages are built.
 # 0.15.0
 
 - **BREAKING:** "top-level state", the one in `BeamerDelegate` is now `RouteInformation` instead of `BeamState`

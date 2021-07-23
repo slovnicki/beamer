@@ -6,6 +6,7 @@ import 'test_locations.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  final List<BeamPage> lastCurrentPagesFromBuildListner = List.empty(growable: true);
   RouteInformation? lastRouteInfoFromRouteListener;
   BeamLocation? lastBeamLocationFromRouteListener;
 
@@ -13,6 +14,9 @@ void main() {
     routeListener: (RouteInformation info, BeamLocation location) {
       lastRouteInfoFromRouteListener = info;
       lastBeamLocationFromRouteListener = location;
+    },
+    buildListener: (BeamerDelegate delegate) {
+      lastCurrentPagesFromBuildListner.addAll(delegate.currentPages);
     },
     locationBuilder: (routeInformation) {
       if (routeInformation.location?.contains('l1') ?? false) {
@@ -29,6 +33,10 @@ void main() {
     },
   );
   delegate.setNewRoutePath(const RouteInformation(location: '/l1'));
+
+  setUp(() {
+    lastCurrentPagesFromBuildListner.clear();
+  });
 
   group('initialization & beaming', () {
     test('initialLocation is set', () {
@@ -130,6 +138,19 @@ void main() {
     expect(lastBeamLocationFromRouteListener, isA<Location1>());
     expect(lastRouteInfoFromRouteListener!.location, equals("/l1"));
   });
+
+
+   testWidgets('buildListener is called when build is called',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routeInformationParser: BeamerParser(),
+        routerDelegate: delegate,
+      ),
+    );
+    expect(lastCurrentPagesFromBuildListner.last.key, ValueKey("l1"));
+  });
+
   test('custom state can be updated', () {
     delegate.beamToNamed('/custom/test');
     expect(
