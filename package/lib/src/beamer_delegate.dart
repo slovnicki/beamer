@@ -129,13 +129,13 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   final String initialPath;
 
   /// The routeListener will be called on every navigation event
-  /// and will recieve the [state] and [currentBeamLocation].
+  /// and will recieve the [configuration] and [currentBeamLocation].
   final void Function(RouteInformation, BeamLocation)? routeListener;
-  
-  /// The buidListener will be called every time after the currentPages 
+
+  /// The buildListener will be called every time after the [currentPages]
   /// are updated. it receives a reference to this delegate.
-  final void Function(BeamerDelegate)? buildListener;
-  
+  final void Function(BuildContext, BeamerDelegate)? buildListener;
+
   /// Whether to prefer updating [currentBeamLocation] if it's of the same type
   /// as the [BeamLocation] being beamed to,
   /// instead of adding it to [beamLocationHistory].
@@ -599,7 +599,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
             primaryColor: Theme.of(context).primaryColor.value,
           ));
         }
-        buildListener?.call(this);
+        buildListener?.call(context, this);
         return Navigator(
           key: navigatorKey,
           observers: navigatorObservers,
