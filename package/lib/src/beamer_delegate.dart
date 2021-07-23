@@ -17,7 +17,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   BeamerDelegate({
     required this.locationBuilder,
     this.initialPath = '/',
-    this.listener,
+    this.routeListener,
+    this.buildListener,
     this.preferUpdate = true,
     this.removeDuplicateHistory = true,
     this.notFoundPage,
@@ -127,10 +128,14 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// when there are no path segments.
   final String initialPath;
 
-  /// The listener for this, that will be called on every navigation event
+  /// The routeListener will be called on every navigation event
   /// and will recieve the [state] and [currentBeamLocation].
-  final void Function(RouteInformation, BeamLocation)? listener;
-
+  final void Function(RouteInformation, BeamLocation)? routeListener;
+  
+  /// The buidListener will be called every time after the currentPages 
+  /// are updated. it receives a reference to this delegate.
+  final void Function(BeamerDelegate)? buildListener;
+  
   /// Whether to prefer updating [currentBeamLocation] if it's of the same type
   /// as the [BeamLocation] being beamed to,
   /// instead of adding it to [beamLocationHistory].
@@ -340,7 +345,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         final location = locationBuilder(this.configuration);
         _pushHistory(location, replaceCurrent: replaceCurrent);
       }
-      listener?.call(this.configuration, _currentBeamLocation);
+      routeListener?.call(this.configuration, _currentBeamLocation);
     }
 
     bool parentDidUpdate = false;
@@ -594,6 +599,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
             primaryColor: Theme.of(context).primaryColor.value,
           ));
         }
+        buildListener?.call(this);
         return Navigator(
           key: navigatorKey,
           observers: navigatorObservers,
