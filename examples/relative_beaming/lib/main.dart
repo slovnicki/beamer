@@ -6,7 +6,7 @@ class MyApp extends StatelessWidget {
 
   final innerDelegate = BeamerDelegate(
     updateParent: false,
-    listener: (routeInformation, _) =>
+    routeListener: (routeInformation, _) =>
         print('inner: ${routeInformation.location}'),
     locationBuilder: SimpleLocationBuilder(
       routes: {
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
     ),
   );
   late final rootDelegate = BeamerDelegate(
-    listener: (routeInformation, _) =>
+    routeListener: (routeInformation, _) =>
         print('root: ${routeInformation.location}'),
     locationBuilder: SimpleLocationBuilder(
       routes: {

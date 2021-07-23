@@ -1,3 +1,6 @@
+# 
+
+- **BREAKING** BeamerDelegate.listener has been renamed to BeamerDelegate.routeListener
 # 0.15.0
 
 - **BREAKING:** "top-level state", the one in `BeamerDelegate` is now `RouteInformation` instead of `BeamState`

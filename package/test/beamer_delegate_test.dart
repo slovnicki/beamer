@@ -6,7 +6,14 @@ import 'test_locations.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  RouteInformation? lastRouteInfoFromRouteListener;
+  BeamLocation? lastBeamLocationFromRouteListener;
+
   final delegate = BeamerDelegate(
+    routeListener: (RouteInformation info, BeamLocation location) {
+      lastRouteInfoFromRouteListener = info;
+      lastBeamLocationFromRouteListener = location;
+    },
     locationBuilder: (routeInformation) {
       if (routeInformation.location?.contains('l1') ?? false) {
         return Location1(routeInformation);
@@ -116,6 +123,13 @@ void main() {
     expect(delegate.currentPages.length, 1);
   });
 
+   testWidgets('routeListener is called when update is called',
+      (tester) async {
+    final routeInfo = RouteInformation(location:  "/l1");
+    delegate.update(configuration: routeInfo);
+    expect(lastBeamLocationFromRouteListener, isA<Location1>());
+    expect(lastRouteInfoFromRouteListener!.location, equals("/l1"));
+  });
   test('custom state can be updated', () {
     delegate.beamToNamed('/custom/test');
     expect(

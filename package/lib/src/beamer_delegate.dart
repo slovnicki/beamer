@@ -17,7 +17,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   BeamerDelegate({
     required this.locationBuilder,
     this.initialPath = '/',
-    this.listener,
+    this.routeListener,
     this.preferUpdate = true,
     this.removeDuplicateHistory = true,
     this.notFoundPage,
@@ -129,7 +129,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   /// The listener for this, that will be called on every navigation event
   /// and will recieve the [state] and [currentBeamLocation].
-  final void Function(RouteInformation, BeamLocation)? listener;
+  final void Function(RouteInformation, BeamLocation)? routeListener;
 
   /// Whether to prefer updating [currentBeamLocation] if it's of the same type
   /// as the [BeamLocation] being beamed to,
@@ -340,7 +340,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         final location = locationBuilder(this.configuration);
         _pushHistory(location, replaceCurrent: replaceCurrent);
       }
-      listener?.call(this.configuration, _currentBeamLocation);
+      routeListener?.call(this.configuration, _currentBeamLocation);
     }
 
     bool parentDidUpdate = false;
