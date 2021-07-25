@@ -32,6 +32,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     this.setBrowserTabTitle = true,
     this.updateFromParent = true,
     this.updateParent = true,
+    this.clearBeamingHistoryOnSlashReached = false,
   }) {
     notFoundPage ??= const BeamPage(
       title: 'Not found',
@@ -206,6 +207,13 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// This means that parent's [beamStateHistory] will be in sync.
   final bool updateParent;
 
+  /// Whether to remove all entries from [routeHistory] when `/` route is reached,
+  /// regardless of how it was reached.
+  ///
+  /// Note that [popToNamed] will also try to clear as much [routeHistory]
+  /// as possible, even when this is set to `false`.
+  final bool clearBeamingHistoryOnSlashReached;
+
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   /// {@template routeHistory}
@@ -331,6 +339,11 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     popConfiguration = popConfiguration?.copyWith(
       location: Utils.trimmed(popConfiguration.location),
     );
+
+    if (configuration?.location == '/' && clearBeamingHistoryOnSlashReached) {
+      beamLocationHistory.clear();
+      routeHistory.clear();
+    }
 
     active = true;
     _popConfiguration = popConfiguration ?? _popConfiguration;

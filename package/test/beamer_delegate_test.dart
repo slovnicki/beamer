@@ -556,4 +556,117 @@ void main() {
     expect(rootDelegate.configuration.location, '/test');
     expect(childDelegate.configuration.location, '/xx');
   });
+
+  group('beaming history and /:', () {
+    testWidgets("history is not cleared when beamToNamed", (tester) async {
+      final delegate = BeamerDelegate(
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '/': (context, state) => Container(),
+            '/test': (context, state) => Container(),
+            '/test/deeper': (context, state) => Container(),
+          },
+        ),
+      );
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: delegate,
+        ),
+      );
+
+      delegate.beamToNamed('/test');
+      await tester.pump();
+      expect(delegate.configuration.location, '/test');
+      expect(delegate.routeHistory.length, 2);
+
+      delegate.beamToNamed('/test/deeper');
+      await tester.pump();
+      expect(delegate.configuration.location, '/test/deeper');
+      expect(delegate.routeHistory.length, 3);
+
+      delegate.beamToNamed('/');
+      await tester.pump(const Duration(milliseconds: 16));
+      expect(delegate.configuration.location, '/');
+      expect(delegate.routeHistory.length, 4);
+    });
+
+    testWidgets("history is cleared when popToNamed", (tester) async {
+      final delegate = BeamerDelegate(
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '/': (context, state) => Container(),
+            '/test': (context, state) => Container(),
+            '/test/deeper': (context, state) => Container(),
+          },
+        ),
+      );
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: delegate,
+        ),
+      );
+
+      delegate.beamToNamed('/test');
+      await tester.pump();
+      expect(delegate.configuration.location, '/test');
+      expect(delegate.routeHistory.length, 2);
+
+      delegate.beamToNamed('/test/deeper');
+      await tester.pump();
+      expect(delegate.configuration.location, '/test/deeper');
+      expect(delegate.routeHistory.length, 3);
+
+      delegate.popToNamed('/');
+      await tester.pump(const Duration(milliseconds: 16));
+      expect(delegate.configuration.location, '/');
+      expect(delegate.routeHistory.length, 1);
+    });
+
+    testWidgets("history is cleared regardless, if option is set",
+        (tester) async {
+      final delegate = BeamerDelegate(
+        clearBeamingHistoryOnSlashReached: true,
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '/': (context, state) => Container(),
+            '/test': (context, state) => Container(),
+            '/test/deeper': (context, state) => Container(),
+          },
+        ),
+      );
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: delegate,
+        ),
+      );
+
+      delegate.beamToNamed('/test');
+      await tester.pump();
+      expect(delegate.configuration.location, '/test');
+      expect(delegate.routeHistory.length, 2);
+
+      delegate.beamToNamed('/test/deeper');
+      await tester.pump();
+      expect(delegate.configuration.location, '/test/deeper');
+      expect(delegate.routeHistory.length, 3);
+
+      delegate.beamToNamed('/');
+      await tester.pump(const Duration(milliseconds: 16));
+      expect(delegate.configuration.location, '/');
+      expect(delegate.routeHistory.length, 1);
+
+      delegate.beamToNamed('/test/deeper');
+      await tester.pump();
+      expect(delegate.configuration.location, '/test/deeper');
+      expect(delegate.routeHistory.length, 2);
+
+      delegate.popToNamed('/');
+      await tester.pump(const Duration(seconds: 1));
+      expect(delegate.configuration.location, '/');
+      expect(delegate.routeHistory.length, 1);
+    });
+  });
 }
