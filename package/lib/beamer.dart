@@ -9,5 +9,5 @@ export 'src/beamer_delegate.dart';
 export 'src/beamer.dart';
 export 'src/beamer_provider.dart';
 export 'src/beamer_back_button_dispatcher.dart';
-export 'src/beamer_location_builder.dart';
+export 'src/location_builders.dart';
 export 'src/transition_delegates.dart';

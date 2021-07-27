@@ -286,7 +286,7 @@ void main() {
       testWidgets('guard beamTo changes the location on build', (tester) async {
         final router = BeamerDelegate(
           initialPath: '/l1',
-          locationBuilder: (routeInformation) {
+          locationBuilder: (routeInformation, _) {
             if (routeInformation.location?.contains('l1') ?? false) {
               return Location1(routeInformation);
             }
@@ -317,7 +317,7 @@ void main() {
           (tester) async {
         final router = BeamerDelegate(
           initialPath: '/l1',
-          locationBuilder: (routeInformation) {
+          locationBuilder: (routeInformation, _) {
             if (routeInformation.location?.contains('l1') ?? false) {
               return Location1(routeInformation);
             }
@@ -410,8 +410,8 @@ void main() {
       expect(delegate.configuration.location, '/1');
       expect(
           delegate.currentBeamLocation.state.routeInformation.location, '/1');
-      expect(delegate.beamLocationHistory.length, 1);
-      expect(delegate.routeHistory.length, 1);
+      expect(delegate.beamingHistory.length, 1);
+      expect(delegate.beamingHistory.last.history.length, 1);
 
       delegate.beamToNamed('/2');
       await tester.pump();
@@ -419,8 +419,8 @@ void main() {
       expect(delegate.configuration.location, '/1');
       expect(
           delegate.currentBeamLocation.state.routeInformation.location, '/1');
-      expect(delegate.beamLocationHistory.length, 1);
-      expect(delegate.routeHistory.length, 1);
+      expect(delegate.beamingHistory.length, 1);
+      expect(delegate.beamingHistory.last.history.length, 1);
     });
   });
 }

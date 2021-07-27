@@ -105,7 +105,7 @@ extension BeamerExtensions on BuildContext {
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
-      replaceCurrent: replaceCurrent,
+      // replaceCurrent: replaceCurrent,
     );
   }
 
@@ -128,7 +128,7 @@ extension BeamerExtensions on BuildContext {
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
-      replaceCurrent: replaceCurrent,
+      // replaceCurrent: replaceCurrent,
     );
   }
 
@@ -166,15 +166,11 @@ extension BeamerExtensions on BuildContext {
   /// {@macro currentPages}
   List<BeamPage> get currentBeamPages => Beamer.of(this).currentPages;
 
-  /// {@macro routeHistory}
-  List<RouteInformation> get routeHistory => Beamer.of(this).routeHistory;
+  /// {@macro beamingHistory}
+  List<BeamLocation> get beamingHistory => Beamer.of(this).beamingHistory;
 
   /// {@macro canBeamBack}
   bool get canBeamBack => Beamer.of(this).canBeamBack;
-
-  /// {@macro beamLocationHistory}
-  List<BeamLocation> get beamLocationHistory =>
-      Beamer.of(this).beamLocationHistory;
 
   /// {@macro canPopBeamLocation}
   bool get canPopBeamLocation => Beamer.of(this).canPopBeamLocation;

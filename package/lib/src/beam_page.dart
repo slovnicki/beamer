@@ -20,7 +20,7 @@ class BeamPage extends Page {
     String? name,
     required this.child,
     this.title,
-    this.onPopPage = defaultOnPopPage,
+    this.onPopPage = pathSegmentPop,
     this.popToNamed,
     this.type = BeamPageType.material,
     this.routeBuilder,
@@ -29,20 +29,26 @@ class BeamPage extends Page {
   }) : super(key: key, name: name);
 
   /// The default pop behavior for [BeamPage].
-  static bool defaultOnPopPage(
+  ///
+  /// Pops the last path segment from URI and calls [BeamerDelegate.update].
+  static bool pathSegmentPop(
     BuildContext context,
     BeamerDelegate delegate,
     BeamPage poppedPage,
   ) {
-    final beamLocation = delegate.currentBeamLocation;
-    final previousRouteInformation = delegate.routeHistory.length > 1
-        ? delegate.routeHistory[delegate.routeHistory.length - 2]
-        : null;
-    final previousUri = previousRouteInformation != null
-        ? Uri.parse(previousRouteInformation.location ?? '/')
-        : null;
+    if (delegate.beamingHistoryCompleteLength <= 1) {
+      return false;
+    }
 
-    final location = beamLocation.state.routeInformation.location ?? '/';
+    final poppedHistoryElement = delegate.removeLastHistoryElement();
+    final previousHistoryElement = delegate.beamingHistory.last.history.last;
+
+    final previousUri = Uri.parse(
+      previousHistoryElement.state.routeInformation.location ?? '/',
+    );
+
+    final location =
+        poppedHistoryElement!.state.routeInformation.location ?? '/';
     final pathSegments = Uri.parse(location).pathSegments;
     final queryParameters = Uri.parse(location).queryParameters;
     var popUri = Uri(
@@ -54,17 +60,39 @@ class BeamPage extends Page {
     popUri = Uri(
       pathSegments: popUri.pathSegments,
       queryParameters:
-          (popUriPath == previousUri?.path && !poppedPage.keepQueryOnPop)
-              ? previousUri?.queryParameters
+          (popUriPath == previousUri.path && !poppedPage.keepQueryOnPop)
+              ? previousUri.queryParameters
               : popUri.queryParameters,
     );
 
-    delegate.removeLastRouteInformation();
+    if (popUriPath == previousUri.path) {
+      delegate.removeLastHistoryElement();
+    }
     delegate.update(
       configuration: delegate.configuration.copyWith(
         location:
             popUriPath + (popUri.query.isNotEmpty ? '?${popUri.query}' : ''),
       ),
+    );
+
+    return true;
+  }
+
+  /// Pops the last route from history and calls [BeamerDelegate.update].
+  static bool routePop(
+    BuildContext context,
+    BeamerDelegate delegate,
+    BeamPage poppedPage,
+  ) {
+    if (delegate.beamingHistoryCompleteLength <= 1) {
+      return false;
+    }
+
+    delegate.removeLastHistoryElement();
+    final previousHistoryElement = delegate.removeLastHistoryElement();
+
+    delegate.update(
+      configuration: previousHistoryElement!.state.routeInformation.copyWith(),
     );
 
     return true;

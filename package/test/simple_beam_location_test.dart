@@ -26,6 +26,7 @@ void main() {
       ));
       delegate.beamToNamed('/test/');
       await tester.pump();
+      print('aaaaaaaaa ${delegate.currentPages.first.key}');
       expect(delegate.currentPages.length, 2);
     });
 

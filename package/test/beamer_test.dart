@@ -64,11 +64,11 @@ void main() {
       'beamStateHistory contains multiple entries and beamBack is possible',
       (tester) async {
     await tester.pumpWidget(app);
-    expect(Beamer.of(testContext!).routeHistory.length, 2);
+    expect(Beamer.of(testContext!).beamingHistoryCompleteLength, 2);
     expect(testContext!.canBeamBack, true);
     testContext!.beamBack();
     await tester.pump();
-    expect(Beamer.of(testContext!).routeHistory.length, 1);
+    expect(Beamer.of(testContext!).beamingHistoryCompleteLength, 1);
     expect(testContext!.canBeamBack, false);
     expect(
         testContext!.currentBeamLocation.state.routeInformation.location, '/');
@@ -81,7 +81,7 @@ void main() {
     testContext!.beamTo(NotFound(path: '/not-found'));
     await tester.pump();
     expect(testContext!.currentBeamLocation, isA<NotFound>());
-    expect(Beamer.of(testContext!).beamLocationHistory.length, 2);
+    expect(Beamer.of(testContext!).beamingHistory, 2);
     expect(testContext!.canPopBeamLocation, true);
     testContext!.popBeamLocation();
   });
@@ -165,10 +165,9 @@ void main() {
     expect(Beamer.of(testContext!), isA<BeamerDelegate>());
   });
 
-  testWidgets('histories are accessible through context extension methods',
+  testWidgets('history is accessible through context extension method',
       (tester) async {
     await tester.pumpWidget(app);
-    expect(testContext!.routeHistory.length, greaterThan(0));
-    expect(testContext!.beamLocationHistory.length, greaterThan(0));
+    expect(testContext!.beamingHistory.length, greaterThan(0));
   });
 }

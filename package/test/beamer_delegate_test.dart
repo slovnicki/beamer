@@ -19,7 +19,7 @@ void main() {
     buildListener: (_, BeamerDelegate delegate) {
       lastCurrentPagesFromBuildListner.addAll(delegate.currentPages);
     },
-    locationBuilder: (routeInformation) {
+    locationBuilder: (routeInformation, _) {
       if (routeInformation.location?.contains('l1') ?? false) {
         return Location1(routeInformation);
       }
@@ -65,10 +65,10 @@ void main() {
     test(
         'beaming to the same location type will not add it to history but will update current location',
         () {
-      final historyLength = delegate.beamLocationHistory.length;
+      final historyLength = delegate.beamingHistory.length;
       delegate.beamToNamed('/l2/2?q=t&r=s', data: {'x': 'z'});
       final location = delegate.currentBeamLocation;
-      expect(delegate.beamLocationHistory.length, historyLength);
+      expect(delegate.beamingHistory.length, historyLength);
       expect(
           (location.state as BeamState).pathParameters.containsKey('id'), true);
       expect((location.state as BeamState).pathParameters['id'], '2');
@@ -94,27 +94,27 @@ void main() {
     });
 
     test('duplicate locations are removed from history', () {
-      expect(delegate.beamLocationHistory.length, 1);
-      expect(delegate.beamLocationHistory[0], isA<Location1>());
+      expect(delegate.beamingHistory.length, 1);
+      expect(delegate.beamingHistory[0], isA<Location1>());
       delegate.beamToNamed('/l2');
-      expect(delegate.beamLocationHistory.length, 2);
-      expect(delegate.beamLocationHistory[0], isA<Location1>());
+      expect(delegate.beamingHistory.length, 2);
+      expect(delegate.beamingHistory[0], isA<Location1>());
       delegate.beamToNamed('/l1');
-      expect(delegate.beamLocationHistory.length, 2);
-      expect(delegate.beamLocationHistory[0], isA<Location2>());
+      expect(delegate.beamingHistory.length, 2);
+      expect(delegate.beamingHistory[0], isA<Location2>());
     });
 
     test(
         'beamTo replaceCurrent removes previous history state before appending new',
         () {
-      expect(delegate.beamLocationHistory.length, 2);
-      expect(delegate.beamLocationHistory[0], isA<Location2>());
+      expect(delegate.beamingHistory.length, 2);
+      expect(delegate.beamingHistory[0], isA<Location2>());
       expect(delegate.currentBeamLocation, isA<Location1>());
       delegate.beamTo(
         Location2(const RouteInformation(location: '/l2')),
         replaceCurrent: true,
       );
-      expect(delegate.beamLocationHistory.length, 1);
+      expect(delegate.beamingHistory.length, 1);
       expect(delegate.currentBeamLocation, isA<Location2>());
     });
   });
@@ -133,7 +133,7 @@ void main() {
   });
 
   testWidgets('routeListener is called when update is called', (tester) async {
-    final routeInfo = RouteInformation(location: "/l1");
+    const routeInfo = RouteInformation(location: "/l1");
     delegate.update(configuration: routeInfo);
     expect(lastBeamLocationFromRouteListener, isA<Location1>());
     expect(lastRouteInfoFromRouteListener!.location, equals("/l1"));
@@ -146,7 +146,7 @@ void main() {
         routerDelegate: delegate,
       ),
     );
-    expect(lastCurrentPagesFromBuildListner.last.key, ValueKey("l1"));
+    expect(lastCurrentPagesFromBuildListner.last.key, const ValueKey("l1"));
   });
 
   test('custom state can be updated', () {
@@ -167,15 +167,8 @@ void main() {
     delegate.beamBack();
   });
 
-  test('clearHistory removes all but last entry (current location)', () {
-    final currentBeamLocation = delegate.currentBeamLocation;
-    expect(delegate.beamLocationHistory.length, greaterThan(1));
-    delegate.clearBeamLocationHistory();
-    expect(delegate.beamLocationHistory.length, equals(1));
-    expect(delegate.currentBeamLocation, currentBeamLocation);
-  });
-
   testWidgets('popToNamed forces pop to specified location', (tester) async {
+    delegate.beamingHistory.removeRange(0, delegate.beamingHistory.length - 1);
     await tester.pumpWidget(
       MaterialApp.router(
         routeInformationParser: BeamerParser(),
@@ -184,49 +177,53 @@ void main() {
     );
     delegate.beamToNamed('/l1/one', popToNamed: '/l2');
     await tester.pump();
-    final historyLength = delegate.beamLocationHistory.length;
+    final historyLength = delegate.beamingHistory.length;
     expect(delegate.currentBeamLocation, isA<Location1>());
     await delegate.popRoute();
     await tester.pump();
     expect(delegate.currentBeamLocation, isA<Location2>());
-    expect(delegate.beamLocationHistory.length, equals(historyLength));
+    expect(delegate.beamingHistory.length, equals(historyLength));
   });
 
   test('beamBack leads to previous beam state and all helpers are correct', () {
-    delegate.clearRouteHistory();
-    expect(delegate.routeHistory.length, 1);
+    delegate.beamingHistory.removeRange(0, delegate.beamingHistory.length - 1);
+    delegate.beamingHistory.last.history
+        .removeRange(0, delegate.beamingHistory.last.history.length - 1);
+    expect(delegate.beamingHistoryCompleteLength, 1);
     expect(delegate.currentBeamLocation, isA<Location2>());
 
     delegate.beamToNamed('/l1');
     delegate.beamToNamed('/l2');
 
-    expect(delegate.routeHistory.length, 3);
+    expect(delegate.beamingHistoryCompleteLength, 3);
     expect(delegate.currentBeamLocation, isA<Location2>());
     expect(delegate.canBeamBack, true);
 
     delegate.beamToNamed('/l1/one');
     delegate.beamToNamed('/l1/two');
-    expect(delegate.routeHistory.length, 5);
+    expect(delegate.beamingHistoryCompleteLength, 5);
     expect(delegate.currentBeamLocation, isA<Location1>());
 
     delegate.beamToNamed('/l1/two');
-    expect(delegate.routeHistory.length, 5);
+    expect(delegate.beamingHistoryCompleteLength, 5);
     expect(delegate.currentBeamLocation, isA<Location1>());
 
     expect(delegate.beamBack(), true);
     expect(delegate.currentBeamLocation, isA<Location1>());
     expect((delegate.currentBeamLocation.state as BeamState).uri.path,
         equals('/l1/one'));
-    expect(delegate.routeHistory.length, 4);
+    expect(delegate.beamingHistoryCompleteLength, 4);
 
     expect(delegate.beamBack(), true);
     expect(delegate.currentBeamLocation, isA<Location2>());
-    expect(delegate.routeHistory.length, 3);
+    expect(delegate.beamingHistoryCompleteLength, 3);
   });
 
   test('beamBack keeps data and can override it', () {
-    delegate.clearRouteHistory();
-    expect(delegate.routeHistory.length, 1);
+    delegate.beamingHistory.removeRange(0, delegate.beamingHistory.length - 1);
+    delegate.beamingHistory.last.history
+        .removeRange(0, delegate.beamingHistory.last.history.length - 1);
+    expect(delegate.beamingHistoryCompleteLength, 1);
     expect(delegate.currentBeamLocation, isA<Location2>());
 
     delegate.beamToNamed('/l1', data: {'x': 'y'});
@@ -350,7 +347,7 @@ void main() {
 
   group('Keeping data', () {
     final delegate = BeamerDelegate(
-      locationBuilder: (routeInformation) {
+      locationBuilder: (routeInformation, _) {
         if (routeInformation.location?.contains('l1') ?? false) {
           return Location1(routeInformation);
         }
@@ -450,13 +447,13 @@ void main() {
       await tester.pump();
       expect(rootDelegate.configuration.location, '/test');
       expect(childDelegate.configuration.location, '/test');
-      expect(childDelegate.routeHistory.length, 1);
+      expect(childDelegate.beamingHistory.last.history.length, 1);
 
       rootDelegate.beamToNamed('/test2');
       await tester.pump();
       expect(rootDelegate.configuration.location, '/test2');
       expect(childDelegate.configuration.location, '/test2');
-      expect(childDelegate.routeHistory.length, 2);
+      expect(childDelegate.beamingHistory.last.history.length, 2);
     });
 
     testWidgets("navigation on parent doesn't update nested Beamer",
@@ -494,13 +491,13 @@ void main() {
       await tester.pump();
       expect(rootDelegate.configuration.location, '/test');
       expect(childDelegate.configuration.location, '/test');
-      expect(childDelegate.routeHistory.length, 1);
+      expect(childDelegate.beamingHistory.last.history.length, 1);
 
       rootDelegate.beamToNamed('/test2');
       await tester.pump();
       expect(rootDelegate.configuration.location, '/test2');
       expect(childDelegate.configuration.location, '/test');
-      expect(childDelegate.routeHistory.length, 1);
+      expect(childDelegate.beamingHistory.last.history.length, 1);
     });
   });
 
@@ -578,17 +575,17 @@ void main() {
       delegate.beamToNamed('/test');
       await tester.pump();
       expect(delegate.configuration.location, '/test');
-      expect(delegate.routeHistory.length, 2);
+      expect(delegate.beamingHistory.last.history.length, 2);
 
       delegate.beamToNamed('/test/deeper');
       await tester.pump();
       expect(delegate.configuration.location, '/test/deeper');
-      expect(delegate.routeHistory.length, 3);
+      expect(delegate.beamingHistory.last.history.length, 3);
 
       delegate.beamToNamed('/');
       await tester.pump(const Duration(milliseconds: 16));
       expect(delegate.configuration.location, '/');
-      expect(delegate.routeHistory.length, 4);
+      expect(delegate.beamingHistory.last.history.length, 4);
     });
 
     testWidgets("history is cleared when popToNamed", (tester) async {
@@ -611,17 +608,17 @@ void main() {
       delegate.beamToNamed('/test');
       await tester.pump();
       expect(delegate.configuration.location, '/test');
-      expect(delegate.routeHistory.length, 2);
+      expect(delegate.beamingHistory.last.history.length, 2);
 
       delegate.beamToNamed('/test/deeper');
       await tester.pump();
       expect(delegate.configuration.location, '/test/deeper');
-      expect(delegate.routeHistory.length, 3);
+      expect(delegate.beamingHistory.last.history.length, 3);
 
       delegate.popToNamed('/');
       await tester.pump(const Duration(milliseconds: 16));
       expect(delegate.configuration.location, '/');
-      expect(delegate.routeHistory.length, 1);
+      expect(delegate.beamingHistory.last.history.length, 1);
     });
 
     testWidgets("history is cleared regardless, if option is set",
@@ -646,27 +643,27 @@ void main() {
       delegate.beamToNamed('/test');
       await tester.pump();
       expect(delegate.configuration.location, '/test');
-      expect(delegate.routeHistory.length, 2);
+      expect(delegate.beamingHistory.last.history.length, 2);
 
       delegate.beamToNamed('/test/deeper');
       await tester.pump();
       expect(delegate.configuration.location, '/test/deeper');
-      expect(delegate.routeHistory.length, 3);
+      expect(delegate.beamingHistory.last.history.length, 3);
 
       delegate.beamToNamed('/');
       await tester.pump(const Duration(milliseconds: 16));
       expect(delegate.configuration.location, '/');
-      expect(delegate.routeHistory.length, 1);
+      expect(delegate.beamingHistory.last.history.length, 1);
 
       delegate.beamToNamed('/test/deeper');
       await tester.pump();
       expect(delegate.configuration.location, '/test/deeper');
-      expect(delegate.routeHistory.length, 2);
+      expect(delegate.beamingHistory.last.history.length, 2);
 
       delegate.popToNamed('/');
       await tester.pump(const Duration(seconds: 1));
       expect(delegate.configuration.location, '/');
-      expect(delegate.routeHistory.length, 1);
+      expect(delegate.beamingHistory.last.history.length, 1);
     });
 
     testWidgets("history is cleared regardless, if option is set",
@@ -689,27 +686,27 @@ void main() {
       );
 
       expect(delegate.configuration.location, '/');
-      expect(delegate.routeHistory.length, 1);
+      expect(delegate.beamingHistory.last.history.length, 1);
 
       delegate.beamToNamed('/test');
       await tester.pump();
       expect(delegate.configuration.location, '/test');
-      expect(delegate.routeHistory.length, 1);
+      expect(delegate.beamingHistory.last.history.length, 1);
 
       delegate.beamToNamed('/test/deeper');
       await tester.pump();
       expect(delegate.configuration.location, '/test/deeper');
-      expect(delegate.routeHistory.length, 2);
+      expect(delegate.beamingHistory.last.history.length, 2);
 
       delegate.beamToNamed('/');
       await tester.pump(const Duration(milliseconds: 16));
       expect(delegate.configuration.location, '/');
-      expect(delegate.routeHistory.length, 3);
+      expect(delegate.beamingHistory.last.history.length, 3);
 
       delegate.beamToNamed('/test');
       await tester.pump();
       expect(delegate.configuration.location, '/test');
-      expect(delegate.routeHistory.length, 1);
+      expect(delegate.beamingHistory.last.history.length, 1);
     });
   });
 }

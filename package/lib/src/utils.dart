@@ -18,12 +18,12 @@ abstract class Utils {
     for (final beamLocation in beamLocations) {
       if (canBeamLocationHandleUri(beamLocation, uri)) {
         return beamLocation
-          ..state = beamLocation.createState(
+          ..history.add(HistoryElement(beamLocation.createState(
             RouteInformation(
               location: uri.toString(),
               state: data,
             ),
-          );
+          )));
       }
     }
     return NotFound(path: uri.path);
