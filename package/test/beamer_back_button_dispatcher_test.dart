@@ -37,12 +37,14 @@ void main() {
       expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
     });
 
-    testWidgets('back button beams back', (tester) async {
+    testWidgets('back button beams back if cannot pop', (tester) async {
       final delegate = BeamerDelegate(
+        initialPath: '/test/deeper',
         locationBuilder: SimpleLocationBuilder(
           routes: {
             '/': (context, state) => Container(),
             '/test': (context, state) => Container(),
+            '/test/deeper': (context, state) => Container(),
           },
         ),
       );
@@ -55,7 +57,6 @@ void main() {
           backButtonDispatcher: backButtonDispatcher,
         ),
       );
-      delegate.beamToNamed('/test');
       delegate.beamToNamed('/');
       await tester.pump();
       expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
@@ -63,7 +64,42 @@ void main() {
       await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pump();
       expect(delegate.currentBeamLocation.state.routeInformation.location,
-          '/test');
+          '/test/deeper');
+    });
+
+    testWidgets(
+        'back button does not beams back if cannot pop, if fallback is set',
+        (tester) async {
+      final delegate = BeamerDelegate(
+        initialPath: '/test/deeper',
+        locationBuilder: SimpleLocationBuilder(
+          routes: {
+            '/': (context, state) => Container(),
+            '/test': (context, state) => Container(),
+            '/test/deeper': (context, state) => Container(),
+          },
+        ),
+      );
+      final backButtonDispatcher = BeamerBackButtonDispatcher(
+        delegate: delegate,
+        fallbackToBeamBack: false,
+      );
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: delegate,
+          backButtonDispatcher: backButtonDispatcher,
+        ),
+      );
+      delegate.beamToNamed('/');
+      await tester.pump();
+      expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
+
+      final didBeamBack =
+          await backButtonDispatcher.invokeCallback(Future.value(false));
+      await tester.pump();
+      expect(didBeamBack, false);
+      expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
     });
 
     testWidgets('onBack has priority', (tester) async {
@@ -131,10 +167,18 @@ void main() {
       await tester.pump();
       expect(delegate.currentBeamLocation.state.routeInformation.location,
           '/test');
+      expect(childDelegate.currentBeamLocation.state.routeInformation.location,
+          '/test');
 
-      await backButtonDispatcher.invokeCallback(Future.value(false));
-      await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
+      final did =
+          await backButtonDispatcher.invokeCallback(Future.value(false));
+      // print('did: $did');
+      // await tester.pump(Duration(seconds: 1));
+      // await tester.pump();
+      // expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
+      // expect(childDelegate.currentBeamLocation.state.routeInformation.location,
+      //     '/');
+      // TODO
     });
 
     testWidgets('back button beams back', (tester) async {

@@ -235,7 +235,7 @@ void main() {
       expect(delegate.currentPages.last.key, const ValueKey('book-1-details'));
 
       delegate.navigator.pop();
-      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
       expect(delegate.currentPages.length, 2);
       expect(delegate.currentPages.last.key, const ValueKey('books'));
     });

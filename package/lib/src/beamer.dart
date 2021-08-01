@@ -76,7 +76,8 @@ class BeamerState extends State<Beamer> {
         ((parent.backButtonDispatcher is BeamerBackButtonDispatcher &&
                 widget.createBackButtonDispatcher)
             ? BeamerChildBackButtonDispatcher(
-                parent: parent.backButtonDispatcher!,
+                parent:
+                    parent.backButtonDispatcher! as BeamerBackButtonDispatcher,
                 delegate: routerDelegate,
               )
             : null);

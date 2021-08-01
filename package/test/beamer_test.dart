@@ -81,7 +81,7 @@ void main() {
     testContext!.beamTo(NotFound(path: '/not-found'));
     await tester.pump();
     expect(testContext!.currentBeamLocation, isA<NotFound>());
-    expect(Beamer.of(testContext!).beamingHistory, 2);
+    expect(Beamer.of(testContext!).beamingHistory.length, 2);
     expect(testContext!.canPopBeamLocation, true);
     testContext!.popBeamLocation();
   });

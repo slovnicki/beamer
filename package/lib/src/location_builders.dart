@@ -50,8 +50,7 @@ class SimpleLocationBuilder {
     if (matched.isNotEmpty) {
       return SimpleBeamLocation(
         routeInformation: routeInformation,
-        routes: Map.fromEntries(
-            routes.entries.where((e) => matched.containsKey(e.key))),
+        routes: routes,
         navBuilder: builder,
       );
     } else {

@@ -78,12 +78,12 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
     RouteInformation? routeInformation,
     BeamParameters? beamParameters,
   ]) {
-    history.add(HistoryElement(
+    addToHistory(
       createState(
         routeInformation ?? const RouteInformation(location: '/'),
       ),
       beamParameters ?? const BeamParameters(),
-    ));
+    );
   }
 
   /// A state of this location.
@@ -111,14 +111,16 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   /// Useful with [BeamState.copyWith].
   void update([
     T Function(T)? copy,
-    bool rebuild = true,
     BeamParameters? beamParameters,
+    bool rebuild = true,
+    bool tryPoppingHistory = true,
   ]) {
     if (copy != null) {
-      history.add(HistoryElement(
+      addToHistory(
         copy(state),
         beamParameters ?? const BeamParameters(),
-      ));
+        tryPoppingHistory,
+      );
     }
     if (rebuild) {
       notifyListeners();
@@ -131,8 +133,26 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   void addToHistory(
     RouteInformationSerializable state, [
     BeamParameters beamParameters = const BeamParameters(),
-  ]) =>
+    bool tryPopping = true,
+  ]) {
+    if (tryPopping) {
+      final sameStateIndex = history.indexWhere((element) {
+        return element.state.routeInformation.location ==
+            state.routeInformation.location;
+      });
+      if (sameStateIndex != -1) {
+        history.removeRange(sameStateIndex, history.length);
+      }
+    }
+    if (history.isEmpty ||
+        state.routeInformation.location !=
+            this.state.routeInformation.location) {
+      if (state is ChangeNotifier) {
+        (state as ChangeNotifier).addListener(update);
+      }
       history.add(HistoryElement<T>(state as T, beamParameters));
+    }
+  }
 
   /// Can this handle the [uri] based on its [pathBlueprints].
   ///
@@ -230,9 +250,10 @@ class EmptyBeamLocation extends BeamLocation<BeamState> {
 class SimpleBeamLocation extends BeamLocation<BeamState> {
   SimpleBeamLocation({
     required RouteInformation routeInformation,
+    BeamParameters? beamParameters,
     required this.routes,
     this.navBuilder,
-  }) : super(routeInformation);
+  }) : super(routeInformation, beamParameters);
 
   /// Map of all routes this location handles.
   Map<Pattern, dynamic Function(BuildContext, BeamState)> routes;
@@ -267,12 +288,11 @@ class SimpleBeamLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
     final filteredRoutes = chooseRoutes(state.routeInformation, routes.keys);
-    print('filteredroutes: ${filteredRoutes.keys}');
     final routeBuilders = Map.of(routes)
       ..removeWhere((key, value) => !filteredRoutes.containsKey(key));
     final sortedRoutes = routeBuilders.keys.toList()
       ..sort((a, b) => _compareKeys(a, b));
-    return sortedRoutes.map<BeamPage>((route) {
+    final pages = sortedRoutes.map<BeamPage>((route) {
       final routeElement = routes[route]!(context, state);
       if (routeElement is BeamPage) {
         return routeElement;
@@ -283,14 +303,17 @@ class SimpleBeamLocation extends BeamLocation<BeamState> {
         );
       }
     }).toList();
+    return pages;
   }
 
-  /// Chooses all the routes that "sub-match" [state.uri] to stack their pages.
+  /// Chooses all the routes that "sub-match" [state.routeInformation] to stack their pages.
   ///
   /// If none of the routes _matches_ [state.uri], nothing will be selected
   /// and [BeamerDelegate] will declare that the location is [NotFound].
   static Map<Pattern, String> chooseRoutes(
-      RouteInformation routeInformation, Iterable<Pattern> routes) {
+    RouteInformation routeInformation,
+    Iterable<Pattern> routes,
+  ) {
     final matched = <Pattern, String>{};
     bool overrideNotFound = false;
     final uri = Uri.parse(routeInformation.location ?? '/');
