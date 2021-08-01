@@ -1,18 +1,20 @@
-# 
-
-- **BREAKING** `BeamerDelegate.listener` has been renamed to `BeamerDelegate.routeListener`
-- **Add** `BeamerDelegate.buildListener`, which is called after the pages are built.
 # 0.15.0
 
 - **BREAKING:** "top-level state", the one in `BeamerDelegate` is now `RouteInformation` instead of `BeamState`
     - `BeamerDelegate.state` doesn't exist anymore and is replaced with `BeamerDelegate.configuration` which is `RouteInformation` and not `BeamState`
-    - `locationBuilder` now works with `RouteInformation` instead of `BeamState`
+    - `locationBuilder` now works with `RouteInformation` and `BeamConfiguration` instead of `BeamState`
     - `super()` constructor on `BeamLocation` now takes optional `RouteInformation` instead of `BeamState`
     - in order to continue using custom `BeamLocation`s with `BeamState` state, generic type has to be specified; `class MyBeamLocation extends BeamLocation<BeamState>`
+- **BREAKING:** `SimpleLocationBuilder` is renamed to `RoutesLocationBuilder`
+    - also the `SimpleBeamLocation` is renamed to `RoutesBeamLocation`
+- **BREAKING:** `beamStateHistory` and `beamLocationHistory` have been replaced with `beamingHistory` that is a `List<BeamLocation>` and each `BeamLocation` has `history` that is `List<HistoryElement>` where `HistoryElement` holds `state` and `BeamParameters`.
+- **BREAKING:** `BeamerDelegate.listener` has been renamed to `BeamerDelegate.routeListener`
 - **BREAKING:** The property `pageRouteBuilder` in `BeamPage` is replaced with a new property `routeBuilder` which works with any `RouteBuilder` not just `PageRouteBuilder`.
-- **BREAKING:** `BeamLocation.pathBlueprints` is now `List<Pattern>` instead of `List<dynamic>`
+- **BREAKING:** `pathBlueprints` is renamed to `pathPatterns` and is `List<Pattern>`.
 - **Add:** [firebase_core example](https://github.com/slovnicki/beamer/tree/master/examples/firebase_core)
 - **Add:** [firebase_auth example](https://github.com/slovnicki/beamer/tree/master/examples/firebase_auth)
+- **Add:** [change_notifier_custom_state example](https://github.com/slovnicki/beamer/tree/master/examples/change_notifier_custom_state)
+- **Add:** `BeamerDelegate.buildListener`, which is called after the pages are built.
 - **Add:** `fullScreenDialog` property to `BeamPage`
 - **Add:** flutter_lints
 - **Add:** a [presentation](https://github.com/slovnicki/beamer/blob/master/resources/navigator-2.0-and-beamer.pdf) resource about beamer
