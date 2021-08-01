@@ -8,6 +8,7 @@ class BeamerBackButtonDispatcher extends RootBackButtonDispatcher {
   BeamerBackButtonDispatcher({
     required this.delegate,
     this.onBack,
+    this.fallbackToBeamBack = true,
   });
 
   /// A [BeamerDelegate] that belongs to the same [Router]/[Beamer] as this.
@@ -18,16 +19,24 @@ class BeamerBackButtonDispatcher extends RootBackButtonDispatcher {
   /// Return `true` if back action can be handled and `false` otherwise.
   final Future<bool> Function(BeamerDelegate delegate)? onBack;
 
+  /// Whether to try to use `beamBack()` when pop cannot be done.
+  final bool fallbackToBeamBack;
+
   @override
   Future<bool> invokeCallback(Future<bool> defaultValue) async {
     if (onBack != null) {
-      return Future.value(await onBack!(delegate));
+      return (await onBack!(delegate));
     }
     bool didPopRoute = await super.invokeCallback(defaultValue);
     if (didPopRoute) {
-      return Future.value(didPopRoute);
+      return didPopRoute;
     }
-    return Future.value(delegate.beamBack());
+
+    if (fallbackToBeamBack) {
+      return delegate.beamBack();
+    } else {
+      return false;
+    }
   }
 }
 
@@ -35,10 +44,11 @@ class BeamerBackButtonDispatcher extends RootBackButtonDispatcher {
 /// to do custom [onBack] or [BeamerDelegate.beamBack].
 class BeamerChildBackButtonDispatcher extends ChildBackButtonDispatcher {
   BeamerChildBackButtonDispatcher({
-    required BackButtonDispatcher parent,
+    required BeamerBackButtonDispatcher parent,
     required this.delegate,
     this.onBack,
-  }) : super(parent);
+  })  : fallbackToBeamBack = parent.fallbackToBeamBack,
+        super(parent);
 
   /// A [BeamerDelegate] that belongs to the same [Router]/[Beamer] as this.
   final BeamerDelegate delegate;
@@ -48,18 +58,26 @@ class BeamerChildBackButtonDispatcher extends ChildBackButtonDispatcher {
   /// Return `true` if back action can be handled and `false` otherwise.
   final Future<bool> Function(BeamerDelegate delegate)? onBack;
 
+  /// Whether to try to use `beamBack()` when pop cannot be done.
+  final bool fallbackToBeamBack;
+
   @override
   Future<bool> invokeCallback(Future<bool> defaultValue) async {
     if (!delegate.active) {
-      return Future.value(false);
+      return false;
     }
     if (onBack != null) {
-      return Future.value(await onBack!(delegate));
+      return (await onBack!(delegate));
     }
     bool didPopRoute = await super.invokeCallback(defaultValue);
     if (didPopRoute) {
-      return Future.value(didPopRoute);
+      return didPopRoute;
     }
-    return Future.value(delegate.beamBack());
+
+    if (fallbackToBeamBack) {
+      return delegate.beamBack();
+    } else {
+      return false;
+    }
   }
 }

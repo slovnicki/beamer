@@ -24,6 +24,7 @@ void main() {
         routeInformationParser: BeamerParser(),
         routerDelegate: delegate,
       ));
+
       delegate.beamToNamed('/test/');
       await tester.pump();
       expect(delegate.currentPages.length, 2);
@@ -40,6 +41,8 @@ void main() {
           },
         ),
       );
+      delegate.setNewRoutePath(const RouteInformation(location: '/'));
+
       await tester.pumpWidget(
         MaterialApp.router(
           routeInformationParser: BeamerParser(),

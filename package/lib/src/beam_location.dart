@@ -3,6 +3,67 @@ import 'package:beamer/src/beam_state.dart';
 import 'package:beamer/src/utils.dart';
 import 'package:flutter/widgets.dart';
 
+/// Parameters used while beaming.
+class BeamParameters {
+  const BeamParameters({
+    this.transitionDelegate = const DefaultTransitionDelegate(),
+    this.popConfiguration,
+    this.beamBackOnPop = false,
+    this.popBeamLocationOnPop = false,
+    this.stacked = true,
+  });
+
+  /// Which transition delegate to use when building pages.
+  final TransitionDelegate transitionDelegate;
+
+  /// Which route to pop to, instead of default pop.
+  ///
+  /// This is more general than [beamBackOnPop].
+  final RouteInformation? popConfiguration;
+
+  /// Whether to implicitly [BeamerDelegate.beamBack] instead of default pop.
+  final bool beamBackOnPop;
+
+  /// Whether to remove entire current [BeamLocation] from history,
+  /// instead of default pop.
+  final bool popBeamLocationOnPop;
+
+  /// Whether all the pages produced by [BeamLocation.buildPages] are stacked.
+  /// If not (`false`), just the last page is taken.
+  final bool stacked;
+
+  /// Returns a copy of this with optional changes.
+  BeamParameters copyWith({
+    TransitionDelegate? transitionDelegate,
+    RouteInformation? popConfiguration,
+    bool? beamBackOnPop,
+    bool? popBeamLocationOnPop,
+    bool? stacked,
+  }) {
+    return BeamParameters(
+      transitionDelegate: transitionDelegate ?? this.transitionDelegate,
+      popConfiguration: popConfiguration ?? this.popConfiguration,
+      beamBackOnPop: beamBackOnPop ?? this.beamBackOnPop,
+      popBeamLocationOnPop: popBeamLocationOnPop ?? this.popBeamLocationOnPop,
+      stacked: stacked ?? this.stacked,
+    );
+  }
+}
+
+/// An element of [BeamLocation.history] list.
+///
+/// Contains the [BeamLocation.state] and [BeamParameters] at the moment
+/// of beaming to mentioned state.
+class HistoryElement<T extends RouteInformationSerializable> {
+  const HistoryElement(
+    this.state, [
+    this.parameters = const BeamParameters(),
+  ]);
+
+  final T state;
+  final BeamParameters parameters;
+}
+
 /// Configuration for a navigatable application region.
 ///
 /// Responsible for
@@ -13,17 +74,29 @@ import 'package:flutter/widgets.dart';
 /// Extend this class to define your locations to which you can then beam to.
 abstract class BeamLocation<T extends RouteInformationSerializable>
     extends ChangeNotifier {
-  BeamLocation([RouteInformation? routeInformation]) {
-    state = createState(
-      routeInformation ?? const RouteInformation(location: '/'),
+  BeamLocation([
+    RouteInformation? routeInformation,
+    BeamParameters? beamParameters,
+  ]) {
+    addToHistory(
+      createState(
+        routeInformation ?? const RouteInformation(location: '/'),
+      ),
+      beamParameters ?? const BeamParameters(),
     );
   }
 
   /// A state of this location.
   ///
   /// Upon beaming, it will be populated by all necessary attributes.
-  /// See [BeamState].
-  late T state;
+  /// See also: [BeamState].
+  T get state => history.last.state;
+
+  set state(T state) =>
+      history.last = HistoryElement(state, history.last.parameters);
+
+  /// Beam parameters used to beam to the [state].
+  BeamParameters get beamParameters => history.last.parameters;
 
   /// How to create state from generic [BeamState], that is produced
   /// by [BeamerDelegate] and passed via [BeamerDelegate.locationBuilder].
@@ -36,12 +109,48 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   /// If no callback is given, just notifies [BeamerDelegate] to rebuild.
   ///
   /// Useful with [BeamState.copyWith].
-  void update([T Function(T)? copy, bool rebuild = true]) {
+  void update([
+    T Function(T)? copy,
+    BeamParameters? beamParameters,
+    bool rebuild = true,
+    bool tryPoppingHistory = true,
+  ]) {
     if (copy != null) {
-      state = copy(state);
+      addToHistory(
+        copy(state),
+        beamParameters ?? const BeamParameters(),
+        tryPoppingHistory,
+      );
     }
     if (rebuild) {
       notifyListeners();
+    }
+  }
+
+  /// The history of beaming for this.
+  final List<HistoryElement<T>> history = [];
+
+  void addToHistory(
+    RouteInformationSerializable state, [
+    BeamParameters beamParameters = const BeamParameters(),
+    bool tryPopping = true,
+  ]) {
+    if (tryPopping) {
+      final sameStateIndex = history.indexWhere((element) {
+        return element.state.routeInformation.location ==
+            state.routeInformation.location;
+      });
+      if (sameStateIndex != -1) {
+        history.removeRange(sameStateIndex, history.length);
+      }
+    }
+    if (history.isEmpty ||
+        state.routeInformation.location !=
+            this.state.routeInformation.location) {
+      if (state is ChangeNotifier) {
+        (state as ChangeNotifier).addListener(update);
+      }
+      history.add(HistoryElement<T>(state as T, beamParameters));
     }
   }
 
@@ -141,9 +250,10 @@ class EmptyBeamLocation extends BeamLocation<BeamState> {
 class SimpleBeamLocation extends BeamLocation<BeamState> {
   SimpleBeamLocation({
     required RouteInformation routeInformation,
+    BeamParameters? beamParameters,
     required this.routes,
     this.navBuilder,
-  }) : super(routeInformation);
+  }) : super(routeInformation, beamParameters);
 
   /// Map of all routes this location handles.
   Map<Pattern, dynamic Function(BuildContext, BeamState)> routes;
@@ -156,13 +266,20 @@ class SimpleBeamLocation extends BeamLocation<BeamState> {
     return navBuilder?.call(context, navigator) ?? navigator;
   }
 
-  int _compareKeys(dynamic a, dynamic b) {
-    // try-catch a CastError
-    try {
-      return (a as String).length - (b as String).length;
-    } on TypeError {
-      return 1;
+  int _compareKeys(Pattern a, Pattern b) {
+    if (a is RegExp && b is RegExp) {
+      return a.pattern.length - b.pattern.length;
     }
+    if (a is RegExp && b is String) {
+      return a.pattern.length - b.length;
+    }
+    if (a is String && b is RegExp) {
+      return a.length - b.pattern.length;
+    }
+    if (a is String && b is String) {
+      return a.length - b.length;
+    }
+    return 0;
   }
 
   @override
@@ -171,11 +288,11 @@ class SimpleBeamLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
     final filteredRoutes = chooseRoutes(state.routeInformation, routes.keys);
-    final activeRoutes = Map.of(routes)
+    final routeBuilders = Map.of(routes)
       ..removeWhere((key, value) => !filteredRoutes.containsKey(key));
-    final sortedRoutes = activeRoutes.keys.toList()
+    final sortedRoutes = routeBuilders.keys.toList()
       ..sort((a, b) => _compareKeys(a, b));
-    return sortedRoutes.map<BeamPage>((route) {
+    final pages = sortedRoutes.map<BeamPage>((route) {
       final routeElement = routes[route]!(context, state);
       if (routeElement is BeamPage) {
         return routeElement;
@@ -186,14 +303,17 @@ class SimpleBeamLocation extends BeamLocation<BeamState> {
         );
       }
     }).toList();
+    return pages;
   }
 
-  /// Chooses all the routes that "sub-match" [state.uri] to stack their pages.
+  /// Chooses all the routes that "sub-match" [state.routeInformation] to stack their pages.
   ///
   /// If none of the routes _matches_ [state.uri], nothing will be selected
   /// and [BeamerDelegate] will declare that the location is [NotFound].
   static Map<Pattern, String> chooseRoutes(
-      RouteInformation routeInformation, Iterable<Pattern> routes) {
+    RouteInformation routeInformation,
+    Iterable<Pattern> routes,
+  ) {
     final matched = <Pattern, String>{};
     bool overrideNotFound = false;
     final uri = Uri.parse(routeInformation.location ?? '/');
