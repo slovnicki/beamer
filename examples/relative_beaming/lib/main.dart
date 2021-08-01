@@ -8,7 +8,7 @@ class MyApp extends StatelessWidget {
     updateParent: false,
     routeListener: (routeInformation, _) =>
         print('inner: ${routeInformation.location}'),
-    locationBuilder: SimpleLocationBuilder(
+    locationBuilder: RoutesLocationBuilder(
       routes: {
         '/test/1': (context, state) => ElevatedButton(
               onPressed: () => context.beamToNamed('/test/2'),
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
   late final rootDelegate = BeamerDelegate(
     routeListener: (routeInformation, _) =>
         print('root: ${routeInformation.location}'),
-    locationBuilder: SimpleLocationBuilder(
+    locationBuilder: RoutesLocationBuilder(
       routes: {
         '/': (context, state) => ElevatedButton(
               onPressed: () => context.beamToNamed('/test'),

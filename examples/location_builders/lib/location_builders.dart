@@ -5,7 +5,7 @@ import 'screens.dart';
 import 'data.dart';
 
 // OPTION A:
-final simpleLocationBuilder = SimpleLocationBuilder(
+final simpleLocationBuilder = RoutesLocationBuilder(
   routes: {
     '/': (context, state) => BeamPage(
           key: ValueKey('home'),
@@ -43,7 +43,7 @@ class BooksLocation extends BeamLocation<BeamState> {
   BooksLocation({RouteInformation? routeInformation}) : super(routeInformation);
 
   @override
-  List<String> get pathBlueprints => [
+  List<String> get pathPatterns => [
         '/',
         '/books/:bookId',
       ];

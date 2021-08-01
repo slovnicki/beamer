@@ -68,7 +68,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final _routerDelegate = BeamerDelegate(
-    locationBuilder: SimpleLocationBuilder(
+    locationBuilder: RoutesLocationBuilder(
       routes: {
         '/': (context, state) => HomeScreen(),
         '/books': (context, state) => BooksScreen(),

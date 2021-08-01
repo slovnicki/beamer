@@ -78,7 +78,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     _routerDelegate = BeamerDelegate(
       initialPath: '/splash',
-      locationBuilder: SimpleLocationBuilder(
+      locationBuilder: RoutesLocationBuilder(
         routes: {
           '/splash': (context, state) => SplashScreen(),
           '/login': (context, state) => LoginScreen(),
@@ -87,12 +87,12 @@ class _MyAppState extends State<MyApp> {
       ),
       guards: [
         BeamGuard(
-          pathBlueprints: ['/splash', '/loggedin'],
+          pathPatterns: ['/splash', '/loggedin'],
           check: (context, location) => _user != null,
           beamToNamed: '/login',
         ),
         BeamGuard(
-          pathBlueprints: ['/splash', '/login'],
+          pathPatterns: ['/splash', '/login'],
           check: (context, location) => _user == null,
           beamToNamed: '/loggedin',
         ),

@@ -168,7 +168,7 @@ class ArticleDetailsScreen extends StatelessWidget {
 // APP
 class MyApp extends StatelessWidget {
   final routerDelegate = BeamerDelegate(
-    locationBuilder: SimpleLocationBuilder(
+    locationBuilder: RoutesLocationBuilder(
       routes: {
         '/': (context, state) {
           final initialIndex =
@@ -182,7 +182,7 @@ class MyApp extends StatelessWidget {
             key: ValueKey('book-$bookId'),
             title: book['title'],
             child: BookDetailsScreen(book: book),
-            onPopPage: (context, delegate, page) {
+            onPopPage: (context, delegate, _, page) {
               delegate.update(
                 configuration: RouteInformation(
                   location: '/?tab=books',
@@ -201,7 +201,7 @@ class MyApp extends StatelessWidget {
             key: ValueKey('articles-$articleId'),
             title: article['title'],
             child: ArticleDetailsScreen(article: article),
-            onPopPage: (context, delegate, page) {
+            onPopPage: (context, delegate, _, page) {
               delegate.update(
                 configuration: RouteInformation(
                   location: '/?tab=articles',

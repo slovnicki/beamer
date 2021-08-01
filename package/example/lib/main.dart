@@ -89,7 +89,7 @@ class BooksLocation extends BeamLocation<BeamState> {
   BooksLocation(RouteInformation routeInformation) : super(routeInformation);
 
   @override
-  List<Pattern> get pathBlueprints => ['/books/:bookId'];
+  List<Pattern> get pathPatterns => ['/books/:bookId'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
@@ -118,7 +118,7 @@ class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
 
   final routerDelegate = BeamerDelegate(
-    locationBuilder: (routeInformation) => BooksLocation(routeInformation),
+    locationBuilder: (routeInformation, _) => BooksLocation(routeInformation),
   );
 
   @override

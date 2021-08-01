@@ -120,7 +120,7 @@ class ArticleDetailsScreen extends StatelessWidget {
 // LOCATIONS
 class BooksLocation extends BeamLocation<BeamState> {
   @override
-  List<String> get pathBlueprints => ['/books/:bookId'];
+  List<String> get pathPatterns => ['/books/:bookId'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
@@ -145,7 +145,7 @@ class BooksLocation extends BeamLocation<BeamState> {
 
 class ArticlesLocation extends BeamLocation<BeamState> {
   @override
-  List<String> get pathBlueprints => ['/articles/:articleId'];
+  List<String> get pathPatterns => ['/articles/:articleId'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
@@ -218,7 +218,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
 class MyApp extends StatelessWidget {
   final routerDelegate = BeamerDelegate(
     initialPath: '/books',
-    locationBuilder: SimpleLocationBuilder(
+    locationBuilder: RoutesLocationBuilder(
       routes: {
         '*': (context, state) {
           final beamerKey = GlobalKey<BeamerState>();

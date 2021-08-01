@@ -97,7 +97,7 @@ class HomeScreen extends StatelessWidget {
               child: Beamer(
                 key: _beamerKey,
                 routerDelegate: BeamerDelegate(
-                  locationBuilder: (routeInformation) =>
+                  locationBuilder: (routeInformation, _) =>
                       routeInformation.location!.contains('articles')
                           ? ArticlesLocation(routeInformation)
                           : BooksLocation(routeInformation),
@@ -145,7 +145,7 @@ class BooksScreen extends StatelessWidget {
             child: Beamer(
               key: _beamerKey,
               routerDelegate: BeamerDelegate(
-                locationBuilder: (routeInformation) =>
+                locationBuilder: (routeInformation, _) =>
                     BooksContentLocation(routeInformation),
               ),
             ),
@@ -224,7 +224,7 @@ class ArticlesScreen extends StatelessWidget {
             child: Beamer(
               key: _beamerKey,
               routerDelegate: BeamerDelegate(
-                locationBuilder: (routeInformation) =>
+                locationBuilder: (routeInformation, _) =>
                     ArticlesContentLocation(routeInformation),
               ),
             ),

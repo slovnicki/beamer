@@ -18,7 +18,7 @@ class MyApp extends HookWidget {
       /// if the user is authenticated
       /// else send them to /login
       BeamGuard(
-          pathBlueprints: ['/home'],
+          pathPatterns: ['/home'],
           check: (context, state) =>
               context.read(authProvider).status == AuthStatus.authenticated,
           beamToNamed: '/login'),
@@ -26,13 +26,13 @@ class MyApp extends HookWidget {
       /// if the user is anything other than authenticated
       /// else send them to /home
       BeamGuard(
-          pathBlueprints: ['/login'],
+          pathPatterns: ['/login'],
           check: (context, state) =>
               context.read(authProvider).status != AuthStatus.authenticated,
           beamToNamed: '/home'),
     ],
     initialPath: '/login',
-    locationBuilder: (state) => BeamerLocations(state),
+    locationBuilder: (routeInformation, _) => BeamerLocations(routeInformation),
   );
 
   @override

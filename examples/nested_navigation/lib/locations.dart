@@ -6,7 +6,7 @@ import 'screens.dart';
 class HomeLocation extends BeamLocation<BeamState> {
   HomeLocation(RouteInformation routeInformation) : super(routeInformation);
   @override
-  List<String> get pathBlueprints => ['/*'];
+  List<String> get pathPatterns => ['/*'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
@@ -22,7 +22,7 @@ class BooksLocation extends BeamLocation<BeamState> {
   BooksLocation(RouteInformation routeInformation) : super(routeInformation);
 
   @override
-  List<String> get pathBlueprints => ['/books/*'];
+  List<String> get pathPatterns => ['/books/*'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
@@ -39,7 +39,7 @@ class BooksContentLocation extends BeamLocation<BeamState> {
       : super(routeInformation);
 
   @override
-  List<String> get pathBlueprints => [
+  List<String> get pathPatterns => [
         '/books/authors',
         '/books/genres',
       ];
@@ -70,7 +70,7 @@ class ArticlesLocation extends BeamLocation<BeamState> {
   ArticlesLocation(RouteInformation routeInformation) : super(routeInformation);
 
   @override
-  List<String> get pathBlueprints => ['/articles/*'];
+  List<String> get pathPatterns => ['/articles/*'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
@@ -87,7 +87,7 @@ class ArticlesContentLocation extends BeamLocation<BeamState> {
       : super(routeInformation);
 
   @override
-  List<String> get pathBlueprints => [
+  List<String> get pathPatterns => [
         '/articles/authors',
         '/articles/genres',
       ];

@@ -128,7 +128,7 @@ class BookDetailsScreen extends StatelessWidget {
 // LOCATIONS
 class HomeLocation extends BeamLocation<BeamState> {
   @override
-  List<String> get pathBlueprints => ['/'];
+  List<String> get pathPatterns => ['/'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
@@ -142,7 +142,7 @@ class HomeLocation extends BeamLocation<BeamState> {
 
 class LoginLocation extends BeamLocation<BeamState> {
   @override
-  List<String> get pathBlueprints => ['/login'];
+  List<String> get pathPatterns => ['/login'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
@@ -156,7 +156,7 @@ class LoginLocation extends BeamLocation<BeamState> {
 
 class BooksLocation extends BeamLocation<BeamState> {
   @override
-  List<String> get pathBlueprints => ['/books/:bookId'];
+  List<String> get pathPatterns => ['/books/:bookId'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
@@ -193,7 +193,7 @@ class BooksLocation extends BeamLocation<BeamState> {
   List<BeamGuard> get guards => [
         // Show forbiddenPage if the user tries to enter books/2:
         BeamGuard(
-          pathBlueprints: ['/books/2'],
+          pathPatterns: ['/books/2'],
           check: (context, location) => false,
           showPage: forbiddenPage,
         ),
@@ -225,7 +225,7 @@ class MyApp extends StatelessWidget {
     guards: [
       // Guard /books and /books/* by beaming to /login if the user is unauthenticated:
       BeamGuard(
-        pathBlueprints: ['/books', '/books/*'],
+        pathPatterns: ['/books', '/books/*'],
         check: (context, location) =>
             context.read<AuthenticationNotifier>().isAuthenticated,
         beamToNamed: '/login',

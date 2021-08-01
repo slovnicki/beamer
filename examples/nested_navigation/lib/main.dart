@@ -7,7 +7,7 @@ void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   final routerDelegate = BeamerDelegate(
-    locationBuilder: (routeInformation) => HomeLocation(routeInformation),
+    locationBuilder: (routeInformation, _) => HomeLocation(routeInformation),
   );
 
   @override

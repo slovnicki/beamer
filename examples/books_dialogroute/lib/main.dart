@@ -101,7 +101,7 @@ class BooksLocation extends BeamLocation<BeamState> {
   BooksLocation(RouteInformation routeInformation) : super(routeInformation);
 
   @override
-  List<String> get pathBlueprints => ['/books/:bookId'];
+  List<String> get pathPatterns => ['/books/:bookId'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
@@ -127,7 +127,7 @@ class BooksLocation extends BeamLocation<BeamState> {
                       builder: (context) => child,
                       settings: settings),
               key: ValueKey('book-buy-${state.pathParameters['bookId']}'),
-              onPopPage: (context, delegate, page) {
+              onPopPage: (context, delegate, _, page) {
                 // when the dialog is dismissed, we only want to pop the `buy=true` query parameter
                 // instead of also popping the bookId.
                 delegate.currentBeamLocation.update(
@@ -145,7 +145,7 @@ class BooksLocation extends BeamLocation<BeamState> {
 // APP
 class MyApp extends StatelessWidget {
   final routerDelegate = BeamerDelegate(
-    locationBuilder: (routeInformation) => BooksLocation(routeInformation),
+    locationBuilder: (routeInformation, _) => BooksLocation(routeInformation),
   );
 
   @override

@@ -8,7 +8,7 @@ class BeamerLocations extends BeamLocation<BeamState> {
   BeamerLocations(RouteInformation routeInformation) : super(routeInformation);
 
   @override
-  List<String> get pathBlueprints => [
+  List<String> get pathPatterns => [
         '/login',
         '/logged_in_page',
       ];

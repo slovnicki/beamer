@@ -122,7 +122,7 @@ class BooksLocation extends BeamLocation<BeamState> {
   BooksLocation(RouteInformation routeInformation) : super(routeInformation);
 
   @override
-  List<String> get pathBlueprints => ['/books/:bookId'];
+  List<String> get pathPatterns => ['/books/:bookId'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
@@ -149,7 +149,7 @@ class ArticlesLocation extends BeamLocation<BeamState> {
   ArticlesLocation(RouteInformation routeInformation) : super(routeInformation);
 
   @override
-  List<String> get pathBlueprints => ['/articles/:articleId'];
+  List<String> get pathPatterns => ['/articles/:articleId'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
@@ -184,7 +184,7 @@ class _AppScreenState extends State<AppScreen> {
   final routerDelegates = [
     BeamerDelegate(
       initialPath: '/books',
-      locationBuilder: (routeInformation) {
+      locationBuilder: (routeInformation, _) {
         if (routeInformation.location!.contains('books')) {
           return BooksLocation(routeInformation);
         }
@@ -193,7 +193,7 @@ class _AppScreenState extends State<AppScreen> {
     ),
     BeamerDelegate(
       initialPath: '/articles',
-      locationBuilder: (routeInformation) {
+      locationBuilder: (routeInformation, _) {
         if (routeInformation.location!.contains('articles')) {
           return ArticlesLocation(routeInformation);
         }
@@ -269,7 +269,7 @@ class _AppScreenState extends State<AppScreen> {
 class MyApp extends StatelessWidget {
   final routerDelegate = BeamerDelegate(
     initialPath: '/books',
-    locationBuilder: SimpleLocationBuilder(
+    locationBuilder: RoutesLocationBuilder(
       routes: {
         '*': (context, state) => AppScreen(),
       },
