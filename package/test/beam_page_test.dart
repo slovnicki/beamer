@@ -6,7 +6,7 @@ class TestLocation extends BeamLocation<BeamState> {
   TestLocation([RouteInformation? routeInformation]) : super(routeInformation);
 
   @override
-  List<String> get pathBlueprints => ['/books/:bookId/details/buy'];
+  List<String> get pathPatterns => ['/books/:bookId/details/buy'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [

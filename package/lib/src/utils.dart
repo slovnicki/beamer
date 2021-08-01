@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 abstract class Utils {
   /// Traverses [beamLocations] and returns the one whose one of
-  /// `pathBlueprints` contains the [uri], ignoring concrete path parameters.
+  /// `pathPatterns` contains the [uri], ignoring concrete path parameters.
   ///
   /// Upon finding such [BeamLocation], configures it with
   /// `pathParameters` and `queryParameters` from [uri].
@@ -29,11 +29,11 @@ abstract class Utils {
     return NotFound(path: uri.path);
   }
 
-  /// Can a [beamLocation], depending on its `pathBlueprints`, handle the [uri].
+  /// Can a [beamLocation], depending on its `pathPatterns`, handle the [uri].
   ///
   /// Used in [BeamLocation.canHandle] and [chooseBeamLocation].
   static bool canBeamLocationHandleUri(BeamLocation beamLocation, Uri uri) {
-    for (final pathBlueprint in beamLocation.pathBlueprints) {
+    for (final pathBlueprint in beamLocation.pathPatterns) {
       if (pathBlueprint is String) {
         if (pathBlueprint == uri.path || pathBlueprint == '/*') {
           return true;
@@ -81,7 +81,7 @@ abstract class Utils {
   }) {
     if (beamLocation != null) {
       // TODO: abstract this and reuse in canBeamLocationHandleUri
-      for (final pathBlueprint in beamLocation.pathBlueprints) {
+      for (final pathBlueprint in beamLocation.pathPatterns) {
         if (pathBlueprint is String) {
           if (pathBlueprint == uri.path || pathBlueprint == '/*') {
             BeamState(

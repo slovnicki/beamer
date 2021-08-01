@@ -11,7 +11,7 @@ import './beam_page.dart';
 /// the guard will just block navigation, i.e. nothing will happen.
 class BeamGuard {
   const BeamGuard({
-    required this.pathBlueprints,
+    required this.pathPatterns,
     required this.check,
     this.onCheckFailed,
     this.beamTo,
@@ -38,7 +38,7 @@ class BeamGuard {
   /// For example, `RegExp('/books/')` will match '/books/1', '/books/2/genres', etc.
   /// but will not match '/books'. To match '/books' and everything after it,
   /// use `RegExp('/books')`
-  final List<Pattern> pathBlueprints;
+  final List<Pattern> pathPatterns;
 
   /// What check should be performed on a given [location],
   /// the one to which beaming has been requested.
@@ -67,8 +67,8 @@ class BeamGuard {
   /// This has precedence over [beamTo] and [beamToNamed].
   final BeamPage? showPage;
 
-  /// Whether to [check] all the path blueprints defined in [pathBlueprints]
-  /// or [check] all the paths that **are not** in [pathBlueprints].
+  /// Whether to [check] all the path blueprints defined in [pathPatterns]
+  /// or [check] all the paths that **are not** in [pathPatterns].
   ///
   /// `false` meaning former and `true` meaning latter.
   final bool guardNonMatching;
@@ -76,14 +76,14 @@ class BeamGuard {
   /// Whether or not to replace the current [BeamLocation]'s stack of pages.
   final bool replaceCurrentStack;
 
-  /// Matches [location]'s pathBlueprint to [pathBlueprints].
+  /// Matches [location]'s pathBlueprint to [pathPatterns].
   ///
   /// If asterisk is present, it is enough that the pre-asterisk substring is
   /// contained within location's pathBlueprint.
   /// Else, the path (i.e. the pre-query substring) of the location's uri
   /// must be equal to the pathBlueprint.
   bool _hasMatch(BeamLocation location) {
-    for (final pathBlueprint in pathBlueprints) {
+    for (final pathBlueprint in pathPatterns) {
       final path =
           Uri.parse(location.state.routeInformation.location ?? '/').path;
       if (pathBlueprint is String) {

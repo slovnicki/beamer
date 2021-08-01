@@ -23,7 +23,7 @@ class Location1 extends BeamLocation<BeamState> {
       ];
 
   @override
-  List<String> get pathBlueprints => ['/l1/one', '/l1/two'];
+  List<String> get pathPatterns => ['/l1/one', '/l1/two'];
 }
 
 class Location2 extends BeamLocation<BeamState> {
@@ -38,7 +38,7 @@ class Location2 extends BeamLocation<BeamState> {
       ];
 
   @override
-  List<String> get pathBlueprints => ['/l2/:id'];
+  List<String> get pathPatterns => ['/l2/:id'];
 }
 
 class CustomState with RouteInformationSerializable {
@@ -70,7 +70,7 @@ class CustomStateLocation extends BeamLocation<CustomState> {
       CustomState().fromRouteInformation(routeInformation);
 
   @override
-  List<String> get pathBlueprints => ['/custom/:customVar'];
+  List<String> get pathPatterns => ['/custom/:customVar'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, CustomState state) => [
@@ -83,7 +83,7 @@ class CustomStateLocation extends BeamLocation<CustomState> {
 
 class NoStateLocation extends BeamLocation<BeamState> {
   @override
-  List<String> get pathBlueprints => ['/page'];
+  List<String> get pathPatterns => ['/page'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
@@ -99,7 +99,7 @@ class RegExpLocation extends BeamLocation<BeamState> {
       : super(routeInformation);
 
   @override
-  List<Pattern> get pathBlueprints => [RegExp('/reg')];
+  List<Pattern> get pathPatterns => [RegExp('/reg')];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
@@ -115,7 +115,7 @@ class AsteriskLocation extends BeamLocation<BeamState> {
       : super(routeInformation);
 
   @override
-  List<Pattern> get pathBlueprints => ['/anything/*'];
+  List<Pattern> get pathPatterns => ['/anything/*'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [

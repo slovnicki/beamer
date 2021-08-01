@@ -67,7 +67,7 @@ class HistoryElement<T extends RouteInformationSerializable> {
 /// Configuration for a navigatable application region.
 ///
 /// Responsible for
-///   * knowing which URIs it can handle: [pathBlueprints]
+///   * knowing which URIs it can handle: [pathPatterns]
 ///   * knowing how to build a stack of pages: [buildPages]
 ///   * keeping a [state] that provides the link between the first 2
 ///
@@ -154,7 +154,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
     }
   }
 
-  /// Can this handle the [uri] based on its [pathBlueprints].
+  /// Can this handle the [uri] based on its [pathPatterns].
   ///
   /// Can be useful in a custom [BeamerDelegate.locationBuilder].
   bool canHandle(Uri uri) => Utils.canBeamLocationHandleUri(this, uri);
@@ -192,7 +192,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   /// whether there is a browser.
   ///
   /// For example: '/books/:id' or using regex `RegExp('/test/(?<test>[a-z]+){0,1}')`
-  List<Pattern> get pathBlueprints;
+  List<Pattern> get pathPatterns;
 
   /// Creates and returns the list of pages to be built by the [Navigator]
   /// when this [BeamLocation] is beamed to or internally inferred.
@@ -230,7 +230,7 @@ class NotFound extends BeamLocation<BeamState> {
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [];
 
   @override
-  List<String> get pathBlueprints => [];
+  List<String> get pathPatterns => [];
 }
 
 /// Empty location used to intialize a non-nullable BeamLocation variable.
@@ -241,7 +241,7 @@ class EmptyBeamLocation extends BeamLocation<BeamState> {
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [];
 
   @override
-  List<String> get pathBlueprints => [];
+  List<String> get pathPatterns => [];
 }
 
 /// A beam location for [RoutesLocationBuilder], but can be used freely.
@@ -283,7 +283,7 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
   }
 
   @override
-  List<Pattern> get pathBlueprints => routes.keys.toList();
+  List<Pattern> get pathPatterns => routes.keys.toList();
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {

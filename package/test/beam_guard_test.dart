@@ -14,7 +14,7 @@ void main() {
   group('shouldGuard', () {
     test('is true if the location has a blueprint matching the guard', () {
       final guard = BeamGuard(
-        pathBlueprints: [pathBlueprint],
+        pathPatterns: [pathBlueprint],
         check: (_, __) => true,
         beamTo: (context) => Location2(const RouteInformation()),
       );
@@ -26,7 +26,7 @@ void main() {
         'is true if the location (which has a query part) has a blueprint matching the guard',
         () {
       final guard = BeamGuard(
-        pathBlueprints: [pathBlueprint],
+        pathPatterns: [pathBlueprint],
         check: (_, __) => true,
         beamTo: (context) => Location2(const RouteInformation()),
       );
@@ -38,7 +38,7 @@ void main() {
         'is true if the location has a blueprint matching the guard using regexp',
         () {
       final guard = BeamGuard(
-        pathBlueprints: [RegExp(pathBlueprint)],
+        pathPatterns: [RegExp(pathBlueprint)],
         check: (_, __) => true,
         beamTo: (context) => Location2(const RouteInformation()),
       );
@@ -50,7 +50,7 @@ void main() {
         'is true if the location (which has a query part) has a blueprint matching the guard using regexp',
         () {
       final guard = BeamGuard(
-        pathBlueprints: [RegExp(pathBlueprint)],
+        pathPatterns: [RegExp(pathBlueprint)],
         check: (_, __) => true,
         beamTo: (context) => Location2(const RouteInformation()),
       );
@@ -61,7 +61,7 @@ void main() {
     test("is false if the location doesn't have a blueprint matching the guard",
         () {
       final guard = BeamGuard(
-        pathBlueprints: ['/not-a-match'],
+        pathPatterns: ['/not-a-match'],
         check: (_, __) => true,
         beamTo: (context) => Location2(const RouteInformation()),
       );
@@ -73,7 +73,7 @@ void main() {
         "is false if the location (which has a query part) doesn't have a blueprint matching the guard",
         () {
       final guard = BeamGuard(
-        pathBlueprints: ['/not-a-match'],
+        pathPatterns: ['/not-a-match'],
         check: (_, __) => true,
         beamTo: (context) => Location2(const RouteInformation()),
       );
@@ -85,7 +85,7 @@ void main() {
         "is false if the location doesn't have a blueprint matching the guard using regexp",
         () {
       final guard = BeamGuard(
-        pathBlueprints: [RegExp('/not-a-match')],
+        pathPatterns: [RegExp('/not-a-match')],
         check: (_, __) => true,
         beamTo: (context) => Location2(const RouteInformation()),
       );
@@ -97,7 +97,7 @@ void main() {
         "is false if the location (which has a query part) doesn't have a blueprint matching the guard using regexp",
         () {
       final guard = BeamGuard(
-        pathBlueprints: ['/not-a-match'],
+        pathPatterns: ['/not-a-match'],
         check: (_, __) => true,
         beamTo: (context) => Location2(const RouteInformation()),
       );
@@ -108,7 +108,7 @@ void main() {
     group('with wildcards', () {
       test('is true if the location has a match up to the wildcard', () {
         final guard = BeamGuard(
-          pathBlueprints: [
+          pathPatterns: [
             pathBlueprint.substring(
                   0,
                   pathBlueprint.indexOf('/'),
@@ -126,7 +126,7 @@ void main() {
           'is true if the location has a match up to the wildcard using regexp',
           () {
         final guard = BeamGuard(
-          pathBlueprints: [RegExp('(/[a-z]*|[0-9]*/one)')],
+          pathPatterns: [RegExp('(/[a-z]*|[0-9]*/one)')],
           check: (_, __) => true,
           beamTo: (context) => Location2(const RouteInformation()),
         );
@@ -137,7 +137,7 @@ void main() {
       test("is false if the location doesn't have a match against the wildcard",
           () {
         final guard = BeamGuard(
-          pathBlueprints: [
+          pathPatterns: [
             '/not-a-match/*',
           ],
           check: (_, __) => true,
@@ -151,7 +151,7 @@ void main() {
           "is false if the location doesn't have a match against the wildcard using regexp",
           () {
         final guard = BeamGuard(
-          pathBlueprints: [
+          pathPatterns: [
             RegExp('(/[a-z]*[0-9]/no-match)'),
           ],
           check: (_, __) => true,
@@ -165,7 +165,7 @@ void main() {
     group('when the guard is set to block other locations', () {
       test('is false if the location has a blueprint matching the guard', () {
         final guard = BeamGuard(
-          pathBlueprints: [
+          pathPatterns: [
             pathBlueprint,
           ],
           check: (_, __) => true,
@@ -180,7 +180,7 @@ void main() {
           'is false if the location has a blueprint matching the guard using regexp',
           () {
         final guard = BeamGuard(
-          pathBlueprints: [
+          pathPatterns: [
             RegExp(pathBlueprint),
           ],
           check: (_, __) => true,
@@ -195,7 +195,7 @@ void main() {
           "is true if the location doesn't have a blueprint matching the guard",
           () {
         final guard = BeamGuard(
-          pathBlueprints: ['/not-a-match'],
+          pathPatterns: ['/not-a-match'],
           check: (_, __) => true,
           beamTo: (context) => Location2(const RouteInformation()),
           guardNonMatching: true,
@@ -208,7 +208,7 @@ void main() {
           "is true if the location doesn't have a blueprint matching the guard using regexp",
           () {
         final guard = BeamGuard(
-          pathBlueprints: [RegExp('/not-a-match')],
+          pathPatterns: [RegExp('/not-a-match')],
           check: (_, __) => true,
           beamTo: (context) => Location2(const RouteInformation()),
           guardNonMatching: true,
@@ -220,7 +220,7 @@ void main() {
       group('with wildcards', () {
         test('is false if the location has a match up to the wildcard', () {
           final guard = BeamGuard(
-            pathBlueprints: [
+            pathPatterns: [
               pathBlueprint.substring(
                     0,
                     pathBlueprint.indexOf('/'),
@@ -239,7 +239,7 @@ void main() {
             'is false if the location has a match up to the wildcard using regexp',
             () {
           final guard = BeamGuard(
-            pathBlueprints: [
+            pathPatterns: [
               RegExp('/[a-z]+'),
             ],
             check: (_, __) => true,
@@ -254,7 +254,7 @@ void main() {
             "is true if the location doesn't have a match against the wildcard",
             () {
           final guard = BeamGuard(
-            pathBlueprints: [
+            pathPatterns: [
               '/not-a-match/*',
             ],
             check: (_, __) => true,
@@ -269,7 +269,7 @@ void main() {
             "is true if the location doesn't have a match against the wildcard using regexp",
             () {
           final guard = BeamGuard(
-            pathBlueprints: [
+            pathPatterns: [
               RegExp('/not-a-match/[a-z]+'),
             ],
             check: (_, __) => true,
@@ -294,7 +294,7 @@ void main() {
           },
           guards: [
             BeamGuard(
-              pathBlueprints: ['/l2'],
+              pathPatterns: ['/l2'],
               check: (context, loc) => false,
               beamTo: (context) =>
                   Location1(const RouteInformation(location: '/l1')),
@@ -325,7 +325,7 @@ void main() {
           },
           guards: [
             BeamGuard(
-              pathBlueprints: ['/l2'],
+              pathPatterns: ['/l2'],
               check: (context, loc) => false,
               beamToNamed: '/l1',
             ),
@@ -360,12 +360,12 @@ void main() {
           // 2 will redirect to 3
           // 3 will redirect to 1
           BeamGuard(
-            pathBlueprints: ['/2'],
+            pathPatterns: ['/2'],
             check: (_, __) => false,
             beamToNamed: '/3',
           ),
           BeamGuard(
-            pathBlueprints: ['/3'],
+            pathPatterns: ['/3'],
             check: (_, __) => false,
             beamToNamed: '/1',
           ),
@@ -396,7 +396,7 @@ void main() {
         ),
         guards: [
           BeamGuard(
-            pathBlueprints: ['/2'],
+            pathPatterns: ['/2'],
             check: (_, __) => false,
           ),
         ],

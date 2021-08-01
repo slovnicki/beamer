@@ -88,13 +88,13 @@ class BeamState with RouteInformationSerializable<BeamState> {
   }
 
   /// Path segments of the current URI,
-  /// in the form as it's defined in [BeamLocation.pathBlueprints].
+  /// in the form as it's defined in [BeamLocation.pathPatterns].
   ///
   /// If current URI is '/books/1', this will be `['books', ':bookId']`.
   final List<String> pathBlueprintSegments;
 
   /// Path parameters from the URI,
-  /// in the form as it's defined in [BeamLocation.pathBlueprints].
+  /// in the form as it's defined in [BeamLocation.pathPatterns].
   ///
   /// If current URI is '/books/1', this will be `{'bookId': '1'}`.
   final Map<String, String> pathParameters;
@@ -110,7 +110,7 @@ class BeamState with RouteInformationSerializable<BeamState> {
   late Uri _uriBlueprint;
 
   /// Current URI object in the "blueprint form",
-  /// as it's defined in [BeamLocation.pathBlueprints].
+  /// as it's defined in [BeamLocation.pathPatterns].
   ///
   /// This is constructed from [pathBlueprintSegments] and [queryParameters].
   /// See more at [configure].

@@ -31,7 +31,7 @@ void main() {
       );
 
       final notFound = NotFound(path: '/test');
-      expect(notFound.pathBlueprints, []);
+      expect(notFound.pathPatterns, []);
       expect(notFound.buildPages(testContext!, BeamState()), []);
       expect(notFound.state.uri.toString(), '/test');
     });
@@ -50,7 +50,7 @@ void main() {
       );
 
       final notFound = EmptyBeamLocation();
-      expect(notFound.pathBlueprints, []);
+      expect(notFound.pathPatterns, []);
       expect(notFound.buildPages(testContext!, BeamState()), []);
     });
   });
