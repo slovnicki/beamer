@@ -701,7 +701,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
                 if (lastPage.popToNamed != null) {
                   popToNamed(lastPage.popToNamed!);
                 } else {
-                  final shouldPop = lastPage.onPopPage(context, this, lastPage);
+                  final shouldPop = lastPage.onPopPage(
+                    context,
+                    this,
+                    currentBeamLocation.state,
+                    lastPage,
+                  );
                   if (!shouldPop) {
                     return false;
                   }

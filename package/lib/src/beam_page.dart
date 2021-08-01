@@ -34,6 +34,7 @@ class BeamPage extends Page {
   static bool pathSegmentPop(
     BuildContext context,
     BeamerDelegate delegate,
+    RouteInformationSerializable state,
     BeamPage poppedPage,
   ) {
     if (delegate.beamingHistoryCompleteLength <= 1) {
@@ -82,6 +83,7 @@ class BeamPage extends Page {
   static bool routePop(
     BuildContext context,
     BeamerDelegate delegate,
+    RouteInformationSerializable state,
     BeamPage poppedPage,
   ) {
     if (delegate.beamingHistoryCompleteLength <= 1) {
@@ -116,6 +118,7 @@ class BeamPage extends Page {
   final bool Function(
     BuildContext context,
     BeamerDelegate delegate,
+    RouteInformationSerializable state,
     BeamPage poppedPage,
   ) onPopPage;
 
