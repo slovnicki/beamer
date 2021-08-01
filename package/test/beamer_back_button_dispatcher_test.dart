@@ -7,7 +7,7 @@ void main() {
   group('Root dispatcher', () {
     testWidgets('back button pops', (tester) async {
       final delegate = BeamerDelegate(
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) => Container(),
             '/test': (context, state) => Container(),
@@ -40,7 +40,7 @@ void main() {
     testWidgets('back button beams back if cannot pop', (tester) async {
       final delegate = BeamerDelegate(
         initialPath: '/test/deeper',
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) => Container(),
             '/test': (context, state) => Container(),
@@ -72,7 +72,7 @@ void main() {
         (tester) async {
       final delegate = BeamerDelegate(
         initialPath: '/test/deeper',
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) => Container(),
             '/test': (context, state) => Container(),
@@ -104,7 +104,7 @@ void main() {
 
     testWidgets('onBack has priority', (tester) async {
       final delegate = BeamerDelegate(
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) => Container(),
             '/test': (context, state) => Container(),
@@ -137,7 +137,7 @@ void main() {
   group('Child dispatcher', () {
     testWidgets('back button pops', (tester) async {
       final childDelegate = BeamerDelegate(
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) => Container(),
             '/test': (context, state) => Container(),
@@ -145,7 +145,7 @@ void main() {
         ),
       );
       final delegate = BeamerDelegate(
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '*': (context, state) => Beamer(
                   routerDelegate: childDelegate,
@@ -183,7 +183,7 @@ void main() {
 
     testWidgets('back button beams back', (tester) async {
       final childDelegate = BeamerDelegate(
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) => Container(),
             '/test': (context, state) => Container(),
@@ -191,7 +191,7 @@ void main() {
         ),
       );
       final delegate = BeamerDelegate(
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '*': (context, state) => Beamer(
                   routerDelegate: childDelegate,
@@ -223,7 +223,7 @@ void main() {
 
     testWidgets('onBack has priority', (tester) async {
       final childDelegate = BeamerDelegate(
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) => Container(),
             '/test': (context, state) => Container(),
@@ -232,7 +232,7 @@ void main() {
       );
       late BeamerBackButtonDispatcher rootBackButtonDispatcher;
       final delegate = BeamerDelegate(
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '*': (context, state) => Beamer(
                   routerDelegate: childDelegate,
@@ -272,7 +272,7 @@ void main() {
 
     testWidgets('inactive child will return false', (tester) async {
       final childDelegate = BeamerDelegate(
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) => Container(),
             '/test': (context, state) => Container(),
@@ -281,7 +281,7 @@ void main() {
       );
       late BeamerBackButtonDispatcher rootBackButtonDispatcher;
       final delegate = BeamerDelegate(
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '*': (context, state) => Beamer(
                   routerDelegate: childDelegate,

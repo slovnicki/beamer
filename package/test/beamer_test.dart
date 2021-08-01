@@ -12,7 +12,7 @@ void main() {
 
   final app = BeamerProvider(
     routerDelegate: BeamerDelegate(
-      locationBuilder: SimpleLocationBuilder(
+      locationBuilder: RoutesLocationBuilder(
         routes: {
           '/test2/x': (context, state) {
             rootDelegate = Beamer.of(context, root: true);
@@ -25,7 +25,7 @@ void main() {
       routeInformationParser: BeamerParser(),
       routerDelegate: BeamerDelegate(
         transitionDelegate: const NoAnimationTransitionDelegate(),
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) {
               testContext = context;
@@ -108,15 +108,15 @@ void main() {
       MaterialApp.router(
         routeInformationParser: BeamerParser(),
         routerDelegate: BeamerDelegate(
-          locationBuilder: SimpleLocationBuilder(
+          locationBuilder: RoutesLocationBuilder(
             routes: {
               '/': (context, state) => Beamer(
                     routerDelegate: BeamerDelegate(
-                      locationBuilder: SimpleLocationBuilder(
+                      locationBuilder: RoutesLocationBuilder(
                         routes: {
                           '/': (context, state) => Beamer(
                                 routerDelegate: BeamerDelegate(
-                                  locationBuilder: SimpleLocationBuilder(
+                                  locationBuilder: RoutesLocationBuilder(
                                     routes: {
                                       '/': (context, state) {
                                         testContext = context;
@@ -143,7 +143,7 @@ void main() {
       (tester) async {
     BuildContext? testContext;
     final delegate = BeamerDelegate(
-      locationBuilder: SimpleLocationBuilder(
+      locationBuilder: RoutesLocationBuilder(
         routes: {
           '/': (context, state) => Container(),
         },

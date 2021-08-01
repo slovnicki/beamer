@@ -349,7 +349,7 @@ void main() {
     testWidgets('guards will run a recursion', (tester) async {
       final delegate = BeamerDelegate(
         initialPath: '/1',
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/1': (context, state) => const Text('1'),
             '/2': (context, state) => const Text('2'),
@@ -388,7 +388,7 @@ void main() {
     testWidgets('nothing happens when guard should just block', (tester) async {
       final delegate = BeamerDelegate(
         initialPath: '/1',
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/1': (context, state) => const Text('1'),
             '/2': (context, state) => const Text('2'),

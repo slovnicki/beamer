@@ -341,7 +341,7 @@ void main() {
   testWidgets("popping drawer doesn't change BeamState", (tester) async {
     final scaffoldKey = GlobalKey<ScaffoldState>();
     final delegate = BeamerDelegate(
-      locationBuilder: SimpleLocationBuilder(
+      locationBuilder: RoutesLocationBuilder(
         routes: {
           '/': (context, state) => Container(),
           '/test': (context, state) => Scaffold(
@@ -445,7 +445,7 @@ void main() {
   group('Updating from parent', () {
     testWidgets('navigation on parent updates nested Beamer', (tester) async {
       final childDelegate = BeamerDelegate(
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) => Container(),
             '/test': (context, state) => Container(),
@@ -454,7 +454,7 @@ void main() {
         ),
       );
       final rootDelegate = BeamerDelegate(
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '*': (context, state) => BeamPage(
                   key: const ValueKey('always-the-same'),
@@ -489,7 +489,7 @@ void main() {
         (tester) async {
       final childDelegate = BeamerDelegate(
         updateFromParent: false,
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) => Container(),
             '/test': (context, state) => Container(),
@@ -498,7 +498,7 @@ void main() {
         ),
       );
       final rootDelegate = BeamerDelegate(
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '*': (context, state) => BeamPage(
                   key: const ValueKey('always-the-same'),
@@ -535,7 +535,7 @@ void main() {
       (tester) async {
     final childDelegate = BeamerDelegate(
       updateParent: false,
-      locationBuilder: SimpleLocationBuilder(
+      locationBuilder: RoutesLocationBuilder(
         routes: {
           '/': (context, state) => Container(),
           '/test': (context, state) => Container(),
@@ -544,7 +544,7 @@ void main() {
       ),
     );
     final rootDelegate = BeamerDelegate(
-      locationBuilder: SimpleLocationBuilder(
+      locationBuilder: RoutesLocationBuilder(
         routes: {
           '*': (context, state) => BeamPage(
                 key: const ValueKey('always-the-same'),
@@ -588,7 +588,7 @@ void main() {
       final delegate = BeamerDelegate(
         initialPath: '/test',
         clearBeamingHistoryOn: {'/'},
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) => Container(),
             '/test': (context, state) => Container(),
@@ -616,7 +616,7 @@ void main() {
 
     testWidgets("history is always cleared when popToNamed", (tester) async {
       final delegate = BeamerDelegate(
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) => Container(),
             '/test': (context, state) => Container(),
@@ -651,7 +651,7 @@ void main() {
         (tester) async {
       final delegate = BeamerDelegate(
         clearBeamingHistoryOn: {'/'},
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) => Container(),
             '/test': (context, state) => Container(),
@@ -696,7 +696,7 @@ void main() {
         (tester) async {
       final delegate = BeamerDelegate(
         clearBeamingHistoryOn: {'/test'},
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) => Container(),
             '/test': (context, state) => Container(),

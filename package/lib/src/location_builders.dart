@@ -28,12 +28,12 @@ class BeamerLocationBuilder {
   }
 }
 
-/// A pre-made builder to be used for [locationBuilder].
+/// A pre-made builder to be used for `locationBuilder`.
 ///
-/// Creates a single [BeamLocation]; [SimpleBeamLocation]
+/// Creates a single [BeamLocation]; [RoutesBeamLocation]
 /// and configures its [BeamLocation.buildPages] with appropriate [routes].
-class SimpleLocationBuilder {
-  SimpleLocationBuilder({required this.routes, this.builder});
+class RoutesLocationBuilder {
+  RoutesLocationBuilder({required this.routes, this.builder});
 
   /// List of all routes this builder handles.
   final Map<Pattern, dynamic Function(BuildContext, BeamState)> routes;
@@ -46,9 +46,9 @@ class SimpleLocationBuilder {
     BeamParameters? beamParameters,
   ) {
     final matched =
-        SimpleBeamLocation.chooseRoutes(routeInformation, routes.keys);
+        RoutesBeamLocation.chooseRoutes(routeInformation, routes.keys);
     if (matched.isNotEmpty) {
-      return SimpleBeamLocation(
+      return RoutesBeamLocation(
         routeInformation: routeInformation,
         routes: routes,
         navBuilder: builder,

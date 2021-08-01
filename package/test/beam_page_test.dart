@@ -90,7 +90,7 @@ void main() {
   group('Pops', () {
     testWidgets('path parameter is removed on pop', (tester) async {
       final delegate = BeamerDelegate(
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) => Container(),
             '/:id': (context, state) => Container(),
@@ -324,7 +324,7 @@ void main() {
 
     testWidgets('pop removes from beamStateHistory', (tester) async {
       final delegate = BeamerDelegate(
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) => Container(),
             '/test': (context, state) => Container(),
@@ -412,7 +412,7 @@ void main() {
     testWidgets('pageles', (tester) async {
       final delegate = BeamerDelegate(
         transitionDelegate: const NoAnimationTransitionDelegate(),
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) => const Scaffold(body: Text('0')),
             '/1': (context, state) => BeamPage(
@@ -453,7 +453,7 @@ void main() {
 
   group('Transitions', () {
     final delegate = BeamerDelegate(
-      locationBuilder: SimpleLocationBuilder(
+      locationBuilder: RoutesLocationBuilder(
         routes: {
           '/': (context, state) => const BeamPage(
                 key: ValueKey('/'),
@@ -553,7 +553,7 @@ void main() {
     testWidgets('pageless no animation transition', (tester) async {
       final delegate = BeamerDelegate(
         transitionDelegate: const NoAnimationTransitionDelegate(),
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) => const Scaffold(body: Text('0')),
             '/1': (context, state) => BeamPage(
@@ -596,7 +596,7 @@ void main() {
     testWidgets('pageless reverse transition', (tester) async {
       final delegate = BeamerDelegate(
         transitionDelegate: const ReverseTransitionDelegate(),
-        locationBuilder: SimpleLocationBuilder(
+        locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state) => const Scaffold(body: Text('0')),
             '/1': (context, state) => BeamPage(

@@ -244,11 +244,11 @@ class EmptyBeamLocation extends BeamLocation<BeamState> {
   List<String> get pathBlueprints => [];
 }
 
-/// A beam location for [SimpleLocationBuilder], but can be used freely.
+/// A beam location for [RoutesLocationBuilder], but can be used freely.
 ///
 /// Useful when needing a simple beam location with a single or few pages.
-class SimpleBeamLocation extends BeamLocation<BeamState> {
-  SimpleBeamLocation({
+class RoutesBeamLocation extends BeamLocation<BeamState> {
+  RoutesBeamLocation({
     required RouteInformation routeInformation,
     BeamParameters? beamParameters,
     required this.routes,

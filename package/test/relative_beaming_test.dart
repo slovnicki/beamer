@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('beaming with relative URI works', (tester) async {
     // final innerDelegate = BeamerDelegate(
-    //   locationBuilder: SimpleLocationBuilder(
+    //   locationBuilder: RoutesLocationBuilder(
     //     routes: {
     //       '/test': (context, state) => const Text('/test'),
     //       '1': (context, state) => const Text('1'),
@@ -14,7 +14,7 @@ void main() {
     //   ),
     // );
     // final rootDelegate = BeamerDelegate(
-    //   locationBuilder: SimpleLocationBuilder(
+    //   locationBuilder: RoutesLocationBuilder(
     //     routes: {
     //       '/': (context, state) => const Text('/'),
     //       '/test*': (context, state) => Beamer(

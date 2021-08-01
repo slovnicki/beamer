@@ -106,9 +106,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// ),
   /// ```
   ///
-  ///   3. [SimpleLocationBuilder]; a Map of routes
+  ///   3. [RoutesLocationBuilder]; a Map of routes
   /// ```dart
-  /// locationBuilder: SimpleLocationBuilder(
+  /// locationBuilder: RoutesLocationBuilder(
   ///   routes: {
   ///     '/': (context) => HomeScreen(),
   ///     '/another': (context) => AnotherScreen(),
