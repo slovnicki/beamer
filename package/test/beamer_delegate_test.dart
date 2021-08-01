@@ -105,17 +105,48 @@ void main() {
     });
 
     test(
-        'beamTo replaceCurrent removes previous history state before appending new',
+        'beamToReplacement removes currentBeamLocation from history before appending new',
         () {
       expect(delegate.beamingHistory.length, 2);
       expect(delegate.beamingHistory[0], isA<Location2>());
       expect(delegate.currentBeamLocation, isA<Location1>());
-      delegate.beamTo(
+      delegate.beamToReplacement(
         Location2(const RouteInformation(location: '/l2')),
-        replaceCurrent: true,
       );
       expect(delegate.beamingHistory.length, 1);
       expect(delegate.currentBeamLocation, isA<Location2>());
+    });
+
+    test('beamToReplacementNamed removes previous history element', () {
+      delegate.beamingHistory.clear();
+      delegate.beamToNamed('/l1');
+      expect(delegate.beamingHistory.length, 1);
+      expect(delegate.beamingHistory[0], isA<Location1>());
+      expect(delegate.beamingHistoryCompleteLength, 1);
+
+      delegate.beamToNamed('/l2');
+      expect(delegate.beamingHistory.length, 2);
+      expect(delegate.beamingHistory[0], isA<Location1>());
+      expect(delegate.currentBeamLocation, isA<Location2>());
+      expect(delegate.beamingHistoryCompleteLength, 2);
+
+      delegate.beamToNamed('/l2/x');
+      expect(delegate.beamingHistory.length, 2);
+      expect(delegate.beamingHistory[0], isA<Location1>());
+      expect(delegate.currentBeamLocation, isA<Location2>());
+      expect(delegate.beamingHistory.last.history.length, 2);
+      expect(delegate.beamingHistoryCompleteLength, 3);
+
+      delegate.beamToReplacementNamed('/l2/y');
+      expect(delegate.beamingHistory.length, 2);
+      expect(delegate.beamingHistory[0], isA<Location1>());
+      expect(delegate.currentBeamLocation, isA<Location2>());
+      expect(delegate.beamingHistory.last.history.length, 2);
+      expect(
+          delegate
+              .beamingHistory.last.history.last.state.routeInformation.location,
+          '/l2/y');
+      expect(delegate.beamingHistoryCompleteLength, 3);
     });
   });
 

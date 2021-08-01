@@ -390,12 +390,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
-    bool replaceCurrent = false,
   }) {
-    if (replaceCurrent) {
-      currentBeamLocation.removeListener(_updateFromLocation);
-      beamingHistory.removeLast();
-    }
     _addToBeamingHistory(location);
     update(
       configuration: location.state.routeInformation,
@@ -407,6 +402,28 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         stacked: stacked,
       ),
       buildBeamLocation: false,
+    );
+  }
+
+  /// The same as [beamTo], but replaces the [currentBeamLocation],
+  /// i.e. removes it from the [beamingHistory] and then does [beamTo].
+  void beamToReplacement(
+    BeamLocation location, {
+    BeamLocation? popTo,
+    TransitionDelegate? transitionDelegate,
+    bool beamBackOnPop = false,
+    bool popBeamLocationOnPop = false,
+    bool stacked = true,
+  }) {
+    currentBeamLocation.removeListener(_updateFromLocation);
+    beamingHistory.removeLast();
+    beamTo(
+      location,
+      popTo: popTo,
+      transitionDelegate: transitionDelegate,
+      beamBackOnPop: beamBackOnPop,
+      popBeamLocationOnPop: popBeamLocationOnPop,
+      stacked: stacked,
     );
   }
 
@@ -451,8 +468,33 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     );
   }
 
+  /// The same as [beamToNamed], but replaces the last state in history,
+  /// i.e. removes it from the `beamingHistory.last.history` and then does [beamToNamed].
+  void beamToReplacementNamed(
+    String uri, {
+    Map<String, dynamic>? data,
+    String? popToNamed,
+    TransitionDelegate? transitionDelegate,
+    bool beamBackOnPop = false,
+    bool popBeamLocationOnPop = false,
+    bool stacked = true,
+  }) {
+    removeLastHistoryElement();
+    beamToNamed(
+      uri,
+      data: data,
+      popToNamed: popToNamed,
+      transitionDelegate: transitionDelegate,
+      beamBackOnPop: beamBackOnPop,
+      popBeamLocationOnPop: popBeamLocationOnPop,
+      stacked: stacked,
+    );
+  }
+
   /// {@template popToNamed}
-  /// Calls [beamToNamed] with a [ReverseTransitionDelegate].
+  /// Calls [beamToNamed] with a [ReverseTransitionDelegate] and tries to
+  /// remove everything from history after entry corresponding to `uri`, as
+  /// if doing a pop way back to that state, if it exists in history.
   ///
   /// See [beamToNamed] for more details.
   /// {@endtemplate}
