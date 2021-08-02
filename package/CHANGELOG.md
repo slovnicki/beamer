@@ -14,6 +14,7 @@
 - **Add:** [firebase_core example](https://github.com/slovnicki/beamer/tree/master/examples/firebase_core)
 - **Add:** [firebase_auth example](https://github.com/slovnicki/beamer/tree/master/examples/firebase_auth)
 - **Add:** [change_notifier_custom_state example](https://github.com/slovnicki/beamer/tree/master/examples/change_notifier_custom_state)
+- **Add:** `BeamPage.routePop` that can be used for `onPopPage` instead of default `pathsegmentPop`
 - **Add:** `BeamerDelegate.buildListener`, which is called after the pages are built.
 - **Add:** `fullScreenDialog` property to `BeamPage`
 - **Add:** flutter_lints
