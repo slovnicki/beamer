@@ -6,15 +6,20 @@ import 'package:flutter/widgets.dart';
 import './utils.dart';
 import './beam_location.dart';
 
+/// A class to mix with when defining a custom state for [BeamLocation].
+///
+/// [fromRouteInformation] and [toRouteInformation] need to be implemented in
+/// order to notify the platform of current [RouteInformation] that corresponds
+/// to the state.
 mixin RouteInformationSerializable<T> {
   T fromRouteInformation(RouteInformation routeInformation);
   RouteInformation toRouteInformation();
   RouteInformation get routeInformation => toRouteInformation();
 }
 
-/// A state for [BeamerDelegate] and [BeamLocation].
+/// A pre-made state for [BeamLocation].
 ///
-/// Helps in building the pages and creates an URI.
+/// This can be used when one does not desire to define its own state.
 class BeamState with RouteInformationSerializable<BeamState> {
   BeamState({
     this.pathBlueprintSegments = const <String>[],
@@ -31,7 +36,7 @@ class BeamState with RouteInformationSerializable<BeamState> {
   /// Creates a [BeamState] from given [uri] and optional [data].
   ///
   /// If [beamLocation] is given, then it will take into consideration
-  /// its path blueprints to populate the [pathParameters] attribute.
+  /// its `pathPatterns` to populate the [pathParameters] attribute.
   ///
   /// See [Utils.createBeamState].
   factory BeamState.fromUri(

@@ -37,42 +37,49 @@ class BeamPage extends Page {
     RouteInformationSerializable state,
     BeamPage poppedPage,
   ) {
-    if (delegate.beamingHistoryCompleteLength <= 1) {
+    if (!delegate.navigator.canPop() ||
+        delegate.beamingHistoryCompleteLength < 2) {
       return false;
     }
 
-    final poppedHistoryElement = delegate.removeLastHistoryElement();
+    // Take the history element that is being popped and the one before
+    // as they will be conpared later on to fine-tune the pop experience.
+    final poppedHistoryElement = delegate.removeLastHistoryElement()!;
     final previousHistoryElement = delegate.beamingHistory.last.history.last;
 
+    // Convert both to Uri as their path and query will be compared.
+    final poppedUri = Uri.parse(
+      poppedHistoryElement.state.routeInformation.location ?? '/',
+    );
     final previousUri = Uri.parse(
       previousHistoryElement.state.routeInformation.location ?? '/',
     );
 
-    final location =
-        poppedHistoryElement!.state.routeInformation.location ?? '/';
-    final pathSegments = Uri.parse(location).pathSegments;
-    final queryParameters = Uri.parse(location).queryParameters;
+    final poppedPathSegments = poppedUri.pathSegments;
+    final poppedQueryParameters = poppedUri.queryParameters;
+
+    // Pop path is obtained via removing the last path segment from path
+    // that is beaing popped.
+    final popPathSegments = List.from(poppedPathSegments)..removeLast();
+    final popPath = '/' + popPathSegments.join('/');
     var popUri = Uri(
-      pathSegments: List.from(pathSegments)..removeLast(),
-      queryParameters: poppedPage.keepQueryOnPop ? queryParameters : null,
-    );
-    final popUriPath = '/' + popUri.path;
-
-    popUri = Uri(
-      pathSegments: popUri.pathSegments,
-      queryParameters:
-          (popUriPath == previousUri.path && !poppedPage.keepQueryOnPop)
+      path: popPath,
+      queryParameters: poppedPage.keepQueryOnPop
+          ? poppedQueryParameters
+          : (popPath == previousUri.path)
               ? previousUri.queryParameters
-              : popUri.queryParameters,
+              : null,
     );
 
-    if (popUriPath == previousUri.path) {
+    // Remove the last history element if it's the same as the path
+    // we're trying to pop to, because `update` will add it to history.
+    // This is `false` in case `popToNamed` is used to `pop` somewhere further.
+    if (popPath == previousUri.path) {
       delegate.removeLastHistoryElement();
     }
     delegate.update(
       configuration: delegate.configuration.copyWith(
-        location:
-            popUriPath + (popUri.query.isNotEmpty ? '?${popUri.query}' : ''),
+        location: popUri.toString(),
       ),
     );
 
@@ -86,15 +93,15 @@ class BeamPage extends Page {
     RouteInformationSerializable state,
     BeamPage poppedPage,
   ) {
-    if (delegate.beamingHistoryCompleteLength <= 1) {
+    if (delegate.beamingHistoryCompleteLength < 2) {
       return false;
     }
 
     delegate.removeLastHistoryElement();
-    final previousHistoryElement = delegate.removeLastHistoryElement();
+    final previousHistoryElement = delegate.removeLastHistoryElement()!;
 
     delegate.update(
-      configuration: previousHistoryElement!.state.routeInformation.copyWith(),
+      configuration: previousHistoryElement.state.routeInformation.copyWith(),
     );
 
     return true;

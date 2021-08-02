@@ -821,7 +821,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   }
 
   HistoryElement? removeLastHistoryElement() {
-    if (!canBeamBack) {
+    if (beamingHistoryCompleteLength == 0) {
       return null;
     }
     if (updateParent) {

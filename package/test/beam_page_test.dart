@@ -449,6 +449,36 @@ void main() {
       expect(find.text('1.1'), findsNothing);
       expect(delegate.configuration.location, '/1');
     });
+
+    testWidgets('routePop works', (tester) async {
+      final delegate = BeamerDelegate(
+        locationBuilder: RoutesLocationBuilder(
+          routes: {
+            '/': (context, state) => Container(),
+            '/test': (context, state) => Container(),
+            '/test/2': (context, state) => BeamPage(
+                  onPopPage: BeamPage.routePop,
+                  child: Container(),
+                ),
+          },
+        ),
+      );
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: delegate,
+        ),
+      );
+      expect(delegate.configuration.location, '/');
+
+      delegate.beamToNamed('/test/2');
+      await tester.pump();
+      expect(delegate.configuration.location, '/test/2');
+
+      delegate.navigator.pop();
+      await tester.pump();
+      expect(delegate.configuration.location, '/');
+    });
   });
 
   group('Transitions', () {
