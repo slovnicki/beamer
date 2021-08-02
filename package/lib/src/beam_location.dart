@@ -141,6 +141,11 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
             state.routeInformation.location;
       });
       if (sameStateIndex != -1) {
+        for (int i = sameStateIndex; i < history.length; i++) {
+          if (history[i] is ChangeNotifier) {
+            (history[i] as ChangeNotifier).removeListener(update);
+          }
+        }
         history.removeRange(sameStateIndex, history.length);
       }
     }
@@ -152,6 +157,17 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
       }
       history.add(HistoryElement<T>(state as T, beamParameters));
     }
+  }
+
+  HistoryElement? removeLastFromHistory() {
+    if (history.isEmpty) {
+      return null;
+    }
+    final last = history.removeLast();
+    if (last is ChangeNotifier) {
+      (last as ChangeNotifier).removeListener(update);
+    }
+    return last;
   }
 
   /// Can this handle the [uri] based on its [pathPatterns].

@@ -827,7 +827,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     if (updateParent) {
       _parent?.removeLastHistoryElement();
     }
-    final lastHistoryElement = beamingHistory.last.history.removeLast();
+    final lastHistoryElement = beamingHistory.last.removeLastFromHistory();
     if (beamingHistory.last.history.isEmpty) {
       beamingHistory.removeLast();
     }
