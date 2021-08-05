@@ -10,6 +10,8 @@ assignees: ''
 **Describe the bug**
 A clear and concise description of what the bug is.
 
+**Beamer version:** (e.g. `v0.14.1`, `master`, ...)
+
 **To Reproduce**
 Steps to reproduce the behavior:
 1. Go to '...'
