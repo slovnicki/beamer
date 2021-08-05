@@ -614,7 +614,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   @override
   Widget build(BuildContext context) {
-    BeamGuard? guard = _checkGuards(guards, context, currentBeamLocation);
+    BeamGuard? guard = _checkGuards(context, currentBeamLocation);
     if (guard != null) {
       _applyGuard(guard, context);
     }
@@ -758,11 +758,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   }
 
   BeamGuard? _checkGuards(
-    List<BeamGuard> guards,
     BuildContext context,
     BeamLocation location,
   ) {
-    for (final guard in guards + location.guards) {
+    for (final guard in (parent?.guards ?? []) + guards + location.guards) {
       if (guard.shouldGuard(location) && !guard.check(context, location)) {
         guard.onCheckFailed?.call(context, location);
         return guard;
@@ -793,7 +792,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       );
     }
 
-    final anotherGuard = _checkGuards(guards, context, redirectLocation);
+    final anotherGuard = _checkGuards(context, redirectLocation);
     if (anotherGuard != null) {
       return _applyGuard(anotherGuard, context);
     }
