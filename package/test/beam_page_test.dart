@@ -34,7 +34,7 @@ class TestLocation extends BeamLocation<BeamState> {
             onPopPage: (context, delegate, _, page) {
               delegate.currentBeamLocation.update(
                 (state) => (state as BeamState).copyWith(
-                  pathBlueprintSegments: ['books'],
+                  pathPatternSegments: ['books'],
                   pathParameters: {},
                 ),
               );

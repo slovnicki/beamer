@@ -117,7 +117,7 @@ class BeamState with RouteInformationSerializable<BeamState> {
   /// Current URI object in the "blueprint form",
   /// as it's defined in [BeamLocation.pathPatterns].
   ///
-  /// This is constructed from [pathBlueprintSegments] and [queryParameters].
+  /// This is constructed from [pathPatternSegments] and [queryParameters].
   /// See more at [configure].
   Uri get uriBlueprint => _uriBlueprint;
 
@@ -126,8 +126,8 @@ class BeamState with RouteInformationSerializable<BeamState> {
   /// Current URI object in the "real form",
   /// as it should be shown in browser's URL bar.
   ///
-  /// This is constructed from [pathBlueprintSegments] and [queryParameters],
-  /// with the addition of replacing each pathBlueprintSegment of the form ':*'
+  /// This is constructed from [pathPatternSegments] and [queryParameters],
+  /// with the addition of replacing each pathPatternSegment of the form ':*'
   /// with a coresponding value from [pathParameters].
   ///
   /// See more at [configure].
@@ -144,13 +144,13 @@ class BeamState with RouteInformationSerializable<BeamState> {
 
   /// Returns a configured copy of this.
   BeamState copyWith({
-    List<String>? pathBlueprintSegments,
+    List<String>? pathPatternSegments,
     Map<String, String>? pathParameters,
     Map<String, String>? queryParameters,
     Map<String, dynamic>? data,
   }) =>
       BeamState(
-        pathPatternSegments: pathBlueprintSegments ?? this.pathPatternSegments,
+        pathPatternSegments: pathPatternSegments ?? this.pathPatternSegments,
         pathParameters: pathParameters ?? this.pathParameters,
         queryParameters: queryParameters ?? this.queryParameters,
         data: data ?? this.data,
