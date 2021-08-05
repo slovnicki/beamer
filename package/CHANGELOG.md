@@ -5,12 +5,15 @@
     - `locationBuilder` now works with `RouteInformation` and `BeamConfiguration` instead of `BeamState`
     - `super()` constructor on `BeamLocation` now takes optional `RouteInformation` instead of `BeamState`
     - in order to continue using custom `BeamLocation`s with `BeamState` state, generic type has to be specified; `class MyBeamLocation extends BeamLocation<BeamState>`
+- **BREAKING:** `pathBlueprints` is renamed to `pathPatterns`
+    - `BeamLocation.pathPatterns` is `List<Pattern>`
+    - `BeamState.pathBlueprintSegments` renamed to `BeamState.pathPatternSegments`
+    - `BeamGuard.pathBlueprints` renamed to `BeamGuard.pathPatterns`
 - **BREAKING:** `SimpleLocationBuilder` is renamed to `RoutesLocationBuilder`
     - also the `SimpleBeamLocation` is renamed to `RoutesBeamLocation`
 - **BREAKING:** `beamStateHistory` and `beamLocationHistory` have been replaced with `beamingHistory` that is a `List<BeamLocation>` and each `BeamLocation` has `history` that is `List<HistoryElement>` where `HistoryElement` holds `state` and `BeamParameters`.
 - **BREAKING:** `BeamerDelegate.listener` has been renamed to `BeamerDelegate.routeListener`
 - **BREAKING:** The property `pageRouteBuilder` in `BeamPage` is replaced with a new property `routeBuilder` which works with any `RouteBuilder` not just `PageRouteBuilder`.
-- **BREAKING:** `pathBlueprints` is renamed to `pathPatterns` and is `List<Pattern>`.
 - **Add:** [firebase_core example](https://github.com/slovnicki/beamer/tree/master/examples/firebase_core)
 - **Add:** [firebase_auth example](https://github.com/slovnicki/beamer/tree/master/examples/firebase_auth)
 - **Add:** [change_notifier_custom_state example](https://github.com/slovnicki/beamer/tree/master/examples/change_notifier_custom_state)
