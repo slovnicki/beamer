@@ -14,7 +14,7 @@ class TestLocation extends BeamLocation<BeamState> {
           key: const ValueKey('home'),
           child: Container(),
         ),
-        if (state.pathBlueprintSegments.contains('books'))
+        if (state.pathPatternSegments.contains('books'))
           BeamPage(
             key: const ValueKey('books'),
             onPopPage: (context, delegate, _, page) {
@@ -28,7 +28,7 @@ class TestLocation extends BeamLocation<BeamState> {
             popToNamed: '/',
             child: Container(),
           ),
-        if (state.pathBlueprintSegments.contains('details'))
+        if (state.pathPatternSegments.contains('details'))
           BeamPage(
             key: ValueKey('book-${state.pathParameters['bookId']}-details'),
             onPopPage: (context, delegate, _, page) {
@@ -42,7 +42,7 @@ class TestLocation extends BeamLocation<BeamState> {
             },
             child: Container(),
           ),
-        if (state.pathBlueprintSegments.contains('buy'))
+        if (state.pathPatternSegments.contains('buy'))
           BeamPage(
             key: ValueKey('book-${state.pathParameters['bookId']}-buy'),
             child: Container(),

@@ -7,7 +7,7 @@ import 'test_locations.dart';
 void main() {
   test('construct', () {
     final state = BeamState(
-      pathBlueprintSegments: ['test', ':x'],
+      pathPatternSegments: ['test', ':x'],
       pathParameters: {'x': 'y'},
     );
     expect(state.pathParameters['x'], 'y');
@@ -33,7 +33,7 @@ void main() {
   test('copyWith', () {
     final state = BeamState.fromUriString('/l2', beamLocation: Location2());
     final copy = state.copyWith();
-    expect(copy.pathBlueprintSegments[0], 'l2');
+    expect(copy.pathPatternSegments[0], 'l2');
   });
 
   test('copyForLocation', () {

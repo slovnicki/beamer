@@ -22,7 +22,7 @@ mixin RouteInformationSerializable<T> {
 /// This can be used when one does not desire to define its own state.
 class BeamState with RouteInformationSerializable<BeamState> {
   BeamState({
-    this.pathBlueprintSegments = const <String>[],
+    this.pathPatternSegments = const <String>[],
     this.pathParameters = const <String, String>{},
     this.queryParameters = const <String, String>{},
     this.data = const <String, dynamic>{},
@@ -96,7 +96,7 @@ class BeamState with RouteInformationSerializable<BeamState> {
   /// in the form as it's defined in [BeamLocation.pathPatterns].
   ///
   /// If current URI is '/books/1', this will be `['books', ':bookId']`.
-  final List<String> pathBlueprintSegments;
+  final List<String> pathPatternSegments;
 
   /// Path parameters from the URI,
   /// in the form as it's defined in [BeamLocation.pathPatterns].
@@ -150,8 +150,7 @@ class BeamState with RouteInformationSerializable<BeamState> {
     Map<String, dynamic>? data,
   }) =>
       BeamState(
-        pathBlueprintSegments:
-            pathBlueprintSegments ?? this.pathBlueprintSegments,
+        pathPatternSegments: pathBlueprintSegments ?? this.pathPatternSegments,
         pathParameters: pathParameters ?? this.pathParameters,
         queryParameters: queryParameters ?? this.queryParameters,
         data: data ?? this.data,
@@ -160,10 +159,10 @@ class BeamState with RouteInformationSerializable<BeamState> {
   /// Constructs [uriBlueprint] and [uri].
   void configure() {
     _uriBlueprint = Uri(
-      path: '/' + pathBlueprintSegments.join('/'),
+      path: '/' + pathPatternSegments.join('/'),
       queryParameters: queryParameters.isEmpty ? null : queryParameters,
     );
-    final pathSegments = pathBlueprintSegments.toList();
+    final pathSegments = pathPatternSegments.toList();
     for (int i = 0; i < pathSegments.length; i++) {
       if (pathSegments[i].isNotEmpty && pathSegments[i][0] == ':') {
         final key = pathSegments[i].substring(1);

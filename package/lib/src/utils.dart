@@ -85,7 +85,7 @@ abstract class Utils {
         if (pathBlueprint is String) {
           if (pathBlueprint == uri.path || pathBlueprint == '/*') {
             BeamState(
-              pathBlueprintSegments: uri.pathSegments,
+              pathPatternSegments: uri.pathSegments,
               queryParameters: uri.queryParameters,
               data: data,
             );
@@ -124,7 +124,7 @@ abstract class Utils {
           }
           if (checksPassed) {
             return BeamState(
-              pathBlueprintSegments: pathSegments,
+              pathPatternSegments: pathSegments,
               pathParameters: pathParameters,
               queryParameters: uri.queryParameters,
               data: data,
@@ -142,7 +142,7 @@ abstract class Utils {
               }
             });
             return BeamState(
-              pathBlueprintSegments: uri.pathSegments,
+              pathPatternSegments: uri.pathSegments,
               pathParameters: pathParameters,
               queryParameters: uri.queryParameters,
               data: data,
@@ -152,7 +152,7 @@ abstract class Utils {
       }
     }
     return BeamState(
-      pathBlueprintSegments: uri.pathSegments,
+      pathPatternSegments: uri.pathSegments,
       queryParameters: uri.queryParameters,
       data: data,
     );

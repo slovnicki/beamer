@@ -10,12 +10,12 @@ class Location1 extends BeamLocation<BeamState> {
           key: const ValueKey('l1'),
           child: Container(),
         ),
-        if (state.pathBlueprintSegments.contains('one'))
+        if (state.pathPatternSegments.contains('one'))
           BeamPage(
             key: const ValueKey('l1-one'),
             child: Container(),
           ),
-        if (state.pathBlueprintSegments.contains('two'))
+        if (state.pathPatternSegments.contains('two'))
           BeamPage(
             key: const ValueKey('l1-two'),
             child: Container(),
