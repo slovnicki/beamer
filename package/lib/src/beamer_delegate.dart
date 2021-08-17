@@ -618,107 +618,26 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     if (guard != null) {
       _applyGuard(guard, context);
     }
+
     if (currentBeamLocation is NotFound) {
-      if (notFoundRedirect == null && notFoundRedirectNamed == null) {
-        // do nothing, pass on NotFound
-      } else {
-        late BeamLocation redirectBeamLocation;
-        if (notFoundRedirect != null) {
-          redirectBeamLocation = notFoundRedirect!;
-        } else if (notFoundRedirectNamed != null) {
-          redirectBeamLocation = locationBuilder(
-            RouteInformation(location: notFoundRedirectNamed),
-            _currentBeamParameters.copyWith(),
-          );
-        }
-        _addToBeamingHistory(redirectBeamLocation);
-        _updateFromLocation(rebuild: false);
-      }
+      _handleNotFoundRedirect();
     }
 
-    final navigator = Builder(
-      builder: (context) {
-        if (currentBeamLocation is NotFound ||
-            currentBeamLocation is EmptyBeamLocation) {
-          _currentPages = [notFoundPage];
-        } else {
-          _currentPages = _currentBeamParameters.stacked
-              ? currentBeamLocation.buildPages(
-                  context, currentBeamLocation.state)
-              : [
-                  currentBeamLocation
-                      .buildPages(context, currentBeamLocation.state)
-                      .last
-                ];
-        }
-        if (active && kIsWeb && setBrowserTabTitle) {
-          SystemChrome.setApplicationSwitcherDescription(
-              ApplicationSwitcherDescription(
-            label: _currentPages.last.title ??
-                currentBeamLocation.state.routeInformation.location,
-            primaryColor: Theme.of(context).primaryColor.value,
-          ));
-        }
-        buildListener?.call(context, this);
-        return Navigator(
-          key: navigatorKey,
-          observers: navigatorObservers,
-          transitionDelegate: currentBeamLocation.transitionDelegate ??
-              _currentBeamParameters.transitionDelegate,
-          pages: guard != null && guard.showPage != null
-              ? guard.replaceCurrentStack
-                  ? [guard.showPage!]
-                  : _currentPages + [guard.showPage!]
-              : _currentPages,
-          onPopPage: (route, result) {
-            if (route.willHandlePopInternally) {
-              if (!route.didPop(result)) {
-                return false;
-              }
-            }
+    _setCurrentPages(context, guard);
 
-            if (_currentBeamParameters.popConfiguration != null) {
-              update(
-                configuration: _currentBeamParameters.popConfiguration,
-                beamParameters: _currentBeamParameters.copyWith(
-                  transitionDelegate: beamBackTransitionDelegate,
-                ),
-                // replaceCurrent: true,
-              );
-            } else if (_currentBeamParameters.popBeamLocationOnPop) {
-              final didPopBeamLocation = popBeamLocation();
-              if (!didPopBeamLocation) {
-                return false;
-              }
-            } else if (_currentBeamParameters.beamBackOnPop) {
-              final didBeamBack = beamBack();
-              if (!didBeamBack) {
-                return false;
-              }
-            } else {
-              final lastPage = _currentPages.last;
-              if (lastPage is BeamPage) {
-                if (lastPage.popToNamed != null) {
-                  popToNamed(lastPage.popToNamed!);
-                } else {
-                  final shouldPop = lastPage.onPopPage(
-                    context,
-                    this,
-                    currentBeamLocation.state,
-                    lastPage,
-                  );
-                  if (!shouldPop) {
-                    return false;
-                  }
-                }
-              }
-            }
+    _setBrowserTitle(context);
 
-            return route.didPop(result);
-          },
-        );
-      },
+    buildListener?.call(context, this);
+
+    final navigator = Navigator(
+      key: navigatorKey,
+      observers: navigatorObservers,
+      transitionDelegate: currentBeamLocation.transitionDelegate ??
+          _currentBeamParameters.transitionDelegate,
+      pages: _currentPages,
+      onPopPage: (route, result) => _onPopPage(context, route, result),
     );
+
     return currentBeamLocation.builder(context, navigator);
   }
 
@@ -832,6 +751,103 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     }
 
     return lastHistoryElement;
+  }
+
+  void _handleNotFoundRedirect() {
+    if (notFoundRedirect == null && notFoundRedirectNamed == null) {
+      // do nothing, pass on NotFound
+    } else {
+      late BeamLocation redirectBeamLocation;
+      if (notFoundRedirect != null) {
+        redirectBeamLocation = notFoundRedirect!;
+      } else if (notFoundRedirectNamed != null) {
+        redirectBeamLocation = locationBuilder(
+          RouteInformation(location: notFoundRedirectNamed),
+          _currentBeamParameters.copyWith(),
+        );
+      }
+      _addToBeamingHistory(redirectBeamLocation);
+      _updateFromLocation(rebuild: false);
+    }
+  }
+
+  void _setCurrentPages(BuildContext context, BeamGuard? guard) {
+    if (currentBeamLocation is NotFound) {
+      _currentPages = [notFoundPage];
+    } else {
+      _currentPages = _currentBeamParameters.stacked
+          ? currentBeamLocation.buildPages(context, currentBeamLocation.state)
+          : [
+              currentBeamLocation
+                  .buildPages(context, currentBeamLocation.state)
+                  .last
+            ];
+    }
+    if (guard != null && guard.showPage != null) {
+      if (guard.replaceCurrentStack) {
+        _currentPages = [guard.showPage!];
+      } else {
+        _currentPages += [guard.showPage!];
+      }
+    }
+  }
+
+  void _setBrowserTitle(BuildContext context) {
+    if (active && kIsWeb && setBrowserTabTitle) {
+      SystemChrome.setApplicationSwitcherDescription(
+          ApplicationSwitcherDescription(
+        label: _currentPages.last.title ??
+            currentBeamLocation.state.routeInformation.location,
+        primaryColor: Theme.of(context).primaryColor.value,
+      ));
+    }
+  }
+
+  bool _onPopPage(BuildContext context, Route<dynamic> route, dynamic result) {
+    if (route.willHandlePopInternally) {
+      if (!route.didPop(result)) {
+        return false;
+      }
+    }
+
+    if (_currentBeamParameters.popConfiguration != null) {
+      update(
+        configuration: _currentBeamParameters.popConfiguration,
+        beamParameters: _currentBeamParameters.copyWith(
+          transitionDelegate: beamBackTransitionDelegate,
+        ),
+        // replaceCurrent: true,
+      );
+    } else if (_currentBeamParameters.popBeamLocationOnPop) {
+      final didPopBeamLocation = popBeamLocation();
+      if (!didPopBeamLocation) {
+        return false;
+      }
+    } else if (_currentBeamParameters.beamBackOnPop) {
+      final didBeamBack = beamBack();
+      if (!didBeamBack) {
+        return false;
+      }
+    } else {
+      final lastPage = _currentPages.last;
+      if (lastPage is BeamPage) {
+        if (lastPage.popToNamed != null) {
+          popToNamed(lastPage.popToNamed!);
+        } else {
+          final shouldPop = lastPage.onPopPage(
+            context,
+            this,
+            currentBeamLocation.state,
+            lastPage,
+          );
+          if (!shouldPop) {
+            return false;
+          }
+        }
+      }
+    }
+
+    return route.didPop(result);
   }
 
   void _initializeFromParent() {
