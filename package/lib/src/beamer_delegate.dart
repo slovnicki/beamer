@@ -396,7 +396,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       configuration: location.state.routeInformation,
       beamParameters: _currentBeamParameters.copyWith(
         popConfiguration: popTo?.state.routeInformation,
-        transitionDelegate: transitionDelegate,
+        transitionDelegate: transitionDelegate ?? this.transitionDelegate,
         beamBackOnPop: beamBackOnPop,
         popBeamLocationOnPop: popBeamLocationOnPop,
         stacked: stacked,
@@ -460,7 +460,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         popConfiguration: popToNamed != null
             ? RouteInformation(location: popToNamed, state: beamData)
             : null,
-        transitionDelegate: transitionDelegate,
+        transitionDelegate: transitionDelegate ?? this.transitionDelegate,
         beamBackOnPop: beamBackOnPop,
         popBeamLocationOnPop: popBeamLocationOnPop,
         stacked: stacked,
