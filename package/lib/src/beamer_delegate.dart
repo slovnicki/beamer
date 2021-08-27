@@ -302,6 +302,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// [build] will not occur, but [state] and browser URL will be updated.
   void update({
     RouteInformation? configuration,
+    Object? data,
     BeamParameters? beamParameters,
     bool buildBeamLocation = true,
     bool rebuild = true,
@@ -339,6 +340,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         beamingHistory.last
             .addToHistory(location.state, location.beamParameters);
       }
+    }
+    if (data != null) {
+      currentBeamLocation.data = data;
     }
     routeListener?.call(this.configuration, currentBeamLocation);
 
@@ -385,6 +389,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// {@endtemplate}
   void beamTo(
     BeamLocation location, {
+    Object? data,
     BeamLocation? popTo,
     TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
@@ -394,6 +399,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     _addToBeamingHistory(location);
     update(
       configuration: location.state.routeInformation,
+      data: data,
       beamParameters: _currentBeamParameters.copyWith(
         popConfiguration: popTo?.state.routeInformation,
         transitionDelegate: transitionDelegate ?? this.transitionDelegate,
@@ -409,6 +415,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// i.e. removes it from the [beamingHistory] and then does [beamTo].
   void beamToReplacement(
     BeamLocation location, {
+    Object? data,
     BeamLocation? popTo,
     TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
@@ -419,6 +426,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     beamingHistory.removeLast();
     beamTo(
       location,
+      data: data,
       popTo: popTo,
       transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
@@ -443,23 +451,20 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// {@endtemplate}
   void beamToNamed(
     String uri, {
-    Map<String, dynamic>? data,
+    Object? routeState,
+    Object? data,
     String? popToNamed,
     TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
   }) {
-    final beamData = data ??
-        (beamingHistory.isNotEmpty
-            ? currentBeamLocation.state.routeInformation.state
-            : null);
     update(
-      configuration: RouteInformation(location: uri, state: beamData),
+      configuration: RouteInformation(location: uri, state: routeState),
+      data: data,
       beamParameters: _currentBeamParameters.copyWith(
-        popConfiguration: popToNamed != null
-            ? RouteInformation(location: popToNamed, state: beamData)
-            : null,
+        popConfiguration:
+            popToNamed != null ? RouteInformation(location: popToNamed) : null,
         transitionDelegate: transitionDelegate ?? this.transitionDelegate,
         beamBackOnPop: beamBackOnPop,
         popBeamLocationOnPop: popBeamLocationOnPop,
@@ -472,7 +477,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// i.e. removes it from the `beamingHistory.last.history` and then does [beamToNamed].
   void beamToReplacementNamed(
     String uri, {
-    Map<String, dynamic>? data,
+    Object? routeState,
+    Object? data,
     String? popToNamed,
     TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
@@ -483,6 +489,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     beamToNamed(
       uri,
       data: data,
+      routeState: routeState,
       popToNamed: popToNamed,
       transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
@@ -500,7 +507,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// {@endtemplate}
   void popToNamed(
     String uri, {
-    Map<String, dynamic>? data,
+    Object? data,
+    Object? routeState,
     String? popToNamed,
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
@@ -523,6 +531,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     beamToNamed(
       uri,
       data: data,
+      routeState: routeState,
       popToNamed: popToNamed,
       transitionDelegate: const ReverseTransitionDelegate(),
       beamBackOnPop: beamBackOnPop,
@@ -533,20 +542,20 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   /// {@template canBeamBack}
   /// Whether it is possible to [beamBack],
-  /// i.e. there is more than 1 state in [routeHistory].
+  /// i.e. there is more than 1 state in [beamingHistory].
   /// {@endtemplate}
   bool get canBeamBack =>
       beamingHistory.last.history.length > 1 || beamingHistory.length > 1;
 
   /// {@template beamBack}
-  /// Beams to previous state in [routeHistory].
+  /// Beams to previous state in [beamingHistory].
   /// and **removes** the last state from history.
   ///
   /// If there is no previous state, does nothing.
   ///
-  /// Returns the success, whether the [state] updated.
+  /// Returns the success, whether [update] was executed.
   /// {@endtemplate}
-  bool beamBack({Map<String, dynamic>? data}) {
+  bool beamBack({Object? data}) {
     if (!canBeamBack) {
       return false;
     }
@@ -565,10 +574,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       lastHistoryElement = beamingHistory.last.history.last;
       beamingHistory.last.history.removeLast();
     }
+
     update(
-      configuration: lastHistoryElement.state.routeInformation.copyWith(
-        state: data,
-      ),
+      configuration: lastHistoryElement.state.routeInformation.copyWith(),
+      data: data,
       beamParameters: lastHistoryElement.parameters.copyWith(
         transitionDelegate: beamBackTransitionDelegate,
       ),
@@ -851,7 +860,11 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   }
 
   void _initializeFromParent() {
-    configuration = _parent!.configuration.copyWith();
+    final parent = _parent;
+    if (parent == null) {
+      return;
+    }
+    configuration = parent.configuration.copyWith();
     var location = locationBuilder(
       configuration,
       _currentBeamParameters.copyWith(),

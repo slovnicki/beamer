@@ -57,8 +57,11 @@ void main() {
       final state2 = BeamState.fromUri(Uri.parse('/test'));
       expect(state1 == state2, isTrue);
 
-      final state3 = BeamState.fromUri(Uri.parse('/test'), data: {'x': 'y'});
-      final state4 = BeamState.fromUri(Uri.parse('/test'), data: {'x': 'y'});
+      final routeState = {'x': 'y'};
+      final state3 =
+          BeamState.fromUri(Uri.parse('/test'), routeState: routeState);
+      final state4 =
+          BeamState.fromUri(Uri.parse('/test'), routeState: routeState);
       expect(state3 == state4, isTrue);
 
       final set1 = <BeamState>{state1, state2};
@@ -70,16 +73,21 @@ void main() {
       final state2 = BeamState.fromUri(Uri.parse('/test2'));
       expect(state1 == state2, isFalse);
 
-      final state3 = BeamState.fromUri(Uri.parse('/test'), data: {'x': 'y'});
+      final state3 =
+          BeamState.fromUri(Uri.parse('/test'), routeState: {'x': 'y'});
       final state4 = BeamState.fromUri(Uri.parse('/test'));
       expect(state3 == state4, isFalse);
 
-      final state5 = BeamState.fromUri(Uri.parse('/test'), data: {'x': 'y'});
-      final state6 = BeamState.fromUri(Uri.parse('/test'), data: {'x': 'z'});
+      final state5 =
+          BeamState.fromUri(Uri.parse('/test'), routeState: {'x': 'y'});
+      final state6 =
+          BeamState.fromUri(Uri.parse('/test'), routeState: {'x': 'z'});
       expect(state5 == state6, isFalse);
 
-      final state7 = BeamState.fromUri(Uri.parse('/test1'), data: {'x': 'y'});
-      final state8 = BeamState.fromUri(Uri.parse('/test2'), data: {'x': 'y'});
+      final state7 =
+          BeamState.fromUri(Uri.parse('/test1'), routeState: {'x': 'y'});
+      final state8 =
+          BeamState.fromUri(Uri.parse('/test2'), routeState: {'x': 'y'});
       expect(state7 == state8, isFalse);
 
       final set1 = <BeamState>{state1, state2};

@@ -13,7 +13,8 @@ abstract class Utils {
   static BeamLocation chooseBeamLocation(
     Uri uri,
     List<BeamLocation> beamLocations, {
-    Map<String, dynamic> data = const <String, dynamic>{},
+    Object? data,
+    Object? routeState,
   }) {
     for (final beamLocation in beamLocations) {
       if (canBeamLocationHandleUri(beamLocation, uri)) {
@@ -21,7 +22,7 @@ abstract class Utils {
           ..addToHistory(beamLocation.createState(
             RouteInformation(
               location: uri.toString(),
-              state: data,
+              state: routeState,
             ),
           ));
       }
@@ -77,7 +78,7 @@ abstract class Utils {
   static BeamState createBeamState(
     Uri uri, {
     BeamLocation? beamLocation,
-    Map<String, dynamic> data = const <String, dynamic>{},
+    Object? routeState,
   }) {
     if (beamLocation != null) {
       // TODO: abstract this and reuse in canBeamLocationHandleUri
@@ -87,7 +88,7 @@ abstract class Utils {
             BeamState(
               pathPatternSegments: uri.pathSegments,
               queryParameters: uri.queryParameters,
-              data: data,
+              routeState: routeState,
             );
           }
           final uriPathSegments = uri.pathSegments.toList();
@@ -127,7 +128,7 @@ abstract class Utils {
               pathPatternSegments: pathSegments,
               pathParameters: pathParameters,
               queryParameters: uri.queryParameters,
-              data: data,
+              routeState: routeState,
             );
           }
         } else {
@@ -145,7 +146,7 @@ abstract class Utils {
               pathPatternSegments: uri.pathSegments,
               pathParameters: pathParameters,
               queryParameters: uri.queryParameters,
-              data: data,
+              routeState: routeState,
             );
           }
         }
@@ -154,7 +155,7 @@ abstract class Utils {
     return BeamState(
       pathPatternSegments: uri.pathSegments,
       queryParameters: uri.queryParameters,
-      data: data,
+      routeState: routeState,
     );
   }
 

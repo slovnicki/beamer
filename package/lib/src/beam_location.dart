@@ -95,6 +95,14 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   set state(T state) =>
       history.last = HistoryElement(state, history.last.parameters);
 
+  /// An arbitrary data to be stored in this.
+  /// This will persist while navigating through this [BeamLocation].
+  ///
+  /// Therefore, in the case of using [RoutesLocationBuilder] which uses only
+  /// a single [RoutesBeamLocation] for all page stacks, this data will
+  /// be available always, until overriden with some new data.
+  Object? data;
+
   /// Beam parameters used to beam to the [state].
   BeamParameters get beamParameters => history.last.parameters;
 
@@ -103,7 +111,10 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   ///
   /// Override this if you have your custom state class extending [BeamState].
   T createState(RouteInformation routeInformation) =>
-      BeamState.fromRouteInformation(routeInformation, beamLocation: this) as T;
+      BeamState.fromRouteInformation(
+        routeInformation,
+        beamLocation: this,
+      ) as T;
 
   /// Update a state via callback receiving the current state.
   /// If no callback is given, just notifies [BeamerDelegate] to rebuild.
@@ -266,6 +277,7 @@ class EmptyBeamLocation extends BeamLocation<BeamState> {
 class RoutesBeamLocation extends BeamLocation<BeamState> {
   RoutesBeamLocation({
     required RouteInformation routeInformation,
+    Object? data,
     BeamParameters? beamParameters,
     required this.routes,
     this.navBuilder,

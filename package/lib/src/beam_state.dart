@@ -25,9 +25,9 @@ class BeamState with RouteInformationSerializable<BeamState> {
     this.pathPatternSegments = const <String>[],
     this.pathParameters = const <String, String>{},
     this.queryParameters = const <String, String>{},
-    this.data = const <String, dynamic>{},
+    this.routeState,
   }) : assert(() {
-          json.encode(data);
+          json.encode(routeState);
           return true;
         }()) {
     configure();
@@ -42,12 +42,12 @@ class BeamState with RouteInformationSerializable<BeamState> {
   factory BeamState.fromUri(
     Uri uri, {
     BeamLocation? beamLocation,
-    Map<String, dynamic> data = const <String, dynamic>{},
+    Object? routeState,
   }) {
     return Utils.createBeamState(
       uri,
       beamLocation: beamLocation,
-      data: data,
+      routeState: routeState,
     );
   }
 
@@ -60,14 +60,14 @@ class BeamState with RouteInformationSerializable<BeamState> {
   factory BeamState.fromUriString(
     String uriString, {
     BeamLocation? beamLocation,
-    Map<String, dynamic> data = const <String, dynamic>{},
+    Object? routeState,
   }) {
     uriString = Utils.trimmed(uriString);
     final uri = Uri.parse(uriString);
     return BeamState.fromUri(
       uri,
       beamLocation: beamLocation,
-      data: data,
+      routeState: routeState,
     );
   }
 
@@ -84,11 +84,7 @@ class BeamState with RouteInformationSerializable<BeamState> {
     return BeamState.fromUri(
       Uri.parse(routeInformation.location ?? '/'),
       beamLocation: beamLocation,
-      data: routeInformation.state is Map<String, dynamic>
-          ? routeInformation.state as Map<String, dynamic>
-          : {
-              'state': routeInformation.state,
-            },
+      routeState: routeInformation.state,
     );
   }
 
@@ -109,8 +105,11 @@ class BeamState with RouteInformationSerializable<BeamState> {
   /// If current URI is '/books?title=str', this will be `{'title': 'str'}`.
   final Map<String, String> queryParameters;
 
-  /// Custom key/value data for arbitrary use.
-  final Map<String, dynamic> data;
+  /// An object that will be passed to [RouteInformation.state]
+  /// that is stored as a part of browser history entry.
+  ///
+  /// This needs to be serializable.
+  final Object? routeState;
 
   late Uri _uriBlueprint;
 
@@ -134,11 +133,11 @@ class BeamState with RouteInformationSerializable<BeamState> {
   Uri get uri => _uri;
 
   /// Copies this with configuration for specific [BeamLocation].
-  BeamState copyForLocation(BeamLocation beamLocation) {
+  BeamState copyForLocation(BeamLocation beamLocation, Object? routeState) {
     return Utils.createBeamState(
       uri,
       beamLocation: beamLocation,
-      data: data,
+      routeState: routeState,
     );
   }
 
@@ -147,13 +146,13 @@ class BeamState with RouteInformationSerializable<BeamState> {
     List<String>? pathPatternSegments,
     Map<String, String>? pathParameters,
     Map<String, String>? queryParameters,
-    Map<String, dynamic>? data,
+    Object? routeState,
   }) =>
       BeamState(
         pathPatternSegments: pathPatternSegments ?? this.pathPatternSegments,
         pathParameters: pathParameters ?? this.pathParameters,
         queryParameters: queryParameters ?? this.queryParameters,
-        data: data ?? this.data,
+        routeState: routeState ?? this.routeState,
       )..configure();
 
   /// Constructs [uriBlueprint] and [uri].
@@ -179,28 +178,21 @@ class BeamState with RouteInformationSerializable<BeamState> {
 
   @override
   BeamState fromRouteInformation(RouteInformation routeInformation) =>
-      BeamState.fromUriString(
-        routeInformation.location ?? '/',
-        data: routeInformation.state is Map<String, dynamic>
-            ? routeInformation.state as Map<String, dynamic>
-            : {
-                'state': routeInformation.state,
-              },
-      );
+      BeamState.fromRouteInformation(routeInformation);
 
   @override
   RouteInformation toRouteInformation() => RouteInformation(
         location: uri.toString(),
-        state: data,
+        state: routeState,
       );
 
   @override
-  int get hashCode => hashValues(uri, data);
+  int get hashCode => hashValues(uri, json.encode(routeState));
 
   @override
   bool operator ==(Object other) {
     return other is BeamState &&
         other.uri == uri &&
-        mapEquals(other.data, data);
+        json.encode(other.routeState) == json.encode(routeState);
   }
 }

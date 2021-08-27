@@ -4,7 +4,9 @@ import '../beamer.dart';
 import 'utils.dart';
 
 typedef LocationBuilder = BeamLocation Function(
-    RouteInformation, BeamParameters?);
+  RouteInformation,
+  BeamParameters?,
+);
 
 /// A pre-made builder to be used for [locationBuilder].
 ///
@@ -23,7 +25,7 @@ class BeamerLocationBuilder {
     return Utils.chooseBeamLocation(
       Uri.parse(routeInformation.location ?? '/'),
       beamLocations,
-      data: {'state': routeInformation.state},
+      routeState: routeInformation.state,
     );
   }
 }

@@ -42,8 +42,12 @@ class BeamPage extends Page {
       return false;
     }
 
+    // take the data in case we remove the BeamLocation from history
+    // and generate a new one (but the same).
+    final data = delegate.currentBeamLocation.data;
+
     // Take the history element that is being popped and the one before
-    // as they will be conpared later on to fine-tune the pop experience.
+    // as they will be compared later on to fine-tune the pop experience.
     final poppedHistoryElement = delegate.removeLastHistoryElement()!;
     final previousHistoryElement = delegate.beamingHistory.last.history.last;
 
@@ -71,16 +75,41 @@ class BeamPage extends Page {
               : null,
     );
 
+    // We need the routeState from the route we are trying to pop to.
+    //
     // Remove the last history element if it's the same as the path
     // we're trying to pop to, because `update` will add it to history.
-    // This is `false` in case `popToNamed` is used to `pop` somewhere further.
+    // This is `false` in case we deep-linked.
+    //
+    // Otherwise, find the state with popPath in history.
+    RouteInformationSerializable? lastState;
     if (popPath == previousUri.path) {
-      delegate.removeLastHistoryElement();
+      lastState = delegate.removeLastHistoryElement()?.state;
+    } else {
+      // find the last
+      bool found = false;
+      for (var beamLocation in delegate.beamingHistory.reversed) {
+        if (found) {
+          break;
+        }
+        for (var historyElement in beamLocation.history.reversed) {
+          final uri =
+              Uri.parse(historyElement.state.routeInformation.location ?? '/');
+          if (uri.path == popPath) {
+            lastState = historyElement.state;
+            found = true;
+            break;
+          }
+        }
+      }
     }
+
     delegate.update(
       configuration: delegate.configuration.copyWith(
         location: popUri.toString(),
+        state: lastState?.routeInformation.state,
       ),
+      data: data,
     );
 
     return true;

@@ -27,7 +27,7 @@ void main() {
       location: '/test',
       state: {'x': 'y'},
     ));
-    expect(state2.data, {'x': 'y'});
+    expect(state2.routeState, {'x': 'y'});
   });
 
   test('copyWith', () {
@@ -38,7 +38,7 @@ void main() {
 
   test('copyForLocation', () {
     final state = BeamState.fromUriString('/l2/xx');
-    final copy = state.copyForLocation(Location2());
+    final copy = state.copyForLocation(Location2(), null);
     expect(copy.pathParameters['id'], 'xx');
   });
 }

@@ -19,7 +19,7 @@ void main() {
     buildListener: (_, BeamerDelegate delegate) {
       lastCurrentPagesFromBuildListner.addAll(delegate.currentPages);
     },
-    locationBuilder: (routeInformation, _) {
+    locationBuilder: (routeInformation, __) {
       if (routeInformation.location?.contains('l1') ?? false) {
         return Location1(routeInformation);
       }
@@ -59,7 +59,7 @@ void main() {
       expect(
           (location.state as BeamState).queryParameters.containsKey('q'), true);
       expect((location.state as BeamState).queryParameters['q'], 't');
-      expect((location.state as BeamState).data, {'x': 'y'});
+      expect(location.data, {'x': 'y'});
     });
 
     test(
@@ -78,7 +78,7 @@ void main() {
       expect(
           (location.state as BeamState).queryParameters.containsKey('r'), true);
       expect((location.state as BeamState).queryParameters['r'], 's');
-      expect((location.state as BeamState).data, {'x': 'z'});
+      expect(location.data, {'x': 'z'});
     });
 
     test(
@@ -262,7 +262,7 @@ void main() {
     expect(delegate.configuration.location,
         delegate.currentBeamLocation.state.routeInformation.location);
     expect(delegate.configuration.location, '/l1');
-    expect((delegate.currentBeamLocation.state as BeamState).data, {'x': 'y'});
+    expect(delegate.currentBeamLocation.data, {'x': 'y'});
 
     delegate.beamToNamed('/l2');
 
@@ -270,7 +270,7 @@ void main() {
     expect(delegate.configuration.location,
         delegate.currentBeamLocation.state.routeInformation.location);
     expect(delegate.configuration.location, '/l1');
-    expect((delegate.currentBeamLocation.state as BeamState).data, {'x': 'y'});
+    expect(delegate.currentBeamLocation.data, {'x': 'y'});
 
     delegate.beamToNamed('/l2');
 
@@ -278,8 +278,7 @@ void main() {
     expect(delegate.configuration.location,
         delegate.currentBeamLocation.state.routeInformation.location);
     expect(delegate.configuration.location, '/l1');
-    expect(
-        (delegate.currentBeamLocation.state as BeamState).data, {'xx': 'yy'});
+    expect(delegate.currentBeamLocation.data, {'xx': 'yy'});
   });
 
   testWidgets('popToNamed() beams correctly', (tester) async {
@@ -397,48 +396,40 @@ void main() {
       await tester.pump();
       expect((delegate.currentBeamLocation.state as BeamState).uri.path,
           '/l1/one');
-      expect(
-          (delegate.currentBeamLocation.state as BeamState).data, {'x': 'y'});
+      expect(delegate.currentBeamLocation.data, {'x': 'y'});
 
       delegate.navigatorKey.currentState!.pop();
       await tester.pump();
       expect((delegate.currentBeamLocation.state as BeamState).uri.path, '/l1');
-      expect(
-          (delegate.currentBeamLocation.state as BeamState).data, {'x': 'y'});
+      expect(delegate.currentBeamLocation.data, {'x': 'y'});
     });
 
     test('single location keeps data', () {
       delegate.beamToNamed('/l1', data: {'x': 'y'});
-      expect(
-          (delegate.currentBeamLocation.state as BeamState).data, {'x': 'y'});
+      expect(delegate.currentBeamLocation.data, {'x': 'y'});
 
       delegate.beamToNamed('/l1/one');
-      expect(
-          (delegate.currentBeamLocation.state as BeamState).data, {'x': 'y'});
+      expect(delegate.currentBeamLocation.data, {'x': 'y'});
     });
 
-    test('data is kept throughout locations if not overwritten', () {
+    test('data is not kept throughout locations', () {
       delegate.beamToNamed('/l1', data: {'x': 'y'});
-      expect(
-          (delegate.currentBeamLocation.state as BeamState).data, {'x': 'y'});
+      expect(delegate.currentBeamLocation.data, {'x': 'y'});
 
       delegate.beamToNamed('/l2');
-      expect(
-          (delegate.currentBeamLocation.state as BeamState).data, {'x': 'y'});
+      expect(delegate.currentBeamLocation.data, isNot({'x': 'y'}));
     });
 
     test('data is not kept if overwritten', () {
       delegate.beamToNamed('/l1', data: {'x': 'y'});
-      expect(
-          (delegate.currentBeamLocation.state as BeamState).data, {'x': 'y'});
+      expect(delegate.currentBeamLocation.data, {'x': 'y'});
       delegate.beamToNamed('/l1/one', data: {});
-      expect((delegate.currentBeamLocation.state as BeamState).data, {});
+      expect(delegate.currentBeamLocation.data, {});
 
       delegate.beamToNamed('/l1', data: {'x': 'y'});
-      expect(
-          (delegate.currentBeamLocation.state as BeamState).data, {'x': 'y'});
+      expect(delegate.currentBeamLocation.data, {'x': 'y'});
       delegate.beamToNamed('/l2', data: {});
-      expect((delegate.currentBeamLocation.state as BeamState).data, {});
+      expect(delegate.currentBeamLocation.data, {});
     });
   });
 
