@@ -302,8 +302,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// [build] will not occur, but [state] and browser URL will be updated.
   void update({
     RouteInformation? configuration,
-    Object? data,
     BeamParameters? beamParameters,
+    Object? data,
     bool buildBeamLocation = true,
     bool rebuild = true,
     bool updateParent = true,
@@ -399,7 +399,6 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     _addToBeamingHistory(location);
     update(
       configuration: location.state.routeInformation,
-      data: data,
       beamParameters: _currentBeamParameters.copyWith(
         popConfiguration: popTo?.state.routeInformation,
         transitionDelegate: transitionDelegate ?? this.transitionDelegate,
@@ -407,6 +406,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         popBeamLocationOnPop: popBeamLocationOnPop,
         stacked: stacked,
       ),
+      data: data,
       buildBeamLocation: false,
     );
   }
@@ -461,7 +461,6 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   }) {
     update(
       configuration: RouteInformation(location: uri, state: routeState),
-      data: data,
       beamParameters: _currentBeamParameters.copyWith(
         popConfiguration:
             popToNamed != null ? RouteInformation(location: popToNamed) : null,
@@ -470,6 +469,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         popBeamLocationOnPop: popBeamLocationOnPop,
         stacked: stacked,
       ),
+      data: data,
     );
   }
 
@@ -488,8 +488,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     removeLastHistoryElement();
     beamToNamed(
       uri,
-      data: data,
       routeState: routeState,
+      data: data,
       popToNamed: popToNamed,
       transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
@@ -507,8 +507,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// {@endtemplate}
   void popToNamed(
     String uri, {
-    Object? data,
     Object? routeState,
+    Object? data,
     String? popToNamed,
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
@@ -530,8 +530,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     }
     beamToNamed(
       uri,
-      data: data,
       routeState: routeState,
+      data: data,
       popToNamed: popToNamed,
       transitionDelegate: const ReverseTransitionDelegate(),
       beamBackOnPop: beamBackOnPop,
@@ -577,10 +577,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
     update(
       configuration: lastHistoryElement.state.routeInformation.copyWith(),
-      data: data,
       beamParameters: lastHistoryElement.parameters.copyWith(
         transitionDelegate: beamBackTransitionDelegate,
       ),
+      data: data,
     );
     return true;
   }
