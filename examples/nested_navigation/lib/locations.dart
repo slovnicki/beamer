@@ -51,13 +51,13 @@ class BooksContentLocation extends BeamLocation<BeamState> {
           title: 'Books Home',
           child: BooksHomeScreen(),
         ),
-        if (state.pathBlueprintSegments.contains('authors'))
+        if (state.pathPatternSegments.contains('authors'))
           BeamPage(
             key: ValueKey('books-authors'),
             title: 'Books Authors',
             child: BookAuthorsScreen(),
           ),
-        if (state.pathBlueprintSegments.contains('genres'))
+        if (state.pathPatternSegments.contains('genres'))
           BeamPage(
             key: ValueKey('books-genres'),
             title: 'Books Genres',
@@ -99,13 +99,13 @@ class ArticlesContentLocation extends BeamLocation<BeamState> {
           title: 'Articles Home',
           child: ArticlesHomeScreen(),
         ),
-        if (state.pathBlueprintSegments.contains('authors'))
+        if (state.pathPatternSegments.contains('authors'))
           BeamPage(
             key: ValueKey('articles-authors'),
             title: 'Articles Authors',
             child: ArticleAuthorsScreen(),
           ),
-        if (state.pathBlueprintSegments.contains('genres'))
+        if (state.pathPatternSegments.contains('genres'))
           BeamPage(
             key: ValueKey('articles-genres'),
             title: 'Articles Genres',

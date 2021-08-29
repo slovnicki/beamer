@@ -114,7 +114,7 @@ class BooksLocation extends BeamLocation<BeamState> {
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
     final beamPages = [...HomeLocation().buildPages(context, state)];
 
-    if (state.pathBlueprintSegments.contains('books')) {
+    if (state.pathPatternSegments.contains('books')) {
       final titleQuery = state.queryParameters['title'] ?? '';
       final genreQuery = state.queryParameters['genre'] ?? '';
       final pageTitle = titleQuery != ''

@@ -39,21 +39,21 @@ class MyApp extends StatelessWidget {
     guards: [
       // Guard /logged_in_page by beaming to /login if the user is unauthenticated:
       BeamGuard(
-        pathBlueprints: ['/logged_in_page'],
+        pathPatterns: ['/logged_in_page'],
         check: (context, state) =>
             context.select((AuthenticationBloc auth) => auth.isAuthenticated()),
         beamToNamed: '/login',
       ),
       // Guard /login by beaming to /logged_in_page if the user is authenticated:
       BeamGuard(
-        pathBlueprints: ['/login'],
+        pathPatterns: ['/login'],
         check: (context, state) => context
             .select((AuthenticationBloc auth) => !auth.isAuthenticated()),
         beamToNamed: '/logged_in_page',
       ),
     ],
     initialPath: '/login',
-    locationBuilder: (routeInformation) => BeamerLocations(routeInformation),
+    locationBuilder: (routeInformation, _) => BeamerLocations(routeInformation),
   );
 
   @override

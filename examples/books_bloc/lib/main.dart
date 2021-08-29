@@ -90,7 +90,7 @@ class BooksLocation extends BeamLocation<BeamState> {
   final BooksBloc _booksBloc = BooksBloc();
 
   void _listener() {
-    if (state.pathBlueprintSegments.isEmpty) return;
+    if (state.pathPatternSegments.isEmpty) return;
 
     final bookId = state.pathParameters.containsKey('bookId')
         ? int.parse(state.pathParameters['bookId']!)
