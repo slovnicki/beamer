@@ -599,7 +599,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   ///
   /// Returns the success, whether the [currentBeamLocation] was changed.
   /// {@endtemplate}
-  bool popBeamLocation() {
+  bool popBeamLocation({Object? data}) {
     if (!canPopBeamLocation) {
       return false;
     }
@@ -609,6 +609,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       beamParameters: currentBeamLocation.history.last.parameters.copyWith(
         transitionDelegate: beamBackTransitionDelegate,
       ),
+      data: data,
       buildBeamLocation: false,
     );
     return true;
