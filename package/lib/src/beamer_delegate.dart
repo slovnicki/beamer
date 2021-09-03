@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import 'beam_update_guard.dart';
 import 'utils.dart';
 
 /// A delegate that is used by the [Router] to build the [Navigator].
@@ -27,6 +28,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     this.notFoundRedirect,
     this.notFoundRedirectNamed,
     this.guards = const <BeamGuard>[],
+    this.updateGuards = const <BeamUpdateGuard>[],
     this.navigatorObservers = const <NavigatorObserver>[],
     this.transitionDelegate = const DefaultTransitionDelegate(),
     this.beamBackTransitionDelegate = const ReverseTransitionDelegate(),
@@ -163,6 +165,13 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// When some guard returns `false`, location candidate will not be accepted
   /// and stack of pages will be updated as is configured in [BeamGuard].
   final List<BeamGuard> guards;
+
+  /// UpdateGuards that will be executing [check] on [currentBeamLocation] candidate.
+  ///
+  /// Checks will be executed in order during [update]; chain of responsibility pattern.
+  /// When some guard returns `false`, location candidate will not be accepted
+  /// and stack of pages will be updated as is configured in [BeamUpdateGuard].
+  final List<BeamUpdateGuard> updateGuards;
 
   /// The list of observers for the [Navigator].
   final List<NavigatorObserver> navigatorObservers;
@@ -309,9 +318,13 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     bool updateParent = true,
     bool updateRouteInformation = true,
   }) {
+    
     configuration = configuration?.copyWith(
       location: Utils.trimmed(configuration.location),
     );
+    if(configuration != null && _checkAndApplyUpdateGuards(configuration) != null) {
+      return;
+    }
     _currentBeamParameters = beamParameters ?? _currentBeamParameters;
 
     if (clearBeamingHistoryOn.contains(configuration?.location)) {
@@ -729,6 +742,23 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     }
     _addToBeamingHistory(redirectLocation);
     _updateFromLocation(rebuild: false);
+  }
+
+
+  BeamUpdateGuard? _checkAndApplyUpdateGuards(
+    RouteInformation routeInformation,
+  ) {
+    // TODO: make guards async => update would be async and all beamXXX functions
+    // TODO: grand parents are not processed => recursive
+    // TODO: locations cannot of have update guards - we would first 
+    //       need to have the effective target location for the given routeInformation
+    for (final guard in (parent?.updateGuards ?? []) + updateGuards) {
+      if (guard.shouldGuard(routeInformation) && !guard.check(this, routeInformation)) {
+        guard.redirect(this, routeInformation);
+        return guard;
+      }
+    }
+    return null;
   }
 
   void _addToBeamingHistory(BeamLocation location) {

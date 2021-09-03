@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 
 import './beam_location.dart';
 import './beam_page.dart';
+import 'beam_guard_util.dart';
 
 /// Checks whether current [BeamLocation] is allowed to be beamed to
 /// and provides steps to be executed following a failed check.
@@ -92,30 +93,7 @@ class BeamGuard {
   /// contained within location's pathBlueprint.
   /// Else, the path (i.e. the pre-query substring) of the location's uri
   /// must be equal to the pathBlueprint.
-  bool _hasMatch(BeamLocation location) {
-    for (final pathBlueprint in pathPatterns) {
-      final path =
-          Uri.parse(location.state.routeInformation.location ?? '/').path;
-      if (pathBlueprint is String) {
-        final asteriskIndex = pathBlueprint.indexOf('*');
-        if (asteriskIndex != -1) {
-          if (location.state.routeInformation.location
-              .toString()
-              .contains(pathBlueprint.substring(0, asteriskIndex))) {
-            return true;
-          }
-        } else {
-          if (pathBlueprint == path) {
-            return true;
-          }
-        }
-      } else {
-        final regexp = Utils.tryCastToRegExp(pathBlueprint);
-        return regexp.hasMatch(path);
-      }
-    }
-    return false;
-  }
+  bool _hasMatch(BeamLocation location) => patternsMatch(pathPatterns, location.state.routeInformation);
 
   /// Whether or not the guard should [check] the [location].
   bool shouldGuard(BeamLocation location) {

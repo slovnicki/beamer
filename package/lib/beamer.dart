@@ -4,6 +4,7 @@ export 'src/beam_page.dart';
 export 'src/beam_state.dart';
 export 'src/beam_location.dart';
 export 'src/beam_guard.dart';
+export 'src/beam_update_guard.dart';
 export 'src/beamer_parser.dart';
 export 'src/beamer_delegate.dart';
 export 'src/beamer.dart';

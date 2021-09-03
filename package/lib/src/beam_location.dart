@@ -3,6 +3,8 @@ import 'package:beamer/src/beam_state.dart';
 import 'package:beamer/src/utils.dart';
 import 'package:flutter/widgets.dart';
 
+import 'beam_update_guard.dart';
+
 /// Parameters used while beaming.
 class BeamParameters {
   const BeamParameters({
@@ -237,6 +239,16 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   /// Override this in your subclasses, if needed.
   /// See [BeamGuard].
   List<BeamGuard> get guards => const <BeamGuard>[];
+
+  /// UpdateGuards that will be executing [check] when this gets beamed to.
+  ///
+  /// Checks will be executed in order during [update]; chain of responsibility pattern.
+  /// When some guard returns `false`, a candidate will not be accepted
+  /// and stack of pages will be updated as is configured in [BeamUpdateGuard].
+  ///
+  /// Override this in your subclasses, if needed.
+  /// See [BeamUpdateGuard].
+  List<BeamUpdateGuard> get updateGuards => const <BeamUpdateGuard>[];
 
   /// A transition delegate to be used by [Navigator].
   ///
