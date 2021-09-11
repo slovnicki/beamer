@@ -132,6 +132,40 @@ void main() {
       expect(delegate.currentBeamLocation.state.routeInformation.location,
           '/test');
     });
+
+    testWidgets('alwaysBeamBack will not pop', (tester) async {
+      final delegate = BeamerDelegate(
+        locationBuilder: RoutesLocationBuilder(
+          routes: {
+            '/': (context, state) => Container(),
+            '/test': (context, state) => Container(),
+            '/test2': (context, state) => Container(),
+          },
+        ),
+      );
+      final backButtonDispatcher = BeamerBackButtonDispatcher(
+        delegate: delegate,
+        alwaysBeamBack: true,
+      );
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: delegate,
+          backButtonDispatcher: backButtonDispatcher,
+        ),
+      );
+      delegate.beamToNamed('/test');
+      await tester.pump(const Duration(seconds: 1));
+      expect(delegate.configuration.location, '/test');
+
+      delegate.beamToNamed('/test2');
+      await tester.pump(const Duration(seconds: 1));
+      expect(delegate.configuration.location, '/test2');
+
+      await backButtonDispatcher.invokeCallback(Future.value(false));
+      await tester.pump(const Duration(seconds: 1));
+      expect(delegate.configuration.location, '/test');
+    });
   });
 
   group('Child dispatcher', () {
