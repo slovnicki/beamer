@@ -1,0 +1,19 @@
+name: guard_riverpod
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  beamer:
+    path: ../../package
+
+  flutter_riverpod: ^1.0.0-dev.7
+
+flutter:
+  uses-material-design: true
