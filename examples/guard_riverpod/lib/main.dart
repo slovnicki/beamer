@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:guard_riverpod/locations.dart';
 
 void main() {
-
   final container = ProviderContainer();
   runApp(UncontrolledProviderScope(container: container, child: MyApp(container)));
 }
@@ -36,9 +35,9 @@ BeamerDelegate createDelegate(Reader read) => BeamerDelegate(
   locationBuilder: BeamerLocationBuilder(beamLocations: [MyLocation()]),
   guards: [
     BeamGuard(
-      pathPatterns: ['/$firstRoute/*'], 
+      pathPatterns: ['/$firstRoute/$secondRoute'], 
       // Only allow to navigate past `firstRoute` if the `navigationProvider` is `true`.
-      check: (_, __) => read(navigationProvider).state,
+      check: (_, __) => read(navigationToSecondProvider).state,
     ),
-  ]
+  ],
 );
