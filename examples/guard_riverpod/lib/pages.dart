@@ -1,7 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:guard_riverpod/router.dart';
+import 'package:guard_riverpod/locations.dart';
 
 class FirstPage extends ConsumerWidget {
   @override
