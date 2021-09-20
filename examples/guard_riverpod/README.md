@@ -1,8 +1,9 @@
 # Guard Riverpod Example
 
-Example using [riverpod](https://pub.dev/packages/riverpod) package, with the release
-of `1.0.0-dev.7`, which drastically changes how things are done with this package
-(if comparing to `0.14.0` or previous versions).
+Example using [riverpod `1.0.0-dev.7`](https://pub.dev/packages/riverpod).
+The `1.0.0` (still as a `dev` release) introduces many breaking changes to `riverpod`,
+which could be confusing if not used properly with `beamer`. These changes can be
+read in detail in the package's [CHANGELOG](https://github.com/rrousselGit/river_pod/blob/master/packages/riverpod/CHANGELOG.md).
 
 This example aims to be a simple approach on how to use provider (in this case, used
 to change a `BeamGuard.check` return).
