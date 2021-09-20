@@ -6,23 +6,34 @@ import 'package:guard_riverpod/locations.dart';
 
 void main() {
   final container = ProviderContainer();
-  runApp(UncontrolledProviderScope(container: container, child: MyApp(container)));
+
+  // Passing `ref.read`, which is a `Reader` instance, so that we can use
+  // riverpod as we see fit.
+  final routerDelegate = createDelegate(container.read);
+  final routeInformationParser = BeamerParser();
+
+  runApp(
+    UncontrolledProviderScope(
+      container: container,
+      child: MyApp(routeInformationParser, routerDelegate),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  MyApp(this._rootContainer);
+  MyApp(this.routeInformationParser, this.routerDelegate);
 
-  final ProviderContainer _rootContainer;
+  final RouteInformationParser<Object> routeInformationParser;
+  final RouterDelegate<Object> routerDelegate;
+
   final _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      // Passing `ref.read`, which is a `Reader` instance, so that we can use
-      // riverpod as we see fit.
-      routerDelegate: createDelegate(_rootContainer.read),
-      routeInformationParser: BeamerParser(),
+      routerDelegate: routerDelegate,
+      routeInformationParser: routeInformationParser,
       scaffoldMessengerKey: _scaffoldKey,
     );
   }
