@@ -110,8 +110,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// ```dart
   /// locationBuilder: RoutesLocationBuilder(
   ///   routes: {
-  ///     '/': (context) => HomeScreen(),
-  ///     '/another': (context) => AnotherScreen(),
+  ///     '/': (context, state) => HomeScreen(),
+  ///     '/another': (context, state) => AnotherScreen(),
   ///   },
   /// ),
   /// ```
