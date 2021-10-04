@@ -69,9 +69,13 @@ class BeamPage extends Page {
     var popUri = Uri(
       path: popPath,
       queryParameters: poppedPage.keepQueryOnPop
-          ? poppedQueryParameters
+          ? poppedQueryParameters.isEmpty
+              ? null
+              : poppedQueryParameters
           : (popPath == previousUri.path)
-              ? previousUri.queryParameters
+              ? previousUri.queryParameters.isEmpty
+                  ? null
+                  : previousUri.queryParameters
               : null,
     );
 
