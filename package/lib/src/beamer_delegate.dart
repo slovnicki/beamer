@@ -307,17 +307,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     bool buildBeamLocation = true,
     bool rebuild = true,
     bool updateParent = true,
+    bool updateRouteInformation = true,
   }) {
     configuration = configuration?.copyWith(
       location: Utils.trimmed(configuration.location),
     );
-    if (beamParameters != null) {
-      _currentBeamParameters = beamParameters;
-    }
-
-    // popConfiguration = beamParameters.popConfiguration?.copyWith(
-    //   location: Utils.trimmed(beamParameters.popConfiguration?.location),
-    // );
+    _currentBeamParameters = beamParameters ?? _currentBeamParameters;
 
     if (clearBeamingHistoryOn.contains(configuration?.location)) {
       for (var beamLocation in beamingHistory) {
@@ -325,8 +320,6 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       }
       beamingHistory.clear();
     }
-
-    active = true;
 
     this.configuration = configuration ??
         currentBeamLocation.history.last.state.routeInformation.copyWith();
@@ -346,24 +339,27 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     }
     routeListener?.call(this.configuration, currentBeamLocation);
 
-    bool parentDidUpdate = false;
-    if (parent != null &&
-        this.updateParent &&
-        updateParent &&
-        (configuration?.location != _parent?.configuration.location ||
-            configuration?.state != _parent?.configuration.state)) {
-      _parent!.update(
+    if (this.updateParent && updateParent) {
+      _parent?.update(
         configuration: this.configuration.copyWith(),
         rebuild: false,
+        updateRouteInformation: false,
       );
-      parentDidUpdate = true;
     }
 
-    if (!rebuild && !parentDidUpdate) {
-      updateRouteInformation(this.configuration);
+    // We should call [updateRouteInformation] manually only if
+    // notifyListeners() is not going to be called.
+    // This is when !rebuild or
+    // when this will notifyListeners (when rebuild), but is not a top-most
+    // router in which case it cannot report the route implicitly.
+    if (updateRouteInformation && active && (!rebuild || parent != null)) {
+      this.updateRouteInformation(this.configuration);
     }
 
     if (rebuild) {
+      // This will implicitly update the route information,
+      // but only if this is the top-most router
+      // See [currentConfiguration].
       notifyListeners();
     }
   }
@@ -885,6 +881,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       configuration: _parent!.configuration.copyWith(),
       rebuild: rebuild,
       updateParent: false,
+      updateRouteInformation: false,
     );
   }
 

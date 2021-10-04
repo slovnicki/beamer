@@ -218,11 +218,6 @@ class _AppScreenState extends State<AppScreen> {
     routerDelegates[currentIndex].active = true;
     routerDelegates[1 - currentIndex].active = false;
 
-    routerDelegates[currentIndex].update(
-      configuration: RouteInformation(location: uriString),
-      rebuild: false,
-    );
-
     return Scaffold(
       body: IndexedStack(
         index: currentIndex,
