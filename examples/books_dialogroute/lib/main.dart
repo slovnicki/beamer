@@ -121,7 +121,8 @@ class BooksLocation extends BeamLocation<BeamState> {
           ),
         if (state.queryParameters.containsKey('buy'))
           BeamPage(
-              routeBuilder: (RouteSettings settings, Widget child) =>
+              routeBuilder: (BuildContext context, RouteSettings settings,
+                      Widget child) =>
                   DialogRoute<void>(
                       context: context,
                       builder: (context) => child,

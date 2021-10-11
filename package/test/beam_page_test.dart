@@ -525,7 +525,7 @@ void main() {
               ),
           '/1/2/3/4/5/6': (context, state) => BeamPage(
                 key: const ValueKey('/1/2/3/4/5/6'),
-                routeBuilder: (settings, child) => PageRouteBuilder(
+                routeBuilder: (context, settings, child) => PageRouteBuilder(
                   settings: settings,
                   pageBuilder: (context, animation, secondaryAnimation) =>
                       Scaffold(body: Row(children: [const Text('6'), child])),
