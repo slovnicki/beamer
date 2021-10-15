@@ -12,23 +12,29 @@ void main() async {
   runApp(ProviderScope(child: MyApp()));
 }
 
-class MyApp extends HookWidget {
+class MyApp extends HookConsumerWidget {
   final routerDelegate = BeamerDelegate(
     guards: [
       /// if the user is authenticated
       /// else send them to /login
       BeamGuard(
           pathPatterns: ['/home'],
-          check: (context, state) =>
-              context.read(authProvider).status == AuthStatus.authenticated,
+          check: (context, state) {
+            final container = ProviderScope.containerOf(context, listen: false);
+            return container.read(authProvider).status ==
+                AuthStatus.authenticated;
+          },
           beamToNamed: '/login'),
 
       /// if the user is anything other than authenticated
       /// else send them to /home
       BeamGuard(
           pathPatterns: ['/login'],
-          check: (context, state) =>
-              context.read(authProvider).status != AuthStatus.authenticated,
+          check: (context, state) {
+            final container = ProviderScope.containerOf(context, listen: false);
+            return container.read(authProvider).status !=
+                AuthStatus.authenticated;
+          },
           beamToNamed: '/home'),
     ],
     initialPath: '/login',
@@ -36,10 +42,10 @@ class MyApp extends HookWidget {
   );
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     /// this is required so the `BeamGuard` checks can be rechecked on
     /// auth state changes
-    useProvider(authProvider);
+    ref.watch(authProvider);
 
     return BeamerProvider(
       routerDelegate: routerDelegate,

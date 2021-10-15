@@ -4,13 +4,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class LoginPage extends HookWidget {
+class LoginPage extends HookConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final usernameController = useTextEditingController(text: 'beamer');
     final passwordController = useTextEditingController(text: 'supersecret');
 
-    final authState = useProvider(authProvider);
+    final authState = ref.watch(authProvider);
 
     return Scaffold(
       body: Center(
@@ -75,7 +75,7 @@ class PasswordInput extends StatelessWidget {
   }
 }
 
-class LoginButton extends StatelessWidget {
+class LoginButton extends ConsumerWidget {
   final TextEditingController usernameController;
   final TextEditingController passwordController;
 
@@ -86,12 +86,12 @@ class LoginButton extends StatelessWidget {
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () async {
-          await context
+          await ref
               .read(authProvider.notifier)
               .loginUser(usernameController.text, passwordController.text);
         },
