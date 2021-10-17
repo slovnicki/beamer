@@ -37,8 +37,7 @@ class BeamPage extends Page {
     RouteInformationSerializable state,
     BeamPage poppedPage,
   ) {
-    if (!delegate.navigator.canPop() ||
-        delegate.beamingHistoryCompleteLength < 2) {
+    if (!delegate.navigator.canPop()) {
       return false;
     }
 
@@ -49,14 +48,18 @@ class BeamPage extends Page {
     // Take the history element that is being popped and the one before
     // as they will be compared later on to fine-tune the pop experience.
     final poppedHistoryElement = delegate.removeLastHistoryElement()!;
-    final previousHistoryElement = delegate.beamingHistory.last.history.last;
+    HistoryElement? previousHistoryElement = delegate.beamingHistory.isNotEmpty
+        ? delegate.beamingHistory.last.history.last
+        : null;
 
     // Convert both to Uri as their path and query will be compared.
     final poppedUri = Uri.parse(
       poppedHistoryElement.state.routeInformation.location ?? '/',
     );
-    final previousUri = Uri.parse(
-      previousHistoryElement.state.routeInformation.location ?? '/',
+    Uri previousUri = Uri.parse(
+      previousHistoryElement != null
+          ? previousHistoryElement.state.routeInformation.location ?? '/'
+          : delegate.initialPath,
     );
 
     final poppedPathSegments = poppedUri.pathSegments;
