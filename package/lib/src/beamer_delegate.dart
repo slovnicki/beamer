@@ -128,8 +128,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   final String initialPath;
 
   /// The routeListener will be called on every navigation event
-  /// and will recieve the [configuration] and [currentBeamLocation].
-  final void Function(RouteInformation, BeamLocation)? routeListener;
+  /// and will recieve the [configuration] and a reference to this delegate.
+  final void Function(RouteInformation, BeamerDelegate)? routeListener;
 
   /// The buildListener will be called every time after the [currentPages]
   /// are updated. it receives a reference to this delegate.
@@ -337,7 +337,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     if (data != null) {
       currentBeamLocation.data = data;
     }
-    routeListener?.call(this.configuration, currentBeamLocation);
+    routeListener?.call(this.configuration, this);
 
     if (this.updateParent && updateParent) {
       _parent?.update(

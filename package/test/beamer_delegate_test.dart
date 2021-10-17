@@ -12,9 +12,9 @@ void main() {
   BeamLocation? lastBeamLocationFromRouteListener;
 
   final delegate = BeamerDelegate(
-    routeListener: (RouteInformation info, BeamLocation location) {
+    routeListener: (RouteInformation info, BeamerDelegate delegate) {
       lastRouteInfoFromRouteListener = info;
-      lastBeamLocationFromRouteListener = location;
+      lastBeamLocationFromRouteListener = delegate.currentBeamLocation;
     },
     buildListener: (_, BeamerDelegate delegate) {
       lastCurrentPagesFromBuildListner.addAll(delegate.currentPages);
