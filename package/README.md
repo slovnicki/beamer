@@ -648,6 +648,10 @@ The code for the nested navigation example app is available [here](https://githu
 
 ## From 0.14 to 0.15
 
+(TBA)
+
+See [CHANGELOG](https://github.com/slovnicki/beamer/blob/master/package/CHANGELOG.md).
+
 ## From 0.13 to 0.14
 
 Instead of
