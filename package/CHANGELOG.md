@@ -14,6 +14,7 @@
 - **BREAKING:** `beamStateHistory` and `beamLocationHistory` have been replaced with `beamingHistory` that is a `List<BeamLocation>` and each `BeamLocation` has `history` that is `List<HistoryElement>` where `HistoryElement` holds `state` and `BeamParameters`.
 - **BREAKING:** `BeamerDelegate.listener` has been renamed to `BeamerDelegate.routeListener`
 - **BREAKING:** The property `pageRouteBuilder` in `BeamPage` is replaced with a new property `routeBuilder` which works with any `RouteBuilder` not just `PageRouteBuilder`.
+- **Add:** [guard_riverpod example](https://github.com/slovnicki/beamer/tree/master/examples/guard_riverpod)
 - **Add:** [firebase_core example](https://github.com/slovnicki/beamer/tree/master/examples/firebase_core)
 - **Add:** [firebase_auth example](https://github.com/slovnicki/beamer/tree/master/examples/firebase_auth)
 - **Add:** [change_notifier_custom_state example](https://github.com/slovnicki/beamer/tree/master/examples/change_notifier_custom_state)
@@ -21,7 +22,7 @@
 - **Add:** `BeamPage.routePop` that can be used for `onPopPage` instead of default `pathsegmentPop`
 - **Add:** `BeamerDelegate.buildListener`, which is called after the pages are built.
 - **Add:** `fullScreenDialog` property to `BeamPage`
-- **Add:** flutter_lints
+- **Add:** [flutter_lints](https://pub.dev/packages/flutter_lints)
 - **Add:** a [presentation](https://github.com/slovnicki/beamer/blob/master/resources/navigator-2.0-and-beamer.pdf) resource about beamer
 - **Fix:** clearing history range when using `popToNamed`
 - **Fix:** passing `BeamPage.title` to `CupertinoPageRoute`s
