@@ -1,14 +1,14 @@
-name: default
+name: CI
 
 on:
-  pull_request:
+  push:
     branches:
       - 'dev'
       - 'main'
       - 'master'
     paths:
       - "package/**"
-  push:
+  pull_request:
     branches:
       - 'dev'
       - 'main'
