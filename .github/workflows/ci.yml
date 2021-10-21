@@ -17,7 +17,7 @@ on:
       - "package/**"
 
 jobs: 
-  flutter_test:
+  test:
     defaults:
       run:
         working-directory: package
