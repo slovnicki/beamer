@@ -1,29 +1,38 @@
-name: CI
+name: default
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - "package/**"
   pull_request:
     branches:
-      - master
+      - 'dev'
+      - 'main'
+      - 'master'
+    paths:
+      - "package/**"
+  push:
+    branches:
+      - 'dev'
+      - 'main'
+      - 'master'
     paths:
       - "package/**"
 
-jobs:
-  test:
+jobs: 
+  flutter_test:
     defaults:
       run:
         working-directory: package
+    name: runs analyze tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
       - uses: subosito/flutter-action@v1
         with:
-          channel: dev
+          channel: 'stable' # or: 'beta', 'dev' or 'master'
       - run: flutter pub get
+      - run: flutter analyze
       - run: flutter test --coverage
       - uses: codecov/codecov-action@v1
         with:
