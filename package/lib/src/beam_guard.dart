@@ -54,13 +54,15 @@ class BeamGuard {
 
   /// If guard [check] returns `false`, build a [BeamLocation] to be beamed to.
   /// 
-  /// [originLocation] holds the location from where is being beamed from.
+  /// [originLocation] holds the origin location from where it is being beamed from. `null` if there's no origin 
+  /// location, which may happen if it's the first navigation or the history was cleared.
   /// [showPage] has precedence over this attribute.
   final BeamLocation Function(BuildContext context, BeamLocation? originLocation)? beamTo;
 
   /// If guard [check] returns `false`, beam to this URI string.
   /// 
-  /// [originLocation] holds the location from where is being beamed from.
+  /// [originLocation] holds the origin location from where it is being beamed from. `null` if there's no origin 
+  /// location, which may happen if it's the first navigation or the history was cleared.
   /// [showPage] has precedence over this attribute.
   final String Function(BeamLocation? originLocation)? beamToNamed;
 
