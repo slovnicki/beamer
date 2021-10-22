@@ -55,12 +55,14 @@ class BeamGuard {
   /// If guard [check] returns `false`, build a [BeamLocation] to be beamed to.
   ///
   /// [showPage] has precedence over this attribute.
-  final BeamLocation Function(BuildContext context)? beamTo;
+  /// TODO(ggirotto)
+  final BeamLocation Function(BuildContext context, BeamLocation currentLocation)? beamTo;
 
   /// If guard [check] returns `false`, beam to this URI string.
   ///
   /// [showPage] has precedence over this attribute.
-  final String? beamToNamed;
+  /// TODO(ggirotto)
+  final String Function(BeamLocation currentLocation)? beamToNamed;
 
   /// If guard [check] returns `false`, put this page onto navigation stack.
   ///
