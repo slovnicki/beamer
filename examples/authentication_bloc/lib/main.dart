@@ -42,14 +42,14 @@ class MyApp extends StatelessWidget {
         pathPatterns: ['/logged_in_page'],
         check: (context, state) =>
             context.select((AuthenticationBloc auth) => auth.isAuthenticated()),
-        beamToNamed: '/login',
+        beamToNamed: (currentLocation) => '/login',
       ),
       // Guard /login by beaming to /logged_in_page if the user is authenticated:
       BeamGuard(
         pathPatterns: ['/login'],
         check: (context, state) => context
             .select((AuthenticationBloc auth) => !auth.isAuthenticated()),
-        beamToNamed: '/logged_in_page',
+        beamToNamed: (currentLocation) => '/logged_in_page',
       ),
     ],
     initialPath: '/login',
