@@ -6,36 +6,36 @@ import 'test_locations.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  final List<BeamPage> lastCurrentPagesFromBuildListner =
-      List.empty(growable: true);
+  late List<BeamPage> lastCurrentPagesFromBuildListner;
   RouteInformation? lastRouteInfoFromRouteListener;
   BeamLocation? lastBeamLocationFromRouteListener;
-
-  final delegate = BeamerDelegate(
-    routeListener: (RouteInformation info, BeamerDelegate delegate) {
-      lastRouteInfoFromRouteListener = info;
-      lastBeamLocationFromRouteListener = delegate.currentBeamLocation;
-    },
-    buildListener: (_, BeamerDelegate delegate) {
-      lastCurrentPagesFromBuildListner.addAll(delegate.currentPages);
-    },
-    locationBuilder: (routeInformation, __) {
-      if (routeInformation.location?.contains('l1') ?? false) {
-        return Location1(routeInformation);
-      }
-      if (routeInformation.location?.contains('l2') ?? false) {
-        return Location2(routeInformation);
-      }
-      if (CustomStateLocation()
-          .canHandle(Uri.parse(routeInformation.location ?? '/'))) {
-        return CustomStateLocation(routeInformation);
-      }
-      return NotFound(path: routeInformation.location ?? '/');
-    },
-  );
-  delegate.setNewRoutePath(const RouteInformation(location: '/l1'));
+  late BeamerDelegate delegate;
 
   setUp(() {
+    lastCurrentPagesFromBuildListner = List.empty(growable: true);
+    delegate = BeamerDelegate(
+      routeListener: (RouteInformation info, BeamerDelegate delegate) {
+        lastRouteInfoFromRouteListener = info;
+        lastBeamLocationFromRouteListener = delegate.currentBeamLocation;
+      },
+      buildListener: (_, BeamerDelegate delegate) {
+        lastCurrentPagesFromBuildListner.addAll(delegate.currentPages);
+      },
+      locationBuilder: (routeInformation, __) {
+        if (routeInformation.location?.contains('l1') ?? false) {
+          return Location1(routeInformation);
+        }
+        if (routeInformation.location?.contains('l2') ?? false) {
+          return Location2(routeInformation);
+        }
+        if (CustomStateLocation()
+            .canHandle(Uri.parse(routeInformation.location ?? '/'))) {
+          return CustomStateLocation(routeInformation);
+        }
+        return NotFound(path: routeInformation.location ?? '/');
+      },
+    );
+    delegate.setNewRoutePath(const RouteInformation(location: '/l1'));
     lastCurrentPagesFromBuildListner.clear();
   });
 

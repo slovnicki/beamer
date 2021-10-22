@@ -7,22 +7,26 @@ void main() {
   group('Beamer history', () {
     TestWidgetsFlutterBinding.ensureInitialized();
 
-    final delegate = BeamerDelegate(
-      locationBuilder: (routeInformation, __) {
-        if (routeInformation.location?.contains('l1') ?? false) {
-          return Location1(routeInformation);
-        }
-        if (routeInformation.location?.contains('l2') ?? false) {
-          return Location2(routeInformation);
-        }
-        if (CustomStateLocation()
-            .canHandle(Uri.parse(routeInformation.location ?? '/'))) {
-          return CustomStateLocation(routeInformation);
-        }
-        return NotFound(path: routeInformation.location ?? '/');
-      },
-    );
-    delegate.setNewRoutePath(const RouteInformation(location: '/l1'));
+    late BeamerDelegate delegate;
+
+    setUp(() {
+      delegate = BeamerDelegate(
+        locationBuilder: (routeInformation, __) {
+          if (routeInformation.location?.contains('l1') ?? false) {
+            return Location1(routeInformation);
+          }
+          if (routeInformation.location?.contains('l2') ?? false) {
+            return Location2(routeInformation);
+          }
+          if (CustomStateLocation()
+              .canHandle(Uri.parse(routeInformation.location ?? '/'))) {
+            return CustomStateLocation(routeInformation);
+          }
+          return NotFound(path: routeInformation.location ?? '/');
+        },
+      );
+      delegate.setNewRoutePath(const RouteInformation(location: '/l1'));
+    });
 
     test('beaming to the same location type will not add it to history', () {
       final historyLength = delegate.beamingHistory.length;
