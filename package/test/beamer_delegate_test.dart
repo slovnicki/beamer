@@ -63,25 +63,6 @@ void main() {
     });
 
     test(
-        'beaming to the same location type will not add it to history but will update current location',
-        () {
-      final historyLength = delegate.beamingHistory.length;
-      delegate.beamToNamed('/l2/2?q=t&r=s', data: {'x': 'z'});
-      final location = delegate.currentBeamLocation;
-      expect(delegate.beamingHistory.length, historyLength);
-      expect(
-          (location.state as BeamState).pathParameters.containsKey('id'), true);
-      expect((location.state as BeamState).pathParameters['id'], '2');
-      expect(
-          (location.state as BeamState).queryParameters.containsKey('q'), true);
-      expect((location.state as BeamState).queryParameters['q'], 't');
-      expect(
-          (location.state as BeamState).queryParameters.containsKey('r'), true);
-      expect((location.state as BeamState).queryParameters['r'], 's');
-      expect(location.data, {'x': 'z'});
-    });
-
-    test(
         'popBeamLocation leads to previous location and all helpers are correct',
         () {
       expect(delegate.canPopBeamLocation, true);
@@ -91,62 +72,6 @@ void main() {
       expect(delegate.canPopBeamLocation, false);
       expect(delegate.popBeamLocation(), false);
       expect(delegate.currentBeamLocation, isA<Location1>());
-    });
-
-    test('duplicate locations are removed from history', () {
-      expect(delegate.beamingHistory.length, 1);
-      expect(delegate.beamingHistory[0], isA<Location1>());
-      delegate.beamToNamed('/l2');
-      expect(delegate.beamingHistory.length, 2);
-      expect(delegate.beamingHistory[0], isA<Location1>());
-      delegate.beamToNamed('/l1');
-      expect(delegate.beamingHistory.length, 2);
-      expect(delegate.beamingHistory[0], isA<Location2>());
-    });
-
-    test(
-        'beamToReplacement removes currentBeamLocation from history before appending new',
-        () {
-      expect(delegate.beamingHistory.length, 2);
-      expect(delegate.beamingHistory[0], isA<Location2>());
-      expect(delegate.currentBeamLocation, isA<Location1>());
-      delegate.beamToReplacement(
-        Location2(const RouteInformation(location: '/l2')),
-      );
-      expect(delegate.beamingHistory.length, 1);
-      expect(delegate.currentBeamLocation, isA<Location2>());
-    });
-
-    test('beamToReplacementNamed removes previous history element', () {
-      delegate.beamingHistory.clear();
-      delegate.beamToNamed('/l1');
-      expect(delegate.beamingHistory.length, 1);
-      expect(delegate.beamingHistory[0], isA<Location1>());
-      expect(delegate.beamingHistoryCompleteLength, 1);
-
-      delegate.beamToNamed('/l2');
-      expect(delegate.beamingHistory.length, 2);
-      expect(delegate.beamingHistory[0], isA<Location1>());
-      expect(delegate.currentBeamLocation, isA<Location2>());
-      expect(delegate.beamingHistoryCompleteLength, 2);
-
-      delegate.beamToNamed('/l2/x');
-      expect(delegate.beamingHistory.length, 2);
-      expect(delegate.beamingHistory[0], isA<Location1>());
-      expect(delegate.currentBeamLocation, isA<Location2>());
-      expect(delegate.beamingHistory.last.history.length, 2);
-      expect(delegate.beamingHistoryCompleteLength, 3);
-
-      delegate.beamToReplacementNamed('/l2/y');
-      expect(delegate.beamingHistory.length, 2);
-      expect(delegate.beamingHistory[0], isA<Location1>());
-      expect(delegate.currentBeamLocation, isA<Location2>());
-      expect(delegate.beamingHistory.last.history.length, 2);
-      expect(
-          delegate
-              .beamingHistory.last.history.last.state.routeInformation.location,
-          '/l2/y');
-      expect(delegate.beamingHistoryCompleteLength, 3);
     });
   });
 
@@ -213,41 +138,6 @@ void main() {
     await tester.pump();
     expect(delegate.currentBeamLocation, isA<Location2>());
   });
-
-  test('beamBack leads to previous beam state and all helpers are correct', () {
-    delegate.beamingHistory.removeRange(0, delegate.beamingHistory.length - 1);
-    delegate.beamingHistory.last.history
-        .removeRange(0, delegate.beamingHistory.last.history.length - 1);
-    expect(delegate.beamingHistoryCompleteLength, 1);
-    expect(delegate.currentBeamLocation, isA<Location2>());
-
-    delegate.beamToNamed('/l1');
-    delegate.beamToNamed('/l2');
-
-    expect(delegate.beamingHistoryCompleteLength, 2);
-    expect(delegate.currentBeamLocation, isA<Location2>());
-    expect(delegate.canBeamBack, true);
-
-    delegate.beamToNamed('/l1/one');
-    delegate.beamToNamed('/l1/two');
-    expect(delegate.beamingHistoryCompleteLength, 3);
-    expect(delegate.currentBeamLocation, isA<Location1>());
-
-    delegate.beamToNamed('/l1/two');
-    expect(delegate.beamingHistoryCompleteLength, 3);
-    expect(delegate.currentBeamLocation, isA<Location1>());
-
-    expect(delegate.beamBack(), true);
-    expect(delegate.currentBeamLocation, isA<Location1>());
-    expect((delegate.currentBeamLocation.state as BeamState).uri.path,
-        equals('/l1/one'));
-    expect(delegate.beamingHistoryCompleteLength, 2);
-
-    expect(delegate.beamBack(), true);
-    expect(delegate.currentBeamLocation, isA<Location2>());
-    expect(delegate.beamingHistoryCompleteLength, 1);
-  });
-
   test('beamBack keeps data and can override it', () {
     delegate.beamingHistory.removeRange(0, delegate.beamingHistory.length - 1);
     delegate.beamingHistory.last.history
