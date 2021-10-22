@@ -709,10 +709,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         rebuild: false,
       );
     } else if (guard.beamTo != null) {
-      redirectLocation = guard.beamTo!(context, currentBeamLocation);
+      final originLocation = beamingHistory.length > 1 ? beamingHistory[beamingHistory.length - 2] : null;
+      redirectLocation = guard.beamTo!(context, originLocation);
     } else if (guard.beamToNamed != null) {
+      final originLocation = beamingHistory.length > 1 ? beamingHistory[beamingHistory.length - 2] : null;
       redirectLocation = locationBuilder(
-        RouteInformation(location: guard.beamToNamed!(currentBeamLocation)),
+        RouteInformation(location: guard.beamToNamed!(originLocation)),
         _currentBeamParameters.copyWith(),
       );
     }

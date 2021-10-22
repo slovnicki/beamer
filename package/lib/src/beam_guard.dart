@@ -53,16 +53,16 @@ class BeamGuard {
       onCheckFailed;
 
   /// If guard [check] returns `false`, build a [BeamLocation] to be beamed to.
-  ///
+  /// 
+  /// [originLocation] holds the location from where is being beamed from.
   /// [showPage] has precedence over this attribute.
-  /// TODO(ggirotto)
-  final BeamLocation Function(BuildContext context, BeamLocation currentLocation)? beamTo;
+  final BeamLocation Function(BuildContext context, BeamLocation? originLocation)? beamTo;
 
   /// If guard [check] returns `false`, beam to this URI string.
-  ///
+  /// 
+  /// [originLocation] holds the location from where is being beamed from.
   /// [showPage] has precedence over this attribute.
-  /// TODO(ggirotto)
-  final String Function(BeamLocation currentLocation)? beamToNamed;
+  final String Function(BeamLocation? originLocation)? beamToNamed;
 
   /// If guard [check] returns `false`, put this page onto navigation stack.
   ///
