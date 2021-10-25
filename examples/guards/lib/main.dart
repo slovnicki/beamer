@@ -228,7 +228,7 @@ class MyApp extends StatelessWidget {
         pathPatterns: ['/books', '/books/*'],
         check: (context, location) =>
             context.read<AuthenticationNotifier>().isAuthenticated,
-        beamToNamed: '/login',
+        beamToNamed: (_, __) => '/login',
       ),
     ],
   );

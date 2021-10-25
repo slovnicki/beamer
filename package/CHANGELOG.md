@@ -14,6 +14,8 @@
 - **BREAKING:** `beamStateHistory` and `beamLocationHistory` have been replaced with `beamingHistory` that is a `List<BeamLocation>` and each `BeamLocation` has `history` that is `List<HistoryElement>` where `HistoryElement` holds `state` and `BeamParameters`.
 - **BREAKING:** `BeamerDelegate.listener` has been renamed to `BeamerDelegate.routeListener`
 - **BREAKING:** The property `pageRouteBuilder` in `BeamPage` is replaced with a new property `routeBuilder` which works with any `RouteBuilder` not just `PageRouteBuilder`.
+- **BREAKING:** `BeamGuard` `beamTo` receives the origin and target `BeamLocation`s alongside `BuildContext`.
+- **BREAKING:** `BeamGuard` `beamToNamed` is now a function that receives the origin and target `BeamLocation`s and return a `String`.
 - **Add:** [guard_riverpod example](https://github.com/slovnicki/beamer/tree/master/examples/guard_riverpod)
 - **Add:** [firebase_core example](https://github.com/slovnicki/beamer/tree/master/examples/firebase_core)
 - **Add:** [firebase_auth example](https://github.com/slovnicki/beamer/tree/master/examples/firebase_auth)

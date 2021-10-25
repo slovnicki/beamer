@@ -622,7 +622,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   Widget build(BuildContext context) {
     BeamGuard? guard = _checkGuards(context, currentBeamLocation);
     if (guard != null) {
-      _applyGuard(guard, context);
+      final originLocation = beamingHistory.length > 1 ? beamingHistory[beamingHistory.length - 2] : null;
+      _applyGuard(guard, context, originLocation, currentBeamLocation);
     }
 
     if (currentBeamLocation is NotFound) {
@@ -695,7 +696,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     return null;
   }
 
-  void _applyGuard(BeamGuard guard, BuildContext context) {
+  void _applyGuard(BeamGuard guard, BuildContext context, BeamLocation? originLocation, BeamLocation targetLocation) {
     if (guard.showPage != null) {
       return;
     }
@@ -709,17 +710,17 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         rebuild: false,
       );
     } else if (guard.beamTo != null) {
-      redirectLocation = guard.beamTo!(context);
+      redirectLocation = guard.beamTo!(context, originLocation, targetLocation);
     } else if (guard.beamToNamed != null) {
       redirectLocation = locationBuilder(
-        RouteInformation(location: guard.beamToNamed!),
+        RouteInformation(location: guard.beamToNamed!(originLocation, targetLocation)),
         _currentBeamParameters.copyWith(),
       );
     }
 
     final anotherGuard = _checkGuards(context, redirectLocation);
     if (anotherGuard != null) {
-      return _applyGuard(anotherGuard, context);
+      return _applyGuard(anotherGuard, context, originLocation, redirectLocation);
     }
 
     currentBeamLocation.removeListener(_updateFromLocation);

@@ -89,12 +89,12 @@ class _MyAppState extends State<MyApp> {
         BeamGuard(
           pathPatterns: ['/splash', '/loggedin'],
           check: (context, location) => _user != null,
-          beamToNamed: '/login',
+          beamToNamed: (_, __) => '/login',
         ),
         BeamGuard(
           pathPatterns: ['/splash', '/login'],
           check: (context, location) => _user == null,
-          beamToNamed: '/loggedin',
+          beamToNamed: (_, __) => '/loggedin',
         ),
       ],
     );
