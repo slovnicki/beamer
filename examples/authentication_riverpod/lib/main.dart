@@ -24,7 +24,7 @@ class MyApp extends HookConsumerWidget {
             return container.read(authProvider).status ==
                 AuthStatus.authenticated;
           },
-          beamToNamed: (originLocation) => '/login'),
+          beamToNamed: (_, __) => '/login'),
 
       /// if the user is anything other than authenticated
       /// else send them to /home
@@ -35,7 +35,7 @@ class MyApp extends HookConsumerWidget {
             return container.read(authProvider).status !=
                 AuthStatus.authenticated;
           },
-          beamToNamed: (originLocation) =>'/home'),
+          beamToNamed: (_, __) =>'/home'),
     ],
     initialPath: '/login',
     locationBuilder: (routeInformation, _) => BeamerLocations(routeInformation),
