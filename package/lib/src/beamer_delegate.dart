@@ -720,7 +720,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
     final anotherGuard = _checkGuards(context, redirectLocation);
     if (anotherGuard != null) {
-      return _applyGuard(anotherGuard, context, originLocation, targetLocation);
+      return _applyGuard(anotherGuard, context, originLocation, redirectLocation);
     }
 
     currentBeamLocation.removeListener(_updateFromLocation);
