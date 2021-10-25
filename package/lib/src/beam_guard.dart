@@ -56,7 +56,8 @@ class BeamGuard {
   /// 
   /// [originLocation] holds the origin location from where it is being beamed from. `null` if there's no origin 
   /// location, which may happen if it's the first navigation or the history was cleared.
-  /// [targetLocation] holds the location to where it's being beam to.
+  /// [targetLocation] holds the location to where we tried to beam to, i.e. the [BeamLocation] on which the check 
+  /// failed.
   /// 
   /// [showPage] has precedence over this attribute.
   final BeamLocation Function(BuildContext context, BeamLocation? originLocation, BeamLocation targetLocation)? beamTo;
@@ -65,7 +66,8 @@ class BeamGuard {
   /// 
   /// [originLocation] holds the origin location from where it is being beamed from. `null` if there's no origin 
   /// location, which may happen if it's the first navigation or the history was cleared.
-  /// [targetLocation] holds the location to where it's being beam to.
+  /// [targetLocation] holds the location to where we tried to beam to, i.e. the [BeamLocation] on which the check 
+  /// failed.
   /// 
   /// [showPage] has precedence over this attribute.
   final String Function(BeamLocation? originLocation, BeamLocation targetLocation)? beamToNamed;
