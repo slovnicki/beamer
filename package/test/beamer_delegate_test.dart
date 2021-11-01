@@ -12,7 +12,7 @@ void main() {
   BeamLocation? lastBeamLocationFromRouteListener;
 
   final delegate = BeamerDelegate(
-    routeListener: (RouteInformation info, BeamerDelegate delegate) {
+    appliedRouteListener: (RouteInformation info, BeamerDelegate delegate) {
       lastRouteInfoFromRouteListener = info;
       lastBeamLocationFromRouteListener = delegate.currentBeamLocation;
     },
@@ -163,7 +163,8 @@ void main() {
     expect(delegate.currentPages.length, 1);
   });
 
-  testWidgets('routeListener is called when update is called', (tester) async {
+  testWidgets('routeListener is called when location is applied',
+      (tester) async {
     const routeInfo = RouteInformation(location: "/l1");
     delegate.update(configuration: routeInfo);
     expect(lastBeamLocationFromRouteListener, isA<Location1>());

@@ -4,22 +4,25 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'test_locations.dart';
 
-class CustomBeamUpdateGuard extends BeamUpdateGuard{
+class CustomBeamUpdateGuard extends BeamUpdateGuard {
   BeamLocation? shouldLocation;
   RouteInformation? shouldRouteInfo;
   Object? shouldData;
 
-  CustomBeamUpdateGuard({ required pathPatterns,
+  CustomBeamUpdateGuard({
+    required pathPatterns,
     required check,
-    required redirect,}) : super(pathPatterns: pathPatterns, check: check, redirect: redirect);
-  
+    required redirect,
+  }) : super(pathPatterns: pathPatterns, check: check, redirect: redirect);
+
   @override
-  bool shouldGuard(BeamLocation currentLocation, RouteInformation routeInformation, Object? data) {
+  bool shouldGuard(BeamLocation currentLocation,
+      RouteInformation routeInformation, Object? data) {
     shouldLocation = currentLocation;
     shouldRouteInfo = routeInformation;
     shouldData = data;
     return super.shouldGuard(currentLocation, routeInformation, data);
-  } 
+  }
 }
 
 void main() {
@@ -29,6 +32,11 @@ void main() {
   const testRouteInfoWithQuery =
       const RouteInformation(location: pathBlueprint + '?query=true');
   final testLocationWithQuery = Location1(testRouteInfoWithQuery);
+
+  BeamLocation? lastOriginBeamLocationFromCheckedRouteListener;
+  RouteInformation? lastTargetRouteInfoFromCheckedRouteListener;
+  Object? lastTargetDataFromCheckedRouteListener;
+  RouteCheckState? lastCheckStateFromCheckedRouteListener;
 
   group('shouldGuard', () {
     test('is true if the location has a blueprint matching the guard', () {
@@ -339,7 +347,6 @@ void main() {
         expect(router.currentBeamLocation.data, equals(3));
       });
     });
-
     testWidgets('check receives the current location and the passed data',
         (tester) async {
       BeamLocation? checkLocation;
@@ -379,12 +386,12 @@ void main() {
       expect(checkData, equals(3));
     });
 
-     testWidgets('shouldGuard receives the current location and the passed data',
+    testWidgets('shouldGuard receives the current location and the passed data',
         (tester) async {
-      final mockGuard =  CustomBeamUpdateGuard(
-              pathPatterns: ['/l2'],
-              check: (location, routeInfo, data) => false,
-              redirect: (delegate, routeInfo, data) {});
+      final mockGuard = CustomBeamUpdateGuard(
+          pathPatterns: ['/l2'],
+          check: (location, routeInfo, data) => false,
+          redirect: (delegate, routeInfo, data) {});
       final router = BeamerDelegate(
         initialPath: '/l1',
         locationBuilder: (routeInformation, _) {
@@ -407,6 +414,97 @@ void main() {
       expect(mockGuard.shouldLocation, equals(isA<Location1>()));
       expect(mockGuard.shouldRouteInfo?.location, equals("/l2"));
       expect(mockGuard.shouldData, equals(3));
+    });
+
+    testWidgets(
+        'when guards blocks, checkedRouteListener receives the current location, the route info and the check results',
+        (tester) async {
+      final router = BeamerDelegate(
+        initialPath: '/l1',
+        checkedRouteListener: (BeamLocation originLocation,
+            RouteInformation targetRouteInfo,
+            Object? targetData,
+            RouteCheckState checkState) {
+          lastOriginBeamLocationFromCheckedRouteListener = originLocation;
+          lastTargetRouteInfoFromCheckedRouteListener = targetRouteInfo;
+          lastTargetDataFromCheckedRouteListener = targetData;
+          lastCheckStateFromCheckedRouteListener = checkState;
+        },
+        locationBuilder: (routeInformation, _) {
+          if (routeInformation.location?.contains('l1') ?? false) {
+            return Location1(routeInformation);
+          }
+          return Location2(routeInformation);
+        },
+        updateGuards: [
+          BeamUpdateGuard(
+              pathPatterns: ['/l2'],
+              check: (location, routeInfo, data) => false,
+              redirect: (delegate, routeInfo, data) {}),
+        ],
+      );
+
+      await tester.pumpWidget(MaterialApp.router(
+        routerDelegate: router,
+        routeInformationParser: BeamerParser(),
+      ));
+
+      router.beamToNamed('/l2', data: 3);
+      await tester.pump();
+
+      expect(lastOriginBeamLocationFromCheckedRouteListener,
+          equals(isA<Location1>()));
+      expect(
+          lastTargetRouteInfoFromCheckedRouteListener?.location, equals("/l2"));
+      expect(lastTargetDataFromCheckedRouteListener, equals(3));
+      expect(lastCheckStateFromCheckedRouteListener,
+          equals(RouteCheckState.rejected));
+    });
+
+    testWidgets(
+        'when guard accepts, checkedRouteListener receives the current location, the route info and the check results',
+        (tester) async {
+      final router = BeamerDelegate(
+        initialPath: '/l1',
+        checkedRouteListener: (BeamLocation originLocation,
+            RouteInformation targetRouteInfo,
+            Object? targetData,
+            RouteCheckState checkState) {
+          lastOriginBeamLocationFromCheckedRouteListener = originLocation;
+          lastTargetRouteInfoFromCheckedRouteListener = targetRouteInfo;
+          lastTargetDataFromCheckedRouteListener = targetData;
+          lastCheckStateFromCheckedRouteListener = checkState;
+        },
+        locationBuilder: (routeInformation, _) {
+          if (routeInformation.location?.contains('l1') ?? false) {
+            return Location1(routeInformation);
+          }
+          return Location2(routeInformation);
+        },
+        updateGuards: [
+          BeamUpdateGuard(
+              pathPatterns: ['/l2'],
+              check: (location, routeInfo, data) => true,
+              redirect: (delegate, routeInfo, data) {}),
+        ],
+      );
+
+      await tester.pumpWidget(MaterialApp.router(
+        routerDelegate: router,
+        routeInformationParser: BeamerParser(),
+      ));
+
+      router.beamToNamed('/l2', data: 3);
+      await tester.pump();
+
+      expect(lastOriginBeamLocationFromCheckedRouteListener,
+          equals(isA<Location1>()));
+
+      expect(
+          lastTargetRouteInfoFromCheckedRouteListener?.location, equals("/l2"));
+      expect(lastTargetDataFromCheckedRouteListener, equals(3));
+      expect(lastCheckStateFromCheckedRouteListener,
+          equals(RouteCheckState.accepted));
     });
   });
 
