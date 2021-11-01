@@ -322,7 +322,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     configuration = configuration?.copyWith(
       location: Utils.trimmed(configuration.location),
     );
-    if(configuration != null && _checkAndApplyUpdateGuards(configuration) != null) {
+    if(configuration != null && _checkAndApplyUpdateGuards(configuration,data) != null) {
       return;
     }
     _currentBeamParameters = beamParameters ?? _currentBeamParameters;
@@ -747,14 +747,15 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   BeamUpdateGuard? _checkAndApplyUpdateGuards(
     RouteInformation routeInformation,
+    Object? data,
   ) {
     // TODO: make guards async => update would be async and all beamXXX functions
     // TODO: grand parents are not processed => recursive
     // TODO: locations cannot of have update guards - we would first 
     //       need to have the effective target location for the given routeInformation
     for (final guard in (parent?.updateGuards ?? []) + updateGuards) {
-      if (guard.shouldGuard(routeInformation) && !guard.check(this, routeInformation)) {
-        guard.redirect(this, routeInformation);
+      if (guard.shouldGuard(currentBeamLocation, routeInformation, data) && !guard.check(currentBeamLocation, routeInformation, data)) {
+        guard.redirect(this, routeInformation,data);
         return guard;
       }
     }

@@ -37,10 +37,10 @@ class BeamUpdateGuard {
   /// the one to which beaming has been requested.
   ///
   /// [context] is also injected to fetch data up the tree if necessary.
-  final bool Function(BeamerDelegate delegate, RouteInformation routeInformation) check;
+  final bool Function(BeamLocation delegate, RouteInformation routeInformation, Object? data) check;
 
   /// Arbitrary closure to execute when [check] fails.
-  final void Function(BeamerDelegate delegate, RouteInformation routeInformation)
+  final void Function(BeamerDelegate delegate, RouteInformation routeInformation, Object? data)
       redirect;
   
   /// Whether to [check] all the path blueprints defined in [pathPatterns]
@@ -57,8 +57,11 @@ class BeamUpdateGuard {
   /// must be equal to the pathBlueprint.
   bool _hasMatch(RouteInformation routeInformation) => patternsMatch(pathPatterns,routeInformation);
 
-    /// Whether or not the guard should [check] the [location].
-  bool shouldGuard(RouteInformation routeInformation) {
+  /// Whether or not the guard should [check] the [location].
+  /// [currentLocation] is the current beam location. [routeInformation] and [data] have not yet applied to it.
+  /// [routeInformation] is the route info of the new route
+  /// [data] is either data that was passed with the new route 
+  bool shouldGuard(BeamLocation currentLocation, RouteInformation routeInformation, Object? data) {
     return guardNonMatching ? !_hasMatch(routeInformation) : _hasMatch(routeInformation);
   }
 }
