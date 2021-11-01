@@ -17,6 +17,13 @@ void main() {
     });
   });
 
+  group('defaults', () {
+    test('BeamLocations have by default empty guards ', () {
+      expect(location2.updateGuards, equals([]));
+      expect(location2.guards, equals([]));
+    });
+  });
+
   group('NotFound', () {
     testWidgets('has "empty" function overrides, but has a state',
         (tester) async {
