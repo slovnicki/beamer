@@ -4,12 +4,12 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'test_locations.dart';
 
-class CustomBeamUpdateGuard extends BeamUpdateGuard {
+class CustomUpdateGuard extends UpdateGuard {
   BeamLocation? shouldLocation;
   RouteInformation? shouldRouteInfo;
   Object? shouldData;
 
-  CustomBeamUpdateGuard({
+  CustomUpdateGuard({
     required pathPatterns,
     required check,
     required redirect,
@@ -40,7 +40,7 @@ void main() {
 
   group('shouldGuard', () {
     test('is true if the location has a blueprint matching the guard', () {
-      final guard = BeamUpdateGuard(
+      final guard = UpdateGuard(
         pathPatterns: [pathBlueprint],
         check: (_, __, ___) => true,
         redirect: (_, __, ___) {},
@@ -52,7 +52,7 @@ void main() {
     test(
         'is true if the location (which has a query part) has a blueprint matching the guard',
         () {
-      final guard = BeamUpdateGuard(
+      final guard = UpdateGuard(
         pathPatterns: [pathBlueprint],
         check: (_, __, ___) => true,
         redirect: (_, __, ___) {},
@@ -65,7 +65,7 @@ void main() {
     test(
         'is true if the location has a blueprint matching the guard using regexp',
         () {
-      final guard = BeamUpdateGuard(
+      final guard = UpdateGuard(
         pathPatterns: [RegExp(pathBlueprint)],
         check: (_, __, ___) => true,
         redirect: (_, __, ___) {},
@@ -77,7 +77,7 @@ void main() {
     test(
         'is true if the location (which has a query part) has a blueprint matching the guard using regexp',
         () {
-      final guard = BeamUpdateGuard(
+      final guard = UpdateGuard(
         pathPatterns: [RegExp(pathBlueprint)],
         check: (_, __, ___) => true,
         redirect: (_, __, ___) {},
@@ -89,7 +89,7 @@ void main() {
 
     test("is false if the location doesn't have a blueprint matching the guard",
         () {
-      final guard = BeamUpdateGuard(
+      final guard = UpdateGuard(
         pathPatterns: ['/not-a-match'],
         check: (_, __, ___) => true,
         redirect: (_, __, ___) {},
@@ -101,7 +101,7 @@ void main() {
     test(
         "is false if the location (which has a query part) doesn't have a blueprint matching the guard",
         () {
-      final guard = BeamUpdateGuard(
+      final guard = UpdateGuard(
         pathPatterns: ['/not-a-match'],
         check: (_, __, ___) => true,
         redirect: (_, __, ___) {},
@@ -114,7 +114,7 @@ void main() {
     test(
         "is false if the location doesn't have a blueprint matching the guard using regexp",
         () {
-      final guard = BeamUpdateGuard(
+      final guard = UpdateGuard(
         pathPatterns: [RegExp('/not-a-match')],
         check: (_, __, ___) => true,
         redirect: (_, __, ___) {},
@@ -126,7 +126,7 @@ void main() {
     test(
         "is false if the location (which has a query part) doesn't have a blueprint matching the guard using regexp",
         () {
-      final guard = BeamUpdateGuard(
+      final guard = UpdateGuard(
         pathPatterns: ['/not-a-match'],
         check: (_, __, ____) => true,
         redirect: (_, __, ___) {},
@@ -138,7 +138,7 @@ void main() {
 
     group('with wildcards', () {
       test('is true if the location has a match up to the wildcard', () {
-        final guard = BeamUpdateGuard(
+        final guard = UpdateGuard(
           pathPatterns: [
             pathBlueprint.substring(
                   0,
@@ -156,7 +156,7 @@ void main() {
       test(
           'is true if the location has a match up to the wildcard using regexp',
           () {
-        final guard = BeamUpdateGuard(
+        final guard = UpdateGuard(
           pathPatterns: [RegExp('(/[a-z]*|[0-9]*/one)')],
           check: (_, __, ___) => true,
           redirect: (_, __, ___) {},
@@ -167,7 +167,7 @@ void main() {
 
       test("is false if the location doesn't have a match against the wildcard",
           () {
-        final guard = BeamUpdateGuard(
+        final guard = UpdateGuard(
           pathPatterns: [
             '/not-a-match/*',
           ],
@@ -181,7 +181,7 @@ void main() {
       test(
           "is false if the location doesn't have a match against the wildcard using regexp",
           () {
-        final guard = BeamUpdateGuard(
+        final guard = UpdateGuard(
           pathPatterns: [
             RegExp('(/[a-z]*[0-9]/no-match)'),
           ],
@@ -195,7 +195,7 @@ void main() {
 
     group('when the guard is set to block other locations', () {
       test('is false if the location has a blueprint matching the guard', () {
-        final guard = BeamUpdateGuard(
+        final guard = UpdateGuard(
           pathPatterns: [
             pathBlueprint,
           ],
@@ -210,7 +210,7 @@ void main() {
       test(
           'is false if the location has a blueprint matching the guard using regexp',
           () {
-        final guard = BeamUpdateGuard(
+        final guard = UpdateGuard(
           pathPatterns: [
             RegExp(pathBlueprint),
           ],
@@ -225,7 +225,7 @@ void main() {
       test(
           "is true if the location doesn't have a blueprint matching the guard",
           () {
-        final guard = BeamUpdateGuard(
+        final guard = UpdateGuard(
           pathPatterns: ['/not-a-match'],
           check: (_, __, ___) => true,
           redirect: (_, __, ___) {},
@@ -238,7 +238,7 @@ void main() {
       test(
           "is true if the location doesn't have a blueprint matching the guard using regexp",
           () {
-        final guard = BeamUpdateGuard(
+        final guard = UpdateGuard(
           pathPatterns: [RegExp('/not-a-match')],
           check: (_, __, ___) => true,
           redirect: (_, __, ___) {},
@@ -250,7 +250,7 @@ void main() {
 
       group('with wildcards', () {
         test('is false if the location has a match up to the wildcard', () {
-          final guard = BeamUpdateGuard(
+          final guard = UpdateGuard(
             pathPatterns: [
               pathBlueprint.substring(
                     0,
@@ -269,7 +269,7 @@ void main() {
         test(
             'is false if the location has a match up to the wildcard using regexp',
             () {
-          final guard = BeamUpdateGuard(
+          final guard = UpdateGuard(
             pathPatterns: [
               RegExp('/[a-z]+'),
             ],
@@ -284,7 +284,7 @@ void main() {
         test(
             "is true if the location doesn't have a match against the wildcard",
             () {
-          final guard = BeamUpdateGuard(
+          final guard = UpdateGuard(
             pathPatterns: [
               '/not-a-match/*',
             ],
@@ -299,7 +299,7 @@ void main() {
         test(
             "is true if the location doesn't have a match against the wildcard using regexp",
             () {
-          final guard = BeamUpdateGuard(
+          final guard = UpdateGuard(
             pathPatterns: [
               RegExp('/not-a-match/[a-z]+'),
             ],
@@ -325,7 +325,7 @@ void main() {
             return Location2(routeInformation);
           },
           updateGuards: [
-            BeamUpdateGuard(
+            UpdateGuard(
               pathPatterns: ['/l2'],
               check: (location, loc, data) => false,
               redirect: (delegate, routeInfo, data) => delegate.beamTo(
@@ -361,7 +361,7 @@ void main() {
           return Location2(routeInformation);
         },
         updateGuards: [
-          BeamUpdateGuard(
+          UpdateGuard(
               pathPatterns: ['/l2'],
               check: (location, routeInfo, data) {
                 checkLocation = location;
@@ -388,7 +388,7 @@ void main() {
 
     testWidgets('shouldGuard receives the current location and the passed data',
         (tester) async {
-      final mockGuard = CustomBeamUpdateGuard(
+      final mockGuard = CustomUpdateGuard(
           pathPatterns: ['/l2'],
           check: (location, routeInfo, data) => false,
           redirect: (delegate, routeInfo, data) {});
@@ -437,7 +437,7 @@ void main() {
           return Location2(routeInformation);
         },
         updateGuards: [
-          BeamUpdateGuard(
+          UpdateGuard(
               pathPatterns: ['/l2'],
               check: (location, routeInfo, data) => false,
               redirect: (delegate, routeInfo, data) {}),
@@ -482,7 +482,7 @@ void main() {
           return Location2(routeInformation);
         },
         updateGuards: [
-          BeamUpdateGuard(
+          UpdateGuard(
               pathPatterns: ['/l2'],
               check: (location, routeInfo, data) => true,
               redirect: (delegate, routeInfo, data) {}),
@@ -522,12 +522,12 @@ void main() {
         updateGuards: [
           // 2 will redirect to 3
           // 3 will redirect to 1
-          BeamUpdateGuard(
+          UpdateGuard(
             pathPatterns: ['/2'],
             check: (_, __, ___) => false,
             redirect: (delegate, routeInfo, data) => delegate.beamToNamed('/3'),
           ),
-          BeamUpdateGuard(
+          UpdateGuard(
             pathPatterns: ['/3'],
             check: (_, __, ___) => false,
             redirect: (delegate, routeInfo, data) => delegate.beamToNamed('/1'),
@@ -558,7 +558,7 @@ void main() {
           },
         ),
         updateGuards: [
-          BeamUpdateGuard(
+          UpdateGuard(
             pathPatterns: ['/2'],
             check: (_, __, ___) => false,
             redirect: (delegate, routeInfo, data) {},

@@ -4,6 +4,16 @@ import '../beamer.dart';
 import 'utils.dart';
 
 
+/// State of the route passed to [BeamDelegate.checkedRouteListener]
+enum RouteCheckState {
+  /// [targetRouteInfo] and [targetData] no [UpdateGuard] has rej
+  accepted,
+
+  /// the route has been rejected by a [UpdateGuard]
+  rejected,
+}
+
+
 /// Matches [location]'s pathBlueprint to [pathPatterns].
 ///
 /// If asterisk is present, it is enough that the pre-asterisk substring is

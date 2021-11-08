@@ -5,17 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import 'beam_update_guard.dart';
+import 'beam_guard_util.dart';
+import 'update_guard.dart';
 import 'utils.dart';
-
-/// State of the route passed to [BeamDelegate.checkedRouteListener]
-enum RouteCheckState {
-  /// [targetRouteInfo] and [targetData] no [BeamUpdateGuard] has rej
-  accepted,
-
-  /// the route has been rejected by a [BeamUpdateGuard]
-  rejected,
-}
 
 /// A delegate that is used by the [Router] to build the [Navigator].
 ///
@@ -38,7 +30,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     this.notFoundRedirect,
     this.notFoundRedirectNamed,
     this.guards = const <BeamGuard>[],
-    this.updateGuards = const <BeamUpdateGuard>[],
+    this.updateGuards = const <UpdateGuard>[],
     this.navigatorObservers = const <NavigatorObserver>[],
     this.transitionDelegate = const DefaultTransitionDelegate(),
     this.beamBackTransitionDelegate = const ReverseTransitionDelegate(),
@@ -147,17 +139,13 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
           RouteInformation appliedRouteInfo, BeamerDelegate delegate)?
       appliedRouteListener;
 
-  /// The [checkedRouteListener] will be called on every navigation event
-  /// and a reference to the current beam location
-  /// and will recieve:
+  /// The [checkedRouteListener] will be called on every navigation event.
   /// [originLocation] the current beam location
   /// [checkedTargetRouteInfo] and [checkedTargetData] of the target route, note that both
-  /// not been applied to [BeamDelegate.currentLocation] !
-  /// further the [routeCheckState] :
-  /// [RouteCheckState.rejected] indicates:
-  /// - an [BeamUpdateGuard] has rejected the route.
-  /// [RouteCheckState.accepted] indicates:
-  /// - no [BeamUpdateGuard] has rejected the route.
+  /// have not yet been applied to [BeamDelegate.currentLocation] !
+  /// [routeCheckState] :
+  /// - [RouteCheckState.rejected] : an [UpdateGuard] has rejected the target route.
+  /// - [RouteCheckState.accepted] : the target route will be applied because all [UpdateGuard]'s have accepted this route.
   final void Function(
       BeamLocation originLocation,
       RouteInformation checkedTargetRouteInfo,
@@ -201,8 +189,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   ///
   /// Checks will be executed in order during [update]; chain of responsibility pattern.
   /// When some guard returns `false`, location candidate will not be accepted
-  /// and stack of pages will be updated as is configured in [BeamUpdateGuard].
-  final List<BeamUpdateGuard> updateGuards;
+  /// and stack of pages will be updated as is configured in [UpdateGuard].
+  final List<UpdateGuard> updateGuards;
 
   /// The list of observers for the [Navigator].
   final List<NavigatorObserver> navigatorObservers;
@@ -788,7 +776,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     _updateFromLocation(rebuild: false);
   }
 
-  BeamUpdateGuard? _checkAndApplyUpdateGuards(
+  UpdateGuard? _checkAndApplyUpdateGuards(
     RouteInformation routeInformation,
     Object? data,
   ) {

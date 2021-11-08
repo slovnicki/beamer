@@ -6,8 +6,8 @@ import 'package:flutter/widgets.dart';
 
 /// Checks whether current [RouteInformation] is allowed to be beamed to
 /// and provides steps to be executed following a failed check.
-class BeamUpdateGuard {
-  const BeamUpdateGuard({
+class UpdateGuard {
+  const UpdateGuard({
     required this.pathPatterns,
     required this.check,
     required this.redirect,
