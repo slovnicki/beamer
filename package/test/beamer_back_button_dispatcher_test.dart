@@ -204,8 +204,8 @@ void main() {
       expect(childDelegate.currentBeamLocation.state.routeInformation.location,
           '/test');
 
-      final did =
-          await backButtonDispatcher.invokeCallback(Future.value(false));
+      // final did =
+      //     await backButtonDispatcher.invokeCallback(Future.value(false));
       // print('did: $did');
       // await tester.pump(Duration(seconds: 1));
       // await tester.pump();

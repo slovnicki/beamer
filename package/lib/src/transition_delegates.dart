@@ -1,6 +1,10 @@
 import 'package:flutter/widgets.dart';
 
+/// A no-animation transition delegate for [BeamerDelegate.transitionDelegate].
+///
+/// See example at https://api.flutter.dev/flutter/widgets/TransitionDelegate-class.html.
 class NoAnimationTransitionDelegate extends TransitionDelegate<void> {
+  /// Creates a [NoAnimationTransitionDelegate].
   const NoAnimationTransitionDelegate() : super();
 
   @override
@@ -37,7 +41,11 @@ class NoAnimationTransitionDelegate extends TransitionDelegate<void> {
   }
 }
 
+/// A transition delegate that will look like pop, regardless of whether an action is actuallly a pop.
+///
+/// New pages are added behind and then the remove animation on old pages is done.
 class ReverseTransitionDelegate extends TransitionDelegate<void> {
+  /// Creates a [ReverseTransitionDelegate],
   const ReverseTransitionDelegate() : super();
 
   @override

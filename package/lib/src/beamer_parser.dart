@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 /// Parses [RouteInformation] into a type that [BeamerDelegate] will understand,
 /// which is again [RouteInformation].
 class BeamerParser extends RouteInformationParser<RouteInformation> {
+  /// Creates a [BeamerParser] with specified properties.
   BeamerParser({this.onParse});
 
   /// Used to inspect and/or modify the parsed [RouteInformation]

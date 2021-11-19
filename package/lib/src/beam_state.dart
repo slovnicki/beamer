@@ -11,15 +11,25 @@ import './beam_location.dart';
 /// order to notify the platform of current [RouteInformation] that corresponds
 /// to the state.
 mixin RouteInformationSerializable<T> {
+  /// Create a state of type `T` from [RouteInformation].
   T fromRouteInformation(RouteInformation routeInformation);
+
+  /// Creates a [RouteInformation] fro the state of type `T`.
   RouteInformation toRouteInformation();
+
+  /// A convenience method to get [RouteInformation] from this.
+  ///
+  /// Basically returns [toRouteInformation].
   RouteInformation get routeInformation => toRouteInformation();
 }
 
-/// A pre-made state for [BeamLocation].
+/// Beamer's opinionated state for [BeamLocation]s.
 ///
 /// This can be used when one does not desire to define its own state.
 class BeamState with RouteInformationSerializable<BeamState> {
+  /// Creates a [BeamState] with specified properties.
+  ///
+  /// All of the properties have empty or `null` default values.
   BeamState({
     this.pathPatternSegments = const <String>[],
     this.pathParameters = const <String, String>{},

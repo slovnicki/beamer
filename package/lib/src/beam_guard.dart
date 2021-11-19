@@ -10,6 +10,9 @@ import './beam_page.dart';
 /// If neither [beamTo], [beamToNamed] nor [showPage] is specified,
 /// the guard will just block navigation, i.e. nothing will happen.
 class BeamGuard {
+  /// Creates a [BeamGuard] with defined properties.
+  ///
+  /// [pathPatterns] and [check] must not be null.
   const BeamGuard({
     required this.pathPatterns,
     required this.check,
@@ -53,24 +56,26 @@ class BeamGuard {
       onCheckFailed;
 
   /// If guard [check] returns `false`, build a [BeamLocation] to be beamed to.
-  /// 
-  /// [originLocation] holds the origin location from where it is being beamed from. `null` if there's no origin 
-  /// location, which may happen if it's the first navigation or the history was cleared.
-  /// [targetLocation] holds the location to where we tried to beam to, i.e. the [BeamLocation] on which the check 
+  ///
+  /// [originLocation] holds the origin location from where it is being beamed from, `null` if there's no origin location,
+  /// which may happen if it's the first navigation or the history was cleared.
+  /// [targetLocation] holds the location to where we tried to beam to, i.e. the [BeamLocation] on which the check
   /// failed.
-  /// 
+  ///
   /// [showPage] has precedence over this attribute.
-  final BeamLocation Function(BuildContext context, BeamLocation? originLocation, BeamLocation targetLocation)? beamTo;
+  final BeamLocation Function(BuildContext context,
+      BeamLocation? originLocation, BeamLocation targetLocation)? beamTo;
 
   /// If guard [check] returns `false`, beam to this URI string.
-  /// 
-  /// [originLocation] holds the origin location from where it is being beamed from. `null` if there's no origin 
+  ///
+  /// [originLocation] holds the origin location from where it is being beamed from. `null` if there's no origin
   /// location, which may happen if it's the first navigation or the history was cleared.
-  /// [targetLocation] holds the location to where we tried to beam to, i.e. the [BeamLocation] on which the check 
+  /// [targetLocation] holds the location to where we tried to beam to, i.e. the [BeamLocation] on which the check
   /// failed.
-  /// 
+  ///
   /// [showPage] has precedence over this attribute.
-  final String Function(BeamLocation? originLocation, BeamLocation targetLocation)? beamToNamed;
+  final String Function(
+      BeamLocation? originLocation, BeamLocation targetLocation)? beamToNamed;
 
   /// If guard [check] returns `false`, put this page onto navigation stack.
   ///

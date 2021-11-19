@@ -9,8 +9,15 @@ import 'beamer_provider.dart';
 import 'path_url_strategy_nonweb.dart'
     if (dart.library.html) 'path_url_strategy_web.dart' as url_strategy;
 
-/// A wrapper for [Router].
+/// Represents a navigation area and is a wrapper for [Router].
+///
+/// This is most commonly used for "nested navigation", e.g. in a tabbed view.
+/// Each [Beamer] has its own navigation rules, but can communicate with its parent [Router].
 class Beamer extends StatefulWidget {
+  /// Creates a [Beamer] with specified properties.
+  ///
+  /// [routerDelegate] is required because it handles the navigation within the
+  /// "sub-navigation module" represented by this.
   const Beamer({
     Key? key,
     required this.routerDelegate,
@@ -56,10 +63,13 @@ class Beamer extends StatefulWidget {
   State<StatefulWidget> createState() => BeamerState();
 }
 
+/// A [State] for [Beamer].
 class BeamerState extends State<Beamer> {
+  /// A getter for [BeamerDelegate] of the [Beamer] whose state is this.
   BeamerDelegate get routerDelegate => widget.routerDelegate;
-  BeamLocation get currentBeamLocation =>
-      widget.routerDelegate.currentBeamLocation;
+
+  /// A convenience getter for current [BeamLocation] of [routerDelegate].
+  BeamLocation get currentBeamLocation => routerDelegate.currentBeamLocation;
 
   @override
   void didChangeDependencies() {
@@ -88,6 +98,7 @@ class BeamerState extends State<Beamer> {
   }
 }
 
+/// Some beamer-specific extension methods on [BuildContext].
 extension BeamerExtensions on BuildContext {
   /// {@macro beamTo}
   void beamTo(
@@ -177,7 +188,9 @@ extension BeamerExtensions on BuildContext {
   bool get canPopBeamLocation => Beamer.of(this).canPopBeamLocation;
 }
 
+/// Some convenient extension methods on [RouteInformation].
 extension BeamerRouteInformationExtension on RouteInformation {
+  /// Returns a new [RouteInformation] created from this.
   RouteInformation copyWith({
     String? location,
     Object? state,

@@ -4,17 +4,33 @@ import 'package:flutter/material.dart';
 import '../beamer.dart';
 
 /// Types for how to route should be built.
+///
+/// See [BeamPage.type]
 enum BeamPageType {
+  /// An enum for Material page type.
   material,
+
+  /// An enum for Cupertino page type.
   cupertino,
+
+  /// An enum for a page type with fade transition.
   fadeTransition,
+
+  /// An enum for a page type with slide transition.
   slideTransition,
+
+  /// An enum for a page type with scale transition.
   scaleTransition,
+
+  /// An enum for a page type with no transition.
   noTransition,
 }
 
 /// A wrapper for screens in a navigation stack.
 class BeamPage extends Page {
+  /// Creates a [BeamPage] with specified properties.
+  ///
+  /// [child] is required and typicially represents a screen of the app.
   const BeamPage({
     LocalKey? key,
     String? name,

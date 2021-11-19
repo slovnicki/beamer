@@ -1,6 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 
+/// Some useful methods for beaming process configuration.
 abstract class Utils {
   /// Traverses [beamLocations] and returns the one whose one of
   /// `pathPatterns` contains the [uri], ignoring concrete path parameters.
@@ -159,26 +160,27 @@ abstract class Utils {
     );
   }
 
-  static bool urisMatch(Pattern blueprint, Uri exact) {
-    if (blueprint is String) {
-      final uriBlueprint = Uri.parse(blueprint);
-      final blueprintSegments = uriBlueprint.pathSegments;
+  /// Whether the [pattern] can match the [exact] URI.
+  static bool urisMatch(Pattern pattern, Uri exact) {
+    if (pattern is String) {
+      final uriPattern = Uri.parse(pattern);
+      final patternSegments = uriPattern.pathSegments;
       final exactSegment = exact.pathSegments;
-      if (blueprintSegments.length != exactSegment.length) {
+      if (patternSegments.length != exactSegment.length) {
         return false;
       }
-      for (int i = 0; i < blueprintSegments.length; i++) {
-        if (blueprintSegments[i].startsWith(':')) {
+      for (int i = 0; i < patternSegments.length; i++) {
+        if (patternSegments[i].startsWith(':')) {
           continue;
         }
-        if (blueprintSegments[i] != exactSegment[i]) {
+        if (patternSegments[i] != exactSegment[i]) {
           return false;
         }
       }
       return true;
     } else {
-      final regExpBlueprint = tryCastToRegExp(blueprint);
-      return regExpBlueprint.hasMatch(exact.toString());
+      final regExpPattern = tryCastToRegExp(pattern);
+      return regExpPattern.hasMatch(exact.toString());
     }
   }
 

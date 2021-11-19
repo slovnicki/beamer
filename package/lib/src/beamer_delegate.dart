@@ -12,6 +12,9 @@ import 'utils.dart';
 /// This is "the beamer", the one that does the actual beaming.
 class BeamerDelegate extends RouterDelegate<RouteInformation>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<RouteInformation> {
+  /// Creates a [BeamerDelegate] with specified properties.
+  ///
+  /// [locationBuilder] is required to process the incoming navigation request.
   BeamerDelegate({
     required this.locationBuilder,
     this.initialPath = '/',
@@ -221,6 +224,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// {@endtemplate}
   final List<BeamLocation> beamingHistory = [];
 
+  /// Returns the complete length of beaming history, that is the sum of all
+  /// history lengths for each [BeamLocation] in [beamingHistory].
   int get beamingHistoryCompleteLength {
     int length = 0;
     for (BeamLocation location in beamingHistory) {
@@ -622,7 +627,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   Widget build(BuildContext context) {
     BeamGuard? guard = _checkGuards(context, currentBeamLocation);
     if (guard != null) {
-      final originLocation = beamingHistory.length > 1 ? beamingHistory[beamingHistory.length - 2] : null;
+      final originLocation = beamingHistory.length > 1
+          ? beamingHistory[beamingHistory.length - 2]
+          : null;
       _applyGuard(guard, context, originLocation, currentBeamLocation);
     }
 
@@ -696,7 +703,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     return null;
   }
 
-  void _applyGuard(BeamGuard guard, BuildContext context, BeamLocation? originLocation, BeamLocation targetLocation) {
+  void _applyGuard(BeamGuard guard, BuildContext context,
+      BeamLocation? originLocation, BeamLocation targetLocation) {
     if (guard.showPage != null) {
       return;
     }
@@ -713,14 +721,16 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       redirectLocation = guard.beamTo!(context, originLocation, targetLocation);
     } else if (guard.beamToNamed != null) {
       redirectLocation = locationBuilder(
-        RouteInformation(location: guard.beamToNamed!(originLocation, targetLocation)),
+        RouteInformation(
+            location: guard.beamToNamed!(originLocation, targetLocation)),
         _currentBeamParameters.copyWith(),
       );
     }
 
     final anotherGuard = _checkGuards(context, redirectLocation);
     if (anotherGuard != null) {
-      return _applyGuard(anotherGuard, context, originLocation, redirectLocation);
+      return _applyGuard(
+          anotherGuard, context, originLocation, redirectLocation);
     }
 
     currentBeamLocation.removeListener(_updateFromLocation);
@@ -745,6 +755,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     currentBeamLocation.addListener(_updateFromLocation);
   }
 
+  /// Removes the last element from [beamingHistory] and returns it.
+  ///
+  /// If there is none, returns `null`.
   HistoryElement? removeLastHistoryElement() {
     if (beamingHistoryCompleteLength == 0) {
       return null;

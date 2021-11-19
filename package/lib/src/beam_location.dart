@@ -5,6 +5,9 @@ import 'package:flutter/widgets.dart';
 
 /// Parameters used while beaming.
 class BeamParameters {
+  /// Creates a [BeamParameters] with specified properties.
+  ///
+  /// All attributes can be null.
   const BeamParameters({
     this.transitionDelegate = const DefaultTransitionDelegate(),
     this.popConfiguration,
@@ -55,12 +58,18 @@ class BeamParameters {
 /// Contains the [BeamLocation.state] and [BeamParameters] at the moment
 /// of beaming to mentioned state.
 class HistoryElement<T extends RouteInformationSerializable> {
+  /// Creates a [HistoryElement] with specified properties.
+  ///
+  /// [state] must not be null.
   const HistoryElement(
     this.state, [
     this.parameters = const BeamParameters(),
   ]);
 
-  final T state;
+  /// A [RouteInformationSerializable] state of this history entry.
+  final T state; // TODO this should be just RouteInformation
+
+  /// Parameters that were used during beaming to this state in history.
   final BeamParameters parameters;
 }
 
@@ -74,6 +83,9 @@ class HistoryElement<T extends RouteInformationSerializable> {
 /// Extend this class to define your locations to which you can then beam to.
 abstract class BeamLocation<T extends RouteInformationSerializable>
     extends ChangeNotifier {
+  /// Creates a [BeamLocation] with specified properties.
+  ///
+  /// All attributes can be null.
   BeamLocation([
     RouteInformation? routeInformation,
     BeamParameters? beamParameters,
@@ -141,8 +153,15 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   /// The history of beaming for this.
   final List<HistoryElement<T>> history = [];
 
+  /// Adds another [HistoryElement] to [history] list.
+  /// The history element is created from given [state] and [beamParameters].
+  ///
+  /// If [tryPopping] is set to `true`, the state with the same `location`
+  /// will be searched in [history] and if found, entire history segment
+  /// `[foundIndex, history.length-1]` will be removed before adding a new
+  /// history element.
   void addToHistory(
-    RouteInformationSerializable state, [
+    T state, [
     BeamParameters beamParameters = const BeamParameters(),
     bool tryPopping = true,
   ]) {
@@ -166,17 +185,21 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
       if (state is ChangeNotifier) {
         (state as ChangeNotifier).addListener(update);
       }
-      history.add(HistoryElement<T>(state as T, beamParameters));
+      history.add(HistoryElement<T>(state, beamParameters));
     }
   }
 
+  /// Removes the last [HistoryElement] from [history] and returns it.
+  ///
+  /// If said history element is a `ChangeNotifier`, listeners are removed.
   HistoryElement? removeLastFromHistory() {
     if (history.isEmpty) {
       return null;
     }
     final last = history.removeLast();
-    if (last is ChangeNotifier) {
-      (last as ChangeNotifier).removeListener(update);
+    final lastState = last.state;
+    if (lastState is ChangeNotifier) {
+      (lastState as ChangeNotifier).removeListener(update);
     }
     return last;
   }
@@ -251,6 +274,8 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
 
 /// Default location to choose if requested URI doesn't parse to any location.
 class NotFound extends BeamLocation<BeamState> {
+  /// Creates a [NotFound] [BeamLocation] with
+  /// `RouteInformation(location: path)` as its state.
   NotFound({String path = '/'}) : super(RouteInformation(location: path));
 
   @override
@@ -275,6 +300,9 @@ class EmptyBeamLocation extends BeamLocation<BeamState> {
 ///
 /// Useful when needing a simple beam location with a single or few pages.
 class RoutesBeamLocation extends BeamLocation<BeamState> {
+  /// Creates a [RoutesBeamLocation] with specified properties.
+  ///
+  /// [routeInformation] and [routes] are required.
   RoutesBeamLocation({
     required RouteInformation routeInformation,
     Object? data,
