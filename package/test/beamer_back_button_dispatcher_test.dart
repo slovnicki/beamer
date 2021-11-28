@@ -29,11 +29,11 @@ void main() {
           '/test');
 
       await backButtonDispatcher.invokeCallback(Future.value(false));
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
 
       await backButtonDispatcher.invokeCallback(Future.value(false));
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
     });
 

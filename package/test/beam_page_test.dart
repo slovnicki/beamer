@@ -352,67 +352,58 @@ void main() {
       await tester.pump();
       var lastBeamLocationHistory = delegate.beamingHistory.last.history;
       expect(lastBeamLocationHistory.length, 2);
-      expect(lastBeamLocationHistory[0].state.routeInformation.location, '/');
-      expect(
-          lastBeamLocationHistory[1].state.routeInformation.location, '/test');
+      expect(lastBeamLocationHistory[0].routeInformation.location, '/');
+      expect(lastBeamLocationHistory[1].routeInformation.location, '/test');
       expect(
           (delegate.currentBeamLocation.state as BeamState).uri.path, '/test');
 
       delegate.beamToNamed('/test/2');
       await tester.pump();
       expect(lastBeamLocationHistory.length, 3);
-      expect(lastBeamLocationHistory[0].state.routeInformation.location, '/');
-      expect(
-          lastBeamLocationHistory[1].state.routeInformation.location, '/test');
-      expect(lastBeamLocationHistory[2].state.routeInformation.location,
-          '/test/2');
+      expect(lastBeamLocationHistory[0].routeInformation.location, '/');
+      expect(lastBeamLocationHistory[1].routeInformation.location, '/test');
+      expect(lastBeamLocationHistory[2].routeInformation.location, '/test/2');
       expect((delegate.currentBeamLocation.state as BeamState).uri.path,
           '/test/2');
 
       delegate.navigator.pop();
       await tester.pump();
       expect(lastBeamLocationHistory.length, 2);
-      expect(lastBeamLocationHistory[0].state.routeInformation.location, '/');
-      expect(
-          lastBeamLocationHistory[1].state.routeInformation.location, '/test');
+      expect(lastBeamLocationHistory[0].routeInformation.location, '/');
+      expect(lastBeamLocationHistory[1].routeInformation.location, '/test');
       expect(
           (delegate.currentBeamLocation.state as BeamState).uri.path, '/test');
 
       delegate.beamToNamed('/xx');
       await tester.pump();
       expect(lastBeamLocationHistory.length, 3);
-      expect(lastBeamLocationHistory[0].state.routeInformation.location, '/');
-      expect(
-          lastBeamLocationHistory[1].state.routeInformation.location, '/test');
-      expect(lastBeamLocationHistory[2].state.routeInformation.location, '/xx');
+      expect(lastBeamLocationHistory[0].routeInformation.location, '/');
+      expect(lastBeamLocationHistory[1].routeInformation.location, '/test');
+      expect(lastBeamLocationHistory[2].routeInformation.location, '/xx');
       expect((delegate.currentBeamLocation.state as BeamState).uri.path, '/xx');
 
       delegate.beamToNamed('/xx/2');
       await tester.pump();
       expect(lastBeamLocationHistory.length, 4);
-      expect(lastBeamLocationHistory[0].state.routeInformation.location, '/');
-      expect(
-          lastBeamLocationHistory[1].state.routeInformation.location, '/test');
-      expect(lastBeamLocationHistory[2].state.routeInformation.location, '/xx');
-      expect(
-          lastBeamLocationHistory[3].state.routeInformation.location, '/xx/2');
+      expect(lastBeamLocationHistory[0].routeInformation.location, '/');
+      expect(lastBeamLocationHistory[1].routeInformation.location, '/test');
+      expect(lastBeamLocationHistory[2].routeInformation.location, '/xx');
+      expect(lastBeamLocationHistory[3].routeInformation.location, '/xx/2');
       expect(
           (delegate.currentBeamLocation.state as BeamState).uri.path, '/xx/2');
 
       delegate.navigator.pop();
       await tester.pump();
       expect(lastBeamLocationHistory.length, 3);
-      expect(lastBeamLocationHistory[0].state.routeInformation.location, '/');
-      expect(
-          lastBeamLocationHistory[1].state.routeInformation.location, '/test');
-      expect(lastBeamLocationHistory[2].state.routeInformation.location, '/xx');
+      expect(lastBeamLocationHistory[0].routeInformation.location, '/');
+      expect(lastBeamLocationHistory[1].routeInformation.location, '/test');
+      expect(lastBeamLocationHistory[2].routeInformation.location, '/xx');
       expect((delegate.currentBeamLocation.state as BeamState).uri.path, '/xx');
 
       delegate.beamBack();
       expect(lastBeamLocationHistory.length, 2);
-      expect(lastBeamLocationHistory[0].state.routeInformation.location, '/');
-      expect(
-          lastBeamLocationHistory[1].state.routeInformation.location, '/test');
+      expect(lastBeamLocationHistory[0].routeInformation.location, '/');
+      expect(lastBeamLocationHistory[1].routeInformation.location, '/test');
       expect(
           (delegate.currentBeamLocation.state as BeamState).uri.path, '/test');
     });

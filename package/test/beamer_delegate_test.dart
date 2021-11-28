@@ -143,8 +143,7 @@ void main() {
       expect(delegate.currentBeamLocation, isA<Location2>());
       expect(delegate.beamingHistory.last.history.length, 2);
       expect(
-          delegate
-              .beamingHistory.last.history.last.state.routeInformation.location,
+          delegate.beamingHistory.last.history.last.routeInformation.location,
           '/l2/y');
       expect(delegate.beamingHistoryCompleteLength, 3);
     });

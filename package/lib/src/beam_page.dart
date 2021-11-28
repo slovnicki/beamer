@@ -70,11 +70,11 @@ class BeamPage extends Page {
 
     // Convert both to Uri as their path and query will be compared.
     final poppedUri = Uri.parse(
-      poppedHistoryElement.state.routeInformation.location ?? '/',
+      poppedHistoryElement.routeInformation.location ?? '/',
     );
     Uri previousUri = Uri.parse(
       previousHistoryElement != null
-          ? previousHistoryElement.state.routeInformation.location ?? '/'
+          ? previousHistoryElement.routeInformation.location ?? '/'
           : delegate.initialPath,
     );
 
@@ -82,7 +82,7 @@ class BeamPage extends Page {
     final poppedQueryParameters = poppedUri.queryParameters;
 
     // Pop path is obtained via removing the last path segment from path
-    // that is beaing popped.
+    // that is beeing popped.
     final popPathSegments = List.from(poppedPathSegments)..removeLast();
     final popPath = '/' + popPathSegments.join('/');
     var popUri = Uri(
@@ -98,16 +98,17 @@ class BeamPage extends Page {
               : null,
     );
 
-    // We need the routeState from the route we are trying to pop to.
+    // We need the route information from the route we are trying to pop to.
     //
     // Remove the last history element if it's the same as the path
     // we're trying to pop to, because `update` will add it to history.
     // This is `false` in case we deep-linked.
     //
-    // Otherwise, find the state with popPath in history.
-    RouteInformationSerializable? lastState;
+    // Otherwise, find the route information with popPath in history.
+    RouteInformation? lastRouteInformation;
     if (popPath == previousUri.path) {
-      lastState = delegate.removeLastHistoryElement()?.state;
+      lastRouteInformation =
+          delegate.removeLastHistoryElement()?.routeInformation;
     } else {
       // find the last
       bool found = false;
@@ -117,9 +118,9 @@ class BeamPage extends Page {
         }
         for (var historyElement in beamLocation.history.reversed) {
           final uri =
-              Uri.parse(historyElement.state.routeInformation.location ?? '/');
+              Uri.parse(historyElement.routeInformation.location ?? '/');
           if (uri.path == popPath) {
-            lastState = historyElement.state;
+            lastRouteInformation = historyElement.routeInformation;
             found = true;
             break;
           }
@@ -130,7 +131,7 @@ class BeamPage extends Page {
     delegate.update(
       configuration: delegate.configuration.copyWith(
         location: popUri.toString(),
-        state: lastState?.routeInformation.state,
+        state: lastRouteInformation?.state,
       ),
       data: data,
     );
@@ -153,7 +154,7 @@ class BeamPage extends Page {
     final previousHistoryElement = delegate.removeLastHistoryElement()!;
 
     delegate.update(
-      configuration: previousHistoryElement.state.routeInformation.copyWith(),
+      configuration: previousHistoryElement.routeInformation.copyWith(),
     );
 
     return true;

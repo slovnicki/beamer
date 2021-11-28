@@ -55,21 +55,21 @@ class BeamParameters {
 
 /// An element of [BeamLocation.history] list.
 ///
-/// Contains the [BeamLocation.state] and [BeamParameters] at the moment
-/// of beaming to mentioned state.
-class HistoryElement<T extends RouteInformationSerializable> {
+/// Contains the [RouteInformation] and [BeamParameters] at the moment
+/// of beaming to it.
+class HistoryElement {
   /// Creates a [HistoryElement] with specified properties.
   ///
-  /// [state] must not be null.
+  /// [routeInformation] must not be null.
   const HistoryElement(
-    this.state, [
+    this.routeInformation, [
     this.parameters = const BeamParameters(),
   ]);
 
-  /// A [RouteInformationSerializable] state of this history entry.
-  final T state; // TODO this should be just RouteInformation
+  /// A [RouteInformation] of this history entry.
+  final RouteInformation routeInformation;
 
-  /// Parameters that were used during beaming to this state in history.
+  /// Parameters that were used during beaming.
   final BeamParameters parameters;
 }
 
@@ -90,22 +90,14 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
     RouteInformation? routeInformation,
     BeamParameters? beamParameters,
   ]) {
-    addToHistory(
-      createState(
-        routeInformation ?? const RouteInformation(location: '/'),
-      ),
-      beamParameters ?? const BeamParameters(),
-    );
+    create(routeInformation, beamParameters);
   }
 
-  /// A state of this location.
+  /// A state of this [BeamLocation].
   ///
   /// Upon beaming, it will be populated by all necessary attributes.
   /// See also: [BeamState].
-  T get state => history.last.state;
-
-  set state(T state) =>
-      history.last = HistoryElement(state, history.last.parameters);
+  late T state;
 
   /// An arbitrary data to be stored in this.
   /// This will persist while navigating through this [BeamLocation].
@@ -118,6 +110,24 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   /// Beam parameters used to beam to the [state].
   BeamParameters get beamParameters => history.last.parameters;
 
+  /// Creates the [state] and adds the [routeInformation] to [history].
+  ///
+  /// See [createState] and [addToHistory].
+  void create([
+    RouteInformation? routeInformation,
+    BeamParameters? beamParameters,
+    bool tryPoppingHistory = true,
+  ]) {
+    state = createState(
+      routeInformation ?? const RouteInformation(location: '/'),
+    );
+    addToHistory(
+      state.routeInformation,
+      beamParameters ?? const BeamParameters(),
+      tryPoppingHistory,
+    );
+  }
+
   /// How to create state from generic [BeamState], that is produced
   /// by [BeamerDelegate] and passed via [BeamerDelegate.locationBuilder].
   ///
@@ -128,7 +138,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
         beamLocation: this,
       ) as T;
 
-  /// Update a state via callback receiving the current state.
+  /// Updates the [state] via callback receiving the current [state].
   /// If no callback is given, just notifies [BeamerDelegate] to rebuild.
   ///
   /// Useful with [BeamState.copyWith].
@@ -139,8 +149,9 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
     bool tryPoppingHistory = true,
   ]) {
     if (copy != null) {
+      state = copy(state);
       addToHistory(
-        copy(state),
+        state.routeInformation,
         beamParameters ?? const BeamParameters(),
         tryPoppingHistory,
       );
@@ -150,8 +161,31 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
     }
   }
 
+  /// Updates the [state] upon recieving new [RouteInformation], which usually
+  /// happens during [BeamerDelegate.update].
+  ///
+  /// Override this if you are using custom state whose copying
+  /// should be handled customly.
+  ///
+  /// See [create].
+  void updateState([
+    RouteInformation? routeInformation,
+    BeamParameters? beamParameters,
+    bool rebuild = true,
+    bool tryPoppingHistory = true,
+  ]) {
+    if (routeInformation == null) {
+      state = createState(history.last.routeInformation);
+    } else {
+      create(routeInformation, beamParameters, tryPoppingHistory);
+    }
+    if (rebuild) {
+      notifyListeners();
+    }
+  }
+
   /// The history of beaming for this.
-  final List<HistoryElement<T>> history = [];
+  final List<HistoryElement> history = [];
 
   /// Adds another [HistoryElement] to [history] list.
   /// The history element is created from given [state] and [beamParameters].
@@ -161,31 +195,22 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   /// `[foundIndex, history.length-1]` will be removed before adding a new
   /// history element.
   void addToHistory(
-    T state, [
+    RouteInformation routeInformation, [
     BeamParameters beamParameters = const BeamParameters(),
     bool tryPopping = true,
   ]) {
     if (tryPopping) {
       final sameStateIndex = history.indexWhere((element) {
-        return element.state.routeInformation.location ==
+        return element.routeInformation.location ==
             state.routeInformation.location;
       });
       if (sameStateIndex != -1) {
-        for (int i = sameStateIndex; i < history.length; i++) {
-          if (history[i] is ChangeNotifier) {
-            (history[i] as ChangeNotifier).removeListener(update);
-          }
-        }
         history.removeRange(sameStateIndex, history.length);
       }
     }
     if (history.isEmpty ||
-        state.routeInformation.location !=
-            this.state.routeInformation.location) {
-      if (state is ChangeNotifier) {
-        (state as ChangeNotifier).addListener(update);
-      }
-      history.add(HistoryElement<T>(state, beamParameters));
+        routeInformation.location != history.last.routeInformation.location) {
+      history.add(HistoryElement(routeInformation, beamParameters));
     }
   }
 
@@ -196,12 +221,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
     if (history.isEmpty) {
       return null;
     }
-    final last = history.removeLast();
-    final lastState = last.state;
-    if (lastState is ChangeNotifier) {
-      (lastState as ChangeNotifier).removeListener(update);
-    }
-    return last;
+    return history.removeLast();
   }
 
   /// Can this handle the [uri] based on its [pathPatterns].

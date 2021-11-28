@@ -362,12 +362,12 @@ void main() {
           BeamGuard(
             pathPatterns: ['/2'],
             check: (_, __) => false,
-            beamToNamed:(_, __) => '/3',
+            beamToNamed: (_, __) => '/3',
           ),
           BeamGuard(
             pathPatterns: ['/3'],
             check: (_, __) => false,
-            beamToNamed:(_, __) => '/1',
+            beamToNamed: (_, __) => '/1',
           ),
         ],
       );
@@ -425,7 +425,9 @@ void main() {
   });
 
   group('origin & target location update', () {
-    testWidgets('should preserve origin location query params when forwarded in beamToNamed', (tester) async {
+    testWidgets(
+        'should preserve origin location query params when forwarded in beamToNamed',
+        (tester) async {
       final delegate = BeamerDelegate(
         initialPath: '/1',
         locationBuilder: RoutesLocationBuilder(
@@ -440,7 +442,9 @@ void main() {
             check: (context, location) => false,
             beamToNamed: (originLocation, targetLocation) {
               final targetState = targetLocation.state as BeamState;
-              final destinationUri = Uri(path: '/1', queryParameters: targetState.queryParameters).toString();
+              final destinationUri =
+                  Uri(path: '/1', queryParameters: targetState.queryParameters)
+                      .toString();
 
               return destinationUri;
             },
@@ -454,16 +458,20 @@ void main() {
       ));
 
       expect(delegate.configuration.location, '/1');
-      expect(delegate.currentBeamLocation.state.routeInformation.location, '/1');
+      expect(
+          delegate.currentBeamLocation.state.routeInformation.location, '/1');
 
       delegate.beamToNamed('/2?param1=a&param2=b');
       await tester.pump();
 
       expect(delegate.configuration.location, '/1?param1=a&param2=b');
-      expect(delegate.currentBeamLocation.state.routeInformation.location, '/1?param1=a&param2=b');
+      expect(delegate.currentBeamLocation.state.routeInformation.location,
+          '/1?param1=a&param2=b');
     });
 
-    testWidgets('should preserve origin location query params when forwarded in beamTo', (tester) async {
+    testWidgets(
+        'should preserve origin location query params when forwarded in beamTo',
+        (tester) async {
       final delegate = BeamerDelegate(
         initialPath: '/l1',
         locationBuilder: (routeInformation, _) {
@@ -478,7 +486,8 @@ void main() {
             check: (context, location) => false,
             beamTo: (context, originLocation, targetLocation) {
               final targetState = targetLocation.state as BeamState;
-              final destinationUri = Uri(path: '/l1', queryParameters: targetState.queryParameters);
+              final destinationUri = Uri(
+                  path: '/l1', queryParameters: targetState.queryParameters);
 
               return Location2()..state = BeamState.fromUri(destinationUri);
             },
@@ -492,13 +501,15 @@ void main() {
       ));
 
       expect(delegate.configuration.location, '/l1');
-      expect(delegate.currentBeamLocation.state.routeInformation.location, '/l1');
+      expect(
+          delegate.currentBeamLocation.state.routeInformation.location, '/l1');
 
       delegate.beamToNamed('/l2?param1=a&param2=b');
       await tester.pump();
 
       expect(delegate.configuration.location, '/l1?param1=a&param2=b');
-      expect(delegate.currentBeamLocation.state.routeInformation.location, '/l1?param1=a&param2=b');
+      expect(delegate.currentBeamLocation.state.routeInformation.location,
+          '/l1?param1=a&param2=b');
     });
   });
 }
