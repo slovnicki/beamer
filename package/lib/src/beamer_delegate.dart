@@ -335,7 +335,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
           location.runtimeType != beamingHistory.last.runtimeType) {
         _addToBeamingHistory(location);
       } else {
-        beamingHistory.last.updateState(
+        beamingHistory.last.update(
+          null,
           this.configuration,
           _currentBeamParameters,
           false,
@@ -640,6 +641,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       _handleNotFoundRedirect();
     }
 
+    if (!currentBeamLocation.mounted) {
+      currentBeamLocation.buildInit(context);
+    }
+
     _setCurrentPages(context, guard);
 
     _setBrowserTitle(context);
@@ -746,6 +751,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   void _addToBeamingHistory(BeamLocation location) {
     currentBeamLocation.removeListener(_updateFromLocation);
+    currentBeamLocation.isCurrent = false;
+    currentBeamLocation.disposeState();
     if (removeDuplicateHistory) {
       final index = beamingHistory.indexWhere((historyLocation) =>
           historyLocation.runtimeType == location.runtimeType);
@@ -755,6 +762,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       }
     }
     beamingHistory.add(location);
+    currentBeamLocation.initState();
+    currentBeamLocation.isCurrent = true;
     currentBeamLocation.addListener(_updateFromLocation);
   }
 
@@ -772,7 +781,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     if (beamingHistory.last.history.isEmpty) {
       beamingHistory.removeLast();
     } else {
-      beamingHistory.last.updateState(null, null, false);
+      beamingHistory.last.update(null, null, null, false);
     }
 
     return lastHistoryElement;
@@ -916,6 +925,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   void dispose() {
     _parent?.removeListener(_updateFromParent);
     currentBeamLocation.removeListener(_updateFromLocation);
+    currentBeamLocation.dispose();
     super.dispose();
   }
 }

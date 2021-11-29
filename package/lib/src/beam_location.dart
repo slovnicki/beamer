@@ -99,18 +99,30 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   /// See also: [BeamState].
   late T state;
 
+  /// Beam parameters used to beam to the current [state].
+  BeamParameters get beamParameters => history.last.parameters;
+
   /// An arbitrary data to be stored in this.
-  /// This will persist while navigating through this [BeamLocation].
+  /// This will persist while navigating within this [BeamLocation].
   ///
   /// Therefore, in the case of using [RoutesLocationBuilder] which uses only
   /// a single [RoutesBeamLocation] for all page stacks, this data will
   /// be available always, until overriden with some new data.
   Object? data;
 
-  /// Beam parameters used to beam to the [state].
-  BeamParameters get beamParameters => history.last.parameters;
+  /// Whether [buildInit] was called.
+  ///
+  /// See [buildInit].
+  bool mounted = false;
+
+  /// Whether this [BeamLocation] is currently in use by [BeamerDelegate].
+  ///
+  /// This influences on the behavior of [create] that gets called on existing
+  /// [BeamLocation]s when using [BeamerLocationBuilder] that uses [Utils.chooseBeamLocation].
+  bool isCurrent = false;
 
   /// Creates the [state] and adds the [routeInformation] to [history].
+  /// This is called only once during the lifetime of [BeamLocation].
   ///
   /// See [createState] and [addToHistory].
   void create([
@@ -118,6 +130,14 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
     BeamParameters? beamParameters,
     bool tryPoppingHistory = true,
   ]) {
+    if (!isCurrent) {
+      try {
+        disposeState();
+      } catch (e) {
+        //
+      }
+      history.clear();
+    }
     state = createState(
       routeInformation ?? const RouteInformation(location: '/'),
     );
@@ -128,22 +148,55 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
     );
   }
 
-  /// How to create state from generic [BeamState], that is produced
-  /// by [BeamerDelegate] and passed via [BeamerDelegate.locationBuilder].
+  /// How to create state from [RouteInformation] given by
+  /// [BeamerDelegate] and passed via [BeamerDelegate.locationBuilder].
   ///
-  /// Override this if you have your custom state class extending [BeamState].
+  /// This will be called only once during the lifetime of [BeamLocation].
+  /// One should override this if using a custom state class.
+  ///
+  /// See [create].
   T createState(RouteInformation routeInformation) =>
       BeamState.fromRouteInformation(
         routeInformation,
         beamLocation: this,
       ) as T;
 
-  /// Updates the [state] via callback receiving the current [state].
-  /// If no callback is given, just notifies [BeamerDelegate] to rebuild.
+  /// What to do on state initalization.
   ///
-  /// Useful with [BeamState.copyWith].
+  /// For example, add listeners to [state] if it's a [ChangeNotifier].
+  void initState() {}
+
+  /// Updates the [state] upon recieving new [RouteInformation], which usually
+  /// happens after [BeamerDelegate.setNewRoutePath].
+  ///
+  /// Override this if you are using custom state whose copying
+  /// should be handled customly.
+  ///
+  /// See [update].
+  void updateState(RouteInformation routeInformation) {
+    state = createState(routeInformation);
+  }
+
+  /// How to relase any resources used by [state].
+  ///
+  /// Override this if
+  /// e.g. using a custom [ChangeNotifier] [state] to remove listeners.
+  void disposeState() {}
+
+  /// Updates the [state] and [history], depending on inputs.
+  ///
+  /// If [copy] function is provided, state should be created from given current [state].
+  /// New [routeInformation] gets added to history.
+  ///
+  /// If [copy] is `null`, then [routeInformation] is used, either `null` or not.
+  /// If [routeInformation] is `null`, then the state will upadate from
+  /// last [history] element and nothing shall be added to [history].
+  /// Else, the state updates from available [routeInformation].
+  ///
+  /// See [updateState] and [addToHistory].
   void update([
     T Function(T)? copy,
+    RouteInformation? routeInformation,
     BeamParameters? beamParameters,
     bool rebuild = true,
     bool tryPoppingHistory = true,
@@ -155,29 +208,17 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
         beamParameters ?? const BeamParameters(),
         tryPoppingHistory,
       );
-    }
-    if (rebuild) {
-      notifyListeners();
-    }
-  }
-
-  /// Updates the [state] upon recieving new [RouteInformation], which usually
-  /// happens during [BeamerDelegate.update].
-  ///
-  /// Override this if you are using custom state whose copying
-  /// should be handled customly.
-  ///
-  /// See [create].
-  void updateState([
-    RouteInformation? routeInformation,
-    BeamParameters? beamParameters,
-    bool rebuild = true,
-    bool tryPoppingHistory = true,
-  ]) {
-    if (routeInformation == null) {
-      state = createState(history.last.routeInformation);
     } else {
-      create(routeInformation, beamParameters, tryPoppingHistory);
+      if (routeInformation == null) {
+        updateState(history.last.routeInformation);
+      } else {
+        updateState(routeInformation);
+        addToHistory(
+          state.routeInformation,
+          beamParameters ?? const BeamParameters(),
+          tryPoppingHistory,
+        );
+      }
     }
     if (rebuild) {
       notifyListeners();
@@ -185,7 +226,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   }
 
   /// The history of beaming for this.
-  final List<HistoryElement> history = [];
+  List<HistoryElement> history = [];
 
   /// Adds another [HistoryElement] to [history] list.
   /// The history element is created from given [state] and [beamParameters].
@@ -222,6 +263,16 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
       return null;
     }
     return history.removeLast();
+  }
+
+  /// Initialize custom bindings for this [BeamLocation] using [BuildContext].
+  /// Similar to [builder], but is not tied to Widget tree.
+  ///
+  /// This will be called on just the first build of this [BeamLocation]
+  /// and sets [mounted] to true. It is called right before [buildPages].
+  @mustCallSuper
+  void buildInit(BuildContext context) {
+    mounted = true;
   }
 
   /// Can this handle the [uri] based on its [pathPatterns].
