@@ -75,7 +75,7 @@ Handle your application routing, synchronize it with browser URL and more. Beame
 
 # Quick Start
 
-The simplest setup is achieved by using the `RoutesLocationBuilder` which yields the least amount of code for a functioning application:
+The simplest setup is achieved by using the `RoutesLocationBuilder` which yields the least amount of code. This is a great choice for applications with fewer navigation scenarios or with shallow page stacks, i.e. when pages are rarely stacked on top of each other.
 
 ```dart
 class MyApp extends StatelessWidget {
@@ -88,7 +88,7 @@ class MyApp extends StatelessWidget {
         '/books/:bookId': (context, state) {
           // Take the parameter of interest from BeamState
           final bookId = state.pathParameters['bookId']!;
-          // Return a Widget or wrap it in a BeamPage for more flexibility
+          // Use BeamPage to define custom behavior
           return BeamPage(
             key: ValueKey('book-$bookId'),
             title: 'A Book #$bookId',
@@ -111,7 +111,18 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-`RoutesLocationBuilder` will create a single `BeamLocation` called `RoutesBeamLocation` which will pick and sort `routes` based on their paths, putt them into `Navigator` and rebuild the page stack.
+`RoutesLocationBuilder` will pick and sort `routes` based on their paths.  
+For example, navigating to `/books/1` will match all 3 entries from `routes` and stack them on top of each other. Navigating to `/books` will match the first 2 entries from `routes`.
+
+The corresponding pages are put into `Navigator.pages` and `BeamerDelegate` (re)builds the `Navigator`, showing the selected stack of pages on the screen.
+
+---
+
+**Why do we have a `locationBuilder` and what is a `BeamLocation`, the output of it?**
+
+`BeamLocation` is an entity that controls what pages should go into `Navigator.pages` based on the `Pattern`s it supports. `locationBuilder` is there to choose the `BeamLocation` (if there are many) that should further handle the incoming `RouteInformation`.
+
+`RoutesLocationBuilder` creates a special type of `BeamLocation` - `RoutesBeamLocation`, that has opinionated implementation for most common navigation use-cases. If customizations available at `BeamPage` are not enough, one can extend `BeamLocation` to define the behavior for any number of page stacks that can go into `Navigator.pages`. Read more at [BeamLocation](#beamlocation).
 
 ## Beaming
 
