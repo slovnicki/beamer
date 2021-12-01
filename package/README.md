@@ -120,9 +120,12 @@ The corresponding pages are put into `Navigator.pages` and `BeamerDelegate` (re)
 
 **Why do we have a `locationBuilder` and what is a `BeamLocation`, the output of it?**
 
-`BeamLocation` is an entity that controls what pages should go into `Navigator.pages` based on the `Pattern`s it supports. `locationBuilder` is there to choose the `BeamLocation` (if there are many) that should further handle the incoming `RouteInformation`.
+`BeamLocation` is an entity which, based on its `state`, decides what pages should go into `Navigator.pages`. `locationBuilder` chooses the appropriate `BeamLocation` that should further handle the incoming `RouteInformation`. This is most commonly achieved by examining `BeamLocation.pathPatterns`.
 
-`RoutesLocationBuilder` creates a special type of `BeamLocation` - `RoutesBeamLocation`, that has opinionated implementation for most common navigation use-cases. If customizations available at `BeamPage` are not enough, one can extend `BeamLocation` to define the behavior for any number of page stacks that can go into `Navigator.pages`. Read more at [BeamLocation](#beamlocation).
+Further reading: [BeamLocation](#beamlocation), [BeamState](#beamstate).
+
+`RoutesLocationBuilder` returns a special type of `BeamLocation` - `RoutesBeamLocation`, that has opinionated implementation for most common navigation use-cases. If customizations available at `BeamPage` are not enough, one can extend `BeamLocation` to define the behavior for any number of page stacks that can go into `Navigator.pages`.
+
 
 ## Beaming
 
