@@ -37,13 +37,13 @@ Handle your application routing on all platforms, synchronize it with browser's 
 ---
 
 - [Quick Start](#quick-start)
-  - [Navigating](#beaming)
-  - [Navigating Back](#beaming-back)
-    - [Upward (popping a page from stack)](#popping-a-page-from-stack)
-    - [Reverse Chronological (beaming to previous state)](#beaming-to-previous-state)
+  - [Navigating](#navigating)
+  - [Navigating Back](#navigating-back)
+    - [Upward (popping a page from stack)](#upward-popping-a-page-from-stack)
+    - [Reverse Chronological (beaming to previous state)](#reverse-chronological-beaming-to-previous-state)
     - [Android back button](#android-back-button)
   - [Accessing nearest Beamer](#accessing-nearest-beamer)
-  - [Using "Navigator 1.0"](#using-navigator-1)
+  - [Using "Navigator 1.0"](#using-navigator-10)
 - [Key Concepts](#key-concepts)
   - [BeamLocation](#beamlocation)
   - [BeamState](#beamstate)
@@ -460,9 +460,9 @@ We can use the `RoutesLocationBuilder` with a map of routes, as mentioned in [Qu
 final routerDelegate = BeamerDelegate(
   locationBuilder: RoutesLocationBuilder(
     routes: {
-      '/': (context, state) => HomeScreen(),
-      '/books': (context, state) => BooksScreen(),
-      '/books/:bookId': (context, state) =>
+      '/': (context, state, data) => HomeScreen(),
+      '/books': (context, state, data) => BooksScreen(),
+      '/books/:bookId': (context, state, data) =>
         BookDetailsScreen(
           bookId: state.pathParameters['bookId'],
         ),
@@ -504,7 +504,7 @@ Of course, `guardNonMatching` needs not to be used. Sometimes we wish to guard j
 BeamGuard(
   pathBlueprints: ['/profile/*', '/orders/*'],
   check: (context, location) => context.isUserAuthenticated(),
-  beamToNamed: '/login',
+  beamToNamed: (context, origin, target) => '/login',
 )
 ```
 
@@ -518,7 +518,7 @@ class MyApp extends StatelessWidget {
     initialPath: '/books',
     locationBuilder: RoutesLocationBuilder(
       routes: {
-        '/*': (context, state) {
+        '/*': (context, state, data) {
           final beamerKey = GlobalKey<BeamerState>();
 
           return Scaffold(
@@ -613,7 +613,7 @@ BeamerDelegate(
     BeamGuard(
       pathBlueprints: ['/books', '/books/*'],
       check: (context, location) => context.isAuthenticated,
-      beamToNamed: '/login',
+      beamToNamed: (context, origin, target) => '/login',
     ),
   ],
   ...
@@ -651,7 +651,33 @@ List<BeamGuard> get guards => [
 
 _(...full article coming soon...)_
 
-For now, see [CHANGELOG](https://github.com/slovnicki/beamer/blob/master/package/CHANGELOG.md).
+Until the article arives:
+
+### If using `SimpleLocationBuilder`:
+
+Instead of
+
+```dart
+locationBuilder: SimpleLocationBuilder(
+  routes: {
+    '/': (context, state) => MyWidget(),
+    '/another': (context, state) => AnotherThatNeedsState(state)
+  }
+)
+```
+
+now we have
+
+```dart
+locationBuilder: RoutesLocationBuilder(
+  routes: {
+    '/': (context, state, data) => MyWidget(),
+    '/another': (context, state, data) => AnotherThatNeedsState(state)
+  }
+)
+```
+
+### Intermediate to advanced users, see [CHANGELOG](https://github.com/slovnicki/beamer/blob/master/package/CHANGELOG.md)
 
 ## From 0.13 to 0.14
 
