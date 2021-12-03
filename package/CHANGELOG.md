@@ -1,4 +1,4 @@
-# 0.15.0
+# 1.0.0
 
 - **BREAKING:** "top-level state", the one in `BeamerDelegate` is now `RouteInformation` instead of `BeamState`
     - `BeamerDelegate.state` doesn't exist anymore and is replaced with `BeamerDelegate.configuration` which is `RouteInformation` and not `BeamState`
@@ -11,6 +11,7 @@
     - `BeamGuard.pathBlueprints` renamed to `BeamGuard.pathPatterns`
 - **BREAKING:** `SimpleLocationBuilder` is renamed to `RoutesLocationBuilder`
     - also the `SimpleBeamLocation` is renamed to `RoutesBeamLocation`
+    - `routes` values now additionally receive `data`
 - **BREAKING:** `beamStateHistory` and `beamLocationHistory` have been replaced with `beamingHistory` that is a `List<BeamLocation>` and each `BeamLocation` has `history` that is `List<HistoryElement>` where `HistoryElement` holds `RouteInformation` and `BeamParameters`.
 - **BREAKING:** `BeamerDelegate.listener` has been renamed to `BeamerDelegate.routeListener`
 - **BREAKING:** The property `pageRouteBuilder` in `BeamPage` is replaced with a new property `routeBuilder` which works with any `RouteBuilder` not just `PageRouteBuilder`.

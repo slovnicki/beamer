@@ -39,8 +39,8 @@ Handle your application routing on all platforms, synchronize it with browser's 
 - [Quick Start](#quick-start)
   - [Navigating](#beaming)
   - [Navigating Back](#beaming-back)
-    - [Popping a page from stack](#popping-a-page-from-stack)
-    - [Beaming to previous state](#beaming-to-previous-state)
+    - [Upward (popping a page from stack)](#popping-a-page-from-stack)
+    - [Reverse Chronological (beaming to previous state)](#beaming-to-previous-state)
     - [Android back button](#android-back-button)
   - [Accessing nearest Beamer](#accessing-nearest-beamer)
   - [Using "Navigator 1.0"](#using-navigator-1)
@@ -133,7 +133,7 @@ context.beamToNamed('/book/2', data: MyObject());
 
 ## Navigating Back
 
-There are 2 types of going back, i.e. [reverse navigation](https://material.io/design/navigation/understanding-navigation.html#reverse-navigation); **reverse chronological** and **upward**.
+There are 2 types of going back, i.e. [reverse navigation](https://material.io/design/navigation/understanding-navigation.html#reverse-navigation); **upward** and **reverse chronological**.
 
 ### Upward (popping a page from stack)
 
@@ -163,7 +163,7 @@ MaterialApp.router(
 )
 ```
 
-`BeamerBackButtonDispatcher` will try to `pop` first and fallback to `beamBack` if `pop` is not possible. If `beamBack` returns `false` (there is nowhere to beam back to), Android's back button will close the app, possibly opening a previously used app that was responsible for opening this app via deep-link.
+`BeamerBackButtonDispatcher` will try to `pop` first and fallback to `beamBack` if `pop` is not possible. If `beamBack` returns `false` (there is nowhere to beam back to), Android's back button will close the app, possibly opening a previously used app that was responsible for opening this app via deep-link. `BeamerBackButtonDispatcher` can be configured to `alwaysBeamBack` (meaning it won't attempt `pop`) or to not `fallbackToBeamBack` (meaning it won't attempt `beamBack`).
 
 ## Accessing nearest Beamer
 
@@ -333,7 +333,7 @@ class BooksState extends ChangeNotifier with RouteInformationSerializable {
 }
 ```
 
-Then the `BeamLocation` using above state would look something like this:
+Then the `BeamLocation` using above state would look something like this. Note that not all these overrides are needed if custom state is not a `ChangeNotifier`.
 
 ```dart
 class BooksLocation extends BeamLocation<BooksState> {
@@ -647,11 +647,11 @@ List<BeamGuard> get guards => [
 
 # Migrating
 
-## From 0.14 to 0.15
+## From 0.14 to 1.0.0
 
-(TBA)
+_(...full article coming soon...)_
 
-See [CHANGELOG](https://github.com/slovnicki/beamer/blob/master/package/CHANGELOG.md).
+For now, see [CHANGELOG](https://github.com/slovnicki/beamer/blob/master/package/CHANGELOG.md).
 
 ## From 0.13 to 0.14
 
