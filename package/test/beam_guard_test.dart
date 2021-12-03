@@ -351,9 +351,9 @@ void main() {
         initialPath: '/1',
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/1': (context, state) => const Text('1'),
-            '/2': (context, state) => const Text('2'),
-            '/3': (context, state) => const Text('3'),
+            '/1': (context, state, data) => const Text('1'),
+            '/2': (context, state, data) => const Text('2'),
+            '/3': (context, state, data) => const Text('3'),
           },
         ),
         guards: [
@@ -390,8 +390,8 @@ void main() {
         initialPath: '/1',
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/1': (context, state) => const Text('1'),
-            '/2': (context, state) => const Text('2'),
+            '/1': (context, state, data) => const Text('1'),
+            '/2': (context, state, data) => const Text('2'),
           },
         ),
         guards: [
@@ -432,8 +432,8 @@ void main() {
         initialPath: '/1',
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/1': (context, state) => const Text('1'),
-            '/2': (context, state) => const Text('2'),
+            '/1': (context, state, data) => const Text('1'),
+            '/2': (context, state, data) => const Text('2'),
           },
         ),
         guards: [

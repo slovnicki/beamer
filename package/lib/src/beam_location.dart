@@ -383,7 +383,7 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
   }) : super(routeInformation, beamParameters);
 
   /// Map of all routes this location handles.
-  Map<Pattern, dynamic Function(BuildContext, BeamState)> routes;
+  Map<Pattern, dynamic Function(BuildContext, BeamState, Object? data)> routes;
 
   /// A wrapper used as [BeamLocation.builder].
   Widget Function(BuildContext context, Widget navigator)? navBuilder;
@@ -420,7 +420,7 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
     final sortedRoutes = routeBuilders.keys.toList()
       ..sort((a, b) => _compareKeys(a, b));
     final pages = sortedRoutes.map<BeamPage>((route) {
-      final routeElement = routes[route]!(context, state);
+      final routeElement = routes[route]!(context, state, data);
       if (routeElement is BeamPage) {
         return routeElement;
       } else {

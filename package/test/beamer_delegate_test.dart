@@ -341,8 +341,8 @@ void main() {
     final delegate = BeamerDelegate(
       locationBuilder: RoutesLocationBuilder(
         routes: {
-          '/': (context, state) => Container(),
-          '/test': (context, state) => Scaffold(
+          '/': (context, state, data) => Container(),
+          '/test': (context, state, data) => Scaffold(
                 key: scaffoldKey,
                 drawer: const Drawer(),
                 body: Container(),
@@ -437,16 +437,16 @@ void main() {
       final childDelegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/test': (context, state) => Container(),
-            '/test2': (context, state) => Container(),
+            '/': (context, state, data) => Container(),
+            '/test': (context, state, data) => Container(),
+            '/test2': (context, state, data) => Container(),
           },
         ),
       );
       final rootDelegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '*': (context, state) => BeamPage(
+            '*': (context, state, data) => BeamPage(
                   key: const ValueKey('always-the-same'),
                   child: Beamer(
                     routerDelegate: childDelegate,
@@ -481,16 +481,16 @@ void main() {
         updateFromParent: false,
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/test': (context, state) => Container(),
-            '/test2': (context, state) => Container(),
+            '/': (context, state, data) => Container(),
+            '/test': (context, state, data) => Container(),
+            '/test2': (context, state, data) => Container(),
           },
         ),
       );
       final rootDelegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '*': (context, state) => BeamPage(
+            '*': (context, state, data) => BeamPage(
                   key: const ValueKey('always-the-same'),
                   child: Beamer(
                     routerDelegate: childDelegate,
@@ -527,16 +527,16 @@ void main() {
       updateParent: false,
       locationBuilder: RoutesLocationBuilder(
         routes: {
-          '/': (context, state) => Container(),
-          '/test': (context, state) => Container(),
-          '/test2': (context, state) => Container(),
+          '/': (context, state, data) => Container(),
+          '/test': (context, state, data) => Container(),
+          '/test2': (context, state, data) => Container(),
         },
       ),
     );
     final rootDelegate = BeamerDelegate(
       locationBuilder: RoutesLocationBuilder(
         routes: {
-          '*': (context, state) => BeamPage(
+          '*': (context, state, data) => BeamPage(
                 key: const ValueKey('always-the-same'),
                 child: Beamer(
                   routerDelegate: childDelegate,
@@ -580,9 +580,9 @@ void main() {
         clearBeamingHistoryOn: {'/'},
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/test': (context, state) => Container(),
-            '/test/deeper': (context, state) => Container(),
+            '/': (context, state, data) => Container(),
+            '/test': (context, state, data) => Container(),
+            '/test/deeper': (context, state, data) => Container(),
           },
         ),
       );
@@ -608,9 +608,9 @@ void main() {
       final delegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/test': (context, state) => Container(),
-            '/test/deeper': (context, state) => Container(),
+            '/': (context, state, data) => Container(),
+            '/test': (context, state, data) => Container(),
+            '/test/deeper': (context, state, data) => Container(),
           },
         ),
       );
@@ -643,9 +643,9 @@ void main() {
         clearBeamingHistoryOn: {'/'},
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/test': (context, state) => Container(),
-            '/test/deeper': (context, state) => Container(),
+            '/': (context, state, data) => Container(),
+            '/test': (context, state, data) => Container(),
+            '/test/deeper': (context, state, data) => Container(),
           },
         ),
       );
@@ -688,9 +688,9 @@ void main() {
         clearBeamingHistoryOn: {'/test'},
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/test': (context, state) => Container(),
-            '/test/deeper': (context, state) => Container(),
+            '/': (context, state, data) => Container(),
+            '/test': (context, state, data) => Container(),
+            '/test/deeper': (context, state, data) => Container(),
           },
         ),
       );

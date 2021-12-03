@@ -9,8 +9,8 @@ void main() {
       final delegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/test': (context, state) => Container(),
+            '/': (context, state, data) => Container(),
+            '/test': (context, state, data) => Container(),
           },
         ),
       );
@@ -42,9 +42,9 @@ void main() {
         initialPath: '/test/deeper',
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/test': (context, state) => Container(),
-            '/test/deeper': (context, state) => Container(),
+            '/': (context, state, data) => Container(),
+            '/test': (context, state, data) => Container(),
+            '/test/deeper': (context, state, data) => Container(),
           },
         ),
       );
@@ -74,9 +74,9 @@ void main() {
         initialPath: '/test/deeper',
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/test': (context, state) => Container(),
-            '/test/deeper': (context, state) => Container(),
+            '/': (context, state, data) => Container(),
+            '/test': (context, state, data) => Container(),
+            '/test/deeper': (context, state, data) => Container(),
           },
         ),
       );
@@ -106,8 +106,8 @@ void main() {
       final delegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/test': (context, state) => Container(),
+            '/': (context, state, data) => Container(),
+            '/test': (context, state, data) => Container(),
           },
         ),
       );
@@ -137,9 +137,9 @@ void main() {
       final delegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/test': (context, state) => Container(),
-            '/test2': (context, state) => Container(),
+            '/': (context, state, data) => Container(),
+            '/test': (context, state, data) => Container(),
+            '/test2': (context, state, data) => Container(),
           },
         ),
       );
@@ -173,15 +173,15 @@ void main() {
       final childDelegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/test': (context, state) => Container(),
+            '/': (context, state, data) => Container(),
+            '/test': (context, state, data) => Container(),
           },
         ),
       );
       final delegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '*': (context, state) => Beamer(
+            '*': (context, state, data) => Beamer(
                   routerDelegate: childDelegate,
                 ),
           },
@@ -219,15 +219,15 @@ void main() {
       final childDelegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/test': (context, state) => Container(),
+            '/': (context, state, data) => Container(),
+            '/test': (context, state, data) => Container(),
           },
         ),
       );
       final delegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '*': (context, state) => Beamer(
+            '*': (context, state, data) => Beamer(
                   routerDelegate: childDelegate,
                 ),
           },
@@ -259,8 +259,8 @@ void main() {
       final childDelegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/test': (context, state) => Container(),
+            '/': (context, state, data) => Container(),
+            '/test': (context, state, data) => Container(),
           },
         ),
       );
@@ -268,7 +268,7 @@ void main() {
       final delegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '*': (context, state) => Beamer(
+            '*': (context, state, data) => Beamer(
                   routerDelegate: childDelegate,
                   backButtonDispatcher: BeamerChildBackButtonDispatcher(
                     parent: rootBackButtonDispatcher,
@@ -308,8 +308,8 @@ void main() {
       final childDelegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/test': (context, state) => Container(),
+            '/': (context, state, data) => Container(),
+            '/test': (context, state, data) => Container(),
           },
         ),
       );
@@ -317,7 +317,7 @@ void main() {
       final delegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '*': (context, state) => Beamer(
+            '*': (context, state, data) => Beamer(
                   routerDelegate: childDelegate,
                   backButtonDispatcher: BeamerChildBackButtonDispatcher(
                     parent: rootBackButtonDispatcher,

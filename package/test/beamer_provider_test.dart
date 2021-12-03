@@ -7,7 +7,7 @@ void main() {
     final delegate = BeamerDelegate(
       locationBuilder: RoutesLocationBuilder(
         routes: {
-          '/': (context, state) => Container(),
+          '/': (context, state, data) => Container(),
         },
       ),
     );
@@ -26,7 +26,7 @@ void main() {
     final delegate2 = BeamerDelegate(
       locationBuilder: RoutesLocationBuilder(
         routes: {
-          '/': (context, state) => Container(),
+          '/': (context, state, data) => Container(),
         },
       ),
     );

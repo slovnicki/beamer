@@ -70,18 +70,20 @@ class MyApp extends StatelessWidget {
     locationBuilder: RoutesLocationBuilder(
       routes: {
         // Return either Widgets or BeamPages if more customization is needed
-        '/': (context, state) => HomeScreen(),
-        '/books': (context, state) => BooksScreen(),
-        '/books/:bookId': (context, state) {
-          // Take the parameter of interest from BeamState
+        '/': (context, state, data) => HomeScreen(),
+        '/books': (context, state, data) => BooksScreen(),
+        '/books/:bookId': (context, state, data) {
+          // Take the path parameter of interest from BeamState
           final bookId = state.pathParameters['bookId']!;
+          // Collect arbitrary data that persist throughout navigation
+          final info = (data as MyObject).info;
           // Use BeamPage to define custom behavior
           return BeamPage(
             key: ValueKey('book-$bookId'),
             title: 'A Book #$bookId',
             popToNamed: '/',
             type: BeamPageType.scaleTransition,
-            child: BookDetailsScreen(bookId),
+            child: BookDetailsScreen(bookId, info),
           );
         }
       },
@@ -124,8 +126,9 @@ Beamer.of(context).beamToNamed('/books/2');
 // Beaming with an extension method on BuildContext
 context.beamToNamed('/books/2');
 
-// Beaming with some additional data
-context.beamToNamed('/book/2', data: SomeObject());
+// Beaming with additional data that persist 
+// throughout navigation withing the same BeamLocation
+context.beamToNamed('/book/2', data: MyObject());
 ```
 
 ## Navigating Back

@@ -48,7 +48,7 @@ class RoutesLocationBuilder {
   RoutesLocationBuilder({required this.routes, this.builder});
 
   /// List of all routes this builder handles.
-  final Map<Pattern, dynamic Function(BuildContext, BeamState)> routes;
+  final Map<Pattern, dynamic Function(BuildContext, BeamState, Object?)> routes;
 
   /// Used as a [BeamLocation.builder].
   Widget Function(BuildContext context, Widget navigator)? builder;

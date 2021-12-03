@@ -266,7 +266,7 @@ class MyApp extends StatelessWidget {
     initialPath: '/books',
     locationBuilder: RoutesLocationBuilder(
       routes: {
-        '*': (context, state) => AppScreen(),
+        '*': (context, state, data) => AppScreen(),
       },
     ),
   );

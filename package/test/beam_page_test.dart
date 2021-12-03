@@ -100,8 +100,8 @@ void main() {
       final delegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/:id': (context, state) => Container(),
+            '/': (context, state, data) => Container(),
+            '/:id': (context, state, data) => Container(),
           },
         ),
       );
@@ -334,11 +334,11 @@ void main() {
       final delegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/test': (context, state) => Container(),
-            '/test/2': (context, state) => Container(),
-            '/xx': (context, state) => Container(),
-            '/xx/2': (context, state) => Container(),
+            '/': (context, state, data) => Container(),
+            '/test': (context, state, data) => Container(),
+            '/test/2': (context, state, data) => Container(),
+            '/xx': (context, state, data) => Container(),
+            '/xx/2': (context, state, data) => Container(),
           },
         ),
       );
@@ -413,8 +413,8 @@ void main() {
         transitionDelegate: const NoAnimationTransitionDelegate(),
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => const Scaffold(body: Text('0')),
-            '/1': (context, state) => BeamPage(
+            '/': (context, state, data) => const Scaffold(body: Text('0')),
+            '/1': (context, state, data) => BeamPage(
                   key: const ValueKey('/1'),
                   child: Scaffold(
                     body: ElevatedButton(
@@ -453,9 +453,9 @@ void main() {
       final delegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/test': (context, state) => Container(),
-            '/test/2': (context, state) => BeamPage(
+            '/': (context, state, data) => Container(),
+            '/test': (context, state, data) => Container(),
+            '/test/2': (context, state, data) => BeamPage(
                   onPopPage: BeamPage.routePop,
                   child: Container(),
                 ),
@@ -484,37 +484,37 @@ void main() {
     final delegate = BeamerDelegate(
       locationBuilder: RoutesLocationBuilder(
         routes: {
-          '/': (context, state) => const BeamPage(
+          '/': (context, state, data) => const BeamPage(
                 key: ValueKey('/'),
                 type: BeamPageType.material,
                 child: Scaffold(body: Text('0')),
               ),
-          '/1': (context, state) => const BeamPage(
+          '/1': (context, state, data) => const BeamPage(
                 key: ValueKey('/1'),
                 type: BeamPageType.cupertino,
                 child: Scaffold(body: Text('1')),
               ),
-          '/1/2': (context, state) => const BeamPage(
+          '/1/2': (context, state, data) => const BeamPage(
                 key: ValueKey('/1/2'),
                 type: BeamPageType.fadeTransition,
                 child: Scaffold(body: Text('2')),
               ),
-          '/1/2/3': (context, state) => const BeamPage(
+          '/1/2/3': (context, state, data) => const BeamPage(
                 key: ValueKey('/1/2/3'),
                 type: BeamPageType.slideTransition,
                 child: Scaffold(body: Text('3')),
               ),
-          '/1/2/3/4': (context, state) => const BeamPage(
+          '/1/2/3/4': (context, state, data) => const BeamPage(
                 key: ValueKey('/1/2/3/4'),
                 type: BeamPageType.scaleTransition,
                 child: Scaffold(body: Text('4')),
               ),
-          '/1/2/3/4/5': (context, state) => const BeamPage(
+          '/1/2/3/4/5': (context, state, data) => const BeamPage(
                 key: ValueKey('/1/2/3/4/5'),
                 type: BeamPageType.noTransition,
                 child: Scaffold(body: Text('5')),
               ),
-          '/1/2/3/4/5/6': (context, state) => BeamPage(
+          '/1/2/3/4/5/6': (context, state, data) => BeamPage(
                 key: const ValueKey('/1/2/3/4/5/6'),
                 routeBuilder: (context, settings, child) => PageRouteBuilder(
                   settings: settings,
@@ -584,8 +584,8 @@ void main() {
         transitionDelegate: const NoAnimationTransitionDelegate(),
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => const Scaffold(body: Text('0')),
-            '/1': (context, state) => BeamPage(
+            '/': (context, state, data) => const Scaffold(body: Text('0')),
+            '/1': (context, state, data) => BeamPage(
                   key: const ValueKey('/1'),
                   child: Scaffold(
                     body: ElevatedButton(
@@ -627,8 +627,8 @@ void main() {
         transitionDelegate: const ReverseTransitionDelegate(),
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => const Scaffold(body: Text('0')),
-            '/1': (context, state) => BeamPage(
+            '/': (context, state, data) => const Scaffold(body: Text('0')),
+            '/1': (context, state, data) => BeamPage(
                   key: const ValueKey('/1'),
                   child: Scaffold(
                     body: ElevatedButton(
