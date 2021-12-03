@@ -103,71 +103,114 @@ extension BeamerExtensions on BuildContext {
   /// {@macro beamTo}
   void beamTo(
     BeamLocation location, {
+    Object? data,
     BeamLocation? popTo,
     TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
-    bool replaceCurrent = false,
   }) {
     Beamer.of(this).beamTo(
       location,
+      data: data,
       popTo: popTo,
       transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
-      // replaceCurrent: replaceCurrent,
+    );
+  }
+
+  /// {@macro beamToReplacement}
+  void beamToReplacement(
+    BeamLocation location, {
+    Object? data,
+    BeamLocation? popTo,
+    TransitionDelegate? transitionDelegate,
+    bool beamBackOnPop = false,
+    bool popBeamLocationOnPop = false,
+    bool stacked = true,
+  }) {
+    Beamer.of(this).beamToReplacement(
+      location,
+      data: data,
+      popTo: popTo,
+      transitionDelegate: transitionDelegate,
+      beamBackOnPop: beamBackOnPop,
+      popBeamLocationOnPop: popBeamLocationOnPop,
+      stacked: stacked,
     );
   }
 
   /// {@macro beamToNamed}
   void beamToNamed(
     String uri, {
-    Map<String, dynamic>? data,
+    Object? routeState,
+    Object? data,
     String? popToNamed,
     TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
-    bool replaceCurrent = false,
   }) {
     Beamer.of(this).beamToNamed(
       uri,
+      routeState: routeState,
       data: data,
       popToNamed: popToNamed,
       transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
-      // replaceCurrent: replaceCurrent,
+    );
+  }
+
+  /// {@macro beamToReplacementNamed}
+  void beamToReplacementNamed(
+    String uri, {
+    Object? routeState,
+    Object? data,
+    String? popToNamed,
+    TransitionDelegate? transitionDelegate,
+    bool beamBackOnPop = false,
+    bool popBeamLocationOnPop = false,
+    bool stacked = true,
+  }) {
+    Beamer.of(this).beamToReplacementNamed(
+      uri,
+      routeState: routeState,
+      data: data,
+      popToNamed: popToNamed,
+      transitionDelegate: transitionDelegate,
+      beamBackOnPop: beamBackOnPop,
+      popBeamLocationOnPop: popBeamLocationOnPop,
+      stacked: stacked,
     );
   }
 
   /// {@macro popToNamed}
   void popToNamed(
     String uri, {
-    Map<String, dynamic>? data,
+    Object? routeState,
+    Object? data,
     String? popToNamed,
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
-    bool replaceCurrent = false,
   }) {
     Beamer.of(this).popToNamed(
       uri,
+      routeState: routeState,
       data: data,
       popToNamed: popToNamed,
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
-      replaceCurrent: replaceCurrent,
     );
   }
 
   /// {@macro beamBack}
-  void beamBack({Map<String, dynamic>? data}) =>
-      Beamer.of(this).beamBack(data: data);
+  void beamBack({Object? data}) => Beamer.of(this).beamBack(data: data);
 
   /// {@macro popBeamLocation}
   void popBeamLocation() => Beamer.of(this).popBeamLocation();
