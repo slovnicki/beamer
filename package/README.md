@@ -75,7 +75,7 @@ class MyApp extends StatelessWidget {
         '/books/:bookId': (context, state, data) {
           // Take the path parameter of interest from BeamState
           final bookId = state.pathParameters['bookId']!;
-          // Collect arbitrary data that persist throughout navigation
+          // Collect arbitrary data that persists throughout navigation
           final info = (data as MyObject).info;
           // Use BeamPage to define custom behavior
           return BeamPage(
@@ -464,7 +464,7 @@ final routerDelegate = BeamerDelegate(
       '/books': (context, state) => BooksScreen(),
       '/books/:bookId': (context, state) =>
         BookDetailsScreen(
-          bookId: state.pathParameters['bookId']
+          bookId: state.pathParameters['bookId'],
         ),
     },
   ),
@@ -484,7 +484,7 @@ BeamGuard(
   // return false to redirect
   check: (context, location) => context.isUserAuthenticated(),
   // where to redirect on a false check
-  beamToNamed: '/login',
+  beamToNamed: (context, origin, target) => '/login',
 )
 ```
 

@@ -440,8 +440,8 @@ void main() {
           BeamGuard(
             pathPatterns: ['/2'],
             check: (context, location) => false,
-            beamToNamed: (originLocation, targetLocation) {
-              final targetState = targetLocation.state as BeamState;
+            beamToNamed: (origin, target) {
+              final targetState = target.state as BeamState;
               final destinationUri =
                   Uri(path: '/1', queryParameters: targetState.queryParameters)
                       .toString();
@@ -484,8 +484,8 @@ void main() {
           BeamGuard(
             pathPatterns: ['/l2'],
             check: (context, location) => false,
-            beamTo: (context, originLocation, targetLocation) {
-              final targetState = targetLocation.state as BeamState;
+            beamTo: (context, origin, target) {
+              final targetState = target.state as BeamState;
               final destinationUri = Uri(
                   path: '/l1', queryParameters: targetState.queryParameters);
 
