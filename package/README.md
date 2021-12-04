@@ -484,7 +484,7 @@ BeamGuard(
   // return false to redirect
   check: (context, location) => context.isUserAuthenticated(),
   // where to redirect on a false check
-  beamToNamed: (context, origin, target) => '/login',
+  beamToNamed: (origin, target) => '/login',
 )
 ```
 
@@ -504,7 +504,7 @@ Of course, `guardNonMatching` needs not to be used. Sometimes we wish to guard j
 BeamGuard(
   pathBlueprints: ['/profile/*', '/orders/*'],
   check: (context, location) => context.isUserAuthenticated(),
-  beamToNamed: (context, origin, target) => '/login',
+  beamToNamed: (origin, target) => '/login',
 )
 ```
 
@@ -613,7 +613,7 @@ BeamerDelegate(
     BeamGuard(
       pathBlueprints: ['/books', '/books/*'],
       check: (context, location) => context.isAuthenticated,
-      beamToNamed: (context, origin, target) => '/login',
+      beamToNamed: (origin, target) => '/login',
     ),
   ],
   ...
@@ -649,11 +649,10 @@ List<BeamGuard> get guards => [
 
 ## From 0.14 to 1.0.0
 
-_(...full article coming soon...)_
+An article explaning changes and providing a migration guide is available [here at Medium](https://medium.com/@lovnicki.sandro/beamer-v1-0-0-is-out-whats-new-and-how-to-migrate-b251b3758e3c).  
+Most notable breaking changes:
 
-Until the article arives:
-
-### If using `SimpleLocationBuilder`:
+- If using a `SimpleLocationBuilder`:
 
 Instead of
 
@@ -677,7 +676,29 @@ locationBuilder: RoutesLocationBuilder(
 )
 ```
 
-### Intermediate to advanced users, see [CHANGELOG](https://github.com/slovnicki/beamer/blob/master/package/CHANGELOG.md)
+- If using a custom `BeamLocation`:
+
+Instead of
+
+```dart
+class BooksLocation extends BeamLocation {
+  @override
+  List<Pattern> get pathBlueprints => ['/books/:bookId'];
+
+  ...
+}
+```
+
+now we have
+
+```dart
+class BooksLocation extends BeamLocation<BeamState> {
+  @override
+  List<Pattern> get pathPatterns => ['/books/:bookId'];
+
+  ...
+}
+```
 
 ## From 0.13 to 0.14
 
