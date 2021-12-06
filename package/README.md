@@ -649,7 +649,7 @@ List<BeamGuard> get guards => [
 
 ## From 0.14 to 1.0.0
 
-An article explaning changes and providing a migration guide is available [here at Medium](https://medium.com/@lovnicki.sandro/beamer-v1-0-0-is-out-whats-new-and-how-to-migrate-b251b3758e3c).  
+An article explaning changes and providing a migration guide is available [here at Medium](https://medium.com/flutter-community/beamer-v1-0-0-is-out-whats-new-and-how-to-migrate-b251b3758e3c).
 Most notable breaking changes:
 
 - If using a `SimpleLocationBuilder`:
