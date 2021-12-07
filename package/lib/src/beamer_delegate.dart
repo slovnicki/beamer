@@ -628,7 +628,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   @override
   Widget build(BuildContext context) {
-    BeamGuard? guard = _checkGuards(context, currentBeamLocation);
+    final guard = _checkGuards(context, currentBeamLocation);
     if (guard != null) {
       final origin = beamingHistory.length > 1
           ? beamingHistory[beamingHistory.length - 2]

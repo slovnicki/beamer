@@ -101,8 +101,8 @@ void main() {
     });
 
     test('Unknown URI yields NotFound location', () async {
-      var uri = Uri.parse('/x');
-      var location = Utils.chooseBeamLocation(uri, beamLocations);
+      final uri = Uri.parse('/x');
+      final location = Utils.chooseBeamLocation(uri, beamLocations);
       expect(location, isA<NotFound>());
     });
 
