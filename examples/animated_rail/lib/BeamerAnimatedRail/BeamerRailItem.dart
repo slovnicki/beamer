@@ -1,4 +1,4 @@
-import 'package:animated_rail/index.dart';
+import 'package:animated_rail/animated_rail.dart';
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 
