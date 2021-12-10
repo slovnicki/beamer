@@ -137,7 +137,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// The buildListener will be called every time after the [currentPages]
   /// are updated. it receives a reference to this delegate.
   final void Function(BuildContext, BeamerDelegate)? buildListener;
-
+  
   /// Whether to prefer updating [currentBeamLocation] if it's of the same type
   /// as the [BeamLocation] being beamed to,
   /// instead of adding it to [beamLocationHistory].
@@ -145,10 +145,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// See how this is used at [_pushHistory] implementation.
   final bool preferUpdate;
 
-  /// Whether to remove [BeamLocation]s from [beamLocationHistory]
+  /// Whether to remove [BeamLocation]s from [beamingHistory]
   /// if they are the same type as the location being beamed to.
   ///
-  /// See how this is used at [_pushHistory] implementation.
+  /// See how this is used at [_addToBeamingHistory] implementation.
   final bool removeDuplicateHistory;
 
   /// Page to show when no [BeamLocation] supports the incoming URI.
@@ -160,7 +160,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// URI string to redirect to when no [BeamLocation] supports the incoming URI.
   final String? notFoundRedirectNamed;
 
-  /// Guards that will be executing [check] on [currentBeamLocation] candidate.
+  /// Guards that will be executing [BeamGuard.check] on [currentBeamLocation]
+  /// candidate.
   ///
   /// Checks will be executed in order; chain of responsibility pattern.
   /// When some guard returns `false`, location candidate will not be accepted
@@ -203,15 +204,16 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// This means that navigation can be done either on parent or on this
   final bool updateFromParent;
 
-  /// Whether to call [update] on [parent] when [state] is updated.
+  /// Whether to call [update] on [parent] when this instance state is updated.
   ///
-  /// This means that parent's [beamStateHistory] will be in sync.
+  /// This means that parent's [beamingHistory] will be in sync.
   final bool updateParent;
 
-  /// Whether to remove all entries from [routeHistory] when a route
-  /// belonging to this set is reached, regardless of how it was reached.
+  /// Whether to remove all entries from [beamingHistory] (and their nested
+  /// [BeamLocation.history]) when a route belonging to this set is reached,
+  /// regardless of how it was reached.
   ///
-  /// Note that [popToNamed] will also try to clear as much [routeHistory]
+  /// Note that [popToNamed] will also try to clear as much [beamingHistory]
   /// as possible, even when this is empty.
   final Set<String> clearBeamingHistoryOn;
 
@@ -220,7 +222,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// {@template beamingHistory}
   /// The history of [BeamLocation]s, each holding its [BeamLocation.history].
   ///
-  /// See [_pushHistory].
+  /// See [_addToBeamingHistory].
   /// {@endtemplate}
   final List<BeamLocation> beamingHistory = [];
 
@@ -272,12 +274,13 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// ```
   NavigatorState get navigator => _navigatorKey.currentState!;
 
-  /// Main method to update the [state] of this; `Beamer.of(context)`,
+  /// Main method to update the state of this delegate and its [currentBeamLocation].
   ///
   /// This "top-level" [update] is generally used for navigation
   /// _between_ [BeamLocation]s and not _within_ a specific [BeamLocation].
   /// For latter purpose, see [BeamLocation.update].
   /// Nevertheless, [update] **will** work for navigation within [BeamLocation].
+  /// 
   /// Calling [update] will run the [locationBuilder].
   ///
   /// ```dart
@@ -291,20 +294,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// [transitionDelegate] determines how a new stack of pages replaces current.
   /// See [Navigator.transitionDelegate].
   ///
-  /// If [beamBackOnPop] is set to `true`,
-  /// default pop action will triger [beamBack] instead.
-  ///
-  /// [popState] is more general than [beamBackOnPop],
-  /// and can beam you anywhere; whatever it resolves to during build.
-  ///
-  /// If [stacked] is set to `false`,
-  /// only the location's last page will be shown.
-  ///
-  /// If [replaceCurrent] is set to `true`,
-  /// new location will replace the last one in the stack.
-  ///
-  /// If [rebuild] is set to `false`,
-  /// [build] will not occur, but [state] and browser URL will be updated.
+  /// TODO(slovnicki): Update the documentation for this new function signature.
   void update({
     RouteInformation? configuration,
     BeamParameters? beamParameters,
@@ -442,7 +432,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   /// {@template beamToNamed}
   /// Beams to [BeamLocation] that has [uri] contained within its
-  /// [BeamLocation.pathBlueprintSegments].
+  /// [BeamLocation.pathPatterns] segments.
   ///
   /// For example
   /// ```dart
@@ -681,9 +671,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     return SynchronousFuture(null);
   }
 
-  /// Pass this call to [root] which notifies the platform for a [state] change.
+  /// Pass this call to [root] which notifies the platform for a state change.
   ///
-  /// On Web, creates a new browser history entry and update URL
+  /// On Web, creates a new browser history entry and update URL.
   ///
   /// See [SystemNavigator.routeInformationUpdated].
   void updateRouteInformation(RouteInformation routeInformation) {

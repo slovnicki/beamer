@@ -167,9 +167,9 @@ class BeamPage extends Page {
   final String? title;
 
   /// Overrides the default pop by executing an arbitrary closure.
-  /// Mainly used to manually update the [delegate.currentBeamLocation] state.
+  /// Mainly used to manually update the `delegate.currentBeamLocation` state.
   ///
-  /// [poppedPage] is this [BeamPage].
+  /// `poppedPage` is this [BeamPage].
   ///
   /// Return `false` (rarely used) to prevent **any** navigation from happening,
   /// otherwise return `true`.
@@ -194,9 +194,9 @@ class BeamPage extends Page {
 
   /// A builder for custom [Route] to use in [createRoute].
   ///
-  /// [context] is the build context.
-  /// [child] is the child of this [BeamPage]
-  /// [settings] must be passed to [PageRoute.settings].
+  /// `context` is the build context.
+  /// `child` is the child of this [BeamPage]
+  /// `settings` will be passed to [PageRoute] constructor.
   final Route Function(
       BuildContext context, RouteSettings settings, Widget child)? routeBuilder;
 

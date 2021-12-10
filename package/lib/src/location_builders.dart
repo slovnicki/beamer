@@ -9,7 +9,7 @@ typedef LocationBuilder = BeamLocation Function(
   BeamParameters?,
 );
 
-/// A pre-made builder to be used for [locationBuilder].
+/// A pre-made builder to be used for [BeamerDelegate.locationBuilder].
 ///
 /// Determines the appropriate [BeamLocation] from the list
 /// and populates it with configured state.

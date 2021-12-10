@@ -42,7 +42,7 @@ class BeamState with RouteInformationSerializable<BeamState> {
     configure();
   }
 
-  /// Creates a [BeamState] from given [uri] and optional [data].
+  /// Creates a [BeamState] from given [uri] and optional [routeState].
   ///
   /// If [beamLocation] is given, then it will take into consideration
   /// its `pathPatterns` to populate the [pathParameters] attribute.
@@ -60,7 +60,7 @@ class BeamState with RouteInformationSerializable<BeamState> {
     );
   }
 
-  /// Creates a [BeamState] from given [uriString] and optional [data].
+  /// Creates a [BeamState] from given [uriString] and optional [routeState].
   ///
   /// If [beamLocation] is given, then it will take into consideration
   /// its path blueprints to populate the [pathParameters] attribute.

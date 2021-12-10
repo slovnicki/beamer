@@ -54,9 +54,9 @@ class Beamer extends StatefulWidget {
     return _delegate;
   }
 
-  /// Change the strategy to use for handling browser URL to [PathUrlStrategy].
+  /// Change the strategy to use for handling browser URL to `PathUrlStrategy`.
   ///
-  /// [PathUrlStrategy] uses the browser URL's pathname to represent Beamer's route name.
+  /// `PathUrlStrategy` uses the browser URL's pathname to represent Beamer's route name.
   static void setPathUrlStrategy() => url_strategy.setPathUrlStrategy();
 
   @override
