@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'test_locations.dart';
 
 void main() {
-  final List<BeamLocation> beamLocations = [
+  final beamLocations = <BeamLocation>[
     Location1(),
     Location2(const RouteInformation()),
     CustomStateLocation(),

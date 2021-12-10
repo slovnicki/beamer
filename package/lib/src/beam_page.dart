@@ -111,7 +111,7 @@ class BeamPage extends Page {
           delegate.removeLastHistoryElement()?.routeInformation;
     } else {
       // find the last
-      bool found = false;
+      var found = false;
       for (var beamLocation in delegate.beamingHistory.reversed) {
         if (found) {
           break;
