@@ -93,11 +93,19 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
     create(routeInformation, beamParameters);
   }
 
+  late T _state;
+
   /// A state of this [BeamLocation].
   ///
   /// Upon beaming, it will be populated by all necessary attributes.
   /// See also: [BeamState].
-  late T state;
+  T get state => _state;
+
+  /// Sets the [state] and adds to [history].
+  set state(T state) {
+    _state = state;
+    addToHistory(_state.routeInformation);
+  }
 
   /// Beam parameters used to beam to the current [state].
   BeamParameters get beamParameters => history.last.parameters;
