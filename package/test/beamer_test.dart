@@ -14,7 +14,7 @@ void main() {
     routerDelegate: BeamerDelegate(
       locationBuilder: RoutesLocationBuilder(
         routes: {
-          '/test2/x': (context, state) {
+          '/test2/x': (context, state, data) {
             rootDelegate = Beamer.of(context, root: true);
             return Container();
           },
@@ -27,12 +27,12 @@ void main() {
         transitionDelegate: const NoAnimationTransitionDelegate(),
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) {
+            '/': (context, state, data) {
               testContext = context;
               return Container();
             },
-            '/test': (context, state) => Container(),
-            '/test2/*': (context, state) => Beamer(
+            '/test': (context, state, data) => Container(),
+            '/test2/*': (context, state, data) => Beamer(
                   key: beamerKey,
                   routerDelegate: BeamerProvider.of(context)!.routerDelegate,
                 ),
@@ -110,15 +110,15 @@ void main() {
         routerDelegate: BeamerDelegate(
           locationBuilder: RoutesLocationBuilder(
             routes: {
-              '/': (context, state) => Beamer(
+              '/': (context, state, data) => Beamer(
                     routerDelegate: BeamerDelegate(
                       locationBuilder: RoutesLocationBuilder(
                         routes: {
-                          '/': (context, state) => Beamer(
+                          '/': (context, state, data) => Beamer(
                                 routerDelegate: BeamerDelegate(
                                   locationBuilder: RoutesLocationBuilder(
                                     routes: {
-                                      '/': (context, state) {
+                                      '/': (context, state, data) {
                                         testContext = context;
                                         Beamer.of(context).active = false;
                                         return Container();
@@ -145,7 +145,7 @@ void main() {
     final delegate = BeamerDelegate(
       locationBuilder: RoutesLocationBuilder(
         routes: {
-          '/': (context, state) => Container(),
+          '/': (context, state, data) => Container(),
         },
       ),
     );

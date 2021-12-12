@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'beamer_delegate.dart';
+import 'package:beamer/src/beamer_delegate.dart';
 
 /// Overrides default back button behavior in [RootBackButtonDispatcher]
 /// to do custom [onBack] or [BeamerDelegate.beamBack].
 class BeamerBackButtonDispatcher extends RootBackButtonDispatcher {
+  /// Creates a [BeamerBackButtonDispatcher] with specified properties.
+  ///
+  /// [delegate] is required as this needs to communicated with [BeamerDelegate].
   BeamerBackButtonDispatcher({
     required this.delegate,
     this.onBack,
@@ -38,7 +41,7 @@ class BeamerBackButtonDispatcher extends RootBackButtonDispatcher {
       return delegate.beamBack();
     }
 
-    bool didPopRoute = await super.invokeCallback(defaultValue);
+    final didPopRoute = await super.invokeCallback(defaultValue);
     if (didPopRoute) {
       return didPopRoute;
     }
@@ -54,6 +57,10 @@ class BeamerBackButtonDispatcher extends RootBackButtonDispatcher {
 /// Overrides default back button behavior in [ChildBackButtonDispatcher]
 /// to do custom [onBack] or [BeamerDelegate.beamBack].
 class BeamerChildBackButtonDispatcher extends ChildBackButtonDispatcher {
+  /// Creates a [BeamerChildBackButtonDispatcher] with specified properties.
+  ///
+  /// [parent] is required as this needs to communicate with its parent [BeamerBackButtonDispatcher].
+  /// [delegate] is required as this needs to communicated with [BeamerDelegate].
   BeamerChildBackButtonDispatcher({
     required BeamerBackButtonDispatcher parent,
     required this.delegate,
@@ -92,7 +99,7 @@ class BeamerChildBackButtonDispatcher extends ChildBackButtonDispatcher {
       return delegate.beamBack();
     }
 
-    bool didPopRoute = await super.invokeCallback(defaultValue);
+    final didPopRoute = await super.invokeCallback(defaultValue);
     if (didPopRoute) {
       return didPopRoute;
     }

@@ -5,18 +5,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import 'utils.dart';
+import 'package:beamer/src/utils.dart';
 
 /// A delegate that is used by the [Router] to build the [Navigator].
 ///
 /// This is "the beamer", the one that does the actual beaming.
 class BeamerDelegate extends RouterDelegate<RouteInformation>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<RouteInformation> {
+  /// Creates a [BeamerDelegate] with specified properties.
+  ///
+  /// [locationBuilder] is required to process the incoming navigation request.
   BeamerDelegate({
     required this.locationBuilder,
     this.initialPath = '/',
     this.routeListener,
     this.buildListener,
+    @Deprecated(
+      'No longer used by this package, please remove any references to it. '
+      'This feature was deprecated after v1.0.0.',
+    )
     this.preferUpdate = true,
     this.removeDuplicateHistory = true,
     this.notFoundPage = const BeamPage(
@@ -135,11 +142,11 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// are updated. it receives a reference to this delegate.
   final void Function(BuildContext, BeamerDelegate)? buildListener;
 
-  /// Whether to prefer updating [currentBeamLocation] if it's of the same type
-  /// as the [BeamLocation] being beamed to,
-  /// instead of adding it to [beamLocationHistory].
-  ///
-  /// See how this is used at [_pushHistory] implementation.
+  @Deprecated(
+    'No longer used by this package, please remove any references to it. '
+    'This feature was deprecated after v1.0.0.',
+  )
+  // ignore: public_member_api_docs
   final bool preferUpdate;
 
   /// Whether to remove [BeamLocation]s from [beamLocationHistory]
@@ -221,9 +228,11 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// {@endtemplate}
   final List<BeamLocation> beamingHistory = [];
 
+  /// Returns the complete length of beaming history, that is the sum of all
+  /// history lengths for each [BeamLocation] in [beamingHistory].
   int get beamingHistoryCompleteLength {
-    int length = 0;
-    for (BeamLocation location in beamingHistory) {
+    var length = 0;
+    for (var location in beamingHistory) {
       length += location.history.length;
     }
     return length;
@@ -322,7 +331,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     }
 
     this.configuration = configuration ??
-        currentBeamLocation.history.last.state.routeInformation.copyWith();
+        currentBeamLocation.history.last.routeInformation.copyWith();
     if (buildBeamLocation) {
       final location =
           locationBuilder(this.configuration, _currentBeamParameters);
@@ -330,8 +339,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
           location.runtimeType != beamingHistory.last.runtimeType) {
         _addToBeamingHistory(location);
       } else {
-        beamingHistory.last
-            .addToHistory(location.state, location.beamParameters);
+        beamingHistory.last.update(
+          null,
+          this.configuration,
+          _currentBeamParameters,
+          false,
+        );
       }
     }
     if (data != null) {
@@ -509,11 +522,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
-    bool replaceCurrent = false,
   }) {
     while (beamingHistory.isNotEmpty) {
       final index = beamingHistory.last.history.lastIndexWhere(
-        (element) => element.state.routeInformation.location == uri,
+        (element) => element.routeInformation.location == uri,
       );
       if (index == -1) {
         beamingHistory.last.removeListener(_updateFromLocation);
@@ -544,10 +556,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       beamingHistory.last.history.length > 1 || beamingHistory.length > 1;
 
   /// {@template beamBack}
-  /// Beams to previous state in [beamingHistory].
-  /// and **removes** the last state from history.
+  /// Beams to previous entry in [beamingHistory].
+  /// and **removes** the last entry from history.
   ///
-  /// If there is no previous state, does nothing.
+  /// If there is no previous entry, does nothing.
   ///
   /// Returns the success, whether [update] was executed.
   /// {@endtemplate}
@@ -555,11 +567,11 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     if (!canBeamBack) {
       return false;
     }
-    late final HistoryElement lastHistoryElement;
+    late final HistoryElement targetHistoryElement;
     final lastHistorylength = beamingHistory.last.history.length;
     // first we try to beam back within last BeamLocation
     if (lastHistorylength > 1) {
-      lastHistoryElement = beamingHistory.last.history[lastHistorylength - 2];
+      targetHistoryElement = beamingHistory.last.history[lastHistorylength - 2];
       beamingHistory.last.history
           .removeRange(lastHistorylength - 2, lastHistorylength);
     } else {
@@ -567,13 +579,13 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       // and that beamingHistory.last.history.length == 1
       // so this last (only) entry is removed along with BeamLocation
       beamingHistory.removeLast();
-      lastHistoryElement = beamingHistory.last.history.last;
+      targetHistoryElement = beamingHistory.last.history.last;
       beamingHistory.last.history.removeLast();
     }
 
     update(
-      configuration: lastHistoryElement.state.routeInformation.copyWith(),
-      beamParameters: lastHistoryElement.parameters.copyWith(
+      configuration: targetHistoryElement.routeInformation.copyWith(),
+      beamParameters: targetHistoryElement.parameters.copyWith(
         transitionDelegate: beamBackTransitionDelegate,
       ),
       data: data,
@@ -620,13 +632,20 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   @override
   Widget build(BuildContext context) {
-    BeamGuard? guard = _checkGuards(context, currentBeamLocation);
+    final guard = _checkGuards(context, currentBeamLocation);
     if (guard != null) {
-      _applyGuard(guard, context);
+      final origin = beamingHistory.length > 1
+          ? beamingHistory[beamingHistory.length - 2]
+          : null;
+      _applyGuard(guard, context, origin, currentBeamLocation);
     }
 
     if (currentBeamLocation is NotFound) {
       _handleNotFoundRedirect();
+    }
+
+    if (!currentBeamLocation.mounted) {
+      currentBeamLocation.buildInit(context);
     }
 
     _setCurrentPages(context, guard);
@@ -695,7 +714,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     return null;
   }
 
-  void _applyGuard(BeamGuard guard, BuildContext context) {
+  void _applyGuard(
+    BeamGuard guard,
+    BuildContext context,
+    BeamLocation? origin,
+    BeamLocation target,
+  ) {
     if (guard.showPage != null) {
       return;
     }
@@ -709,17 +733,17 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         rebuild: false,
       );
     } else if (guard.beamTo != null) {
-      redirectLocation = guard.beamTo!(context);
+      redirectLocation = guard.beamTo!(context, origin, target);
     } else if (guard.beamToNamed != null) {
       redirectLocation = locationBuilder(
-        RouteInformation(location: guard.beamToNamed!),
+        RouteInformation(location: guard.beamToNamed!(origin, target)),
         _currentBeamParameters.copyWith(),
       );
     }
 
     final anotherGuard = _checkGuards(context, redirectLocation);
     if (anotherGuard != null) {
-      return _applyGuard(anotherGuard, context);
+      return _applyGuard(anotherGuard, context, origin, redirectLocation);
     }
 
     currentBeamLocation.removeListener(_updateFromLocation);
@@ -732,6 +756,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   void _addToBeamingHistory(BeamLocation location) {
     currentBeamLocation.removeListener(_updateFromLocation);
+    currentBeamLocation.isCurrent = false;
+    currentBeamLocation.disposeState();
     if (removeDuplicateHistory) {
       final index = beamingHistory.indexWhere((historyLocation) =>
           historyLocation.runtimeType == location.runtimeType);
@@ -741,9 +767,14 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       }
     }
     beamingHistory.add(location);
+    currentBeamLocation.initState();
+    currentBeamLocation.isCurrent = true;
     currentBeamLocation.addListener(_updateFromLocation);
   }
 
+  /// Removes the last element from [beamingHistory] and returns it.
+  ///
+  /// If there is none, returns `null`.
   HistoryElement? removeLastHistoryElement() {
     if (beamingHistoryCompleteLength == 0) {
       return null;
@@ -754,6 +785,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     final lastHistoryElement = beamingHistory.last.removeLastFromHistory();
     if (beamingHistory.last.history.isEmpty) {
       beamingHistory.removeLast();
+    } else {
+      beamingHistory.last.update(null, null, null, false);
     }
 
     return lastHistoryElement;
@@ -897,6 +930,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   void dispose() {
     _parent?.removeListener(_updateFromParent);
     currentBeamLocation.removeListener(_updateFromLocation);
+    currentBeamLocation.dispose();
     super.dispose();
   }
 }

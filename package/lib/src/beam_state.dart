@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 
-import './utils.dart';
-import './beam_location.dart';
+import 'package:beamer/src/utils.dart';
+import 'package:beamer/src/beam_location.dart';
 
 /// A class to mix with when defining a custom state for [BeamLocation].
 ///
@@ -11,15 +11,25 @@ import './beam_location.dart';
 /// order to notify the platform of current [RouteInformation] that corresponds
 /// to the state.
 mixin RouteInformationSerializable<T> {
+  /// Create a state of type `T` from [RouteInformation].
   T fromRouteInformation(RouteInformation routeInformation);
+
+  /// Creates a [RouteInformation] fro the state of type `T`.
   RouteInformation toRouteInformation();
+
+  /// A convenience method to get [RouteInformation] from this.
+  ///
+  /// Basically returns [toRouteInformation].
   RouteInformation get routeInformation => toRouteInformation();
 }
 
-/// A pre-made state for [BeamLocation].
+/// Beamer's opinionated state for [BeamLocation]s.
 ///
 /// This can be used when one does not desire to define its own state.
 class BeamState with RouteInformationSerializable<BeamState> {
+  /// Creates a [BeamState] with specified properties.
+  ///
+  /// All of the properties have empty or `null` default values.
   BeamState({
     this.pathPatternSegments = const <String>[],
     this.pathParameters = const <String, String>{},
@@ -161,7 +171,7 @@ class BeamState with RouteInformationSerializable<BeamState> {
       queryParameters: queryParameters.isEmpty ? null : queryParameters,
     );
     final pathSegments = pathPatternSegments.toList();
-    for (int i = 0; i < pathSegments.length; i++) {
+    for (var i = 0; i < pathSegments.length; i++) {
       if (pathSegments[i].isNotEmpty && pathSegments[i][0] == ':') {
         final key = pathSegments[i].substring(1);
         if (pathParameters.containsKey(key)) {

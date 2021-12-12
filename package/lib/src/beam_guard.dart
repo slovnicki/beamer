@@ -1,8 +1,8 @@
 import 'package:beamer/src/utils.dart';
 import 'package:flutter/widgets.dart';
 
-import './beam_location.dart';
-import './beam_page.dart';
+import 'package:beamer/src/beam_location.dart';
+import 'package:beamer/src/beam_page.dart';
 
 /// Checks whether current [BeamLocation] is allowed to be beamed to
 /// and provides steps to be executed following a failed check.
@@ -10,6 +10,9 @@ import './beam_page.dart';
 /// If neither [beamTo], [beamToNamed] nor [showPage] is specified,
 /// the guard will just block navigation, i.e. nothing will happen.
 class BeamGuard {
+  /// Creates a [BeamGuard] with defined properties.
+  ///
+  /// [pathPatterns] and [check] must not be null.
   const BeamGuard({
     required this.pathPatterns,
     required this.check,
@@ -40,7 +43,7 @@ class BeamGuard {
   /// use `RegExp('/books')`
   final List<Pattern> pathPatterns;
 
-  /// What check should be performed on a given [location],
+  /// What check should be performed on a given [BeamLocation],
   /// the one to which beaming has been requested.
   ///
   /// [context] is also injected to fetch data up the tree if necessary.
@@ -54,13 +57,22 @@ class BeamGuard {
 
   /// If guard [check] returns `false`, build a [BeamLocation] to be beamed to.
   ///
+  /// [origin] holds the origin [BeamLocation] from where it is being beamed from, `null` if there's no origin,
+  /// which may happen if it's the first navigation or the history was cleared.
+  /// [target] holds the [BeamLocation] to where we tried to beam to, i.e. the one on which the check failed.
+  ///
   /// [showPage] has precedence over this attribute.
-  final BeamLocation Function(BuildContext context)? beamTo;
+  final BeamLocation Function(
+      BuildContext context, BeamLocation? origin, BeamLocation target)? beamTo;
 
   /// If guard [check] returns `false`, beam to this URI string.
   ///
+  /// [origin] holds the origin [BeamLocation] from where it is being beamed from. `null` if there's no origin,
+  /// which may happen if it's the first navigation or the history was cleared.
+  /// [target] holds the [BeamLocation] to where we tried to beam to, i.e. the one on which the check failed.
+  ///
   /// [showPage] has precedence over this attribute.
-  final String? beamToNamed;
+  final String Function(BeamLocation? origin, BeamLocation target)? beamToNamed;
 
   /// If guard [check] returns `false`, put this page onto navigation stack.
   ///
@@ -79,28 +91,28 @@ class BeamGuard {
   /// Matches [location]'s pathBlueprint to [pathPatterns].
   ///
   /// If asterisk is present, it is enough that the pre-asterisk substring is
-  /// contained within location's pathBlueprint.
+  /// contained within location's pathPatterns.
   /// Else, the path (i.e. the pre-query substring) of the location's uri
-  /// must be equal to the pathBlueprint.
+  /// must be equal to the pathPattern.
   bool _hasMatch(BeamLocation location) {
-    for (final pathBlueprint in pathPatterns) {
+    for (final pathPattern in pathPatterns) {
       final path =
           Uri.parse(location.state.routeInformation.location ?? '/').path;
-      if (pathBlueprint is String) {
-        final asteriskIndex = pathBlueprint.indexOf('*');
+      if (pathPattern is String) {
+        final asteriskIndex = pathPattern.indexOf('*');
         if (asteriskIndex != -1) {
           if (location.state.routeInformation.location
               .toString()
-              .contains(pathBlueprint.substring(0, asteriskIndex))) {
+              .contains(pathPattern.substring(0, asteriskIndex))) {
             return true;
           }
         } else {
-          if (pathBlueprint == path) {
+          if (pathPattern == path) {
             return true;
           }
         }
       } else {
-        final regexp = Utils.tryCastToRegExp(pathBlueprint);
+        final regexp = Utils.tryCastToRegExp(pathPattern);
         return regexp.hasMatch(path);
       }
     }

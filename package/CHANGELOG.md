@@ -1,4 +1,4 @@
-# 0.15.0
+# 1.0.0
 
 - **BREAKING:** "top-level state", the one in `BeamerDelegate` is now `RouteInformation` instead of `BeamState`
     - `BeamerDelegate.state` doesn't exist anymore and is replaced with `BeamerDelegate.configuration` which is `RouteInformation` and not `BeamState`
@@ -11,9 +11,15 @@
     - `BeamGuard.pathBlueprints` renamed to `BeamGuard.pathPatterns`
 - **BREAKING:** `SimpleLocationBuilder` is renamed to `RoutesLocationBuilder`
     - also the `SimpleBeamLocation` is renamed to `RoutesBeamLocation`
-- **BREAKING:** `beamStateHistory` and `beamLocationHistory` have been replaced with `beamingHistory` that is a `List<BeamLocation>` and each `BeamLocation` has `history` that is `List<HistoryElement>` where `HistoryElement` holds `state` and `BeamParameters`.
-- **BREAKING:** `BeamerDelegate.listener` has been renamed to `BeamerDelegate.routeListener`
+    - `routes` values now additionally receive `data`
+- **BREAKING:** `beamStateHistory` and `beamLocationHistory` have been replaced with `beamingHistory` that is a `List<BeamLocation>` and each `BeamLocation` has `history` that is `List<HistoryElement>` where `HistoryElement` holds `RouteInformation` and `BeamParameters`.
+    - `clearBeamStateHistory` and `clearBeamLocationHistory` have been removed.
+- **BREAKING:** `BeamerDelegate.listener` has been renamed to `BeamerDelegate.routeListener`.
 - **BREAKING:** The property `pageRouteBuilder` in `BeamPage` is replaced with a new property `routeBuilder` which works with any `RouteBuilder` not just `PageRouteBuilder`.
+- **BREAKING:** `BeamGuard` `beamTo` receives the origin and target `BeamLocation`s alongside `BuildContext`.
+    - `replaceCurrent` was removed in favor of `beamToReplacement`.
+- **BREAKING:** `BeamGuard` `beamToNamed` is now a function that receives the origin and target `BeamLocation`s and returns a `String`.
+    - `replaceCurrent` was removed in favor of `beamToNamedReplacement`.
 - **Add:** [guard_riverpod example](https://github.com/slovnicki/beamer/tree/master/examples/guard_riverpod)
 - **Add:** [firebase_core example](https://github.com/slovnicki/beamer/tree/master/examples/firebase_core)
 - **Add:** [firebase_auth example](https://github.com/slovnicki/beamer/tree/master/examples/firebase_auth)

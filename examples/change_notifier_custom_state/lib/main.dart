@@ -2,22 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
 
 // DATA
-const List<Map<String, String>> books = [
-  {
-    'id': '1',
-    'title': 'Stranger in a Strange Land',
-    'author': 'Robert A. Heinlein',
-  },
-  {
-    'id': '2',
-    'title': 'Foundation',
-    'author': 'Isaac Asimov',
-  },
-  {
-    'id': '3',
-    'title': 'Fahrenheit 451',
-    'author': 'Ray Bradbury',
-  },
+class Book {
+  const Book(this.id, this.title, this.author);
+
+  final int id;
+  final String title;
+  final String author;
+}
+
+const List<Book> books = [
+  Book(1, 'Stranger in a Strange Land', 'Robert A. Heinlein'),
+  Book(2, 'Foundation', 'Isaac Asimov'),
+  Book(3, 'Fahrenheit 451', 'Ray Bradbury'),
 ];
 
 // SCREENS
@@ -56,11 +52,11 @@ class BooksScreen extends StatelessWidget {
         children: books
             .map(
               (book) => ListTile(
-                title: Text(book['title']!),
-                subtitle: Text(book['author']!),
+                title: Text(book.title),
+                subtitle: Text(book.author),
                 onTap: () {
                   final state = context.currentBeamLocation.state as BooksState;
-                  state.selectedBookId = int.parse(book['id']!);
+                  state.selectedBookId = book.id;
                 },
               ),
             )
@@ -71,21 +67,22 @@ class BooksScreen extends StatelessWidget {
 }
 
 class BookDetailsScreen extends StatelessWidget {
-  const BookDetailsScreen({Key? key, required this.bookDetails})
-      : super(key: key);
+  const BookDetailsScreen({Key? key, required this.book}) : super(key: key);
 
-  final Map<String, String> bookDetails;
+  final Book? book;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(bookDetails['title']!),
+        title: Text(book?.title ?? 'Not Found'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text('Author: ${bookDetails['author']!}'),
-      ),
+      body: book != null
+          ? Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Author: ${book!.author}'),
+            )
+          : const SizedBox.shrink(),
     );
   }
 }
@@ -109,6 +106,12 @@ class BooksState extends ChangeNotifier with RouteInformationSerializable {
   int? get selectedBookId => _selectedBookId;
   set selectedBookId(int? id) {
     _selectedBookId = id;
+    notifyListeners();
+  }
+
+  void updateWith(bool isBooksListOn, int? selectedBookId) {
+    _isBooksListOn = isBooksListOn;
+    _selectedBookId = selectedBookId;
     notifyListeners();
   }
 
@@ -142,41 +145,54 @@ class BooksLocation extends BeamLocation<BooksState> {
   BooksLocation(RouteInformation routeInformation) : super(routeInformation);
 
   @override
-  createState(RouteInformation routeInformation) =>
+  BooksState createState(RouteInformation routeInformation) =>
       BooksState().fromRouteInformation(routeInformation);
+
+  @override
+  void initState() {
+    super.initState();
+    state.addListener(notifyListeners);
+  }
+
+  @override
+  void updateState(RouteInformation routeInformation) {
+    final booksState = BooksState().fromRouteInformation(routeInformation);
+    state.updateWith(booksState.isBooksListOn, booksState.selectedBookId);
+  }
+
+  @override
+  void disposeState() {
+    state.removeListener(notifyListeners);
+    super.disposeState();
+  }
 
   @override
   List<Pattern> get pathPatterns => ['/books/:bookId'];
 
   @override
-  List<BeamPage> buildPages(BuildContext context, BooksState state) => [
+  List<BeamPage> buildPages(BuildContext context, BooksState state) {
+    final pages = [
+      const BeamPage(
+        key: ValueKey('home'),
+        child: HomeScreen(),
+      ),
+      if (state.isBooksListOn)
         const BeamPage(
-          key: ValueKey('home'),
-          child: HomeScreen(),
+          key: ValueKey('books'),
+          child: BooksScreen(),
         ),
-        if (state.isBooksListOn)
-          BeamPage(
-            key: ValueKey('books'),
-            child: BooksScreen(),
-            onPopPage: (context, delegate, state, page) {
-              (state as BooksState).isBooksListOn = false;
-              return true;
-            },
-          ),
-        if (state.selectedBookId != null)
-          BeamPage(
-            key: ValueKey('book-${state.selectedBookId}'),
-            child: BookDetailsScreen(
-              bookDetails: books.firstWhere(
-                (book) => int.parse(book['id']!) == state.selectedBookId,
-              ),
-            ),
-            onPopPage: (context, delegate, state, page) {
-              (state as BooksState).selectedBookId = null;
-              return true;
-            },
-          ),
-      ];
+    ];
+    if (state.selectedBookId != null) {
+      pages.add(
+        BeamPage(
+          key: ValueKey('book-${state.selectedBookId}'),
+          title: 'Book #${state.selectedBookId}',
+          child: BookDetailsScreen(book: books[state.selectedBookId!]),
+        ),
+      );
+    }
+    return pages;
+  }
 }
 
 // APP

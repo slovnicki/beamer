@@ -1,20 +1,36 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../beamer.dart';
+import 'package:beamer/beamer.dart';
 
 /// Types for how to route should be built.
+///
+/// See [BeamPage.type]
 enum BeamPageType {
+  /// An enum for Material page type.
   material,
+
+  /// An enum for Cupertino page type.
   cupertino,
+
+  /// An enum for a page type with fade transition.
   fadeTransition,
+
+  /// An enum for a page type with slide transition.
   slideTransition,
+
+  /// An enum for a page type with scale transition.
   scaleTransition,
+
+  /// An enum for a page type with no transition.
   noTransition,
 }
 
 /// A wrapper for screens in a navigation stack.
 class BeamPage extends Page {
+  /// Creates a [BeamPage] with specified properties.
+  ///
+  /// [child] is required and typicially represents a screen of the app.
   const BeamPage({
     LocalKey? key,
     String? name,
@@ -48,17 +64,17 @@ class BeamPage extends Page {
     // Take the history element that is being popped and the one before
     // as they will be compared later on to fine-tune the pop experience.
     final poppedHistoryElement = delegate.removeLastHistoryElement()!;
-    HistoryElement? previousHistoryElement = delegate.beamingHistory.isNotEmpty
+    final previousHistoryElement = delegate.beamingHistory.isNotEmpty
         ? delegate.beamingHistory.last.history.last
         : null;
 
     // Convert both to Uri as their path and query will be compared.
     final poppedUri = Uri.parse(
-      poppedHistoryElement.state.routeInformation.location ?? '/',
+      poppedHistoryElement.routeInformation.location ?? '/',
     );
-    Uri previousUri = Uri.parse(
+    final previousUri = Uri.parse(
       previousHistoryElement != null
-          ? previousHistoryElement.state.routeInformation.location ?? '/'
+          ? previousHistoryElement.routeInformation.location ?? '/'
           : delegate.initialPath,
     );
 
@@ -66,10 +82,10 @@ class BeamPage extends Page {
     final poppedQueryParameters = poppedUri.queryParameters;
 
     // Pop path is obtained via removing the last path segment from path
-    // that is beaing popped.
+    // that is beeing popped.
     final popPathSegments = List.from(poppedPathSegments)..removeLast();
     final popPath = '/' + popPathSegments.join('/');
-    var popUri = Uri(
+    final popUri = Uri(
       path: popPath,
       queryParameters: poppedPage.keepQueryOnPop
           ? poppedQueryParameters.isEmpty
@@ -82,28 +98,29 @@ class BeamPage extends Page {
               : null,
     );
 
-    // We need the routeState from the route we are trying to pop to.
+    // We need the route information from the route we are trying to pop to.
     //
     // Remove the last history element if it's the same as the path
     // we're trying to pop to, because `update` will add it to history.
     // This is `false` in case we deep-linked.
     //
-    // Otherwise, find the state with popPath in history.
-    RouteInformationSerializable? lastState;
+    // Otherwise, find the route information with popPath in history.
+    RouteInformation? lastRouteInformation;
     if (popPath == previousUri.path) {
-      lastState = delegate.removeLastHistoryElement()?.state;
+      lastRouteInformation =
+          delegate.removeLastHistoryElement()?.routeInformation;
     } else {
       // find the last
-      bool found = false;
+      var found = false;
       for (var beamLocation in delegate.beamingHistory.reversed) {
         if (found) {
           break;
         }
         for (var historyElement in beamLocation.history.reversed) {
           final uri =
-              Uri.parse(historyElement.state.routeInformation.location ?? '/');
+              Uri.parse(historyElement.routeInformation.location ?? '/');
           if (uri.path == popPath) {
-            lastState = historyElement.state;
+            lastRouteInformation = historyElement.routeInformation;
             found = true;
             break;
           }
@@ -114,7 +131,7 @@ class BeamPage extends Page {
     delegate.update(
       configuration: delegate.configuration.copyWith(
         location: popUri.toString(),
-        state: lastState?.routeInformation.state,
+        state: lastRouteInformation?.state,
       ),
       data: data,
     );
@@ -137,7 +154,7 @@ class BeamPage extends Page {
     final previousHistoryElement = delegate.removeLastHistoryElement()!;
 
     delegate.update(
-      configuration: previousHistoryElement.state.routeInformation.copyWith(),
+      configuration: previousHistoryElement.routeInformation.copyWith(),
     );
 
     return true;

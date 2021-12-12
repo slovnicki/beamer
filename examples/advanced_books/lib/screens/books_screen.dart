@@ -8,6 +8,8 @@ class BooksScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final titleQuery = (context.currentBeamLocation.state as BeamState)
+        .queryParameters['title'];
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -18,7 +20,10 @@ class BooksScreen extends StatelessWidget {
               (book) => ListTile(
                 title: Text(book['title']),
                 subtitle: Text(book['author']),
-                onTap: () => context.beamToNamed('/books/${book['id']}'),
+                onTap: () => context.beamToNamed(
+                  '/books/${book['id']}',
+                  data: {'title': titleQuery},
+                ),
               ),
             )
             .toList(),

@@ -7,9 +7,9 @@ void main() {
   final delegate = BeamerDelegate(
     locationBuilder: RoutesLocationBuilder(
       routes: {
-        '/': (context, state) => Container(),
-        RegExp('/test'): (context, state) => Container(),
-        RegExp('/path-param/(?<test>[a-z]+)'): (context, state) => Text(
+        '/': (context, state, data) => Container(),
+        RegExp('/test'): (context, state, data) => Container(),
+        RegExp('/path-param/(?<test>[a-z]+)'): (context, state, data) => Text(
               state.pathParameters['test'] ?? 'failure',
             ),
       },
@@ -36,8 +36,8 @@ void main() {
       final delegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/test': (context, state) => Container(),
+            '/': (context, state, data) => Container(),
+            '/test': (context, state, data) => Container(),
           },
         ),
       );
@@ -114,8 +114,8 @@ void main() {
       final delegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state) => Container(),
-            '/test/*': (context, state) => Container(),
+            '/': (context, state, data) => Container(),
+            '/test/*': (context, state, data) => Container(),
           },
         ),
       );
@@ -128,7 +128,7 @@ void main() {
       final delegate1 = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/*': (context, state) => Container(),
+            '/*': (context, state, data) => Container(),
           },
         ),
       );
@@ -138,7 +138,7 @@ void main() {
       final delegate2 = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '*': (context, state) => Container(),
+            '*': (context, state, data) => Container(),
           },
         ),
       );
@@ -150,7 +150,7 @@ void main() {
       final delegate1 = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/test/:testId': (context, state) => Container(),
+            '/test/:testId': (context, state, data) => Container(),
           },
         ),
       );
