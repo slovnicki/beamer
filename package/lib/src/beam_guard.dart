@@ -1,8 +1,8 @@
 import 'package:beamer/src/utils.dart';
 import 'package:flutter/widgets.dart';
 
-import './beam_location.dart';
-import './beam_page.dart';
+import 'package:beamer/src/beam_location.dart';
+import 'package:beamer/src/beam_page.dart';
 
 /// Checks whether current [BeamLocation] is allowed to be beamed to
 /// and provides steps to be executed following a failed check.

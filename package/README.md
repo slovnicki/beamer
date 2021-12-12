@@ -1,3 +1,7 @@
+<p align="right">
+<a href="https://docs.flutter.dev/development/packages-and-plugins/favorites"><img src="https://raw.githubusercontent.com/slovnicki/beamer/master/resources/flutter_favorite_badge.png" width="80" alt="favorite"></a>
+</p>
+
 <p align="center">
 <img src="https://raw.githubusercontent.com/slovnicki/beamer/master/resources/logo.png">
 </p>
