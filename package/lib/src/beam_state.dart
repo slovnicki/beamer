@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 
-import './utils.dart';
-import './beam_location.dart';
+import 'package:beamer/src/utils.dart';
+import 'package:beamer/src/beam_location.dart';
 
 /// A class to mix with when defining a custom state for [BeamLocation].
 ///

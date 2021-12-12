@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import 'utils.dart';
+import 'package:beamer/src/utils.dart';
 
 /// A delegate that is used by the [Router] to build the [Navigator].
 ///
