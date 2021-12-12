@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'test_locations.dart';
 
 void main() {
-  group('Beamer history', () {
+  group('Beaming history', () {
     TestWidgetsFlutterBinding.ensureInitialized();
 
     late BeamerDelegate delegate;
@@ -25,21 +25,25 @@ void main() {
           return NotFound(path: routeInformation.location ?? '/');
         },
       );
-      delegate.setNewRoutePath(const RouteInformation(location: '/l1'));
     });
 
     test('beaming to the same location type will not add it to history', () {
+      delegate.beamToNamed('/l2');
       final historyLength = delegate.beamingHistory.length;
+
       delegate.beamToNamed('/l2/2?q=t&r=s', data: {'x': 'z'});
       expect(delegate.beamingHistory.length, historyLength);
     });
 
     test('duplicate locations are removed from history', () {
+      delegate.beamToNamed('/l1');
       expect(delegate.beamingHistory.length, 1);
       expect(delegate.beamingHistory[0], isA<Location1>());
+
       delegate.beamToNamed('/l2');
       expect(delegate.beamingHistory.length, 2);
       expect(delegate.beamingHistory[0], isA<Location1>());
+
       delegate.beamToNamed('/l1');
       expect(delegate.beamingHistory.length, 2);
       expect(delegate.beamingHistory[0], isA<Location2>());
@@ -48,9 +52,13 @@ void main() {
     test(
         'beamToReplacement removes currentBeamLocation from history before appending new',
         () {
+      delegate.beamToNamed('/l2');
+      delegate.beamToNamed('/l1');
+
       expect(delegate.beamingHistory.length, 2);
       expect(delegate.beamingHistory[0], isA<Location2>());
       expect(delegate.currentBeamLocation, isA<Location1>());
+
       delegate.beamToReplacement(
         Location2(const RouteInformation(location: '/l2')),
       );
@@ -84,21 +92,13 @@ void main() {
       expect(delegate.currentBeamLocation, isA<Location2>());
       expect(delegate.beamingHistory.last.history.length, 2);
       expect(
-          delegate
-              .beamingHistory.last.history.last.state.routeInformation.location,
+          delegate.beamingHistory.last.history.last.routeInformation.location,
           '/l2/y');
       expect(delegate.beamingHistoryCompleteLength, 3);
     });
 
     test('beamBack leads to previous beam state and all helpers are correct',
         () {
-      delegate.beamingHistory
-          .removeRange(0, delegate.beamingHistory.length - 1);
-      delegate.beamingHistory.last.history
-          .removeRange(0, delegate.beamingHistory.last.history.length - 1);
-      expect(delegate.beamingHistoryCompleteLength, 1);
-      expect(delegate.currentBeamLocation, isA<Location2>());
-
       delegate.beamToNamed('/l1');
       delegate.beamToNamed('/l2');
 
