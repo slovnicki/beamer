@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../beamer.dart';
-import 'utils.dart';
+import 'package:beamer/beamer.dart';
+import 'package:beamer/src/utils.dart';
 
 /// A convenience typdef for [BeamerDelegate.locationBuilder].
 typedef LocationBuilder = BeamLocation Function(

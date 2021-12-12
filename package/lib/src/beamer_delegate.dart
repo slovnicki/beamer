@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import 'utils.dart';
+import 'package:beamer/src/utils.dart';
 
 /// A delegate that is used by the [Router] to build the [Navigator].
 ///
@@ -20,6 +20,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     this.initialPath = '/',
     this.routeListener,
     this.buildListener,
+    @Deprecated(
+      'No longer used by this package, please remove any references to it. '
+      'This feature was deprecated after v1.0.0.',
+    )
     this.preferUpdate = true,
     this.removeDuplicateHistory = true,
     this.notFoundPage = const BeamPage(
@@ -137,12 +141,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// The buildListener will be called every time after the [currentPages]
   /// are updated. it receives a reference to this delegate.
   final void Function(BuildContext, BeamerDelegate)? buildListener;
-  
-  /// Whether to prefer updating [currentBeamLocation] if it's of the same type
-  /// as the [BeamLocation] being beamed to,
-  /// instead of adding it to [beamLocationHistory].
-  ///
-  /// See how this is used at [_pushHistory] implementation.
+
+  @Deprecated(
+    'No longer used by this package, please remove any references to it. '
+    'This feature was deprecated after v1.0.0.',
+  )
+  // ignore: public_member_api_docs
   final bool preferUpdate;
 
   /// Whether to remove [BeamLocation]s from [beamingHistory]
@@ -229,8 +233,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// Returns the complete length of beaming history, that is the sum of all
   /// history lengths for each [BeamLocation] in [beamingHistory].
   int get beamingHistoryCompleteLength {
-    int length = 0;
-    for (BeamLocation location in beamingHistory) {
+    var length = 0;
+    for (var location in beamingHistory) {
       length += location.history.length;
     }
     return length;

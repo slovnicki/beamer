@@ -444,7 +444,7 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
     Iterable<Pattern> routes,
   ) {
     final matched = <Pattern, String>{};
-    bool overrideNotFound = false;
+    var overrideNotFound = false;
     final uri = Uri.parse(routeInformation.location ?? '/');
     for (final route in routes) {
       if (route is String) {
@@ -457,7 +457,7 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
 
         var checksPassed = true;
         var path = '';
-        for (int i = 0; i < routePathSegments.length; i++) {
+        for (var i = 0; i < routePathSegments.length; i++) {
           path += '/${uriPathSegments[i]}';
 
           if (routePathSegments[i] == '*') {
@@ -493,7 +493,7 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
       }
     }
 
-    bool isNotFound = true;
+    var isNotFound = true;
     matched.forEach((key, value) {
       if (Utils.urisMatch(key, uri)) {
         isNotFound = false;

@@ -49,7 +49,7 @@ abstract class Utils {
           continue;
         }
         var checksPassed = true;
-        for (int i = 0; i < uriPathSegments.length; i++) {
+        for (var i = 0; i < uriPathSegments.length; i++) {
           if (beamLocationPathBlueprintSegments[i] == '*') {
             checksPassed = true;
             break;
@@ -104,7 +104,7 @@ abstract class Utils {
             continue;
           }
           var checksPassed = true;
-          for (int i = 0; i < uriPathSegments.length; i++) {
+          for (var i = 0; i < uriPathSegments.length; i++) {
             if (beamLocationPathBlueprintSegments[i] == '*') {
               pathSegments = uriPathSegments.toList();
               checksPassed = true;
@@ -167,7 +167,7 @@ abstract class Utils {
       if (patternSegments.length != exactSegment.length) {
         return false;
       }
-      for (int i = 0; i < patternSegments.length; i++) {
+      for (var i = 0; i < patternSegments.length; i++) {
         if (patternSegments[i].startsWith(':')) {
           continue;
         }

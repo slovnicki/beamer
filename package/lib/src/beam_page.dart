@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../beamer.dart';
+import 'package:beamer/beamer.dart';
 
 /// Types for how to route should be built.
 ///
@@ -111,7 +111,7 @@ class BeamPage extends Page {
           delegate.removeLastHistoryElement()?.routeInformation;
     } else {
       // find the last
-      bool found = false;
+      var found = false;
       for (var beamLocation in delegate.beamingHistory.reversed) {
         if (found) {
           break;

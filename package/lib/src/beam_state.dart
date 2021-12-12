@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 
-import './utils.dart';
-import './beam_location.dart';
+import 'package:beamer/src/utils.dart';
+import 'package:beamer/src/beam_location.dart';
 
 /// A class to mix with when defining a custom state for [BeamLocation].
 ///
@@ -171,7 +171,7 @@ class BeamState with RouteInformationSerializable<BeamState> {
       queryParameters: queryParameters.isEmpty ? null : queryParameters,
     );
     final pathSegments = pathPatternSegments.toList();
-    for (int i = 0; i < pathSegments.length; i++) {
+    for (var i = 0; i < pathSegments.length; i++) {
       if (pathSegments[i].isNotEmpty && pathSegments[i][0] == ':') {
         final key = pathSegments[i].substring(1);
         if (pathParameters.containsKey(key)) {
