@@ -163,10 +163,10 @@ void main() {
   });
 
   testWidgets('routeListener is called when update is called', (tester) async {
-    const routeInfo = RouteInformation(location: "/l1");
+    const routeInfo = RouteInformation(location: '/l1');
     delegate.update(configuration: routeInfo);
     expect(lastBeamLocationFromRouteListener, isA<Location1>());
-    expect(lastRouteInfoFromRouteListener!.location, equals("/l1"));
+    expect(lastRouteInfoFromRouteListener!.location, equals('/l1'));
   });
 
   testWidgets('buildListener is called when build is called', (tester) async {
@@ -176,7 +176,7 @@ void main() {
         routerDelegate: delegate,
       ),
     );
-    expect(lastCurrentPagesFromBuildListner.last.key, const ValueKey("l1"));
+    expect(lastCurrentPagesFromBuildListner.last.key, const ValueKey('l1'));
   });
 
   test('custom state can be updated', () {
@@ -521,7 +521,7 @@ void main() {
   });
 
   testWidgets(
-      "updating route information without updating parent or rebuilding",
+      'updating route information without updating parent or rebuilding',
       (tester) async {
     final childDelegate = BeamerDelegate(
       updateParent: false,
@@ -574,7 +574,7 @@ void main() {
   });
 
   group('clearBeamingHistoryOn:', () {
-    testWidgets("history is cleared when beamToNamed", (tester) async {
+    testWidgets('history is cleared when beamToNamed', (tester) async {
       final delegate = BeamerDelegate(
         initialPath: '/test',
         clearBeamingHistoryOn: {'/'},
@@ -604,7 +604,7 @@ void main() {
       expect(delegate.beamingHistory.last.history.length, 1);
     });
 
-    testWidgets("history is always cleared when popToNamed", (tester) async {
+    testWidgets('history is always cleared when popToNamed', (tester) async {
       final delegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
@@ -637,7 +637,7 @@ void main() {
       expect(delegate.beamingHistory.last.history.length, 1);
     });
 
-    testWidgets("history is cleared regardless, if option is set",
+    testWidgets('history is cleared regardless, if option is set',
         (tester) async {
       final delegate = BeamerDelegate(
         clearBeamingHistoryOn: {'/'},
@@ -682,7 +682,7 @@ void main() {
       expect(delegate.beamingHistory.last.history.length, 1);
     });
 
-    testWidgets("history is cleared regardless, if option is set",
+    testWidgets('history is cleared regardless, if option is set',
         (tester) async {
       final delegate = BeamerDelegate(
         clearBeamingHistoryOn: {'/test'},
