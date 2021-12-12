@@ -23,6 +23,7 @@ linter:
   # producing the lint.
   rules:
     public_member_api_docs: true
+    omit_local_variable_types: true
     always_use_package_imports: true
     prefer_single_quotes: true
     # avoid_print: false  # Uncomment to disable the `avoid_print` rule

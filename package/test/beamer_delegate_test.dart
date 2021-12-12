@@ -6,8 +6,7 @@ import 'test_locations.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  final List<BeamPage> lastCurrentPagesFromBuildListner =
-      List.empty(growable: true);
+  final lastCurrentPagesFromBuildListner = List.empty(growable: true);
   RouteInformation? lastRouteInfoFromRouteListener;
   BeamLocation? lastBeamLocationFromRouteListener;
 

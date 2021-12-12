@@ -15,22 +15,20 @@ class NoAnimationTransitionDelegate extends TransitionDelegate<void> {
     required Map<RouteTransitionRecord?, List<RouteTransitionRecord>>
         pageRouteToPagelessRoutes,
   }) {
-    final List<RouteTransitionRecord> results = <RouteTransitionRecord>[];
+    final results = <RouteTransitionRecord>[];
 
-    for (final RouteTransitionRecord pageRoute in newPageRouteHistory) {
+    for (final pageRoute in newPageRouteHistory) {
       if (pageRoute.isWaitingForEnteringDecision) {
         pageRoute.markForAdd();
       }
       results.add(pageRoute);
     }
-    for (final RouteTransitionRecord exitingPageRoute
-        in locationToExitingPageRoute.values) {
+    for (final exitingPageRoute in locationToExitingPageRoute.values) {
       if (exitingPageRoute.isWaitingForExitingDecision) {
         exitingPageRoute.markForRemove();
-        final List<RouteTransitionRecord>? pagelessRoutes =
-            pageRouteToPagelessRoutes[exitingPageRoute];
+        final pagelessRoutes = pageRouteToPagelessRoutes[exitingPageRoute];
         if (pagelessRoutes != null) {
-          for (final RouteTransitionRecord pagelessRoute in pagelessRoutes) {
+          for (final pagelessRoute in pagelessRoutes) {
             pagelessRoute.markForRemove();
           }
         }
@@ -56,20 +54,18 @@ class ReverseTransitionDelegate extends TransitionDelegate<void> {
     required Map<RouteTransitionRecord?, List<RouteTransitionRecord>>
         pageRouteToPagelessRoutes,
   }) {
-    final List<RouteTransitionRecord> results = <RouteTransitionRecord>[];
+    final results = <RouteTransitionRecord>[];
 
     void handleExitingRoute(RouteTransitionRecord? location) {
-      final RouteTransitionRecord? exitingPageRoute =
-          locationToExitingPageRoute[location];
+      final exitingPageRoute = locationToExitingPageRoute[location];
       if (exitingPageRoute == null) return;
       if (exitingPageRoute.isWaitingForExitingDecision) {
-        final bool hasPagelessRoute =
+        final hasPagelessRoute =
             pageRouteToPagelessRoutes.containsKey(exitingPageRoute);
         exitingPageRoute.markForPop(exitingPageRoute.route.currentResult);
         if (hasPagelessRoute) {
-          final List<RouteTransitionRecord> pagelessRoutes =
-              pageRouteToPagelessRoutes[exitingPageRoute]!;
-          for (final RouteTransitionRecord pagelessRoute in pagelessRoutes) {
+          final pagelessRoutes = pageRouteToPagelessRoutes[exitingPageRoute]!;
+          for (final pagelessRoute in pagelessRoutes) {
             if (pagelessRoute.isWaitingForExitingDecision) {
               pagelessRoute.markForPop(pagelessRoute.route.currentResult);
             }
@@ -81,7 +77,7 @@ class ReverseTransitionDelegate extends TransitionDelegate<void> {
       handleExitingRoute(exitingPageRoute);
     }
 
-    for (final RouteTransitionRecord pageRoute in newPageRouteHistory) {
+    for (final pageRoute in newPageRouteHistory) {
       if (pageRoute.isWaitingForEnteringDecision) {
         pageRoute.markForAdd();
       }

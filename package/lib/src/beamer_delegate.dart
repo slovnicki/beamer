@@ -227,8 +227,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// Returns the complete length of beaming history, that is the sum of all
   /// history lengths for each [BeamLocation] in [beamingHistory].
   int get beamingHistoryCompleteLength {
-    int length = 0;
-    for (BeamLocation location in beamingHistory) {
+    var length = 0;
+    for (var location in beamingHistory) {
       length += location.history.length;
     }
     return length;

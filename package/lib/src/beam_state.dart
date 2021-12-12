@@ -171,7 +171,7 @@ class BeamState with RouteInformationSerializable<BeamState> {
       queryParameters: queryParameters.isEmpty ? null : queryParameters,
     );
     final pathSegments = pathPatternSegments.toList();
-    for (int i = 0; i < pathSegments.length; i++) {
+    for (var i = 0; i < pathSegments.length; i++) {
       if (pathSegments[i].isNotEmpty && pathSegments[i][0] == ':') {
         final key = pathSegments[i].substring(1);
         if (pathParameters.containsKey(key)) {
