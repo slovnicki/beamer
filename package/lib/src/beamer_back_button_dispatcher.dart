@@ -41,7 +41,7 @@ class BeamerBackButtonDispatcher extends RootBackButtonDispatcher {
       return delegate.beamBack();
     }
 
-    bool didPopRoute = await super.invokeCallback(defaultValue);
+    final didPopRoute = await super.invokeCallback(defaultValue);
     if (didPopRoute) {
       return didPopRoute;
     }
@@ -99,7 +99,7 @@ class BeamerChildBackButtonDispatcher extends ChildBackButtonDispatcher {
       return delegate.beamBack();
     }
 
-    bool didPopRoute = await super.invokeCallback(defaultValue);
+    final didPopRoute = await super.invokeCallback(defaultValue);
     if (didPopRoute) {
       return didPopRoute;
     }

@@ -64,7 +64,7 @@ class BeamPage extends Page {
     // Take the history element that is being popped and the one before
     // as they will be compared later on to fine-tune the pop experience.
     final poppedHistoryElement = delegate.removeLastHistoryElement()!;
-    HistoryElement? previousHistoryElement = delegate.beamingHistory.isNotEmpty
+    final previousHistoryElement = delegate.beamingHistory.isNotEmpty
         ? delegate.beamingHistory.last.history.last
         : null;
 
@@ -72,7 +72,7 @@ class BeamPage extends Page {
     final poppedUri = Uri.parse(
       poppedHistoryElement.routeInformation.location ?? '/',
     );
-    Uri previousUri = Uri.parse(
+    final previousUri = Uri.parse(
       previousHistoryElement != null
           ? previousHistoryElement.routeInformation.location ?? '/'
           : delegate.initialPath,
@@ -85,7 +85,7 @@ class BeamPage extends Page {
     // that is beeing popped.
     final popPathSegments = List.from(poppedPathSegments)..removeLast();
     final popPath = '/' + popPathSegments.join('/');
-    var popUri = Uri(
+    final popUri = Uri(
       path: popPath,
       queryParameters: poppedPage.keepQueryOnPop
           ? poppedQueryParameters.isEmpty

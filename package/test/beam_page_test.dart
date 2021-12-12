@@ -350,7 +350,7 @@ void main() {
       );
       delegate.beamToNamed('/test');
       await tester.pump();
-      var lastBeamLocationHistory = delegate.beamingHistory.last.history;
+      final lastBeamLocationHistory = delegate.beamingHistory.last.history;
       expect(lastBeamLocationHistory.length, 2);
       expect(lastBeamLocationHistory[0].routeInformation.location, '/');
       expect(lastBeamLocationHistory[1].routeInformation.location, '/test');
