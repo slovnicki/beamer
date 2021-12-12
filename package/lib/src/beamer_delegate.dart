@@ -20,6 +20,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     this.initialPath = '/',
     this.routeListener,
     this.buildListener,
+    @Deprecated(
+      'No longer used by this package, please remove any references to it. '
+      'This feature was deprecated after v1.0.0.',
+    )
     this.preferUpdate = true,
     this.removeDuplicateHistory = true,
     this.notFoundPage = const BeamPage(
@@ -138,11 +142,11 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// are updated. it receives a reference to this delegate.
   final void Function(BuildContext, BeamerDelegate)? buildListener;
 
-  /// Whether to prefer updating [currentBeamLocation] if it's of the same type
-  /// as the [BeamLocation] being beamed to,
-  /// instead of adding it to [beamLocationHistory].
-  ///
-  /// See how this is used at [_pushHistory] implementation.
+  @Deprecated(
+    'No longer used by this package, please remove any references to it. '
+    'This feature was deprecated after v1.0.0.',
+  )
+  // ignore: public_member_api_docs
   final bool preferUpdate;
 
   /// Whether to remove [BeamLocation]s from [beamLocationHistory]
