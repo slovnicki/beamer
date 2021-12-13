@@ -208,7 +208,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// This means that navigation can be done either on parent or on this
   final bool updateFromParent;
 
-  /// Whether to call [update] on [parent] when this instance state is updated.
+  /// Whether to call [update] on [parent] when this instance's [configuration]
+  /// is updated.
   ///
   /// This means that parent's [beamingHistory] will be in sync.
   final bool updateParent;
@@ -278,7 +279,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// ```
   NavigatorState get navigator => _navigatorKey.currentState!;
 
-  /// Main method to update the state of this delegate and its [currentBeamLocation].
+  /// Main method to update the [configuration] of this delegate and its
+  /// [currentBeamLocation].
   ///
   /// This "top-level" [update] is generally used for navigation
   /// _between_ [BeamLocation]s and not _within_ a specific [BeamLocation].
@@ -435,8 +437,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   }
 
   /// {@template beamToNamed}
-  /// Beams to [BeamLocation] that has [uri] contained within its
-  /// [BeamLocation.pathPatterns] segments.
+  /// Configures and beams to a [BeamLocation] that supports uri within its
+  /// [BeamLocation.pathPatterns].
   ///
   /// For example
   /// ```dart
@@ -675,9 +677,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     return SynchronousFuture(null);
   }
 
-  /// Pass this call to [root] which notifies the platform for a state change.
+  /// Pass this call to [root] which notifies the platform for a [configuration]
+  /// change.
   ///
-  /// On Web, creates a new browser history entry and update URL.
+  /// On Web, creates a new browser history entry and updates URL.
   ///
   /// See [SystemNavigator.routeInformationUpdated].
   void updateRouteInformation(RouteInformation routeInformation) {
