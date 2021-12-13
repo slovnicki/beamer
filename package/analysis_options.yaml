@@ -24,6 +24,7 @@ linter:
   rules:
     public_member_api_docs: true
     comment_references: true
+    prefer_final_locals: true
     omit_local_variable_types: true
     always_use_package_imports: true
     prefer_single_quotes: true

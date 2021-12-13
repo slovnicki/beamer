@@ -1,9 +1,7 @@
 import 'package:beamer/beamer.dart';
-import 'package:beamer/src/transition_delegates.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 
 import 'package:beamer/src/utils.dart';
 
@@ -24,7 +22,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       'No longer used by this package, please remove any references to it. '
       'This feature was deprecated after v1.0.0.',
     )
-    this.preferUpdate = true,
+        this.preferUpdate = true,
     this.removeDuplicateHistory = true,
     this.notFoundPage = const BeamPage(
       key: ValueKey('not-found'),
@@ -624,7 +622,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   @override
   Widget build(BuildContext context) {
-    BeamGuard? guard = _checkGuards(context, currentBeamLocation);
+    final guard = _checkGuards(context, currentBeamLocation);
     if (guard != null) {
       final origin = beamingHistory.length > 1
           ? beamingHistory[beamingHistory.length - 2]
@@ -862,19 +860,17 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       }
     } else {
       final lastPage = _currentPages.last;
-      if (lastPage is BeamPage) {
-        if (lastPage.popToNamed != null) {
-          popToNamed(lastPage.popToNamed!);
-        } else {
-          final shouldPop = lastPage.onPopPage(
-            context,
-            this,
-            currentBeamLocation.state,
-            lastPage,
-          );
-          if (!shouldPop) {
-            return false;
-          }
+      if (lastPage.popToNamed != null) {
+        popToNamed(lastPage.popToNamed!);
+      } else {
+        final shouldPop = lastPage.onPopPage(
+          context,
+          this,
+          currentBeamLocation.state,
+          lastPage,
+        );
+        if (!shouldPop) {
+          return false;
         }
       }
     }

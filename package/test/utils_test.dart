@@ -1,7 +1,5 @@
 import 'package:beamer/beamer.dart';
-import 'package:beamer/src/beam_location.dart';
 import 'package:beamer/src/utils.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -101,8 +99,8 @@ void main() {
     });
 
     test('Unknown URI yields NotFound location', () async {
-      var uri = Uri.parse('/x');
-      var location = Utils.chooseBeamLocation(uri, beamLocations);
+      final uri = Uri.parse('/x');
+      final location = Utils.chooseBeamLocation(uri, beamLocations);
       expect(location, isA<NotFound>());
     });
 

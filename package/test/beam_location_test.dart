@@ -54,4 +54,16 @@ void main() {
       expect(notFound.buildPages(testContext!, BeamState()), []);
     });
   });
+
+  group('State', () {
+    test('updating state directly will add to history', () {
+      final beamLocation = Location1();
+      expect(beamLocation.history.length, 1);
+      expect(beamLocation.history[0].routeInformation.location, '/');
+
+      beamLocation.state = BeamState.fromUriString('/l1');
+      expect(beamLocation.history.length, 2);
+      expect(beamLocation.history[1].routeInformation.location, '/l1');
+    });
+  });
 }
