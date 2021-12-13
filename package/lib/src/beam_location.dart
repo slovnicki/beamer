@@ -311,10 +311,10 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   /// expressions as this might lead to unexpected behaviour.
   ///
   /// For strings, optional path segments are denoted with ':xxx' and consequently
-  /// `{'xxx': <real>}` will be put to [pathParameters].
+  /// `{'xxx': <real>}` will be put to `pathParameters`.
   /// For regular expressions we use named groups as optional path segments, following
   /// regex is tested to be effective in most cases `RegExp('/test/(?<test>[a-z]+){0,1}')`
-  /// This will put `{'test': <real>}` to [pathParameters]. Note that we use the name from the regex group.
+  /// This will put `{'test': <real>}` to `pathParameters`. Note that we use the name from the regex group.
   ///
   /// Optional path segments can be used as a mean to pass data regardless of
   /// whether there is a browser.
@@ -329,7 +329,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   /// It will also contain anything injected via [builder].
   List<BeamPage> buildPages(BuildContext context, T state);
 
-  /// Guards that will be executing [check] when this gets beamed to.
+  /// Guards that will be executing [BeamGuard.check] when this gets beamed to.
   ///
   /// Checks will be executed in order; chain of responsibility pattern.
   /// When some guard returns `false`, a candidate will not be accepted
@@ -440,10 +440,12 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
     return pages;
   }
 
-  /// Chooses all the routes that "sub-match" [state.routeInformation] to stack their pages.
+  /// Chooses all the routes that "sub-match" [routeInformation] to stack their
+  /// pages.
   ///
-  /// If none of the routes _matches_ [state.uri], nothing will be selected
-  /// and [BeamerDelegate] will declare that the location is [NotFound].
+  /// If [routeInformation] doesn't match any of the [routes], nothing will be
+  /// selected and [BeamerDelegate] will declare that the location is
+  /// [NotFound].
   static Map<Pattern, String> chooseRoutes(
     RouteInformation routeInformation,
     Iterable<Pattern> routes,

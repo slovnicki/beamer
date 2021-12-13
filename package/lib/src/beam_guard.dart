@@ -46,7 +46,7 @@ class BeamGuard {
   /// What check should be performed on a given [BeamLocation],
   /// the one to which beaming has been requested.
   ///
-  /// [context] is also injected to fetch data up the tree if necessary.
+  /// `context` is also injected to fetch data up the tree if necessary.
   final bool Function(BuildContext context, BeamLocation location) check;
 
   /// Arbitrary closure to execute when [check] fails.
@@ -57,9 +57,9 @@ class BeamGuard {
 
   /// If guard [check] returns `false`, build a [BeamLocation] to be beamed to.
   ///
-  /// [origin] holds the origin [BeamLocation] from where it is being beamed from, `null` if there's no origin,
+  /// `origin` holds the origin [BeamLocation] from where it is being beamed from, `null` if there's no origin,
   /// which may happen if it's the first navigation or the history was cleared.
-  /// [target] holds the [BeamLocation] to where we tried to beam to, i.e. the one on which the check failed.
+  /// `target` holds the [BeamLocation] to where we tried to beam to, i.e. the one on which the check failed.
   ///
   /// [showPage] has precedence over this attribute.
   final BeamLocation Function(
@@ -67,9 +67,9 @@ class BeamGuard {
 
   /// If guard [check] returns `false`, beam to this URI string.
   ///
-  /// [origin] holds the origin [BeamLocation] from where it is being beamed from. `null` if there's no origin,
+  /// `origin` holds the origin [BeamLocation] from where it is being beamed from. `null` if there's no origin,
   /// which may happen if it's the first navigation or the history was cleared.
-  /// [target] holds the [BeamLocation] to where we tried to beam to, i.e. the one on which the check failed.
+  /// `target` holds the [BeamLocation] to where we tried to beam to, i.e. the one on which the check failed.
   ///
   /// [showPage] has precedence over this attribute.
   final String Function(BeamLocation? origin, BeamLocation target)? beamToNamed;

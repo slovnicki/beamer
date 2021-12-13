@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-/// A no-animation transition delegate for [BeamerDelegate.transitionDelegate].
+/// A no-animation transition delegate for `BeamerDelegate.transitionDelegate`.
 ///
 /// See example at https://api.flutter.dev/flutter/widgets/TransitionDelegate-class.html.
 class NoAnimationTransitionDelegate extends TransitionDelegate<void> {

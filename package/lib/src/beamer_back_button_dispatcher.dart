@@ -15,7 +15,7 @@ class BeamerBackButtonDispatcher extends RootBackButtonDispatcher {
     this.fallbackToBeamBack = true,
   });
 
-  /// A [BeamerDelegate] that belongs to the same [Router]/[Beamer] as this.
+  /// A [BeamerDelegate] that belongs to the same [Router]/`Beamer` as this.
   final BeamerDelegate delegate;
 
   /// A custom closure that has precedence over other behaviors.
@@ -69,7 +69,7 @@ class BeamerChildBackButtonDispatcher extends ChildBackButtonDispatcher {
         fallbackToBeamBack = parent.fallbackToBeamBack,
         super(parent);
 
-  /// A [BeamerDelegate] that belongs to the same [Router]/[Beamer] as this.
+  /// A [BeamerDelegate] that belongs to the same [Router]/`Beamer` as this.
   final BeamerDelegate delegate;
 
   /// A custom closure that has precedence over other behaviors.
