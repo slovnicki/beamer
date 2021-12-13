@@ -1,3 +1,13 @@
+# 1.1.0
+
+Most of this release is [matuella](https://github.com/matuella)'s directly and indirectly contributions. Many thanks!
+- **Add:** a link to [Medium article](https://medium.com/flutter-community/beamer-v1-0-0-is-out-whats-new-and-how-to-migrate-b251b3758e3c) for "Migrating" section in README
+- **Add:** lint rules `prefer_single_quotes`, `always_use_package_imports`, `omit_local_variable_types`, `prefer_final_locals` and `comment_references`.
+- **Fix:** disposing histories on `beamBack` ([#417](https://github.com/slovnicki/beamer/issues/417))
+- **Fix:** updating history when setting `state` manually ([#420](https://github.com/slovnicki/beamer/issues/420))
+- **Deprecate:** unused `BeamerDelegate.preferUpdate`
+- **Improve:** tests setup (Thanks [cedvdb](https://github.com/cedvdb))
+
 # 1.0.0
 
 - **BREAKING:** "top-level state", the one in `BeamerDelegate` is now `RouteInformation` instead of `BeamState`
