@@ -284,7 +284,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// _between_ [BeamLocation]s and not _within_ a specific [BeamLocation].
   /// For latter purpose, see [BeamLocation.update].
   /// Nevertheless, [update] **will** work for navigation within [BeamLocation].
-  /// 
+  ///
   /// Calling [update] will run the [locationBuilder].
   ///
   /// ```dart
@@ -293,12 +293,29 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// );
   /// ```
   ///
-  /// **[beamTo] and [beamToNamed] call [update] to really do the update.**
+  /// **all of the beaming functions call [update] to really do the update.**
   ///
-  /// [transitionDelegate] determines how a new stack of pages replaces current.
-  /// See [Navigator.transitionDelegate].
+  /// [beamParameters] hold various parameters such as `transitionDelegate` and
+  /// other that will be used for this update **and** stored in history.
   ///
-  /// TODO(slovnicki): Update the documentation for this new function signature.
+  /// [data] can be used to hold arbitrary [Object] througout navigation.
+  /// See [BeamLocation.data] for more information.
+  ///
+  /// [buildBeamLocation] determines whether a [BeamLocation] should be created
+  /// from [configuration], using the [locationBuilder]. For example, when using
+  /// [beamTo] and passing an already created [BeamLocation], this can be false.
+  ///
+  /// [rebuild] determines whether to call [notifyListeners]. This can be false
+  /// if we already have built the UI and just want to notify the platform,
+  /// e.g. browser, of the new [RouteInformation].
+  ///
+  /// [updateParent] is used in nested navigation to call [update] on [parent].
+  ///
+  /// [updateRouteInformation] determines whether to update the browser's URL.
+  /// This is usually done through `notifyListeners`, but in specific cases,
+  /// e.g. when [rebuild] is false, browser would not be updated.
+  /// This is mainly used to not update the route information from parent,
+  /// when it has already been done by this delegate.
   void update({
     RouteInformation? configuration,
     BeamParameters? beamParameters,
