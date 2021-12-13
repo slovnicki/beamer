@@ -579,12 +579,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     // first we try to beam back within last BeamLocation
     if (lastHistorylength > 1) {
       targetHistoryElement = beamingHistory.last.history[lastHistorylength - 2];
-      beamingHistory.last.history
-          .removeRange(lastHistorylength - 2, lastHistorylength);
+      beamingHistory.last.history.removeLast();
     } else {
       // here we know that beamingHistory.length > 1 (because of canBeamBack)
       // and that beamingHistory.last.history.length == 1
       // so this last (only) entry is removed along with BeamLocation
+      _disposeBeamLocation(beamingHistory.last);
       beamingHistory.removeLast();
       targetHistoryElement = beamingHistory.last.history.last;
       beamingHistory.last.history.removeLast();
@@ -762,10 +762,18 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     _updateFromLocation(rebuild: false);
   }
 
+  void _initBeamLocation(BeamLocation beamLocation) {
+    beamLocation.initState();
+    beamLocation.addListener(_updateFromLocation);
+  }
+
+  void _disposeBeamLocation(BeamLocation beamLocation) {
+    beamLocation.removeListener(_updateFromLocation);
+    beamLocation.disposeState();
+  }
+
   void _addToBeamingHistory(BeamLocation location) {
-    currentBeamLocation.removeListener(_updateFromLocation);
-    currentBeamLocation.isCurrent = false;
-    currentBeamLocation.disposeState();
+    _disposeBeamLocation(currentBeamLocation);
     if (removeDuplicateHistory) {
       final index = beamingHistory.indexWhere((historyLocation) =>
           historyLocation.runtimeType == location.runtimeType);
@@ -775,9 +783,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       }
     }
     beamingHistory.add(location);
-    currentBeamLocation.initState();
-    currentBeamLocation.isCurrent = true;
-    currentBeamLocation.addListener(_updateFromLocation);
+    _initBeamLocation(currentBeamLocation);
   }
 
   /// Removes the last element from [beamingHistory] and returns it.

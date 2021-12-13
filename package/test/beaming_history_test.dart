@@ -1,7 +1,30 @@
 import 'package:beamer/beamer.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'test_locations.dart';
+
+class LocationA extends BeamLocation<BeamState> {
+  @override
+  List<Pattern> get pathPatterns => ['/a'];
+
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) =>
+      [BeamPage(key: const ValueKey('a'), child: Container())];
+}
+
+class LocationB extends BeamLocation<BeamState> {
+  @override
+  List<Pattern> get pathPatterns => ['/b1', '/b2'];
+
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
+        if (state.pathPatternSegments.contains('b1'))
+          BeamPage(key: const ValueKey('b1'), child: Container()),
+        if (state.pathPatternSegments.contains('b2'))
+          BeamPage(key: const ValueKey('b2'), child: Container()),
+      ];
+}
 
 void main() {
   group('Beaming history', () {
@@ -125,5 +148,35 @@ void main() {
       expect(delegate.currentBeamLocation, isA<Location2>());
       expect(delegate.beamingHistoryCompleteLength, 1);
     });
+  });
+
+  testWidgets("previously used BeamLocation doesn't keep history",
+      (tester) async {
+    final delegate = BeamerDelegate(
+      initialPath: '/a',
+      locationBuilder: BeamerLocationBuilder(
+        beamLocations: [LocationA(), LocationB()],
+      ),
+    );
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routerDelegate: delegate,
+        routeInformationParser: BeamerParser(),
+      ),
+    );
+    expect(delegate.currentBeamLocation, isA<LocationA>());
+
+    delegate.beamToNamed('/b1');
+    await tester.pump();
+    expect(delegate.currentBeamLocation, isA<LocationB>());
+    expect(delegate.currentPages.first.key, const ValueKey('b1'));
+    expect(delegate.currentBeamLocation.history.length, 1);
+
+    delegate.beamBack();
+    delegate.beamToNamed('/b2');
+    await tester.pump();
+    expect(delegate.currentBeamLocation, isA<LocationB>());
+    expect(delegate.currentPages.first.key, const ValueKey('b2'));
+    expect(delegate.currentBeamLocation.history.length, 1);
   });
 }

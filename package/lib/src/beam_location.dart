@@ -117,16 +117,20 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   /// be available always, until overriden with some new data.
   Object? data;
 
+  bool _mounted = false;
+
   /// Whether [buildInit] was called.
   ///
   /// See [buildInit].
-  bool mounted = false;
+  bool get mounted => _mounted;
+
+  bool _isCurrent = false;
 
   /// Whether this [BeamLocation] is currently in use by [BeamerDelegate].
   ///
   /// This influences on the behavior of [create] that gets called on existing
   /// [BeamLocation]s when using [BeamerLocationBuilder] that uses [Utils.chooseBeamLocation].
-  bool isCurrent = false;
+  bool get isCurrent => _isCurrent;
 
   /// Creates the [state] and adds the [routeInformation] to [history].
   /// This is called only once during the lifetime of [BeamLocation].
@@ -171,7 +175,10 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   /// What to do on state initalization.
   ///
   /// For example, add listeners to [state] if it's a [ChangeNotifier].
-  void initState() {}
+  @mustCallSuper
+  void initState() {
+    _isCurrent = true;
+  }
 
   /// Updates the [state] upon recieving new [RouteInformation], which usually
   /// happens after [BeamerDelegate.setNewRoutePath].
@@ -188,7 +195,10 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   ///
   /// Override this if
   /// e.g. using a custom [ChangeNotifier] [state] to remove listeners.
-  void disposeState() {}
+  @mustCallSuper
+  void disposeState() {
+    _isCurrent = false;
+  }
 
   /// Updates the [state] and [history], depending on inputs.
   ///
@@ -279,7 +289,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   /// and sets [mounted] to true. It is called right before [buildPages].
   @mustCallSuper
   void buildInit(BuildContext context) {
-    mounted = true;
+    _mounted = true;
   }
 
   /// Can this handle the [uri] based on its [pathPatterns].
