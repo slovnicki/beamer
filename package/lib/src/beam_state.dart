@@ -136,7 +136,7 @@ class BeamState with RouteInformationSerializable<BeamState> {
   ///
   /// This is constructed from [pathPatternSegments] and [queryParameters],
   /// with the addition of replacing each pathPatternSegment of the form ':*'
-  /// with a coresponding value from [pathParameters].
+  /// with a corresponding value from [pathParameters].
   ///
   /// See more at [configure].
   Uri get uri => _uri;
