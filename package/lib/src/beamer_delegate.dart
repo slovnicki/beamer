@@ -298,7 +298,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// [beamParameters] hold various parameters such as `transitionDelegate` and
   /// other that will be used for this update **and** stored in history.
   ///
-  /// [data] can be used to hold arbitrary [Object] through navigation.
+  /// [data] can be used to hold arbitrary [Object] throughout navigation.
   /// See [BeamLocation.data] for more information.
   ///
   /// [buildBeamLocation] determines whether a [BeamLocation] should be created
