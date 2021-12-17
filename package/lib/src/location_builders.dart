@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
 import 'package:beamer/src/utils.dart';
 
-/// A convenience typdef for [BeamerDelegate.locationBuilder].
+/// A convenience typedef for [BeamerDelegate.locationBuilder].
 typedef LocationBuilder = BeamLocation Function(
   RouteInformation,
   BeamParameters?,

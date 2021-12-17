@@ -172,7 +172,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
         beamLocation: this,
       ) as T;
 
-  /// What to do on state initalization.
+  /// What to do on state initialization.
   ///
   /// For example, add listeners to [state] if it's a [ChangeNotifier].
   @mustCallSuper
@@ -180,7 +180,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
     _isCurrent = true;
   }
 
-  /// Updates the [state] upon recieving new [RouteInformation], which usually
+  /// Updates the [state] upon receiving new [RouteInformation], which usually
   /// happens after [BeamerDelegate.setNewRoutePath].
   ///
   /// Override this if you are using custom state whose copying
@@ -191,7 +191,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
     state = createState(routeInformation);
   }
 
-  /// How to relase any resources used by [state].
+  /// How to release any resources used by [state].
   ///
   /// Override this if
   /// e.g. using a custom [ChangeNotifier] [state] to remove listeners.
@@ -318,7 +318,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   /// Represents the "form" of URI paths supported by this [BeamLocation].
   ///
   /// You can pass in either a String or a RegExp. Beware of using greedy regular
-  /// expressions as this might lead to unexpected behaviour.
+  /// expressions as this might lead to unexpected behavior.
   ///
   /// For strings, optional path segments are denoted with ':xxx' and consequently
   /// `{'xxx': <real>}` will be put to `pathParameters`.
@@ -373,7 +373,7 @@ class NotFound extends BeamLocation<BeamState> {
   List<String> get pathPatterns => [];
 }
 
-/// Empty location used to intialize a non-nullable BeamLocation variable.
+/// Empty location used to initialize a non-nullable BeamLocation variable.
 ///
 /// See [BeamerDelegate.currentBeamLocation].
 class EmptyBeamLocation extends BeamLocation<BeamState> {

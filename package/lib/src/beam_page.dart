@@ -30,7 +30,7 @@ enum BeamPageType {
 class BeamPage extends Page {
   /// Creates a [BeamPage] with specified properties.
   ///
-  /// [child] is required and typicially represents a screen of the app.
+  /// [child] is required and typically represents a screen of the app.
   const BeamPage({
     LocalKey? key,
     String? name,
@@ -82,7 +82,7 @@ class BeamPage extends Page {
     final poppedQueryParameters = poppedUri.queryParameters;
 
     // Pop path is obtained via removing the last path segment from path
-    // that is beeing popped.
+    // that is being popped.
     final popPathSegments = List.from(poppedPathSegments)..removeLast();
     final popPath = '/' + popPathSegments.join('/');
     final popUri = Uri(
