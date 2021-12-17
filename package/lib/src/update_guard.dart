@@ -4,8 +4,8 @@ import 'package:beamer/beamer.dart';
 import 'package:beamer/src/beam_guard_util.dart';
 import 'package:flutter/widgets.dart';
 
-/// Checks whether current [RouteInformation] is allowed to be beamed to
-/// and provides steps to be executed following a failed check.
+/// Checks whether a target [BeamLocation] is allowed to be beamed to
+/// and provides methods to handle a failed check.
 class UpdateGuard {
   const UpdateGuard({
     required this.pathPatterns,
@@ -33,16 +33,16 @@ class UpdateGuard {
   /// use `RegExp('/books')`
   final List<Pattern> pathPatterns;
 
-  /// What check should be performed on a given [RouteInformation],
-  /// the one to which beaming has been requested.
-  ///
-  /// [context] is also injected to fetch data up the tree if necessary.
-  final bool Function(BeamLocation delegate, RouteInformation routeInformation,
+  /// When [check] returns `true`, a redirect to [target] will be executed.
+  /// When returning `false`, [redirect] is called to determine
+  /// a different target
+  final bool Function(BeamLocation origin, RouteInformation target,
       Object? data) check;
 
-  /// Arbitrary closure to execute when [check] fails.
+  /// Arbitrary closure to execute when [check] fails,
+  /// can potentialy call [delegate] to redirect to another location
   final void Function(BeamerDelegate delegate,
-      RouteInformation routeInformation, Object? data) redirect;
+      RouteInformation target, Object? data) redirect;
 
   /// Whether to [check] all the path blueprints defined in [pathPatterns]
   /// or [check] all the paths that **are not** in [pathPatterns].
@@ -50,23 +50,23 @@ class UpdateGuard {
   /// `false` meaning former and `true` meaning latter.
   final bool guardNonMatching;
 
-  /// Matches [location]'s pathBlueprint to [pathPatterns].
+  /// Matches [target]'s [location]  to [pathPatterns].
   ///
   /// If asterisk is present, it is enough that the pre-asterisk substring is
   /// contained within location's pathBlueprint.
   /// Else, the path (i.e. the pre-query substring) of the location's uri
   /// must be equal to the pathBlueprint.
-  bool _hasMatch(RouteInformation routeInformation) =>
-      patternsMatch(pathPatterns, routeInformation);
+  bool _hasMatch(RouteInformation target) =>
+      patternsMatch(pathPatterns, target);
 
-  /// Whether or not the guard should [check] the [location].
-  /// [currentLocation] is the current beam location. [routeInformation] and [data] have not yet applied to it.
-  /// [routeInformation] is the route info of the new route
+  /// Whether or not the guard should [check] the [target].
+  /// [origin] is the current beam location. [target] and [data] have not yet applied to it.
+  /// [target] is the intended target beam location
   /// [data] is either data that was passed with the new route
-  bool shouldGuard(BeamLocation currentLocation,
-      RouteInformation routeInformation, Object? data) {
+  bool shouldGuard(BeamLocation origin,
+      RouteInformation target, Object? data) {
     return guardNonMatching
-        ? !_hasMatch(routeInformation)
-        : _hasMatch(routeInformation);
+        ? !_hasMatch(target)
+        : _hasMatch(target);
   }
 }

@@ -26,7 +26,7 @@ class AuthState extends Equatable {
 }
 
 class AuthNotifier extends StateNotifier<AuthState> {
-  AuthNotifier(ProviderReference ref)
+  AuthNotifier(Ref ref)
       : repo = ref.read(appRepositoryProvider),
         super(AuthState.loading()) {
     checkUserAuth();

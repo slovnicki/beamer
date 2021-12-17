@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
 
-import 'data.dart' as data;
+import 'data.dart' as booksData;
 import 'screens/screens.dart';
 
 // OPTION A: SimpleLocationBuilder
 final simpleLocationBuilder = RoutesLocationBuilder(
   routes: {
-    '/': (context, state) => BeamPage(
+    '/': (context, state, data) => BeamPage(
           key: ValueKey('home'),
           title: 'Home',
           child: HomeScreen(),
         ),
-    '/books': (context, state) {
-      final titleQuery = state.queryParameters['title'] ?? '';
+    '/books': (context, state, data) {
+      final titleQuery =
+          state.queryParameters['title'] ?? (data as Map)['title'] ?? '';
       final genreQuery = state.queryParameters['genre'] ?? '';
       final pageTitle = titleQuery != ''
           ? "Books with name '$titleQuery'"
@@ -21,11 +22,12 @@ final simpleLocationBuilder = RoutesLocationBuilder(
               ? "Books with genre '$genreQuery'"
               : 'All Books';
       final books = titleQuery != ''
-          ? data.books.where((book) =>
+          ? booksData.books.where((book) =>
               book['title'].toLowerCase().contains(titleQuery.toLowerCase()))
           : genreQuery != ''
-              ? data.books.where((book) => book['genres'].contains(genreQuery))
-              : data.books;
+              ? booksData.books
+                  .where((book) => book['genres'].contains(genreQuery))
+              : booksData.books;
 
       return BeamPage(
         key: ValueKey('books-$titleQuery-$genreQuery'),
@@ -36,9 +38,9 @@ final simpleLocationBuilder = RoutesLocationBuilder(
         ),
       );
     },
-    '/books/:bookId': (context, state) {
+    '/books/:bookId': (context, state, data) {
       final bookId = state.pathParameters['bookId'];
-      final book = data.books.firstWhere((book) => book['id'] == bookId);
+      final book = booksData.books.firstWhere((book) => book['id'] == bookId);
       final pageTitle = book['title'];
 
       return BeamPage(
@@ -50,9 +52,9 @@ final simpleLocationBuilder = RoutesLocationBuilder(
         ),
       );
     },
-    '/books/:bookId/genres': (context, state) {
+    '/books/:bookId/genres': (context, state, data) {
       final bookId = state.pathParameters['bookId'];
-      final book = data.books.firstWhere((book) => book['id'] == bookId);
+      final book = booksData.books.firstWhere((book) => book['id'] == bookId);
       final pageTitle = "${book['title']}'s Genres";
 
       return BeamPage(
@@ -64,9 +66,9 @@ final simpleLocationBuilder = RoutesLocationBuilder(
         ),
       );
     },
-    '/books/:bookId/buy': (context, state) {
+    '/books/:bookId/buy': (context, state, data) {
       final bookId = state.pathParameters['bookId'];
-      final book = data.books.firstWhere((book) => book['id'] == bookId);
+      final book = booksData.books.firstWhere((book) => book['id'] == bookId);
       final pageTitle = 'Buy ${book['title']}';
 
       return BeamPage(
@@ -123,11 +125,12 @@ class BooksLocation extends BeamLocation<BeamState> {
               ? "Books with genre '$genreQuery'"
               : 'All Books';
       final books = titleQuery != ''
-          ? data.books.where((book) =>
+          ? booksData.books.where((book) =>
               book['title'].toLowerCase().contains(titleQuery.toLowerCase()))
           : genreQuery != ''
-              ? data.books.where((book) => book['genres'].contains(genreQuery))
-              : data.books;
+              ? booksData.books
+                  .where((book) => book['genres'].contains(genreQuery))
+              : booksData.books;
 
       beamPages.add(
         BeamPage(
@@ -143,7 +146,7 @@ class BooksLocation extends BeamLocation<BeamState> {
 
     if (state.pathParameters.containsKey('bookId')) {
       final bookId = state.pathParameters['bookId'];
-      final book = data.books.firstWhere((book) => book['id'] == bookId);
+      final book = booksData.books.firstWhere((book) => book['id'] == bookId);
       final pageTitle = book['title'];
 
       beamPages.add(
@@ -160,7 +163,7 @@ class BooksLocation extends BeamLocation<BeamState> {
 
     if (state.uri.pathSegments.contains('genres')) {
       final bookId = state.pathParameters['bookId'];
-      final book = data.books.firstWhere((book) => book['id'] == bookId);
+      final book = booksData.books.firstWhere((book) => book['id'] == bookId);
       final pageTitle = "${book['title']}'s Genres";
 
       beamPages.add(
@@ -177,7 +180,7 @@ class BooksLocation extends BeamLocation<BeamState> {
 
     if (state.uri.pathSegments.contains('buy')) {
       final bookId = state.pathParameters['bookId'];
-      final book = data.books.firstWhere((book) => book['id'] == bookId);
+      final book = booksData.books.firstWhere((book) => book['id'] == bookId);
       final pageTitle = 'Buy ${book['title']}';
 
       beamPages.add(

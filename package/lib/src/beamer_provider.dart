@@ -24,6 +24,9 @@ import 'package:flutter/widgets.dart';
 ///
 /// ```
 class BeamerProvider extends InheritedWidget {
+  /// Creates a [BeamerProvider] with specified properties.
+  ///
+  /// [routerDelegate] is required because it is the object to provide down the tree.
   const BeamerProvider({
     Key? key,
     required this.routerDelegate,
@@ -33,6 +36,9 @@ class BeamerProvider extends InheritedWidget {
   /// Responsible for beaming, updating and rebuilding the page stack.
   final BeamerDelegate routerDelegate;
 
+  /// Obtain the nearest [BeamerProvider].
+  ///
+  /// See [BuildContext.dependOnInheritedWidgetOfExactType].
   static BeamerProvider? of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<BeamerProvider>();
 

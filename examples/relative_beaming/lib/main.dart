@@ -10,11 +10,11 @@ class MyApp extends StatelessWidget {
         print('inner: ${routeInformation.location}'),
     locationBuilder: RoutesLocationBuilder(
       routes: {
-        '/test/1': (context, state) => ElevatedButton(
+        '/test/1': (context, state, _) => ElevatedButton(
               onPressed: () => context.beamToNamed('/test/2'),
               child: const Text('/test/1 -> /test/2'),
             ),
-        '/test/2': (context, state) => const Text('/test/2'),
+        '/test/2': (context, state, _) => const Text('/test/2'),
       },
     ),
   );
@@ -23,15 +23,15 @@ class MyApp extends StatelessWidget {
         print('root: ${routeInformation.location}'),
     locationBuilder: RoutesLocationBuilder(
       routes: {
-        '/': (context, state) => ElevatedButton(
+        '/': (context, state, _) => ElevatedButton(
               onPressed: () => context.beamToNamed('/test'),
               child: const Text('/ -> /test'),
             ),
-        '/test': (context, state) => ElevatedButton(
+        '/test': (context, state, _) => ElevatedButton(
               onPressed: () => context.beamToNamed('/test/1'),
               child: const Text('/test -> /test/1'),
             ),
-        '/test/*': (context, state) => BeamPage(
+        '/test/*': (context, state, _) => BeamPage(
               key: const ValueKey('test/x'),
               child: Beamer(
                 routerDelegate: innerDelegate,

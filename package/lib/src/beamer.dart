@@ -1,16 +1,18 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/widgets.dart';
 
-import 'beam_page.dart';
-import 'beam_location.dart';
-import 'beamer_back_button_dispatcher.dart';
-import 'beamer_delegate.dart';
-import 'beamer_provider.dart';
-import 'path_url_strategy_nonweb.dart'
+import 'package:beamer/src/path_url_strategy_nonweb.dart'
     if (dart.library.html) 'path_url_strategy_web.dart' as url_strategy;
 
-/// A wrapper for [Router].
+/// Represents a navigation area and is a wrapper for [Router].
+///
+/// This is most commonly used for "nested navigation", e.g. in a tabbed view.
+/// Each [Beamer] has its own navigation rules, but can communicate with its parent [Router].
 class Beamer extends StatefulWidget {
+  /// Creates a [Beamer] with specified properties.
+  ///
+  /// [routerDelegate] is required because it handles the navigation within the
+  /// "sub-navigation module" represented by this.
   const Beamer({
     Key? key,
     required this.routerDelegate,
@@ -47,19 +49,22 @@ class Beamer extends StatefulWidget {
     return _delegate;
   }
 
-  /// Change the strategy to use for handling browser URL to [PathUrlStrategy].
+  /// Change the strategy to use for handling browser URL to `PathUrlStrategy`.
   ///
-  /// [PathUrlStrategy] uses the browser URL's pathname to represent Beamer's route name.
+  /// `PathUrlStrategy` uses the browser URL's pathname to represent Beamer's route name.
   static void setPathUrlStrategy() => url_strategy.setPathUrlStrategy();
 
   @override
   State<StatefulWidget> createState() => BeamerState();
 }
 
+/// A [State] for [Beamer].
 class BeamerState extends State<Beamer> {
+  /// A getter for [BeamerDelegate] of the [Beamer] whose state is this.
   BeamerDelegate get routerDelegate => widget.routerDelegate;
-  BeamLocation get currentBeamLocation =>
-      widget.routerDelegate.currentBeamLocation;
+
+  /// A convenience getter for current [BeamLocation] of [routerDelegate].
+  BeamLocation get currentBeamLocation => routerDelegate.currentBeamLocation;
 
   @override
   void didChangeDependencies() {
@@ -88,75 +93,119 @@ class BeamerState extends State<Beamer> {
   }
 }
 
+/// Some beamer-specific extension methods on [BuildContext].
 extension BeamerExtensions on BuildContext {
   /// {@macro beamTo}
   void beamTo(
     BeamLocation location, {
+    Object? data,
     BeamLocation? popTo,
     TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
-    bool replaceCurrent = false,
   }) {
     Beamer.of(this).beamTo(
       location,
+      data: data,
       popTo: popTo,
       transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
-      // replaceCurrent: replaceCurrent,
+    );
+  }
+
+  /// {@macro beamToReplacement}
+  void beamToReplacement(
+    BeamLocation location, {
+    Object? data,
+    BeamLocation? popTo,
+    TransitionDelegate? transitionDelegate,
+    bool beamBackOnPop = false,
+    bool popBeamLocationOnPop = false,
+    bool stacked = true,
+  }) {
+    Beamer.of(this).beamToReplacement(
+      location,
+      data: data,
+      popTo: popTo,
+      transitionDelegate: transitionDelegate,
+      beamBackOnPop: beamBackOnPop,
+      popBeamLocationOnPop: popBeamLocationOnPop,
+      stacked: stacked,
     );
   }
 
   /// {@macro beamToNamed}
   void beamToNamed(
     String uri, {
-    Map<String, dynamic>? data,
+    Object? routeState,
+    Object? data,
     String? popToNamed,
     TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
-    bool replaceCurrent = false,
   }) {
     Beamer.of(this).beamToNamed(
       uri,
+      routeState: routeState,
       data: data,
       popToNamed: popToNamed,
       transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
-      // replaceCurrent: replaceCurrent,
+    );
+  }
+
+  /// {@macro beamToReplacementNamed}
+  void beamToReplacementNamed(
+    String uri, {
+    Object? routeState,
+    Object? data,
+    String? popToNamed,
+    TransitionDelegate? transitionDelegate,
+    bool beamBackOnPop = false,
+    bool popBeamLocationOnPop = false,
+    bool stacked = true,
+  }) {
+    Beamer.of(this).beamToReplacementNamed(
+      uri,
+      routeState: routeState,
+      data: data,
+      popToNamed: popToNamed,
+      transitionDelegate: transitionDelegate,
+      beamBackOnPop: beamBackOnPop,
+      popBeamLocationOnPop: popBeamLocationOnPop,
+      stacked: stacked,
     );
   }
 
   /// {@macro popToNamed}
   void popToNamed(
     String uri, {
-    Map<String, dynamic>? data,
+    Object? routeState,
+    Object? data,
     String? popToNamed,
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
-    bool replaceCurrent = false,
   }) {
     Beamer.of(this).popToNamed(
       uri,
+      routeState: routeState,
       data: data,
       popToNamed: popToNamed,
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
-      replaceCurrent: replaceCurrent,
     );
   }
 
   /// {@macro beamBack}
-  void beamBack({Map<String, dynamic>? data}) =>
-      Beamer.of(this).beamBack(data: data);
+  void beamBack({Object? data}) => Beamer.of(this).beamBack(data: data);
 
   /// {@macro popBeamLocation}
   void popBeamLocation() => Beamer.of(this).popBeamLocation();
@@ -177,7 +226,9 @@ extension BeamerExtensions on BuildContext {
   bool get canPopBeamLocation => Beamer.of(this).canPopBeamLocation;
 }
 
+/// Some convenient extension methods on [RouteInformation].
 extension BeamerRouteInformationExtension on RouteInformation {
+  /// Returns a new [RouteInformation] created from this.
   RouteInformation copyWith({
     String? location,
     Object? state,

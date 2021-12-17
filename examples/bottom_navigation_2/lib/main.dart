@@ -170,12 +170,12 @@ class MyApp extends StatelessWidget {
   final routerDelegate = BeamerDelegate(
     locationBuilder: RoutesLocationBuilder(
       routes: {
-        '/': (context, state) {
+        '/': (context, state, data) {
           final initialIndex =
               state.queryParameters['tab'] == 'articles' ? 1 : 0;
           return HomeScreen(initialIndex: initialIndex);
         },
-        '/books/:bookId': (context, state) {
+        '/books/:bookId': (context, state, data) {
           final bookId = state.pathParameters['bookId'];
           final book = books.firstWhere((book) => book['id'] == bookId);
           return BeamPage(
@@ -193,7 +193,7 @@ class MyApp extends StatelessWidget {
             },
           );
         },
-        'articles/:articleId': (context, state) {
+        'articles/:articleId': (context, state, data) {
           final articleId = state.pathParameters['articleId'];
           final article =
               articles.firstWhere((article) => article['id'] == articleId);

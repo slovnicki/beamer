@@ -1,26 +1,31 @@
 import 'package:beamer/beamer.dart';
-import 'package:beamer/src/transition_delegates.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 
-import 'beam_guard_util.dart';
-import 'update_guard.dart';
-import 'utils.dart';
+import 'package:beamer/src/beam_guard_util.dart';
+import 'package:beamer/src/update_guard.dart';
+import 'package:beamer/src/utils.dart';
 
 /// A delegate that is used by the [Router] to build the [Navigator].
 ///
 /// This is "the beamer", the one that does the actual beaming.
 class BeamerDelegate extends RouterDelegate<RouteInformation>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<RouteInformation> {
+  /// Creates a [BeamerDelegate] with specified properties.
+  ///
+  /// [locationBuilder] is required to process the incoming navigation request.
   BeamerDelegate({
     required this.locationBuilder,
     this.initialPath = '/',
     this.checkedRouteListener,
     this.appliedRouteListener,
     this.buildListener,
-    this.preferUpdate = true,
+    @Deprecated(
+      'No longer used by this package, please remove any references to it. '
+      'This feature was deprecated after v1.0.0.',
+    )
+        this.preferUpdate = true,
     this.removeDuplicateHistory = true,
     this.notFoundPage = const BeamPage(
       key: ValueKey('not-found'),
@@ -156,17 +161,17 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// are updated. it receives a reference to this delegate.
   final void Function(BuildContext, BeamerDelegate)? buildListener;
 
-  /// Whether to prefer updating [currentBeamLocation] if it's of the same type
-  /// as the [BeamLocation] being beamed to,
-  /// instead of adding it to [beamLocationHistory].
-  ///
-  /// See how this is used at [_pushHistory] implementation.
+  @Deprecated(
+    'No longer used by this package, please remove any references to it. '
+    'This feature was deprecated after v1.0.0.',
+  )
+  // ignore: public_member_api_docs
   final bool preferUpdate;
 
-  /// Whether to remove [BeamLocation]s from [beamLocationHistory]
+  /// Whether to remove [BeamLocation]s from [beamingHistory]
   /// if they are the same type as the location being beamed to.
   ///
-  /// See how this is used at [_pushHistory] implementation.
+  /// See how this is used at [_addToBeamingHistory] implementation.
   final bool removeDuplicateHistory;
 
   /// Page to show when no [BeamLocation] supports the incoming URI.
@@ -178,7 +183,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// URI string to redirect to when no [BeamLocation] supports the incoming URI.
   final String? notFoundRedirectNamed;
 
-  /// Guards that will be executing [check] on [currentBeamLocation] candidate.
+  /// Guards that will be executing [BeamGuard.check] on [currentBeamLocation]
+  /// candidate.
   ///
   /// Checks will be executed in order; chain of responsibility pattern.
   /// When some guard returns `false`, location candidate will not be accepted
@@ -228,15 +234,17 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// This means that navigation can be done either on parent or on this
   final bool updateFromParent;
 
-  /// Whether to call [update] on [parent] when [state] is updated.
+  /// Whether to call [update] on [parent] when this instance's [configuration]
+  /// is updated.
   ///
-  /// This means that parent's [beamStateHistory] will be in sync.
+  /// This means that parent's [beamingHistory] will be in sync.
   final bool updateParent;
 
-  /// Whether to remove all entries from [routeHistory] when a route
-  /// belonging to this set is reached, regardless of how it was reached.
+  /// Whether to remove all entries from [beamingHistory] (and their nested
+  /// [BeamLocation.history]) when a route belonging to this set is reached,
+  /// regardless of how it was reached.
   ///
-  /// Note that [popToNamed] will also try to clear as much [routeHistory]
+  /// Note that [popToNamed] will also try to clear as much [beamingHistory]
   /// as possible, even when this is empty.
   final Set<String> clearBeamingHistoryOn;
 
@@ -245,13 +253,15 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// {@template beamingHistory}
   /// The history of [BeamLocation]s, each holding its [BeamLocation.history].
   ///
-  /// See [_pushHistory].
+  /// See [_addToBeamingHistory].
   /// {@endtemplate}
   final List<BeamLocation> beamingHistory = [];
 
+  /// Returns the complete length of beaming history, that is the sum of all
+  /// history lengths for each [BeamLocation] in [beamingHistory].
   int get beamingHistoryCompleteLength {
-    int length = 0;
-    for (BeamLocation location in beamingHistory) {
+    var length = 0;
+    for (var location in beamingHistory) {
       length += location.history.length;
     }
     return length;
@@ -295,12 +305,14 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// ```
   NavigatorState get navigator => _navigatorKey.currentState!;
 
-  /// Main method to update the [state] of this; `Beamer.of(context)`,
+  /// Main method to update the [configuration] of this delegate and its
+  /// [currentBeamLocation].
   ///
   /// This "top-level" [update] is generally used for navigation
   /// _between_ [BeamLocation]s and not _within_ a specific [BeamLocation].
   /// For latter purpose, see [BeamLocation.update].
   /// Nevertheless, [update] **will** work for navigation within [BeamLocation].
+  ///
   /// Calling [update] will run the [locationBuilder].
   ///
   /// ```dart
@@ -309,25 +321,29 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// );
   /// ```
   ///
-  /// **[beamTo] and [beamToNamed] call [update] to really do the update.**
+  /// **all of the beaming functions call [update] to really do the update.**
   ///
-  /// [transitionDelegate] determines how a new stack of pages replaces current.
-  /// See [Navigator.transitionDelegate].
+  /// [beamParameters] hold various parameters such as `transitionDelegate` and
+  /// other that will be used for this update **and** stored in history.
   ///
-  /// If [beamBackOnPop] is set to `true`,
-  /// default pop action will triger [beamBack] instead.
+  /// [data] can be used to hold arbitrary [Object] througout navigation.
+  /// See [BeamLocation.data] for more information.
   ///
-  /// [popState] is more general than [beamBackOnPop],
-  /// and can beam you anywhere; whatever it resolves to during build.
+  /// [buildBeamLocation] determines whether a [BeamLocation] should be created
+  /// from [configuration], using the [locationBuilder]. For example, when using
+  /// [beamTo] and passing an already created [BeamLocation], this can be false.
   ///
-  /// If [stacked] is set to `false`,
-  /// only the location's last page will be shown.
+  /// [rebuild] determines whether to call [notifyListeners]. This can be false
+  /// if we already have built the UI and just want to notify the platform,
+  /// e.g. browser, of the new [RouteInformation].
   ///
-  /// If [replaceCurrent] is set to `true`,
-  /// new location will replace the last one in the stack.
+  /// [updateParent] is used in nested navigation to call [update] on [parent].
   ///
-  /// If [rebuild] is set to `false`,
-  /// [build] will not occur, but [state] and browser URL will be updated.
+  /// [updateRouteInformation] determines whether to update the browser's URL.
+  /// This is usually done through `notifyListeners`, but in specific cases,
+  /// e.g. when [rebuild] is false, browser would not be updated.
+  /// This is mainly used to not update the route information from parent,
+  /// when it has already been done by this delegate.
   void update({
     RouteInformation? configuration,
     BeamParameters? beamParameters,
@@ -362,7 +378,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     }
 
     this.configuration = configuration ??
-        currentBeamLocation.history.last.state.routeInformation.copyWith();
+        currentBeamLocation.history.last.routeInformation.copyWith();
     if (buildBeamLocation) {
       final location =
           locationBuilder(this.configuration, _currentBeamParameters);
@@ -370,8 +386,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
           location.runtimeType != beamingHistory.last.runtimeType) {
         _addToBeamingHistory(location);
       } else {
-        beamingHistory.last
-            .addToHistory(location.state, location.beamParameters);
+        beamingHistory.last.update(
+          null,
+          this.configuration,
+          _currentBeamParameters,
+          false,
+        );
       }
     }
     if (data != null) {
@@ -472,8 +492,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   }
 
   /// {@template beamToNamed}
-  /// Beams to [BeamLocation] that has [uri] contained within its
-  /// [BeamLocation.pathBlueprintSegments].
+  /// Configures and beams to a [BeamLocation] that supports uri within its
+  /// [BeamLocation.pathPatterns].
   ///
   /// For example
   /// ```dart
@@ -549,11 +569,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
-    bool replaceCurrent = false,
   }) {
     while (beamingHistory.isNotEmpty) {
       final index = beamingHistory.last.history.lastIndexWhere(
-        (element) => element.state.routeInformation.location == uri,
+        (element) => element.routeInformation.location == uri,
       );
       if (index == -1) {
         beamingHistory.last.removeListener(_updateFromLocation);
@@ -584,10 +603,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       beamingHistory.last.history.length > 1 || beamingHistory.length > 1;
 
   /// {@template beamBack}
-  /// Beams to previous state in [beamingHistory].
-  /// and **removes** the last state from history.
+  /// Beams to previous entry in [beamingHistory].
+  /// and **removes** the last entry from history.
   ///
-  /// If there is no previous state, does nothing.
+  /// If there is no previous entry, does nothing.
   ///
   /// Returns the success, whether [update] was executed.
   /// {@endtemplate}
@@ -595,25 +614,25 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     if (!canBeamBack) {
       return false;
     }
-    late final HistoryElement lastHistoryElement;
+    late final HistoryElement targetHistoryElement;
     final lastHistorylength = beamingHistory.last.history.length;
     // first we try to beam back within last BeamLocation
     if (lastHistorylength > 1) {
-      lastHistoryElement = beamingHistory.last.history[lastHistorylength - 2];
-      beamingHistory.last.history
-          .removeRange(lastHistorylength - 2, lastHistorylength);
+      targetHistoryElement = beamingHistory.last.history[lastHistorylength - 2];
+      beamingHistory.last.history.removeLast();
     } else {
       // here we know that beamingHistory.length > 1 (because of canBeamBack)
       // and that beamingHistory.last.history.length == 1
       // so this last (only) entry is removed along with BeamLocation
+      _disposeBeamLocation(beamingHistory.last);
       beamingHistory.removeLast();
-      lastHistoryElement = beamingHistory.last.history.last;
+      targetHistoryElement = beamingHistory.last.history.last;
       beamingHistory.last.history.removeLast();
     }
 
     update(
-      configuration: lastHistoryElement.state.routeInformation.copyWith(),
-      beamParameters: lastHistoryElement.parameters.copyWith(
+      configuration: targetHistoryElement.routeInformation.copyWith(),
+      beamParameters: targetHistoryElement.parameters.copyWith(
         transitionDelegate: beamBackTransitionDelegate,
       ),
       data: data,
@@ -660,16 +679,20 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   @override
   Widget build(BuildContext context) {
-    BeamGuard? guard = _checkGuards(context, currentBeamLocation);
+    final guard = _checkGuards(context, currentBeamLocation);
     if (guard != null) {
-      final originLocation = beamingHistory.length > 1
+      final origin = beamingHistory.length > 1
           ? beamingHistory[beamingHistory.length - 2]
           : null;
-      _applyGuard(guard, context, originLocation, currentBeamLocation);
+      _applyGuard(guard, context, origin, currentBeamLocation);
     }
 
     if (currentBeamLocation is NotFound) {
       _handleNotFoundRedirect();
+    }
+
+    if (!currentBeamLocation.mounted) {
+      currentBeamLocation.buildInit(context);
     }
 
     _setCurrentPages(context, guard);
@@ -709,9 +732,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     return SynchronousFuture(null);
   }
 
-  /// Pass this call to [root] which notifies the platform for a [state] change.
+  /// Pass this call to [root] which notifies the platform for a [configuration]
+  /// change.
   ///
-  /// On Web, creates a new browser history entry and update URL
+  /// On Web, creates a new browser history entry and updates URL.
   ///
   /// See [SystemNavigator.routeInformationUpdated].
   void updateRouteInformation(RouteInformation routeInformation) {
@@ -738,8 +762,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     return null;
   }
 
-  void _applyGuard(BeamGuard guard, BuildContext context,
-      BeamLocation? originLocation, BeamLocation targetLocation) {
+  void _applyGuard(
+    BeamGuard guard,
+    BuildContext context,
+    BeamLocation? origin,
+    BeamLocation target,
+  ) {
     if (guard.showPage != null) {
       return;
     }
@@ -753,19 +781,17 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         rebuild: false,
       );
     } else if (guard.beamTo != null) {
-      redirectLocation = guard.beamTo!(context, originLocation, targetLocation);
+      redirectLocation = guard.beamTo!(context, origin, target);
     } else if (guard.beamToNamed != null) {
       redirectLocation = locationBuilder(
-        RouteInformation(
-            location: guard.beamToNamed!(originLocation, targetLocation)),
+        RouteInformation(location: guard.beamToNamed!(origin, target)),
         _currentBeamParameters.copyWith(),
       );
     }
 
     final anotherGuard = _checkGuards(context, redirectLocation);
     if (anotherGuard != null) {
-      return _applyGuard(
-          anotherGuard, context, originLocation, redirectLocation);
+      return _applyGuard(anotherGuard, context, origin, redirectLocation);
     }
 
     currentBeamLocation.removeListener(_updateFromLocation);
@@ -777,7 +803,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   }
 
   UpdateGuard? _checkAndApplyUpdateGuards(
-    RouteInformation routeInformation,
+    RouteInformation targetRouteInfo,
     Object? data,
   ) {
     // TODO: make guards async => update would be async and all beamXXX functions
@@ -785,17 +811,27 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     // TODO: locations cannot of have update guards - we would first
     //       need to have the effective target location for the given routeInformation
     for (final guard in (parent?.updateGuards ?? []) + updateGuards) {
-      if (guard.shouldGuard(currentBeamLocation, routeInformation, data) &&
-          !guard.check(currentBeamLocation, routeInformation, data)) {
-        guard.redirect(this, routeInformation, data);
+      if (guard.shouldGuard(currentBeamLocation, targetRouteInfo, data) &&
+          !guard.check(currentBeamLocation, targetRouteInfo, data)) {
+        guard.redirect(this, targetRouteInfo, data);
         return guard;
       }
     }
     return null;
   }
 
+  void _initBeamLocation(BeamLocation beamLocation) {
+    beamLocation.initState();
+    beamLocation.addListener(_updateFromLocation);
+  }
+
+  void _disposeBeamLocation(BeamLocation beamLocation) {
+    beamLocation.removeListener(_updateFromLocation);
+    beamLocation.disposeState();
+  }
+
   void _addToBeamingHistory(BeamLocation location) {
-    currentBeamLocation.removeListener(_updateFromLocation);
+    _disposeBeamLocation(currentBeamLocation);
     if (removeDuplicateHistory) {
       final index = beamingHistory.indexWhere((historyLocation) =>
           historyLocation.runtimeType == location.runtimeType);
@@ -805,9 +841,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       }
     }
     beamingHistory.add(location);
-    currentBeamLocation.addListener(_updateFromLocation);
+    _initBeamLocation(currentBeamLocation);
   }
 
+  /// Removes the last element from [beamingHistory] and returns it.
+  ///
+  /// If there is none, returns `null`.
   HistoryElement? removeLastHistoryElement() {
     if (beamingHistoryCompleteLength == 0) {
       return null;
@@ -818,6 +857,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     final lastHistoryElement = beamingHistory.last.removeLastFromHistory();
     if (beamingHistory.last.history.isEmpty) {
       beamingHistory.removeLast();
+    } else {
+      beamingHistory.last.update(null, null, null, false);
     }
 
     return lastHistoryElement;
@@ -900,19 +941,17 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       }
     } else {
       final lastPage = _currentPages.last;
-      if (lastPage is BeamPage) {
-        if (lastPage.popToNamed != null) {
-          popToNamed(lastPage.popToNamed!);
-        } else {
-          final shouldPop = lastPage.onPopPage(
-            context,
-            this,
-            currentBeamLocation.state,
-            lastPage,
-          );
-          if (!shouldPop) {
-            return false;
-          }
+      if (lastPage.popToNamed != null) {
+        popToNamed(lastPage.popToNamed!);
+      } else {
+        final shouldPop = lastPage.onPopPage(
+          context,
+          this,
+          currentBeamLocation.state,
+          lastPage,
+        );
+        if (!shouldPop) {
+          return false;
         }
       }
     }
@@ -961,6 +1000,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   void dispose() {
     _parent?.removeListener(_updateFromParent);
     currentBeamLocation.removeListener(_updateFromLocation);
+    currentBeamLocation.dispose();
     super.dispose();
   }
 }

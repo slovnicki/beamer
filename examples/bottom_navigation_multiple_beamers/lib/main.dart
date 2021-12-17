@@ -193,6 +193,7 @@ class _AppScreenState extends State<AppScreen> {
     ),
     BeamerDelegate(
       initialPath: '/articles',
+      updateFromParent: false,
       locationBuilder: (routeInformation, _) {
         if (routeInformation.location!.contains('articles')) {
           return ArticlesLocation(routeInformation);
@@ -266,7 +267,7 @@ class MyApp extends StatelessWidget {
     initialPath: '/books',
     locationBuilder: RoutesLocationBuilder(
       routes: {
-        '*': (context, state) => AppScreen(),
+        '*': (context, state, data) => AppScreen(),
       },
     ),
   );

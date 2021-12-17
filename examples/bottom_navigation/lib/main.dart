@@ -220,7 +220,7 @@ class MyApp extends StatelessWidget {
     initialPath: '/books',
     locationBuilder: RoutesLocationBuilder(
       routes: {
-        '*': (context, state) {
+        '*': (context, state, data) {
           final beamerKey = GlobalKey<BeamerState>();
           return Scaffold(
             body: Beamer(

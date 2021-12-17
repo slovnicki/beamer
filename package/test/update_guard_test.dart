@@ -514,9 +514,9 @@ void main() {
         initialPath: '/1',
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/1': (context, state) => const Text('1'),
-            '/2': (context, state) => const Text('2'),
-            '/3': (context, state) => const Text('3'),
+            '/1': (context, state,_) => const Text('1'),
+            '/2': (context, state,_) => const Text('2'),
+            '/3': (context, state,_) => const Text('3'),
           },
         ),
         updateGuards: [
@@ -553,8 +553,8 @@ void main() {
         initialPath: '/1',
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/1': (context, state) => const Text('1'),
-            '/2': (context, state) => const Text('2'),
+            '/1': (context, state,_) => const Text('1'),
+            '/2': (context, state,_) => const Text('2'),
           },
         ),
         updateGuards: [

@@ -70,8 +70,8 @@ class _MyAppState extends State<MyApp> {
   final _routerDelegate = BeamerDelegate(
     locationBuilder: RoutesLocationBuilder(
       routes: {
-        '/': (context, state) => HomeScreen(),
-        '/books': (context, state) => BooksScreen(),
+        '/': (context, state, data) => HomeScreen(),
+        '/books': (context, state, data) => BooksScreen(),
       },
     ),
   );

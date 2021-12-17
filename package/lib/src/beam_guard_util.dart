@@ -14,31 +14,31 @@ enum RouteCheckState {
 }
 
 
-/// Matches [location]'s pathBlueprint to [pathPatterns].
+/// Matches [routeInformation] with [pathPatterns].
 ///
 /// If asterisk is present, it is enough that the pre-asterisk substring is
 /// contained within location's pathBlueprint.
 /// Else, the path (i.e. the pre-query substring) of the location's uri
-/// must be equal to the pathBlueprint.
+/// must be equal to the pathPattern.
 bool patternsMatch(List<Pattern> pathPatterns,RouteInformation routeInformation) {
-  for (final pathBlueprint in pathPatterns) {
+  for (final pathPattern in pathPatterns) {
     final path =
         Uri.parse(routeInformation.location ?? '/').path;
-    if (pathBlueprint is String) {
-      final asteriskIndex = pathBlueprint.indexOf('*');
+    if (pathPattern is String) {
+      final asteriskIndex = pathPattern.indexOf('*');
       if (asteriskIndex != -1) {
         if (routeInformation.location
             .toString()
-            .contains(pathBlueprint.substring(0, asteriskIndex))) {
+            .contains(pathPattern.substring(0, asteriskIndex))) {
           return true;
         }
       } else {
-        if (pathBlueprint == path) {
+        if (pathPattern == path) {
           return true;
         }
       }
     } else {
-      final regexp = Utils.tryCastToRegExp(pathBlueprint);
+      final regexp = Utils.tryCastToRegExp(pathPattern);
       return regexp.hasMatch(path);
     }
   }

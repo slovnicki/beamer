@@ -7,17 +7,17 @@ import 'data.dart';
 // OPTION A:
 final simpleLocationBuilder = RoutesLocationBuilder(
   routes: {
-    '/': (context, state) => BeamPage(
+    '/': (context, state, data) => BeamPage(
           key: ValueKey('home'),
           title: 'Home',
           child: HomeScreen(),
         ),
-    '/books': (context, state) => BeamPage(
+    '/books': (context, state, data) => BeamPage(
           key: ValueKey('books'),
           title: 'Books',
           child: BooksScreen(),
         ),
-    '/books/:bookId': (context, state) {
+    '/books/:bookId': (context, state, data) {
       final book = books.firstWhere((book) =>
           book['id'] ==
           (context.currentBeamLocation.state as BeamState)
