@@ -19,7 +19,7 @@ class AuthenticationBloc
   AuthenticationBloc({
     required authenticationRepository,
     required userRepository,
-  })   : assert(authenticationRepository != null),
+  })  : assert(authenticationRepository != null),
         _authenticationRepository = authenticationRepository,
         _userRepository = userRepository,
         super(
@@ -30,24 +30,18 @@ class AuthenticationBloc
         AuthenticationStatusChanged(status),
       ),
     );
+    on<AuthenticationStatusChanged>((event, emit) async =>
+        emit(await _mapAuthenticationStatusChangedtoState(event)));
+    on<AuthenticationUserChanged>(
+        (event, emit) => emit(_mapAuthenticationUserChangedToState(event)));
+    on<AuthenticationLogoutRequested>(
+        (event, emit) => _authenticationRepository.logOut());
   }
 
   bool isAuthenticated() => state.status == AuthenticationStatus.authenticated;
 
   void logout() =>
       add(AuthenticationStatusChanged(AuthenticationStatus.unauthenticated));
-
-  @override
-  Stream<AuthenticationState> mapEventToState(
-    AuthenticationEvent event,
-  ) async* {
-    if (event is AuthenticationStatusChanged)
-      yield await _mapAuthenticationStatusChangedtoState(event);
-    else if (event is AuthenticationUserChanged)
-      yield _mapAuthenticationUserChangedToState(event);
-    else if (event is AuthenticationLogoutRequested)
-      _authenticationRepository.logOut();
-  }
 
   @override
   Future<void> close() {
