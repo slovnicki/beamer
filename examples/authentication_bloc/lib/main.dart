@@ -11,17 +11,19 @@ import 'package:user_repository/user_repository.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  HydratedBloc.storage = await HydratedStorage.build(
+  final storage = await HydratedStorage.build(
     storageDirectory: kIsWeb
         ? HydratedStorage.webStorageDirectory
         : await getTemporaryDirectory(),
   );
-
-  runApp(
-    MyApp(
-      authenticationRepository: AuthenticationRepository(),
-      userRepository: UserRepository(),
+  HydratedBlocOverrides.runZoned(
+    () => runApp(
+      MyApp(
+        authenticationRepository: AuthenticationRepository(),
+        userRepository: UserRepository(),
+      ),
     ),
+    storage: storage,
   );
 }
 

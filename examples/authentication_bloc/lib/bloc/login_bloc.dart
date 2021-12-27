@@ -15,8 +15,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   LoginBloc({
     required AuthenticationRepository authenticationRepository,
-  })   : _authenticationRepository = authenticationRepository,
-        super(const LoginState());
+  })  : _authenticationRepository = authenticationRepository,
+        super(const LoginState()) {
+    on<LoginUsernameChanged>(
+        (event, emit) => emit(_mapUsernameChangedToState(event, state)));
+    on<LoginPasswordChanged>(
+        (event, emit) => emit(_mapPasswordChangedToState(event, state)));
+    on<LoginSubmitted>((event, emit) async =>
+        await _mapLoginSubmittedToState(event, state, emit));
+  }
 
   LoginState _mapUsernameChangedToState(
     LoginUsernameChanged event,
@@ -40,33 +47,22 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     );
   }
 
-  Stream<LoginState> _mapLoginSubmittedToState(
+  Future<void> _mapLoginSubmittedToState(
     LoginSubmitted event,
     LoginState state,
-  ) async* {
+    Emitter<LoginState> emit,
+  ) async {
     if (state.status.isValidated) {
-      yield state.copyWith(status: FormzStatus.submissionInProgress);
+      emit(state.copyWith(status: FormzStatus.submissionInProgress));
       try {
         await _authenticationRepository.logInWithEmailAndPassword(
           username: state.username.value,
           password: state.password.value,
         );
-        yield state.copyWith(status: FormzStatus.submissionSuccess);
+        emit(state.copyWith(status: FormzStatus.submissionSuccess));
       } on Exception catch (_) {
-        yield state.copyWith(status: FormzStatus.submissionFailure);
+        emit(state.copyWith(status: FormzStatus.submissionFailure));
       }
     }
-  }
-
-  @override
-  Stream<LoginState> mapEventToState(
-    LoginEvent event,
-  ) async* {
-    if (event is LoginUsernameChanged)
-      yield _mapUsernameChangedToState(event, state);
-    else if (event is LoginPasswordChanged)
-      yield _mapPasswordChangedToState(event, state);
-    else if (event is LoginSubmitted)
-      yield* _mapLoginSubmittedToState(event, state);
   }
 }
