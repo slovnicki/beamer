@@ -149,7 +149,7 @@ Navigator.of(context).maybePop();
 
 ### Reverse Chronological (beaming to previous state)
 
-Reverse chronological navigation is navigating to wherever we were before. In case of deep-linking (e.g. coming to `/books/2` from `/authors/3` instead of from `/books`), this will not be the same as `pop`. Beamer keeps navigation history in `beamingHistory` so there is an ability to navigate chronologically to a previous entry in `beamingHistory`. This is called "beaming back".
+Reverse chronological navigation is navigating to wherever we were before. In case of deep-linking (e.g. coming to `/books/2` from `/authors/3` instead of from `/books`), this will not be the same as `pop`. Beamer keeps navigation history in `beamingHistory` so there is an ability to navigate chronologically to a previous entry in `beamingHistory`. This is called "beaming back". Reverse chronological navigation is also what the browser's back button does, although not via `beamBack`, but through its internal mechanics.
 
 ```dart
 Beamer.of(context).beamBack();
