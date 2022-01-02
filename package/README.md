@@ -569,16 +569,14 @@ class MyApp extends StatelessWidget {
 ## Keys
 
 When you beam somewhere, you are basically putting a new list of "pages" into `Navigator.pages`.
+Now the `Navigator` has to decide on the transition between the old list of pages and the new list of pages.
 
-Now the Navigator has to decide on the transition between the old list of pages and the new list of pages.
-
-In order to know which pages changed and which pages stayed the same, Navigator looks at the pages `key`s. If the page of 2 pages that are compared are equals (important here: `null` == `null`), Navigator treats them as the same page and does not issue a rebuild.
+In order to know which pages changed and which pages stayed the same, `Navigator` looks at the pages `key`s. If the key of 2 pages that are compared are equal (important here: `null` == `null`), Navigator treats them as the same page and does not issue a rebuild.
 
 So, `key` is a pretty important field on the `BeamPage`s. You should always provide one (most likely a [ValueKey](https://api.flutter.dev/flutter/foundation/ValueKey-class.html) will be good).
-
 If you do not provide `key`s to your `BeamPage`s, the behavior you will see is this:
 
-You beam to some location with `Beamer.of(context).beamToNamed('/somewhere')`, you will see no change in your UI. The new BeamPage won't get pushed (since Navigator thinks it is the same as the already displayed one).
+You beam to some location with `Beamer.of(context).beamToNamed('/somewhere')`, but see no change in your UI. The new `BeamPage` doesn't get pushed since `Navigator` thinks it is the same as the already displayed one.
 
 ## Tips and Common Issues
 
