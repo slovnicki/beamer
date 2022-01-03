@@ -3,7 +3,6 @@ import 'package:authentication_riverpod/providers/auth_notifier.dart';
 import 'package:authentication_riverpod/providers/provider.dart';
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 void main() async {
@@ -34,7 +33,7 @@ class MyApp extends HookConsumerWidget {
             return container.read(authProvider).status !=
                 AuthStatus.authenticated;
           },
-          beamToNamed: (_, __) =>'/home'),
+          beamToNamed: (_, __) => '/home'),
     ],
     initialPath: '/login',
     locationBuilder: (routeInformation, _) => BeamerLocations(routeInformation),

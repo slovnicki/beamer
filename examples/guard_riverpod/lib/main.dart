@@ -1,4 +1,3 @@
-
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,15 +39,15 @@ class MyApp extends StatelessWidget {
 }
 
 BeamerDelegate createDelegate(Reader read) => BeamerDelegate(
-  initialPath: '/$firstRoute',
-  // If we wanted to, we could even pass the `Reader` to locations, if they
-  // needed to.
-  locationBuilder: BeamerLocationBuilder(beamLocations: [MyLocation()]),
-  guards: [
-    BeamGuard(
-      pathPatterns: ['/$firstRoute/$secondRoute'], 
-      // Only allow to navigate past `firstRoute` if the `navigationProvider` is `true`.
-      check: (_, __) => read(navigationToSecondProvider).state,
-    ),
-  ],
-);
+      initialPath: '/$firstRoute',
+      // If we wanted to, we could even pass the `Reader` to locations, if they
+      // needed to.
+      locationBuilder: BeamerLocationBuilder(beamLocations: [MyLocation()]),
+      guards: [
+        BeamGuard(
+          pathPatterns: ['/$firstRoute/$secondRoute'],
+          // Only allow to navigate past `firstRoute` if the `navigationProvider` is `true`.
+          check: (_, __) => read(navigationToSecondProvider),
+        ),
+      ],
+    );

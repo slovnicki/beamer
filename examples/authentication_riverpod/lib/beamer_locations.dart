@@ -2,7 +2,6 @@ import 'package:authentication_riverpod/views/home_page.dart';
 import 'package:authentication_riverpod/views/login_page.dart';
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class BeamerLocations extends BeamLocation<BeamState> {
   BeamerLocations(RouteInformation routeInformation) : super(routeInformation);
