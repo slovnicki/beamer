@@ -14,9 +14,12 @@ class MyApp extends StatelessWidget {
     locationBuilder: simpleLocationBuilder,
     //
     // OPTION B:
-    //locationBuilder: beamerLocationBuilder,
+    // locationBuilder: beamerLocationBuilder,
     //
     // OPTION C:
+    // locationBuilder: path2regexpLocationBuilder,
+    //
+    // OPTION D:
     // locationBuilder: (routeInformation) =>
     //     BooksLocation(routeInformation: routeInformation),
   );

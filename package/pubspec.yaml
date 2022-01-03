@@ -13,6 +13,7 @@ dependencies:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
+  path_to_regexp_port: ^1.0.2
 
 dev_dependencies:
   flutter_lints: ^1.0.4

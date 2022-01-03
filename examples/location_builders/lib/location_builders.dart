@@ -39,6 +39,34 @@ final beamerLocationBuilder = BeamerLocationBuilder(
   ],
 );
 
+// OPTION C:
+final path2regexpLocationBuilder = PathLocationBuilder(
+  routes: {
+    '/': (context, state, data) => BeamPage(
+          key: ValueKey('home'),
+          title: 'Home',
+          child: HomeScreen(),
+        ),
+    '/books': (context, state, data) => BeamPage(
+          key: ValueKey('books'),
+          title: 'Books',
+          child: BooksScreen(),
+        ),
+    '/books/:bookId': (context, state, data) {
+      final book = books.firstWhere((book) =>
+          book['id'] ==
+          (context.currentBeamLocation.state as BeamState)
+              .pathParameters['bookId']);
+
+      return BeamPage(
+        key: ValueKey('book-${book['id']}'),
+        title: book['title'],
+        child: BookDetailsScreen(book: book),
+      );
+    }
+  },
+);
+
 class BooksLocation extends BeamLocation<BeamState> {
   BooksLocation({RouteInformation? routeInformation}) : super(routeInformation);
 
