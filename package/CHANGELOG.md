@@ -1,3 +1,16 @@
+# 1.2.0
+
+- **Fixed:** Using the `initialPath` instead of parent's path on nested `BeamerDelegate` during initialization from parent when the `updateFromParent` is set to `false` ([samdogg7](https://github.com/samdogg7))
+
+### Documentation:
+  - Added a section about Page Keys to README ([Goddchen](https://github.com/Goddchen))
+  - Added a sentence about browser's back button to README
+  - Fixed and improved grammar in doc comments ([ggirotto](https://github.com/ggirotto))
+
+### Examples:
+  - Fixed analyzer warnings ([Goddchen](https://github.com/Goddchen))
+  - Updated [authentication_bloc example](https://github.com/slovnicki/beamer/tree/master/examples/authentication_bloc) to bloc v8 ([Lorenzohidalgo](https://github.com/Lorenzohidalgo))
+
 # 1.1.0
 
 Most of this release is [matuella](https://github.com/matuella)'s directly and indirectly contributions. Many thanks!
