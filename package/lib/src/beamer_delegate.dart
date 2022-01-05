@@ -23,11 +23,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     )
         this.preferUpdate = true,
     this.removeDuplicateHistory = true,
-    this.notFoundPage = const BeamPage(
-      key: ValueKey('not-found'),
-      title: 'Not found',
-      child: Scaffold(body: Center(child: Text('Not found'))),
-    ),
+    this.notFoundPage = BeamPage.notFound,
     this.notFoundRedirect,
     this.notFoundRedirectNamed,
     this.guards = const <BeamGuard>[],

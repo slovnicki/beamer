@@ -44,6 +44,13 @@ class BeamPage extends Page {
     this.keepQueryOnPop = false,
   }) : super(key: key, name: name);
 
+  /// A [BeamPage] to be the default for [BeamerDelegate.notFoundPage].
+  static const notFound = BeamPage(
+    key: ValueKey('not-found'),
+    title: 'Not found',
+    child: Scaffold(body: Center(child: Text('Not found'))),
+  );
+
   /// The default pop behavior for [BeamPage].
   ///
   /// Pops the last path segment from URI and calls [BeamerDelegate.update].
