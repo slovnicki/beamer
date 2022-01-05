@@ -1,9 +1,8 @@
 import 'package:beamer/beamer.dart';
+import 'package:beamer/src/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import 'package:beamer/src/utils.dart';
 
 /// A delegate that is used by the [Router] to build the [Navigator].
 ///
@@ -906,7 +905,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     if (parent == null) {
       return;
     }
-    configuration = parent.configuration.copyWith();
+    configuration = updateFromParent
+        ? parent.configuration.copyWith()
+        : parent.configuration.copyWith(location: initialPath);
     var location = locationBuilder(
       configuration,
       _currentBeamParameters.copyWith(),
