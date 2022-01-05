@@ -402,13 +402,19 @@ void main() {
       rootDelegate.beamToNamed('/test'); // initial will update
       await tester.pump();
       expect(rootDelegate.configuration.location, '/test');
-      expect(childDelegate.configuration.location, '/test');
+      childDelegate.updateFromParent
+          ? expect(childDelegate.configuration.location, '/test')
+          : expect(
+              childDelegate.configuration.location, childDelegate.initialPath);
       expect(childDelegate.beamingHistory.last.history.length, 1);
 
       rootDelegate.beamToNamed('/test2');
       await tester.pump();
       expect(rootDelegate.configuration.location, '/test2');
-      expect(childDelegate.configuration.location, '/test');
+      childDelegate.updateFromParent
+          ? expect(childDelegate.configuration.location, '/test')
+          : expect(
+              childDelegate.configuration.location, childDelegate.initialPath);
       expect(childDelegate.beamingHistory.last.history.length, 1);
     });
   });
