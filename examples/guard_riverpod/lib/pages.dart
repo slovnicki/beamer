@@ -8,9 +8,10 @@ class FirstPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Listening won't rebuild this widget, but will make sure that we can
     // call functions independently from this widget's lifecycle.
-    ref.listen<StateController<bool>>(navigationToThirdProvider, (provider) {
+    ref.listen<StateController<bool>>(navigationToThirdProvider.state,
+        (prev, next) {
       // We will only navigate when our provider state is `true`.
-      if (provider.state) {
+      if (next.state) {
         context.beamToNamed('/$firstRoute/$thirdRoute');
       }
     });
@@ -26,15 +27,18 @@ class FirstPage extends ConsumerWidget {
           children: [
             Text('Tap to enable/disable SecondPage guard'),
             Switch(
-              value: ref.watch(navigationToSecondProvider).state,
-              onChanged: (enabled) => ref.read(navigationToSecondProvider).state = enabled,
+              value: ref.watch(navigationToSecondProvider),
+              onChanged: (enabled) =>
+                  ref.read(navigationToSecondProvider.notifier).state = enabled,
             ),
             ElevatedButton(
               onPressed: () {
-                  if (!ref.read(navigationToSecondProvider).state) {
-                    final snack = SnackBar(content: Text('Please, disable the navigation guard first'));
-                    ScaffoldMessenger.of(context).showSnackBar(snack);
-                  }
+                if (!ref.read(navigationToSecondProvider)) {
+                  final snack = SnackBar(
+                      content:
+                          Text('Please, disable the navigation guard first'));
+                  ScaffoldMessenger.of(context).showSnackBar(snack);
+                }
 
                 context.beamToNamed('/$firstRoute/$secondRoute');
               },
@@ -43,10 +47,12 @@ class FirstPage extends ConsumerWidget {
             SizedBox(height: 20),
             Divider(thickness: 2),
             SizedBox(height: 20),
-            Text('Will trigger a navigation to ThirdPage when switching to enabled'),
+            Text(
+                'Will trigger a navigation to ThirdPage when switching to enabled'),
             Switch(
-              value: ref.watch(navigationToThirdProvider).state,
-              onChanged: (enabled) => ref.read(navigationToThirdProvider).state = enabled,
+              value: ref.watch(navigationToThirdProvider),
+              onChanged: (enabled) =>
+                  ref.read(navigationToThirdProvider.notifier).state = enabled,
             ),
           ],
         ),
