@@ -355,7 +355,7 @@ void main() {
         ),
       );
 
-      rootDelegate.beamToNamed('/test');
+      rootDelegate.beamToNamed('/test'); // initial will update
       await tester.pump();
       expect(rootDelegate.configuration.location, '/test');
       expect(childDelegate.configuration.location, '/test');
@@ -399,7 +399,7 @@ void main() {
         ),
       );
 
-      rootDelegate.beamToNamed('/test'); // initial will update
+      rootDelegate.beamToNamed('/test');
       await tester.pump();
       expect(rootDelegate.configuration.location, '/test');
       expect(childDelegate.configuration.location, childDelegate.initialPath);
