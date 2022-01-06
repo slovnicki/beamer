@@ -41,6 +41,7 @@ class BeamPage extends Page {
     this.type = BeamPageType.material,
     this.routeBuilder,
     this.fullScreenDialog = false,
+    this.opaque = true,
     this.keepQueryOnPop = false,
   }) : super(key: key, name: name);
 
@@ -212,6 +213,11 @@ class BeamPage extends Page {
   /// On iOS, dialog transitions animate differently and are also not closeable with the back swipe gesture
   final bool fullScreenDialog;
 
+  /// Whether the route obscures previous [BeamPage]s when the transition is complete.
+  /// 
+  /// Setting [opaque] will have no effect when [type] is [BeamPageType.cupertino].
+  final bool opaque;
+
   /// When this [BeamPage] pops from [Navigator] stack, whether to keep the
   /// query parameters within current [BeamLocation].
   ///
@@ -234,6 +240,7 @@ class BeamPage extends Page {
       case BeamPageType.fadeTransition:
         return PageRouteBuilder(
           fullscreenDialog: fullScreenDialog,
+          opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
           transitionsBuilder: (_, animation, __, child) => FadeTransition(
@@ -244,6 +251,7 @@ class BeamPage extends Page {
       case BeamPageType.slideTransition:
         return PageRouteBuilder(
           fullscreenDialog: fullScreenDialog,
+          opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
@@ -256,6 +264,7 @@ class BeamPage extends Page {
       case BeamPageType.scaleTransition:
         return PageRouteBuilder(
           fullscreenDialog: fullScreenDialog,
+          opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
           transitionsBuilder: (_, animation, __, child) => ScaleTransition(
@@ -266,6 +275,7 @@ class BeamPage extends Page {
       case BeamPageType.noTransition:
         return PageRouteBuilder(
           fullscreenDialog: fullScreenDialog,
+          opaque: opaque,
           settings: this,
           pageBuilder: (context, animation, secondaryAnimation) => child,
         );
