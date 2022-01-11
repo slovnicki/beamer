@@ -13,8 +13,9 @@ final simpleLocationBuilder = RoutesLocationBuilder(
           child: HomeScreen(),
         ),
     '/books': (context, state, data) {
-      final titleQuery =
-          state.queryParameters['title'] ?? (data as Map)['title'] ?? '';
+      final titleQuery = state.queryParameters['title'] ??
+          ((data ?? {}) as Map)['title'] ??
+          '';
       final genreQuery = state.queryParameters['genre'] ?? '';
       final pageTitle = titleQuery != ''
           ? "Books with name '$titleQuery'"
