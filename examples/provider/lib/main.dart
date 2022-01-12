@@ -102,13 +102,6 @@ class HomeLocation extends BeamLocation<BeamState> {
 
 class BooksLocation extends BeamLocation<BeamState> {
   @override
-  Widget builder(BuildContext context, Widget navigator) =>
-      ChangeNotifierProvider(
-        create: (context) => Books(),
-        child: navigator,
-      );
-
-  @override
   List<String> get pathPatterns => ['/books/:bookId'];
 
   @override
@@ -152,6 +145,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routerDelegate: routerDelegate,
       routeInformationParser: BeamerParser(),
+      builder: (context, child) => ChangeNotifierProvider(
+        create: (context) => Books(),
+        child: child,
+      ),
     );
   }
 }
