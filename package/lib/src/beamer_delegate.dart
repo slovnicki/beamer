@@ -650,19 +650,23 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       currentBeamLocation.buildInit(context);
     }
 
-    _setCurrentPages(context, guard);
+    final navigator = Builder(
+      builder: (context) {
+        _setCurrentPages(context, guard);
 
-    _setBrowserTitle(context);
+        _setBrowserTitle(context);
 
-    buildListener?.call(context, this);
+        buildListener?.call(context, this);
 
-    final navigator = Navigator(
-      key: navigatorKey,
-      observers: navigatorObservers,
-      transitionDelegate: currentBeamLocation.transitionDelegate ??
-          _currentBeamParameters.transitionDelegate,
-      pages: _currentPages,
-      onPopPage: (route, result) => _onPopPage(context, route, result),
+        return Navigator(
+          key: navigatorKey,
+          observers: navigatorObservers,
+          transitionDelegate: currentBeamLocation.transitionDelegate ??
+              _currentBeamParameters.transitionDelegate,
+          pages: _currentPages,
+          onPopPage: (route, result) => _onPopPage(context, route, result),
+        );
+      },
     );
 
     return currentBeamLocation.builder(context, navigator);
