@@ -371,6 +371,7 @@ void main() {
     testWidgets("navigation on parent doesn't update nested Beamer",
         (tester) async {
       final childDelegate = BeamerDelegate(
+        initializeFromParent: false,
         updateFromParent: false,
         locationBuilder: RoutesLocationBuilder(
           routes: {

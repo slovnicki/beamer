@@ -32,6 +32,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     this.beamBackTransitionDelegate = const ReverseTransitionDelegate(),
     this.onPopPage,
     this.setBrowserTabTitle = true,
+    this.initializeFromParent = true,
     this.updateFromParent = true,
     this.updateParent = true,
     this.clearBeamingHistoryOn = const <String>{},
@@ -58,7 +59,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   BeamerDelegate? get parent => _parent;
   set parent(BeamerDelegate? parent) {
     _parent = parent!;
-    _initializeFromParent();
+    _initialize();
     if (updateFromParent) {
       _parent!.addListener(_updateFromParent);
     }
@@ -195,6 +196,11 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// Whether the title attribute of [BeamPage] should
   /// be used to set and update the browser tab title.
   final bool setBrowserTabTitle;
+
+  /// Whether to take [configuration] from parent when this is created.
+  ///
+  /// If false, the [initialPath] will be used.
+  final bool initializeFromParent;
 
   /// Whether to call [update] when parent notifies listeners.
   ///
@@ -900,12 +906,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     return route.didPop(result);
   }
 
-  void _initializeFromParent() {
+  void _initialize() {
     final parent = _parent;
     if (parent == null) {
       return;
     }
-    configuration = updateFromParent
+    configuration = initializeFromParent
         ? parent.configuration.copyWith()
         : parent.configuration.copyWith(location: initialPath);
     var location = locationBuilder(
