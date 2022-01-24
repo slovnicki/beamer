@@ -273,8 +273,14 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   }
 
   /// Removes the last [HistoryElement] from [history] and returns it.
-  ///
-  /// If said history element is a `ChangeNotifier`, listeners are removed.
+  HistoryElement? removeFirstFromHistory() {
+    if (history.isEmpty) {
+      return null;
+    }
+    return history.removeAt(0);
+  }
+
+  /// Removes the last [HistoryElement] from [history] and returns it.
   HistoryElement? removeLastFromHistory() {
     if (history.isEmpty) {
       return null;

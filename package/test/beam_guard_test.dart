@@ -1,8 +1,11 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
 
 import 'test_locations.dart';
+
+class MockBuildContext extends Mock implements BuildContext {}
 
 void main() {
   const pathBlueprint = '/l1/one';
@@ -282,8 +285,8 @@ void main() {
       });
     });
 
-    group('guard updates location on build', () {
-      testWidgets('guard beamTo changes the location on build', (tester) async {
+    group('guard updates location', () {
+      testWidgets('with beamTo', (tester) async {
         final router = BeamerDelegate(
           initialPath: '/l1',
           locationBuilder: (routeInformation, _) {
@@ -313,8 +316,7 @@ void main() {
         expect(router.currentBeamLocation, isA<Location1>());
       });
 
-      testWidgets('guard beamToNamed changes the location on build',
-          (tester) async {
+      testWidgets('with beamToNamed', (tester) async {
         final router = BeamerDelegate(
           initialPath: '/l1',
           locationBuilder: (routeInformation, _) {
@@ -510,6 +512,80 @@ void main() {
       expect(delegate.configuration.location, '/l1?param1=a&param2=b');
       expect(delegate.currentBeamLocation.state.routeInformation.location,
           '/l1?param1=a&param2=b');
+    });
+  });
+
+  group('Apply', () {
+    BeamerDelegate _createDelegate(BeamGuard guard) {
+      return BeamerDelegate(
+        initialPath: '/allowed',
+        locationBuilder: RoutesLocationBuilder(
+          routes: {
+            '/allowed': (_, __, ___) => Container(),
+            '/guarded': (_, __, ___) => Container(),
+          },
+        ),
+        guards: [guard],
+      );
+    }
+
+    BeamLocation _createGuardedBeamLocation(BeamerDelegate delegate) {
+      return delegate.locationBuilder(
+          const RouteInformation(location: '/guarded'), null);
+    }
+
+    test('does nothing', () {
+      final guard = BeamGuard(
+        pathPatterns: ['/guarded'],
+        check: (_, __) => false,
+      );
+
+      final delegate = _createDelegate(guard);
+      final guardedBeamLocation = _createGuardedBeamLocation(delegate);
+
+      delegate.beamToNamed('/allowed');
+
+      guard.apply(
+        MockBuildContext(),
+        delegate,
+        delegate.currentBeamLocation,
+        delegate.currentPages,
+        guardedBeamLocation,
+      );
+
+      expect(
+        delegate.currentBeamLocation.state.routeInformation.location,
+        '/allowed',
+      );
+      expect(delegate.beamingHistoryCompleteLength, 1);
+    });
+
+    test('redirects to allowed and adds to beamingHistory', () {
+      final guard = BeamGuard(
+        pathPatterns: ['/guarded'],
+        check: (_, __) => false,
+        beamToNamed: (_, __) => '/allowed',
+        replaceCurrentStack: false,
+      );
+
+      final delegate = _createDelegate(guard);
+      final guardedBeamLocation = _createGuardedBeamLocation(delegate);
+
+      delegate.beamToNamed('/allowed');
+
+      guard.apply(
+        MockBuildContext(),
+        delegate,
+        delegate.currentBeamLocation,
+        delegate.currentPages,
+        guardedBeamLocation,
+      );
+
+      expect(
+        delegate.currentBeamLocation.state.routeInformation.location,
+        '/allowed',
+      );
+      expect(delegate.beamingHistoryCompleteLength, 1);
     });
   });
 }

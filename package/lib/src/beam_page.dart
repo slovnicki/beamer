@@ -214,7 +214,7 @@ class BeamPage extends Page {
   final bool fullScreenDialog;
 
   /// Whether the route obscures previous [BeamPage]s when the transition is complete.
-  /// 
+  ///
   /// Setting [opaque] will have no effect when [type] is [BeamPageType.cupertino].
   final bool opaque;
 

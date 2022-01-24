@@ -1,14 +1,18 @@
 import 'package:beamer/src/utils.dart';
 import 'package:flutter/widgets.dart';
 
+import 'package:beamer/src/beamer_delegate.dart';
 import 'package:beamer/src/beam_location.dart';
 import 'package:beamer/src/beam_page.dart';
 
 /// Checks whether current [BeamLocation] is allowed to be beamed to
 /// and provides steps to be executed following a failed check.
 ///
-/// If neither [beamTo], [beamToNamed] nor [showPage] is specified,
-/// the guard will just block navigation, i.e. nothing will happen.
+/// [BeamGuard] has an authority to change [BeamerDelegate.beamingHistory].
+/// Applying the guard can have various consequences, depending on
+/// the configuration of optional properties:
+///
+/// See more at [apply].
 class BeamGuard {
   /// Creates a [BeamGuard] with defined properties.
   ///
@@ -19,7 +23,6 @@ class BeamGuard {
     this.onCheckFailed,
     this.beamTo,
     this.beamToNamed,
-    this.showPage,
     this.guardNonMatching = false,
     this.replaceCurrentStack = true,
   });
@@ -51,7 +54,7 @@ class BeamGuard {
 
   /// Arbitrary closure to execute when [check] fails.
   ///
-  /// This will run before and regardless of [beamTo], [beamToNamed], [showPage].
+  /// This will run before and regardless of [beamTo], [beamToNamed].
   final void Function(BuildContext context, BeamLocation location)?
       onCheckFailed;
 
@@ -60,8 +63,6 @@ class BeamGuard {
   /// `origin` holds the origin [BeamLocation] from where it is being beamed from, `null` if there's no origin,
   /// which may happen if it's the first navigation or the history was cleared.
   /// `target` holds the [BeamLocation] to where we tried to beam to, i.e. the one on which the check failed.
-  ///
-  /// [showPage] has precedence over this attribute.
   final BeamLocation Function(
       BuildContext context, BeamLocation? origin, BeamLocation target)? beamTo;
 
@@ -70,14 +71,7 @@ class BeamGuard {
   /// `origin` holds the origin [BeamLocation] from where it is being beamed from. `null` if there's no origin,
   /// which may happen if it's the first navigation or the history was cleared.
   /// `target` holds the [BeamLocation] to where we tried to beam to, i.e. the one on which the check failed.
-  ///
-  /// [showPage] has precedence over this attribute.
   final String Function(BeamLocation? origin, BeamLocation target)? beamToNamed;
-
-  /// If guard [check] returns `false`, put this page onto navigation stack.
-  ///
-  /// This has precedence over [beamTo] and [beamToNamed].
-  final BeamPage? showPage;
 
   /// Whether to [check] all the path blueprints defined in [pathPatterns]
   /// or [check] all the paths that **are not** in [pathPatterns].
@@ -87,6 +81,55 @@ class BeamGuard {
 
   /// Whether or not to replace the current [BeamLocation]'s stack of pages.
   final bool replaceCurrentStack;
+
+  /// Whether or not the guard should [check] the [location].
+  bool shouldGuard(BeamLocation location) {
+    return guardNonMatching ? !_hasMatch(location) : _hasMatch(location);
+  }
+
+  /// Applies the guard.
+  /// TODO add detailed comments
+  bool apply(
+    BuildContext context,
+    BeamerDelegate delegate,
+    BeamLocation origin,
+    List<BeamPage> currentPages,
+    BeamLocation target,
+  ) {
+    final checkPassed = check(context, target);
+    if (checkPassed) {
+      return false;
+    }
+
+    onCheckFailed?.call(context, target);
+
+    // just block navigation
+    // revert the configuration of delegate
+    if (beamTo == null && beamToNamed == null) {
+      delegate.configuration = origin.state.routeInformation;
+      return true;
+    }
+
+    // create redirect BeamLocation
+    late BeamLocation redirectLocation;
+    if (beamTo != null) {
+      redirectLocation = beamTo!(context, origin, target);
+    } else if (beamToNamed != null) {
+      redirectLocation = delegate.locationBuilder(
+        RouteInformation(location: beamToNamed!(origin, target)),
+        null,
+      );
+    }
+
+    // beam
+    if (replaceCurrentStack) {
+      delegate.beamToReplacement(redirectLocation);
+    } else {
+      delegate.beamTo(redirectLocation);
+    }
+
+    return true;
+  }
 
   /// Matches [location]'s pathBlueprint to [pathPatterns].
   ///
@@ -117,10 +160,5 @@ class BeamGuard {
       }
     }
     return false;
-  }
-
-  /// Whether or not the guard should [check] the [location].
-  bool shouldGuard(BeamLocation location) {
-    return guardNonMatching ? !_hasMatch(location) : _hasMatch(location);
   }
 }
