@@ -378,13 +378,16 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       // guards will be run in build
     }
 
+    // adds the candidate to history
+    // it will become currentBeamLocation after this step
     _updateBeamingHistory(_beamLocationCandidate);
-
     if (data != null) {
       currentBeamLocation.data = data;
     }
+
     routeListener?.call(this.configuration, this);
 
+    // update parent if necessary
     if (this.updateParent && updateParent) {
       _parent?.update(
         configuration: this.configuration.copyWith(),
@@ -393,19 +396,13 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       );
     }
 
-    // We should call [updateRouteInformation] manually only if
-    // notifyListeners() is not going to be called.
-    // This is when !rebuild or
-    // when this will notifyListeners (when rebuild), but is not a top-most
-    // router in which case it cannot report the route implicitly.
-    if (updateRouteInformation && active && (!rebuild || parent != null)) {
+    // update browser history
+    if (updateRouteInformation && active) {
       this.updateRouteInformation(this.configuration);
     }
 
+    // initiate build
     if (rebuild) {
-      // This will implicitly update the route information,
-      // but only if this is the top-most router
-      // See [currentConfiguration].
       notifyListeners();
     }
   }
@@ -657,8 +654,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   }
 
   @override
-  RouteInformation? get currentConfiguration =>
-      _parent == null ? configuration.copyWith() : null;
+  RouteInformation? get currentConfiguration => null;
 
   @override
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
@@ -739,7 +735,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   }
 
   bool _runGuards(BuildContext context, BeamLocation targetBeamLocation) {
-    for (final guard in (parent?.guards ?? []) + guards) {
+    final allGuards = parent?.guards ?? [] + guards + targetBeamLocation.guards;
+    for (final guard in allGuards) {
       if (guard.shouldGuard(targetBeamLocation)) {
         return guard.apply(
           context,

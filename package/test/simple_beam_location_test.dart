@@ -15,7 +15,6 @@ void main() {
       },
     ),
   );
-  delegate.setNewRoutePath(const RouteInformation(location: '/'));
 
   group('General', () {
     testWidgets('/ can be at the end of URI and will be ignored when matching',
