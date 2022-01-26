@@ -13,8 +13,8 @@ final simpleLocationBuilder = RoutesLocationBuilder(
           child: HomeScreen(),
         ),
     '/books': (context, state, data) {
-      final titleQuery =
-          state.queryParameters['title'] ?? (data as Map)['title'] ?? '';
+      final titleQuery = state.queryParameters['title'] ??
+          (data is Map ? (data['title'] ?? '') : '');
       final genreQuery = state.queryParameters['genre'] ?? '';
       final pageTitle = titleQuery != ''
           ? "Books with name '$titleQuery'"
@@ -117,8 +117,8 @@ class BooksLocation extends BeamLocation<BeamState> {
     final beamPages = [...HomeLocation().buildPages(context, state)];
 
     if (state.pathPatternSegments.contains('books')) {
-      final titleQuery =
-          state.queryParameters['title'] ?? (data as Map)['title'] ?? '';
+      final titleQuery = state.queryParameters['title'] ??
+          (data is Map ? ((data as Map)['title'] ?? '') : '');
       final genreQuery = state.queryParameters['genre'] ?? '';
       final pageTitle = titleQuery != ''
           ? "Books with name '$titleQuery'"
