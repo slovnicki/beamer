@@ -735,16 +735,22 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   }
 
   bool _runGuards(BuildContext context, BeamLocation targetBeamLocation) {
-    final allGuards = parent?.guards ?? [] + guards + targetBeamLocation.guards;
+    final allGuards =
+        (parent?.guards ?? []) + guards + targetBeamLocation.guards;
     for (final guard in allGuards) {
       if (guard.shouldGuard(targetBeamLocation)) {
-        return guard.apply(
+        final wasApplied = guard.apply(
           context,
           this,
           currentBeamLocation,
           _currentPages,
           targetBeamLocation,
         );
+
+        // Return true on the first guard that was fully applied
+        if (wasApplied) {
+          return true;
+        }
       }
     }
     return false;
