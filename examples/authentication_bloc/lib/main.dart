@@ -43,14 +43,14 @@ class MyApp extends StatelessWidget {
       BeamGuard(
         pathPatterns: ['/logged_in_page'],
         check: (context, state) =>
-            context.select((AuthenticationBloc auth) => auth.isAuthenticated()),
+            context.read<AuthenticationBloc>().isAuthenticated(),
         beamToNamed: (_, __) => '/login',
       ),
       // Guard /login by beaming to /logged_in_page if the user is authenticated:
       BeamGuard(
         pathPatterns: ['/login'],
-        check: (context, state) => context
-            .select((AuthenticationBloc auth) => !auth.isAuthenticated()),
+        check: (context, state) =>
+            !context.read<AuthenticationBloc>().isAuthenticated(),
         beamToNamed: (_, __) => '/logged_in_page',
       ),
     ],
@@ -67,14 +67,18 @@ class MyApp extends StatelessWidget {
           authenticationRepository: authenticationRepository,
           userRepository: userRepository,
         ),
-        child: BeamerProvider(
-          routerDelegate: routerDelegate,
-          child: MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            routerDelegate: routerDelegate,
-            routeInformationParser: BeamerParser(),
-          ),
-        ),
+        child: Builder(builder: (context) {
+          return BlocListener<AuthenticationBloc, AuthenticationState>(
+            listener: (context, state) {
+              routerDelegate.update();
+            },
+            child: MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              routerDelegate: routerDelegate,
+              routeInformationParser: BeamerParser(),
+            ),
+          );
+        }),
       ),
     );
   }
