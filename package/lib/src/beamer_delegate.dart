@@ -281,6 +281,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// ```
   NavigatorState get navigator => _navigatorKey.currentState!;
 
+  /// A context for guards
+  BuildContext? _context;
+
   /// Whether guards already ran.
   ///
   /// This is used to decide whether guards need to be run in the [build].
@@ -364,18 +367,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     }
 
     // run guards on _beamLocationCandidate
-    try {
-      final navigatorContext = _navigatorKey.currentContext;
-      if (navigatorContext != null) {
-        final didApply = _runGuards(navigatorContext, _beamLocationCandidate);
-        _didRunGuards = true;
-        if (didApply) {
-          return;
-        }
+    if (_context != null) {
+      final didApply = _runGuards(_context!, _beamLocationCandidate);
+      _didRunGuards = true;
+      if (didApply) {
+        return;
       }
-    } catch (_) {
-      // no navigator yet,
-      // guards will be run in build
     }
 
     // adds the candidate to history
@@ -662,12 +659,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   @override
   Widget build(BuildContext context) {
     _buildInProgress = true;
+    _context ??= context;
 
     if (!_didRunGuards) {
-      _runGuards(context, _beamLocationCandidate);
-      _updateBeamingHistory(_beamLocationCandidate);
+      _runGuards(_context!, _beamLocationCandidate);
+      _addToBeamingHistory(_beamLocationCandidate);
     }
-    _didRunGuards = false;
 
     if (currentBeamLocation is NotFound) {
       _handleNotFoundRedirect();
@@ -735,7 +732,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   }
 
   bool _runGuards(BuildContext context, BeamLocation targetBeamLocation) {
-    final allGuards = parent?.guards ?? [] + guards + targetBeamLocation.guards;
+    final allGuards =
+        (parent?.guards ?? []) + guards + targetBeamLocation.guards;
     for (final guard in allGuards) {
       if (guard.shouldGuard(targetBeamLocation)) {
         return guard.apply(

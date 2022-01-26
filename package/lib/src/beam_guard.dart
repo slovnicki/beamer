@@ -110,25 +110,36 @@ class BeamGuard {
       return true;
     }
 
-    // create redirect BeamLocation
-    late BeamLocation redirectLocation;
     if (beamTo != null) {
-      redirectLocation = beamTo!(context, origin, target);
-    } else if (beamToNamed != null) {
-      redirectLocation = delegate.locationBuilder(
-        RouteInformation(location: beamToNamed!(origin, target)),
-        null,
-      );
+      final redirectBeamLocation = beamTo!(context, origin, target);
+      if (redirectBeamLocation.state.routeInformation.location ==
+          target.state.routeInformation.location) {
+        // just block if this will produce an immediate infinite loop
+        return true;
+      }
+      if (replaceCurrentStack) {
+        delegate.beamToReplacement(redirectBeamLocation);
+      } else {
+        delegate.beamTo(redirectBeamLocation);
+      }
+      return true;
     }
 
-    // beam
-    if (replaceCurrentStack) {
-      delegate.beamToReplacement(redirectLocation);
-    } else {
-      delegate.beamTo(redirectLocation);
+    if (beamToNamed != null) {
+      final redirectNamed = beamToNamed!(origin, target);
+      if (redirectNamed == target.state.routeInformation.location) {
+        // just block if this will produce an immediate infinite loop
+        return true;
+      }
+      if (replaceCurrentStack) {
+        delegate.beamToReplacementNamed(redirectNamed);
+      } else {
+        delegate.beamToNamed(redirectNamed);
+      }
+      return true;
     }
 
-    return true;
+    return false;
   }
 
   /// Matches [location]'s pathBlueprint to [pathPatterns].
