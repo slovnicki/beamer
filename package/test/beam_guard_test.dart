@@ -588,4 +588,49 @@ void main() {
       expect(delegate.beamingHistoryCompleteLength, 1);
     });
   });
+
+  testWidgets(
+    "Unapplied guards doesn't break guarding process",
+    (tester) async {
+      final routerDelegate = BeamerDelegate(
+        initialPath: '/s1',
+        locationBuilder: RoutesLocationBuilder(
+          routes: <Pattern, dynamic Function(BuildContext, BeamState, Object?)>{
+            '/s1': (_, __, ___) => Container(),
+            '/s1/*': (_, __, ___) => Container(),
+            '/s1/s2/s3': (_, __, ___) => Container(),
+          },
+        ),
+        guards: <BeamGuard>[
+          BeamGuard(
+            pathPatterns: <Pattern>['/x'],
+            guardNonMatching: true,
+            check: (_, __) => true,
+            beamToNamed: (_, __) => '/s1',
+          ),
+          BeamGuard(
+            pathPatterns: <Pattern>['/s1/s2'],
+            check: (_, __) => false,
+            beamToNamed: (_, to) {
+              return to.state.routeInformation.location! + '/s3';
+            },
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: routerDelegate,
+        ),
+      );
+
+      expect(routerDelegate.configuration.location, '/s1');
+
+      routerDelegate.beamToNamed('/s1/s2');
+      await tester.pumpAndSettle();
+
+      expect(routerDelegate.configuration.location, '/s1/s2/s3');
+    },
+  );
 }
