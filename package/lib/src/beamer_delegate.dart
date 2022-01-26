@@ -281,9 +281,6 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// ```
   NavigatorState get navigator => _navigatorKey.currentState!;
 
-  /// A context for guards
-  BuildContext? _context;
-
   /// Whether guards already ran.
   ///
   /// This is used to decide whether guards need to be run in the [build].
@@ -367,12 +364,18 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     }
 
     // run guards on _beamLocationCandidate
-    if (_context != null) {
-      final didApply = _runGuards(_context!, _beamLocationCandidate);
-      _didRunGuards = true;
-      if (didApply) {
-        return;
+    try {
+      final navigatorContext = _navigatorKey.currentContext;
+      if (navigatorContext != null) {
+        final didApply = _runGuards(navigatorContext, _beamLocationCandidate);
+        _didRunGuards = true;
+        if (didApply) {
+          return;
+        }
       }
+    } catch (_) {
+      // no navigator yet,
+      // guards will be run in build
     }
 
     // adds the candidate to history
@@ -659,12 +662,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   @override
   Widget build(BuildContext context) {
     _buildInProgress = true;
-    _context ??= context;
 
     if (!_didRunGuards) {
-      _runGuards(_context!, _beamLocationCandidate);
-      _addToBeamingHistory(_beamLocationCandidate);
+      _runGuards(context, _beamLocationCandidate);
+      _updateBeamingHistory(_beamLocationCandidate);
     }
+    _didRunGuards = false;
 
     if (currentBeamLocation is NotFound) {
       _handleNotFoundRedirect();
@@ -736,13 +739,18 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         (parent?.guards ?? []) + guards + targetBeamLocation.guards;
     for (final guard in allGuards) {
       if (guard.shouldGuard(targetBeamLocation)) {
-        return guard.apply(
+        final wasApplied = guard.apply(
           context,
           this,
           currentBeamLocation,
           _currentPages,
           targetBeamLocation,
         );
+
+        // Return true on the first guard that was fully applied
+        if (wasApplied) {
+          return true;
+        }
       }
     }
     return false;
