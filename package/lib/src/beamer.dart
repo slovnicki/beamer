@@ -205,10 +205,10 @@ extension BeamerExtensions on BuildContext {
   }
 
   /// {@macro beamBack}
-  void beamBack({Object? data}) => Beamer.of(this).beamBack(data: data);
+  bool beamBack({Object? data}) => Beamer.of(this).beamBack(data: data);
 
   /// {@macro popBeamLocation}
-  void popBeamLocation() => Beamer.of(this).popBeamLocation();
+  bool popBeamLocation() => Beamer.of(this).popBeamLocation();
 
   /// {@macro currentBeamLocation}
   BeamLocation get currentBeamLocation => Beamer.of(this).currentBeamLocation;
