@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 class Location1 extends BeamLocation<BeamState> {
   Location1([RouteInformation? routeInformation]) : super(routeInformation);
 
+  bool get doesHaveListeners => hasListeners;
+
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         BeamPage(
@@ -28,6 +30,8 @@ class Location1 extends BeamLocation<BeamState> {
 
 class Location2 extends BeamLocation<BeamState> {
   Location2([RouteInformation? routeInformation]) : super(routeInformation);
+
+  bool get doesHaveListeners => hasListeners;
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [

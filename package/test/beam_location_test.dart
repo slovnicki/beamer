@@ -1,6 +1,5 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 
@@ -90,15 +89,24 @@ void main() {
         ),
       );
       expect(beamerDelegate.currentBeamLocation, isA<Location1>());
-      expect(beamerDelegate.currentBeamLocation.hasListeners, true);
+      expect(
+        (beamerDelegate.currentBeamLocation as Location1).doesHaveListeners,
+        true,
+      );
 
       beamerDelegate.beamToNamed('/l2');
       expect(beamerDelegate.currentBeamLocation, isA<Location2>());
-      expect(beamerDelegate.currentBeamLocation.hasListeners, true);
+      expect(
+        (beamerDelegate.currentBeamLocation as Location2).doesHaveListeners,
+        true,
+      );
 
       beamerDelegate.beamBack();
       expect(beamerDelegate.currentBeamLocation, isA<Location1>());
-      expect(beamerDelegate.currentBeamLocation.hasListeners, true);
+      expect(
+        (beamerDelegate.currentBeamLocation as Location1).doesHaveListeners,
+        true,
+      );
     });
   });
 }
