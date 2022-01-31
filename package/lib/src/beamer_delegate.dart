@@ -576,10 +576,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   /// {@template canBeamBack}
   /// Whether it is possible to [beamBack],
-  /// i.e. there is more than 1 state in [beamingHistory].
+  /// i.e. there is more than 1 entry in [beamingHistoryCompleteLength].
   /// {@endtemplate}
-  bool get canBeamBack =>
-      beamingHistory.last.history.length > 1 || beamingHistory.length > 1;
+  bool get canBeamBack => beamingHistoryCompleteLength > 1;
 
   /// {@template beamBack}
   /// Beams to previous entry in [beamingHistory].
@@ -597,16 +596,15 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     final lastHistorylength = beamingHistory.last.history.length;
     // first we try to beam back within last BeamLocation
     if (lastHistorylength > 1) {
-      targetHistoryElement = beamingHistory.last.history[lastHistorylength - 2];
       beamingHistory.last.history.removeLast();
+      targetHistoryElement = beamingHistory.last.history.removeLast();
     } else {
       // here we know that beamingHistory.length > 1 (because of canBeamBack)
       // and that beamingHistory.last.history.length == 1
       // so this last (only) entry is removed along with BeamLocation
       _disposeBeamLocation(beamingHistory.last);
       beamingHistory.removeLast();
-      targetHistoryElement = beamingHistory.last.history.last;
-      beamingHistory.last.history.removeLast();
+      targetHistoryElement = beamingHistory.last.history.removeLast();
     }
 
     update(
@@ -616,6 +614,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       ),
       data: data,
     );
+
     return true;
   }
 
@@ -763,18 +762,18 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     beamLocation.disposeState();
   }
 
-  void _addToBeamingHistory(BeamLocation location) {
+  void _addToBeamingHistory(BeamLocation beamLocation) {
     _disposeBeamLocation(currentBeamLocation);
     if (removeDuplicateHistory) {
       final index = beamingHistory.indexWhere((historyLocation) =>
-          historyLocation.runtimeType == location.runtimeType);
+          historyLocation.runtimeType == beamLocation.runtimeType);
       if (index != -1) {
         _disposeBeamLocation(beamingHistory[index]);
         beamingHistory.removeAt(index);
       }
     }
-    beamingHistory.add(location);
-    _initBeamLocation(currentBeamLocation);
+    _initBeamLocation(beamLocation);
+    beamingHistory.add(beamLocation);
   }
 
   void _updateBeamingHistory(BeamLocation beamLocation) {
