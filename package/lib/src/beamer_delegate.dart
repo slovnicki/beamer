@@ -604,7 +604,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       // so this last (only) entry is removed along with BeamLocation
       _disposeBeamLocation(beamingHistory.last);
       beamingHistory.removeLast();
-      targetHistoryElement = beamingHistory.last.history.removeLast();
+      final targetBeamLocation = beamingHistory.last;
+      targetHistoryElement = targetBeamLocation.history.removeLast();
+      _initBeamLocation(targetBeamLocation);
     }
 
     update(

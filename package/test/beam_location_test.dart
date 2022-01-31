@@ -1,4 +1,5 @@
 import 'package:beamer/beamer.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -64,6 +65,40 @@ void main() {
       beamLocation.state = BeamState.fromUriString('/l1');
       expect(beamLocation.history.length, 2);
       expect(beamLocation.history[1].routeInformation.location, '/l1');
+    });
+  });
+
+  group('Listeners', () {
+    testWidgets('are registered after beamBack', (tester) async {
+      final beamLocation1 = Location1();
+      final beamLocation2 = Location2();
+
+      final beamerDelegate = BeamerDelegate(
+        initialPath: '/l1',
+        locationBuilder: BeamerLocationBuilder(
+          beamLocations: [
+            beamLocation1,
+            beamLocation2,
+          ],
+        ),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerDelegate: beamerDelegate,
+          routeInformationParser: BeamerParser(),
+        ),
+      );
+      expect(beamerDelegate.currentBeamLocation, isA<Location1>());
+      expect(beamerDelegate.currentBeamLocation.hasListeners, true);
+
+      beamerDelegate.beamToNamed('/l2');
+      expect(beamerDelegate.currentBeamLocation, isA<Location2>());
+      expect(beamerDelegate.currentBeamLocation.hasListeners, true);
+
+      beamerDelegate.beamBack();
+      expect(beamerDelegate.currentBeamLocation, isA<Location1>());
+      expect(beamerDelegate.currentBeamLocation.hasListeners, true);
     });
   });
 }
