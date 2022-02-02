@@ -241,7 +241,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   }
 
   /// A candidate to become the next [currentBeamLocation].
-  late BeamLocation _beamLocationCandidate;
+  BeamLocation _beamLocationCandidate = EmptyBeamLocation();
 
   /// {@template currentBeamLocation}
   /// A [BeamLocation] that is currently responsible for providing a page stack
