@@ -342,10 +342,15 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     bool rebuild = true,
     bool updateParent = true,
     bool updateRouteInformation = true,
+    bool replaceRouteInformation = false,
   }) {
     if (_buildInProgress) {
       rebuild = false;
     }
+
+    replaceRouteInformation
+        ? SystemNavigator.selectSingleEntryHistory()
+        : SystemNavigator.selectMultiEntryHistory();
 
     // clean the configuration, i.e. trim trailing '/'
     configuration = configuration?.copyWith(
@@ -372,6 +377,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       _didRunGuards = true;
       if (didApply) {
         return;
+      } else {
+        // TODO revert configuration if guard just blocked navigation
       }
     }
 
@@ -394,7 +401,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     }
 
     // update browser history
-    if (updateRouteInformation && active) {
+    if (_parent != null && updateRouteInformation && active) {
       this.updateRouteInformation(this.configuration);
     }
 
@@ -431,6 +438,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
+    bool replaceRouteInformation = false,
   }) {
     _beamLocationCandidate = location;
     update(
@@ -444,6 +452,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       ),
       data: data,
       buildBeamLocation: false,
+      replaceRouteInformation: replaceRouteInformation,
     );
   }
 
@@ -467,6 +476,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
+      replaceRouteInformation: true,
     );
   }
 
@@ -493,6 +503,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
+    bool replaceRouteInformation = false,
   }) {
     update(
       configuration: RouteInformation(location: uri, state: routeState),
@@ -505,6 +516,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         stacked: stacked,
       ),
       data: data,
+      replaceRouteInformation: replaceRouteInformation,
     );
   }
 
@@ -530,6 +542,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
+      replaceRouteInformation: true,
     );
   }
 
@@ -548,6 +561,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
+    bool replaceRouteInformation = false,
   }) {
     while (beamingHistory.isNotEmpty) {
       final index = beamingHistory.last.history.lastIndexWhere(
@@ -571,6 +585,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
+      replaceRouteInformation: replaceRouteInformation,
     );
   }
 
@@ -588,7 +603,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   ///
   /// Returns the success, whether [update] was executed.
   /// {@endtemplate}
-  bool beamBack({Object? data}) {
+  bool beamBack({
+    Object? data,
+    bool replaceRouteInformation = false,
+  }) {
     if (!canBeamBack) {
       return false;
     }
@@ -615,6 +633,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         transitionDelegate: beamBackTransitionDelegate,
       ),
       data: data,
+      replaceRouteInformation: replaceRouteInformation,
     );
 
     return true;
@@ -634,7 +653,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   ///
   /// Returns the success, whether the [currentBeamLocation] was changed.
   /// {@endtemplate}
-  bool popBeamLocation({Object? data}) {
+  bool popBeamLocation({
+    Object? data,
+    bool replaceRouteInformation = false,
+  }) {
     if (!canPopBeamLocation) {
       return false;
     }
@@ -647,12 +669,14 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       ),
       data: data,
       buildBeamLocation: false,
+      replaceRouteInformation: replaceRouteInformation,
     );
     return true;
   }
 
   @override
-  RouteInformation? get currentConfiguration => null;
+  RouteInformation? get currentConfiguration =>
+      _parent == null ? configuration : null;
 
   @override
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;

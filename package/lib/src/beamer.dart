@@ -104,6 +104,7 @@ extension BeamerExtensions on BuildContext {
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
+    bool replaceRouteInformation = false,
   }) {
     Beamer.of(this).beamTo(
       location,
@@ -113,6 +114,7 @@ extension BeamerExtensions on BuildContext {
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
+      replaceRouteInformation: replaceRouteInformation,
     );
   }
 
@@ -147,6 +149,7 @@ extension BeamerExtensions on BuildContext {
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
+    bool replaceRouteInformation = false,
   }) {
     Beamer.of(this).beamToNamed(
       uri,
@@ -157,6 +160,7 @@ extension BeamerExtensions on BuildContext {
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
+      replaceRouteInformation: replaceRouteInformation,
     );
   }
 
@@ -192,6 +196,7 @@ extension BeamerExtensions on BuildContext {
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
+    bool replaceRouteInformation = false,
   }) {
     Beamer.of(this).popToNamed(
       uri,
@@ -201,6 +206,7 @@ extension BeamerExtensions on BuildContext {
       beamBackOnPop: beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop,
       stacked: stacked,
+      replaceRouteInformation: replaceRouteInformation,
     );
   }
 
