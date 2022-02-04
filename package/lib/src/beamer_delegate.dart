@@ -735,6 +735,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   @override
   SynchronousFuture<void> setNewRoutePath(RouteInformation configuration) {
+    if (configuration.location == '/' && initialPath != '/') {
+      configuration = configuration.copyWith(location: initialPath);
+    }
     update(configuration: configuration);
     return SynchronousFuture(null);
   }
