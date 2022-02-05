@@ -109,4 +109,30 @@ void main() {
       );
     });
   });
+
+  testWidgets('strict path patterns', (tester) async {
+    final delegate = BeamerDelegate(
+      locationBuilder: BeamerLocationBuilder(
+        beamLocations: [StrictPatternsLocation()],
+      ),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routerDelegate: delegate,
+        routeInformationParser: BeamerParser(),
+      ),
+    );
+
+    expect(delegate.currentBeamLocation, isA<NotFound>());
+
+    delegate.beamToNamed('/strict');
+    expect(delegate.currentBeamLocation, isA<StrictPatternsLocation>());
+
+    delegate.beamToNamed('/strict/deeper');
+    expect(delegate.currentBeamLocation, isA<StrictPatternsLocation>());
+
+    delegate.beamToNamed('/');
+    expect(delegate.currentBeamLocation, isA<NotFound>());
+  });
 }

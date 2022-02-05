@@ -129,3 +129,26 @@ class AsteriskLocation extends BeamLocation<BeamState> {
         )
       ];
 }
+
+class StrictPatternsLocation extends BeamLocation<BeamState> {
+  @override
+  List<Pattern> get pathPatterns => ['/strict', '/strict/deeper'];
+
+  @override
+  bool get strictPathPatterns => true;
+
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) {
+    return [
+      BeamPage(
+        key: const ValueKey('strict'),
+        child: Container(),
+      ),
+      if (state.pathPatternSegments.contains('deeper'))
+        BeamPage(
+          key: const ValueKey('deeper'),
+          child: Container(),
+        ),
+    ];
+  }
+}

@@ -338,6 +338,13 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   /// For example: '/books/:id' or using regex `RegExp('/test/(?<test>[a-z]+){0,1}')`
   List<Pattern> get pathPatterns;
 
+  /// Whether [pathPatterns] are strictly matched agains incoming URI.
+  ///
+  /// If this is false (default), then a path pattern '/some/path' will match
+  /// '/' and '/some' and '/some/path'.
+  /// If this is true, then it will match just '/some/path'.
+  bool get strictPathPatterns => false;
+
   /// Creates and returns the list of pages to be built by the [Navigator]
   /// when this [BeamLocation] is beamed to or internally inferred.
   ///
