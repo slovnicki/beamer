@@ -619,4 +619,38 @@ void main() {
       expect(delegate.beamingHistory.last.history.length, 1);
     });
   });
+
+  testWidgets('updateListenable', (tester) async {
+    final guardCheck = ValueNotifier<bool>(true);
+
+    final delegate = BeamerDelegate(
+      initialPath: '/r1',
+      locationBuilder: RoutesLocationBuilder(
+        routes: {
+          '/r1': (context, state, data) => Container(),
+          '/r2': (context, state, data) => Container(),
+        },
+      ),
+      guards: [
+        BeamGuard(
+          pathPatterns: ['/r1'],
+          check: (_, __) => guardCheck.value,
+          beamToNamed: (_, __) => '/r2',
+        ),
+      ],
+      updateListenable: guardCheck,
+    );
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routeInformationParser: BeamerParser(),
+        routerDelegate: delegate,
+      ),
+    );
+
+    expect(delegate.configuration.location, '/r1');
+
+    guardCheck.value = false;
+
+    expect(delegate.configuration.location, '/r2');
+  });
 }

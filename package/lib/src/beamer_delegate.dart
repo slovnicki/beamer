@@ -17,6 +17,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     this.initialPath = '/',
     this.routeListener,
     this.buildListener,
+    this.updateListenable,
     @Deprecated(
       'No longer used by this package, please remove any references to it. '
       'This feature was deprecated after v1.0.0.',
@@ -42,6 +43,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     );
 
     configuration = RouteInformation(location: initialPath);
+
+    updateListenable?.addListener(_update);
   }
 
   /// A state of this delegate. This is the `routeInformation` that goes into
@@ -135,6 +138,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// The buildListener will be called every time after the [currentPages]
   /// are updated. it receives a reference to this delegate.
   final void Function(BuildContext, BeamerDelegate)? buildListener;
+
+  /// A Listenable to which an update listener will be added, i.e.
+  /// [update] will be called when listeners are notified.
+  final Listenable? updateListenable;
 
   @Deprecated(
     'No longer used by this package, please remove any references to it. '
@@ -979,6 +986,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     _beamLocationCandidate = location;
   }
 
+  void _update() => update();
+
   void _updateFromParent({bool rebuild = true}) {
     update(
       configuration: _parent!.configuration.copyWith(),
@@ -1009,6 +1018,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     _parent?.removeListener(_updateFromParent);
     _disposeBeamLocation(currentBeamLocation);
     currentBeamLocation.dispose();
+    updateListenable?.removeListener(_update);
     super.dispose();
   }
 }
