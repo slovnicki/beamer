@@ -23,6 +23,7 @@ class BeamGuard {
     this.onCheckFailed,
     this.beamTo,
     this.beamToNamed,
+    this.showPage,
     this.guardNonMatching = false,
     this.replaceCurrentStack = true,
   });
@@ -73,6 +74,11 @@ class BeamGuard {
   /// `target` holds the [BeamLocation] to where we tried to beam to, i.e. the one on which the check failed.
   final String Function(BeamLocation? origin, BeamLocation target)? beamToNamed;
 
+  /// If guard [check] returns `false`, beam to a [BeamLocation] with just that page.
+  ///
+  /// This has precendence over [beamTo] and [beamToNamed].
+  final BeamPage? showPage;
+
   /// Whether to [check] all the path blueprints defined in [pathPatterns]
   /// or [check] all the paths that **are not** in [pathPatterns].
   ///
@@ -102,6 +108,17 @@ class BeamGuard {
     }
 
     onCheckFailed?.call(context, target);
+
+    if (showPage != null) {
+      final redirectBeamLocation =
+          GuardShowPage(target.state.routeInformation, showPage!);
+      if (replaceCurrentStack) {
+        delegate.beamToReplacement(redirectBeamLocation);
+      } else {
+        delegate.beamTo(redirectBeamLocation);
+      }
+      return true;
+    }
 
     // just block navigation
     // revert the configuration of delegate

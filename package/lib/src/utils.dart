@@ -60,7 +60,8 @@ abstract class Utils {
         // If URI has more segments and pattern doesn't end with asterisk,
         // we don't have a match so can continue.
         if (uriPathSegments.length > pathPatternSegments.length &&
-            !pathPatternSegments.last.endsWith('*')) {
+            (pathPatternSegments.isEmpty ||
+                !pathPatternSegments.last.endsWith('*'))) {
           continue;
         }
 

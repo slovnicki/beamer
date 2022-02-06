@@ -397,6 +397,29 @@ class EmptyBeamLocation extends BeamLocation<BeamState> {
   List<String> get pathPatterns => [];
 }
 
+/// A specific single-page [BeamLocation] for [BeamGuard.showPage]
+class GuardShowPage extends BeamLocation<BeamState> {
+  /// Creates a [GuardShowPage] [BeamLocation] with
+  /// `RouteInformation(location: path)` as its state.
+  GuardShowPage(
+    this.routeInformation,
+    this.beamPage,
+  ) : super(routeInformation);
+
+  /// [RouteInformation] to show in URL
+  final RouteInformation routeInformation;
+
+  /// A single page to show in stack.
+  final BeamPage beamPage;
+
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) =>
+      [beamPage];
+
+  @override
+  List<String> get pathPatterns => [routeInformation.location!];
+}
+
 /// A beam location for [RoutesLocationBuilder], but can be used freely.
 ///
 /// Useful when needing a simple beam location with a single or few pages.

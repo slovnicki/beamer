@@ -587,6 +587,35 @@ void main() {
       );
       expect(delegate.beamingHistoryCompleteLength, 1);
     });
+
+    test('redirects to showPage BeamLocation', () {
+      final guard = BeamGuard(
+        pathPatterns: ['/guarded'],
+        check: (_, __) => false,
+        showPage: BeamPage(child: Container()),
+        replaceCurrentStack: false,
+      );
+
+      final delegate = _createDelegate(guard);
+      final guardedBeamLocation = _createGuardedBeamLocation(delegate);
+
+      delegate.beamToNamed('/allowed');
+
+      guard.apply(
+        MockBuildContext(),
+        delegate,
+        delegate.currentBeamLocation,
+        delegate.currentPages,
+        guardedBeamLocation,
+      );
+
+      expect(
+        delegate.currentBeamLocation.state.routeInformation.location,
+        '/guarded',
+      );
+      expect(delegate.currentBeamLocation, isA<GuardShowPage>());
+      expect(delegate.beamingHistoryCompleteLength, 2);
+    });
   });
 
   testWidgets(
