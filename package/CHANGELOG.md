@@ -1,3 +1,20 @@
+# 1.3.0
+
+- **Added:** `strictPathPatterns` to `BeamLocation` which will do only exact matches of URI and path pattern ([5810c9c](https://github.com/slovnicki/beamer/commit/5810c9ca7d821fd7fb85a6ad1c4a482abe86d728))
+- **Added:** `updateListenable` to `BeamerDelegate` which will trigger `update` when it notifies ([f0ccfd7](https://github.com/slovnicki/beamer/commit/f0ccfd7eafb4ab08e1b4767a20410846d8b030fd))
+- **Added:** Support for replacing the browser history entry when using `beamToReplacement*` or specifying `replaceRouteInformation: true`
+- **Added:** Support for setting `opaque` property on `BeamPage` ([ggirotto](https://github.com/ggirotto), [#446](https://github.com/slovnicki/beamer/pull/446))
+- **Added:** `initializeFromParent` property to `BeamerDelegate` to overcome the limitation of `updateFromParent` and give finer control over parent interaction ([340b474](https://github.com/slovnicki/beamer/commit/340b47407995df4a14fd296c35950183bbbc6d70))
+- **Fixed:** Browser back/forward buttons behavior, i.e. browser history
+- **Fixed:** Initialization of target `BeamLocation` when beaming back ([#463](https://github.com/slovnicki/beamer/issues/463))
+- **Updated:** Return values for `beamBack` and `popBeamLocation` context extensions ([marcguilera](https://github.com/marcguilera), [#461](https://github.com/slovnicki/beamer/pull/461), [1045ab3](https://github.com/slovnicki/beamer/commit/1045ab350bcc73d06703496d2d85b33428e650b8))
+- **Updated:** The entire guarding flow (thanks [mat100payette](https://github.com/mat100payette) for important feedback and contribution)
+
+### Examples
+
+- Fixed some edge cases in [advanced_books example](https://github.com/slovnicki/beamer/tree/master/examples/advanced_books) ([jpangburn](https://github.com/jpangburn), [#451](https://github.com/slovnicki/beamer/pull/451))
+- Updated [authentication_bloc example](https://github.com/slovnicki/beamer/tree/master/examples/authentication_bloc) guard usage ([df194e8](https://github.com/slovnicki/beamer/commit/df194e877d05506e2931531e10b3d11f5b3bad56))
+
 # 1.2.0
 
 - **Fixed:** Using the `initialPath` instead of parent's path on nested `BeamerDelegate` during initialization from parent when the `updateFromParent` is set to `false` ([samdogg7](https://github.com/samdogg7))
