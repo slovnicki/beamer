@@ -586,7 +586,7 @@ If `key`s are not set, after beaming somewhere via e.g. `Beamer.of(context).beam
 
 **Check out all examples (with gifs) [here](https://github.com/slovnicki/beamer/tree/master/examples).**
 
-- [Location Builders](https://github.com/slovnicki/beamer/tree/master/examples/location_builders): a recreation of the example app from [this article](https://medium.com/flutter/learning-flutters-new-navigation-and-routing-system-7c9068155ade) where you can learn a lot about Navigator 2.0. 
+- [Location Builders](https://github.com/slovnicki/beamer/tree/master/examples/location_builders): a recreation of the example app from [this article](https://medium.com/flutter/learning-flutters-new-navigation-and-routing-system-7c9068155ade) where you can learn a lot about Navigator 2.0.
 This example showcases all 3 options of using `locationBuilder`.
 
 <p align="center">
@@ -773,6 +773,7 @@ locationBuilder: SimpleLocationBuilder(
 
 - rename `pages` to `buildPages` in `BeamLocation`s
 - pass `beamLocations` to `BeamerDelegate` instead of `BeamerParser`. See [Usage](#usage)
+
 ## From 0.4 to 0.5
 
 - instead of wrapping `MaterialApp` with `Beamer`, use `*App.router()`
@@ -812,8 +813,11 @@ See you at our list of awesome contributors!
 17. [luketg8](https://github.com/luketg8)
 18. [Zambrella](https://github.com/Zambrella)
 19. [piyushchauhan](https://github.com/piyushchauhan)
-20. [Lorenzohidalgo](https://github.com/Lorenzohidalgo)
-21. [timshadel](https://github.com/timshadel)
-22. [definev](https://github.com/definev)
-23. [britannio](https://github.com/britannio)
-24. [satyajitghana](https://github.com/satyajitghana)
+20. [marcguilera](https://github.com/marcguilera)
+21. [mat100payette](https://github.com/mat100payette)
+21. [Lorenzohidalgo](https://github.com/Lorenzohidalgo)
+22. [timshadel](https://github.com/timshadel)
+23. [definev](https://github.com/definev)
+24. [britannio](https://github.com/britannio)
+25. [satyajitghana](https://github.com/satyajitghana)
+26. [jpangburn](https://github.com/jpangburn)
