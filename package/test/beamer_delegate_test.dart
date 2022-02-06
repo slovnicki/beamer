@@ -255,12 +255,12 @@ void main() {
     expect(delegate.configuration.location, '/test');
 
     scaffoldKey.currentState?.openDrawer();
-    await tester.pump();
+    await tester.pumpAndSettle();
     expect(scaffoldKey.currentState?.isDrawerOpen, isTrue);
     expect(delegate.configuration.location, '/test');
 
     delegate.navigatorKey.currentState?.pop();
-    await tester.pump();
+    await tester.pumpAndSettle();
     expect(scaffoldKey.currentState?.isDrawerOpen, isFalse);
     expect(delegate.configuration.location, '/test');
   });

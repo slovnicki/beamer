@@ -138,7 +138,7 @@ void main() {
         ),
       );
       delegate.beamToNamed('/books');
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(delegate.currentPages.length, 2);
       expect(delegate.currentPages.last.key, const ValueKey('books'));
 
