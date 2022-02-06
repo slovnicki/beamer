@@ -316,6 +316,39 @@ void main() {
         expect(router.currentBeamLocation, isA<Location1>());
       });
 
+      testWidgets("with beamTo that doesn't replace", (tester) async {
+        final router = BeamerDelegate(
+          removeDuplicateHistory: false,
+          initialPath: '/l1',
+          locationBuilder: (routeInformation, _) {
+            if (routeInformation.location?.contains('l1') ?? false) {
+              return Location1(routeInformation);
+            }
+            return Location2(routeInformation);
+          },
+          guards: [
+            BeamGuard(
+              pathPatterns: ['/l2'],
+              check: (context, loc) => false,
+              beamTo: (context, _, __) =>
+                  Location1(const RouteInformation(location: '/l1')),
+              replaceCurrentStack: false,
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(
+          routerDelegate: router,
+          routeInformationParser: BeamerParser(),
+        ));
+
+        expect(router.currentBeamLocation, isA<Location1>());
+        router.beamToNamed('/l2');
+        await tester.pump();
+        expect(router.currentBeamLocation, isA<Location1>());
+        expect(router.beamingHistory.length, 2);
+      });
+
       testWidgets('with beamToNamed', (tester) async {
         final router = BeamerDelegate(
           initialPath: '/l1',
@@ -588,7 +621,7 @@ void main() {
       expect(delegate.beamingHistoryCompleteLength, 1);
     });
 
-    test('redirects to showPage BeamLocation', () {
+    test("redirects to showPage BeamLocation and doesn't replace", () {
       final guard = BeamGuard(
         pathPatterns: ['/guarded'],
         check: (_, __) => false,
@@ -615,6 +648,34 @@ void main() {
       );
       expect(delegate.currentBeamLocation, isA<GuardShowPage>());
       expect(delegate.beamingHistoryCompleteLength, 2);
+    });
+
+    test('redirects to showPage BeamLocation and replaces', () {
+      final guard = BeamGuard(
+        pathPatterns: ['/guarded'],
+        check: (_, __) => false,
+        showPage: BeamPage(child: Container()),
+      );
+
+      final delegate = _createDelegate(guard);
+      final guardedBeamLocation = _createGuardedBeamLocation(delegate);
+
+      delegate.beamToNamed('/allowed');
+
+      guard.apply(
+        MockBuildContext(),
+        delegate,
+        delegate.currentBeamLocation,
+        delegate.currentPages,
+        guardedBeamLocation,
+      );
+
+      expect(
+        delegate.currentBeamLocation.state.routeInformation.location,
+        '/guarded',
+      );
+      expect(delegate.currentBeamLocation, isA<GuardShowPage>());
+      expect(delegate.beamingHistoryCompleteLength, 1);
     });
   });
 
