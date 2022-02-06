@@ -2,18 +2,21 @@
 
 - **Fixed:** Using the `initialPath` instead of parent's path on nested `BeamerDelegate` during initialization from parent when the `updateFromParent` is set to `false` ([samdogg7](https://github.com/samdogg7))
 
-### Documentation:
-  - Added a section about Page Keys to README ([Goddchen](https://github.com/Goddchen))
-  - Added a sentence about browser's back button to README
-  - Fixed and improved grammar in doc comments ([ggirotto](https://github.com/ggirotto))
+### Documentation
 
-### Examples:
-  - Fixed analyzer warnings ([Goddchen](https://github.com/Goddchen))
-  - Updated [authentication_bloc example](https://github.com/slovnicki/beamer/tree/master/examples/authentication_bloc) to bloc v8 ([Lorenzohidalgo](https://github.com/Lorenzohidalgo))
+- Added a section about Page Keys to README ([Goddchen](https://github.com/Goddchen))
+- Added a sentence about browser's back button to README
+- Fixed and improved grammar in doc comments ([ggirotto](https://github.com/ggirotto))
+
+### Examples
+
+- Fixed analyzer warnings ([Goddchen](https://github.com/Goddchen))
+- Updated [authentication_bloc example](https://github.com/slovnicki/beamer/tree/master/examples/authentication_bloc) to bloc v8 ([Lorenzohidalgo](https://github.com/Lorenzohidalgo))
 
 # 1.1.0
 
 Most of this release is [matuella](https://github.com/matuella)'s directly and indirectly contributions. Many thanks!
+
 - **Add:** a link to [Medium article](https://medium.com/flutter-community/beamer-v1-0-0-is-out-whats-new-and-how-to-migrate-b251b3758e3c) for "Migrating" section in README
 - **Add:** lint rules `prefer_single_quotes`, `always_use_package_imports`, `omit_local_variable_types`, `prefer_final_locals` and `comment_references`.
 - **Fix:** disposing histories on `beamBack` ([#417](https://github.com/slovnicki/beamer/issues/417))
@@ -24,25 +27,25 @@ Most of this release is [matuella](https://github.com/matuella)'s directly and i
 # 1.0.0
 
 - **BREAKING:** "top-level state", the one in `BeamerDelegate` is now `RouteInformation` instead of `BeamState`
-    - `BeamerDelegate.state` doesn't exist anymore and is replaced with `BeamerDelegate.configuration` which is `RouteInformation` and not `BeamState`
-    - `locationBuilder` now works with `RouteInformation` and `BeamConfiguration` instead of `BeamState`
-    - `super()` constructor on `BeamLocation` now takes optional `RouteInformation` instead of `BeamState`
-    - in order to continue using custom `BeamLocation`s with `BeamState` state, generic type has to be specified; `class MyBeamLocation extends BeamLocation<BeamState>`
+  - `BeamerDelegate.state` doesn't exist anymore and is replaced with `BeamerDelegate.configuration` which is `RouteInformation` and not `BeamState`
+  - `locationBuilder` now works with `RouteInformation` and `BeamConfiguration` instead of `BeamState`
+  - `super()` constructor on `BeamLocation` now takes optional `RouteInformation` instead of `BeamState`
+  - in order to continue using custom `BeamLocation`s with `BeamState` state, generic type has to be specified; `class MyBeamLocation extends BeamLocation<BeamState>`
 - **BREAKING:** `pathBlueprints` is renamed to `pathPatterns`
-    - `BeamLocation.pathPatterns` is `List<Pattern>`
-    - `BeamState.pathBlueprintSegments` renamed to `BeamState.pathPatternSegments`
-    - `BeamGuard.pathBlueprints` renamed to `BeamGuard.pathPatterns`
+  - `BeamLocation.pathPatterns` is `List<Pattern>`
+  - `BeamState.pathBlueprintSegments` renamed to `BeamState.pathPatternSegments`
+  - `BeamGuard.pathBlueprints` renamed to `BeamGuard.pathPatterns`
 - **BREAKING:** `SimpleLocationBuilder` is renamed to `RoutesLocationBuilder`
-    - also the `SimpleBeamLocation` is renamed to `RoutesBeamLocation`
-    - `routes` values now additionally receive `data`
+  - also the `SimpleBeamLocation` is renamed to `RoutesBeamLocation`
+  - `routes` values now additionally receive `data`
 - **BREAKING:** `beamStateHistory` and `beamLocationHistory` have been replaced with `beamingHistory` that is a `List<BeamLocation>` and each `BeamLocation` has `history` that is `List<HistoryElement>` where `HistoryElement` holds `RouteInformation` and `BeamParameters`.
-    - `clearBeamStateHistory` and `clearBeamLocationHistory` have been removed.
+  - `clearBeamStateHistory` and `clearBeamLocationHistory` have been removed.
 - **BREAKING:** `BeamerDelegate.listener` has been renamed to `BeamerDelegate.routeListener`.
 - **BREAKING:** The property `pageRouteBuilder` in `BeamPage` is replaced with a new property `routeBuilder` which works with any `RouteBuilder` not just `PageRouteBuilder`.
 - **BREAKING:** `BeamGuard` `beamTo` receives the origin and target `BeamLocation`s alongside `BuildContext`.
-    - `replaceCurrent` was removed in favor of `beamToReplacement`.
+  - `replaceCurrent` was removed in favor of `beamToReplacement`.
 - **BREAKING:** `BeamGuard` `beamToNamed` is now a function that receives the origin and target `BeamLocation`s and returns a `String`.
-    - `replaceCurrent` was removed in favor of `beamToNamedReplacement`.
+  - `replaceCurrent` was removed in favor of `beamToNamedReplacement`.
 - **Add:** [guard_riverpod example](https://github.com/slovnicki/beamer/tree/master/examples/guard_riverpod)
 - **Add:** [firebase_core example](https://github.com/slovnicki/beamer/tree/master/examples/firebase_core)
 - **Add:** [firebase_auth example](https://github.com/slovnicki/beamer/tree/master/examples/firebase_auth)
@@ -187,7 +190,6 @@ Most of this release is [matuella](https://github.com/matuella)'s directly and i
 - **Add** `popTo`/`popToNamed` options for beaming
 - **Add** `onPopPage` to `BeamLocation`
 
-
 # 0.10.5
 
 - **Remove** `NavigationNotifier.currentLocation` (not needed)
@@ -218,7 +220,6 @@ Most of this release is [matuella](https://github.com/matuella)'s directly and i
 - **Add** `BeamState` for more declarative experience
 
 See [migration details](https://pub.dev/packages/beamer#from-09-to-010)
-
 
 # 0.9.3
 
