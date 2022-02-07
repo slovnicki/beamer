@@ -94,13 +94,16 @@ class HomeScreen extends StatelessWidget {
             )
           else
             Expanded(
-              child: Beamer(
-                key: _beamerKey,
-                routerDelegate: BeamerDelegate(
-                  locationBuilder: (routeInformation, _) =>
-                      routeInformation.location!.contains('articles')
-                          ? ArticlesLocation(routeInformation)
-                          : BooksLocation(routeInformation),
+              child: ClipRRect(
+                child: Beamer(
+                  key: _beamerKey,
+                  routerDelegate: BeamerDelegate(
+                    transitionDelegate: const NoAnimationTransitionDelegate(),
+                    locationBuilder: (routeInformation, _) =>
+                        routeInformation.location!.contains('articles')
+                            ? ArticlesLocation(routeInformation)
+                            : BooksLocation(routeInformation),
+                  ),
                 ),
               ),
             ),
@@ -142,11 +145,13 @@ class BooksScreen extends StatelessWidget {
           ),
           Container(width: 1, color: Colors.blue),
           Expanded(
-            child: Beamer(
-              key: _beamerKey,
-              routerDelegate: BeamerDelegate(
-                locationBuilder: (routeInformation, _) =>
-                    BooksContentLocation(routeInformation),
+            child: ClipRRect(
+              child: Beamer(
+                key: _beamerKey,
+                routerDelegate: BeamerDelegate(
+                  locationBuilder: (routeInformation, _) =>
+                      BooksContentLocation(routeInformation),
+                ),
               ),
             ),
           ),
@@ -221,11 +226,13 @@ class ArticlesScreen extends StatelessWidget {
           ),
           Container(width: 1, color: Colors.blue),
           Expanded(
-            child: Beamer(
-              key: _beamerKey,
-              routerDelegate: BeamerDelegate(
-                locationBuilder: (routeInformation, _) =>
-                    ArticlesContentLocation(routeInformation),
+            child: ClipRRect(
+              child: Beamer(
+                key: _beamerKey,
+                routerDelegate: BeamerDelegate(
+                  locationBuilder: (routeInformation, _) =>
+                      ArticlesContentLocation(routeInformation),
+                ),
               ),
             ),
           ),
