@@ -353,12 +353,6 @@ class BooksLocation extends BeamLocation<BooksState> {
   }
 
   @override
-  void updateState(RouteInformation routeInformation) {
-    final booksState = BooksState().fromRouteInformation(routeInformation);
-    state.updateWith(booksState.isBooksListOn, booksState.selectedBookId);
-  }
-
-  @override
   void disposeState() {
     state.removeListener(notifyListeners);
     super.disposeState();
