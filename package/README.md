@@ -306,6 +306,12 @@ class BooksState extends ChangeNotifier with RouteInformationSerializable {
     notifyListeners();
   }
 
+  void updateWith(bool isBooksListOn, int? selectedBookId) {
+    _isBooksListOn = isBooksListOn;
+    _selectedBookId = selectedBookId;
+    notifyListeners();
+  }
+
   @override
   BooksState fromRouteInformation(RouteInformation routeInformation) {
     final uri = Uri.parse(routeInformation.location ?? '/');
@@ -350,6 +356,12 @@ class BooksLocation extends BeamLocation<BooksState> {
   void initState() {
     super.initState();
     state.addListener(notifyListeners);
+  }
+
+  @override
+  void updateState(RouteInformation routeInformation) {
+    final booksState = BooksState().fromRouteInformation(routeInformation);
+    state.updateWith(booksState.isBooksListOn, booksState.selectedBookId);
   }
 
   @override
