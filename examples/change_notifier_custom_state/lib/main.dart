@@ -145,11 +145,8 @@ class BooksLocation extends BeamLocation<BooksState> {
   BooksLocation(RouteInformation routeInformation) : super(routeInformation);
 
   @override
-  BooksState createState(RouteInformation routeInformation) {
-    final state = BooksState().fromRouteInformation(routeInformation)
-      ..addListener(notifyListeners);
-    return state;
-  }
+  BooksState createState(RouteInformation routeInformation) =>
+      BooksState().fromRouteInformation(routeInformation);
 
   @override
   void initState() {
