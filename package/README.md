@@ -346,7 +346,7 @@ class BooksLocation extends BeamLocation<BooksState> {
 
   @override
   BooksState createState(RouteInformation routeInformation) =>
-      BooksState().fromRouteInformation(routeInformation);  
+      BooksState().fromRouteInformation(routeInformation);
 
   @override
   void initState() {
