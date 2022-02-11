@@ -228,6 +228,14 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
     } else {
       if (routeInformation == null) {
         updateState(history.last.routeInformation);
+      } else if (routeInformation.location == state.routeInformation.location) {
+        // if the new route information is the same as in the state it means
+        // the state changed first and notified listeners, so updating it
+        // will be unnecessary. Let's just add route to history with [tryPoppingHistory] set to true
+        addToHistory(
+          state.routeInformation,
+          beamParameters ?? const BeamParameters(),
+        );
       } else {
         updateState(routeInformation);
         addToHistory(
