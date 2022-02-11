@@ -19,6 +19,15 @@ enum BeamPageType {
   /// An enum for a page type with slide transition.
   slideTransition,
 
+  /// An enum for a page type with slide right transition.
+  slideRightTransition,
+
+  /// An enum for a page type with slide left transition.
+  slideLeftTransition,
+
+  /// An enum for a page type with slide left transition.
+  slideTopTransition,
+
   /// An enum for a page type with scale transition.
   scaleTransition,
 
@@ -257,6 +266,45 @@ class BeamPage extends Page {
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
             position: animation.drive(
                 Tween(begin: const Offset(0, 1), end: const Offset(0, 0))
+                    .chain(CurveTween(curve: Curves.ease))),
+            child: child,
+          ),
+        );
+      case BeamPageType.slideRightTransition:
+        return PageRouteBuilder(
+          fullscreenDialog: fullScreenDialog,
+          opaque: opaque,
+          settings: this,
+          pageBuilder: (_, __, ___) => child,
+          transitionsBuilder: (_, animation, __, child) => SlideTransition(
+            position: animation.drive(
+                Tween(begin: const Offset(1, 0), end: const Offset(0, 0))
+                    .chain(CurveTween(curve: Curves.ease))),
+            child: child,
+          ),
+        );
+      case BeamPageType.slideLeftTransition:
+        return PageRouteBuilder(
+          fullscreenDialog: fullScreenDialog,
+          opaque: opaque,
+          settings: this,
+          pageBuilder: (_, __, ___) => child,
+          transitionsBuilder: (_, animation, __, child) => SlideTransition(
+            position: animation.drive(
+                Tween(begin: const Offset(-1, 0), end: const Offset(0, 0))
+                    .chain(CurveTween(curve: Curves.ease))),
+            child: child,
+          ),
+        );
+      case BeamPageType.slideTopTransition:
+        return PageRouteBuilder(
+          fullscreenDialog: fullScreenDialog,
+          opaque: opaque,
+          settings: this,
+          pageBuilder: (_, __, ___) => child,
+          transitionsBuilder: (_, animation, __, child) => SlideTransition(
+            position: animation.drive(
+                Tween(begin: const Offset(0, -1), end: const Offset(0, 0))
                     .chain(CurveTween(curve: Curves.ease))),
             child: child,
           ),
