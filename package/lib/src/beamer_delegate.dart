@@ -617,22 +617,22 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     if (!canBeamBack) {
       return false;
     }
-    late final HistoryElement targetHistoryElement;
-    final lastHistorylength = beamingHistory.last.history.length;
     // first we try to beam back within last BeamLocation
-    if (lastHistorylength > 1) {
+    // i.e. we just pop its last history element id possible
+    if (beamingHistory.last.history.length > 1) {
       beamingHistory.last.history.removeLast();
-      targetHistoryElement = beamingHistory.last.history.removeLast();
     } else {
       // here we know that beamingHistory.length > 1 (because of canBeamBack)
       // and that beamingHistory.last.history.length == 1
       // so this last (only) entry is removed along with BeamLocation
       _disposeBeamLocation(beamingHistory.last);
       beamingHistory.removeLast();
-      final targetBeamLocation = beamingHistory.last;
-      targetHistoryElement = targetBeamLocation.history.removeLast();
-      _initBeamLocation(targetBeamLocation);
+      _initBeamLocation(beamingHistory.last);
     }
+
+    _beamLocationCandidate = beamingHistory.last;
+    _beamLocationCandidate.update();
+    final targetHistoryElement = _beamLocationCandidate.history.last;
 
     update(
       configuration: targetHistoryElement.routeInformation.copyWith(),
@@ -640,6 +640,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         transitionDelegate: beamBackTransitionDelegate,
       ),
       data: data,
+      buildBeamLocation: false,
       replaceRouteInformation: replaceRouteInformation,
     );
 
