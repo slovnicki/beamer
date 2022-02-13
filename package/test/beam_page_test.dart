@@ -523,6 +523,21 @@ void main() {
                 ),
                 child: const Text('Child'),
               ),
+          '/1/2/3/4/5/6/7': (context, state, data) => const BeamPage(
+                key: ValueKey('/1/2/3/4/5/6/7'),
+                type: BeamPageType.slideRightTransition,
+                child: Scaffold(body: Text('7')),
+              ),
+          '/1/2/3/4/5/6/7/8': (context, state, data) => const BeamPage(
+                key: ValueKey('/1/2/3/4/5/6/7/8'),
+                type: BeamPageType.slideLeftTransition,
+                child: Scaffold(body: Text('8')),
+              ),
+          '/1/2/3/4/5/6/7/8/9': (context, state, data) => const BeamPage(
+                key: ValueKey('/1/2/3/4/5/6/7/8/9'),
+                type: BeamPageType.slideTopTransition,
+                child: Scaffold(body: Text('9')),
+              ),
         },
       ),
     );
@@ -577,6 +592,33 @@ void main() {
       await tester.pump();
       expect(find.text('6'), findsOneWidget);
       expect(find.text('Child'), findsOneWidget);
+
+      delegate.beamToNamed('/1/2/3/4/5/6/7');
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 8));
+      offset = tester.getTopLeft(find.text('7'));
+      expect(offset.dx, greaterThan(0.0));
+      expect(offset.dx, lessThan(800.0));
+      expect(offset.dy, equals(0.0));
+      expect(offset.dy, equals(0.0));
+
+      delegate.beamToNamed('/1/2/3/4/5/6/7/8');
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 8));
+      offset = tester.getTopLeft(find.text('8'));
+      expect(offset.dx, greaterThan(-800.0));
+      expect(offset.dx, lessThan(0.0));
+      expect(offset.dy, equals(0.0));
+      expect(offset.dy, equals(0.0));
+
+      delegate.beamToNamed('/1/2/3/4/5/6/7/8/9');
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 8));
+      offset = tester.getTopLeft(find.text('9'));
+      expect(offset.dx, equals(0.0));
+      expect(offset.dx, equals(0.0));
+      expect(offset.dy, greaterThan(-600.0));
+      expect(offset.dy, lessThan(0.0));
     });
 
     testWidgets('pageless no animation transition', (tester) async {

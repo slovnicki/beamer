@@ -25,7 +25,7 @@ enum BeamPageType {
   /// An enum for a page type with slide left transition.
   slideLeftTransition,
 
-  /// An enum for a page type with slide left transition.
+  /// An enum for a page type with slide top transition.
   slideTopTransition,
 
   /// An enum for a page type with scale transition.
