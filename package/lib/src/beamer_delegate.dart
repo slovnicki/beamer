@@ -408,7 +408,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     }
 
     // update browser history
-    if (_parent != null && updateRouteInformation && active) {
+    // if this is from nested Beamer
+    // or
+    // if rebuild was false (browser will not be notified implicitly)
+    if (updateRouteInformation && active && (_parent != null || !rebuild)) {
       this.updateRouteInformation(this.configuration);
     }
 
@@ -763,6 +766,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         state: configuration.state,
       );
     } else {
+      if (updateParent) {
+        _parent!.configuration = routeInformation.copyWith();
+      }
       _parent!.updateRouteInformation(routeInformation);
     }
   }
