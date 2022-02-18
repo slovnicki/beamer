@@ -123,4 +123,31 @@ void main() {
       throwsA(isA<FlutterError>()),
     );
   });
+
+  group('Creating new configuration for BeamerDelegate', () {
+    test('Trimming', () {
+      expect(Utils.trimmed(null), '');
+      expect(Utils.trimmed('/'), '/');
+      expect(Utils.trimmed('/xxx/'), '/xxx');
+    });
+
+    test('Appending', () {
+      const current = RouteInformation(location: '/current');
+      expect(
+        Utils.maybeAppend(current, const RouteInformation()).location,
+        current.location,
+      );
+      expect(
+        Utils.maybeAppend(current, const RouteInformation(location: 'incoming'))
+            .location,
+        '/current/incoming',
+      );
+      expect(
+        Utils.maybeAppend(
+                current, const RouteInformation(location: '/incoming'))
+            .location,
+        '/incoming',
+      );
+    });
+  });
 }

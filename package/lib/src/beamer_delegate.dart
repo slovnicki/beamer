@@ -359,13 +359,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         ? SystemNavigator.selectSingleEntryHistory()
         : SystemNavigator.selectMultiEntryHistory();
 
-    // clean the configuration, i.e. trim trailing '/'
-    configuration = configuration?.copyWith(
-      location: Utils.trimmed(configuration.location),
-    );
-    // store configuration and use current if null
-    this.configuration = configuration ??
-        currentBeamLocation.history.last.routeInformation.copyWith();
+    this.configuration = configuration != null
+        ? Utils.createNewConfiguration(this.configuration, configuration)
+        : currentBeamLocation.state.routeInformation.copyWith();
 
     // update beam parameters
     _currentBeamParameters = beamParameters ?? _currentBeamParameters;

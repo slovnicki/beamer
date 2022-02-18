@@ -231,13 +231,51 @@ abstract class Utils {
   /// Removes the trailing / in an URI String and returns the result.
   ///
   /// If there is no trailing /, returns the input.
-  static String trimmed(String? uri) {
-    if (uri == null) {
-      return '/';
+  static String trimmed(String? uriString) {
+    if (uriString == null) {
+      return '';
     }
-    if (uri.length > 1 && uri.endsWith('/')) {
-      return uri.substring(0, uri.length - 1);
+    if (uriString.length > 1 && uriString.endsWith('/')) {
+      return uriString.substring(0, uriString.length - 1);
     }
-    return uri;
+    return uriString;
+  }
+
+  /// If incoming RouteInformation doesn't start with slash,
+  /// append it to the current RouteInformation.location.
+  ///
+  /// Else, return incoming RouteInformation
+  static RouteInformation maybeAppend(
+    RouteInformation current,
+    RouteInformation incoming,
+  ) {
+    final incomingLocation = incoming.location;
+    if (incomingLocation == null) {
+      return current.copyWith();
+    }
+    if (!incomingLocation.startsWith('/')) {
+      return current.copyWith(
+        location: current.location?.endsWith('/') ?? false
+            ? '${current.location}$incomingLocation'
+            : '${current.location}/$incomingLocation',
+      );
+    }
+    return incoming;
+  }
+
+  /// Creates a new configuration for [BeamerDelegate.update].
+  ///
+  /// Takes into consideration trimming and potentially appending
+  /// the incoming to current (used in relative beaming).
+  ///
+  /// See [trimmed] and [maybeAppend].
+  static RouteInformation createNewConfiguration(
+    RouteInformation current,
+    RouteInformation incoming,
+  ) {
+    incoming = incoming.copyWith(
+      location: trimmed(incoming.location),
+    );
+    return maybeAppend(current, incoming);
   }
 }

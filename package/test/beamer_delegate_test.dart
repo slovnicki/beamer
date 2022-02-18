@@ -414,57 +414,85 @@ void main() {
     });
   });
 
-  testWidgets(
-      'updating route information without updating parent or rebuilding',
-      (tester) async {
-    final childDelegate = BeamerDelegate(
-      updateParent: false,
-      locationBuilder: RoutesLocationBuilder(
-        routes: {
-          '/': (context, state, data) => Container(),
-          '/test': (context, state, data) => Container(),
-          '/test2': (context, state, data) => Container(),
-        },
-      ),
-    );
-    final rootDelegate = BeamerDelegate(
-      locationBuilder: RoutesLocationBuilder(
-        routes: {
-          '*': (context, state, data) => BeamPage(
-                key: const ValueKey('always-the-same'),
-                child: Beamer(
-                  routerDelegate: childDelegate,
+  group('update without rebuild', () {
+    test('no rebuild updates route information (configuration) to anything',
+        () {
+      final delegate = BeamerDelegate(
+        locationBuilder: RoutesLocationBuilder(
+          routes: {
+            '/': (_, __, ___) => Container(),
+            '/test': (_, __, ___) => Container(),
+          },
+        ),
+      );
+
+      expect(delegate.configuration.location, '/');
+
+      delegate.update(
+        configuration: const RouteInformation(location: '/test'),
+        rebuild: false,
+      );
+      expect(delegate.configuration.location, '/test');
+
+      delegate.update(
+        configuration: const RouteInformation(location: '/any'),
+        rebuild: false,
+      );
+      expect(delegate.configuration.location, '/any');
+    });
+
+    testWidgets(
+        'updating route information without updating parent or rebuilding',
+        (tester) async {
+      final childDelegate = BeamerDelegate(
+        updateParent: false,
+        locationBuilder: RoutesLocationBuilder(
+          routes: {
+            '/': (context, state, data) => Container(),
+            '/test': (context, state, data) => Container(),
+            '/test2': (context, state, data) => Container(),
+          },
+        ),
+      );
+      final rootDelegate = BeamerDelegate(
+        locationBuilder: RoutesLocationBuilder(
+          routes: {
+            '*': (context, state, data) => BeamPage(
+                  key: const ValueKey('always-the-same'),
+                  child: Beamer(
+                    routerDelegate: childDelegate,
+                  ),
                 ),
-              ),
-        },
-      ),
-    );
-    await tester.pumpWidget(
-      MaterialApp.router(
-        routeInformationParser: BeamerParser(),
-        routerDelegate: rootDelegate,
-      ),
-    );
+          },
+        ),
+      );
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: rootDelegate,
+        ),
+      );
 
-    rootDelegate.beamToNamed('/test');
-    await tester.pump();
+      rootDelegate.beamToNamed('/test');
+      await tester.pump();
 
-    expect(rootDelegate.configuration.location, '/test');
-    expect(childDelegate.configuration.location, '/test');
-    expect(childDelegate.parent, rootDelegate);
+      expect(rootDelegate.configuration.location, '/test');
+      expect(childDelegate.configuration.location, '/test');
+      expect(childDelegate.parent, rootDelegate);
 
-    childDelegate.beamToNamed('/test2');
-    await tester.pump();
+      childDelegate.beamToNamed('/test2');
+      await tester.pump();
 
-    expect(rootDelegate.configuration.location, '/test');
-    expect(childDelegate.configuration.location, '/test2');
+      expect(rootDelegate.configuration.location, '/test');
+      expect(childDelegate.configuration.location, '/test2');
 
-    childDelegate.update(
-      configuration: const RouteInformation(location: '/xx'),
-      rebuild: false,
-    );
-    expect(rootDelegate.configuration.location, '/test');
-    expect(childDelegate.configuration.location, '/xx');
+      childDelegate.update(
+        configuration: const RouteInformation(location: '/xx'),
+        rebuild: false,
+      );
+      expect(rootDelegate.configuration.location, '/test');
+      expect(childDelegate.configuration.location, '/xx');
+    });
   });
 
   group('clearBeamingHistoryOn:', () {
@@ -652,5 +680,30 @@ void main() {
     guardCheck.value = false;
 
     expect(delegate.configuration.location, '/r2');
+  });
+
+  group('Relative beaming', () {
+    test('incoming configuration is appended when it does not start with /',
+        () {
+      final delegate = BeamerDelegate(
+        locationBuilder: RoutesLocationBuilder(
+          routes: {
+            '/': (context, state, data) => Container(),
+            '/t1': (context, state, data) => Container(),
+            '/t1/t2': (context, state, data) => Container(),
+          },
+        ),
+      );
+
+      delegate.beamToNamed('t1');
+      expect(delegate.configuration.location, '/t1');
+      expect(
+          delegate.currentBeamLocation.state.routeInformation.location, '/t1');
+
+      delegate.beamToNamed('t2');
+      expect(delegate.configuration.location, '/t1/t2');
+      expect(delegate.currentBeamLocation.state.routeInformation.location,
+          '/t1/t2');
+    });
   });
 }
