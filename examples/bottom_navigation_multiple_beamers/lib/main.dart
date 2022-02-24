@@ -193,7 +193,6 @@ class _AppScreenState extends State<AppScreen> {
     ),
     BeamerDelegate(
       initialPath: '/articles',
-      updateFromParent: false,
       locationBuilder: (routeInformation, _) {
         if (routeInformation.location!.contains('articles')) {
           return ArticlesLocation(routeInformation);
@@ -203,22 +202,15 @@ class _AppScreenState extends State<AppScreen> {
     ),
   ];
 
-  void _setStateListener() => setState(() {});
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    Beamer.of(context).addListener(_setStateListener);
+    final uriString = Beamer.of(context).configuration.location!;
+    currentIndex = uriString.contains('books') ? 0 : 1;
   }
 
   @override
   Widget build(BuildContext context) {
-    final uriString = Beamer.of(context).configuration.location!;
-    currentIndex = uriString.contains('books') ? 0 : 1;
-
-    routerDelegates[currentIndex].active = true;
-    routerDelegates[1 - currentIndex].active = false;
-
     return Scaffold(
       body: IndexedStack(
         index: currentIndex,
@@ -243,22 +235,12 @@ class _AppScreenState extends State<AppScreen> {
         ],
         onTap: (index) {
           if (index != currentIndex) {
-            routerDelegates[currentIndex].active = false;
-            routerDelegates[1 - currentIndex].active = true;
-
             setState(() => currentIndex = index);
-
             routerDelegates[currentIndex].update(rebuild: false);
           }
         },
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    Beamer.of(context).removeListener(_setStateListener);
-    super.dispose();
   }
 }
 

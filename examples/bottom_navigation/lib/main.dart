@@ -203,7 +203,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
         BottomNavigationBarItem(label: 'Articles', icon: Icon(Icons.article)),
       ],
       onTap: (index) => _beamerDelegate.beamToNamed(
-        index == 0 ? '/books' : 'articles',
+        index == 0 ? '/books' : '/articles',
       ),
     );
   }
