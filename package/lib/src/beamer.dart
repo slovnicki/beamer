@@ -35,18 +35,14 @@ class Beamer extends StatefulWidget {
 
   /// Access Beamer's [routerDelegate].
   static BeamerDelegate of(BuildContext context, {bool root = false}) {
-    BeamerDelegate _delegate;
     try {
-      _delegate = Router.of(context).routerDelegate as BeamerDelegate;
+      final delegate = Router.of(context).routerDelegate as BeamerDelegate;
+      return root ? delegate.root : delegate;
     } catch (e) {
       assert(BeamerProvider.of(context) != null,
           'There was no Router nor BeamerProvider in current context. If using MaterialApp.builder, wrap the MaterialApp.router in BeamerProvider to which you pass the same routerDelegate as to MaterialApp.router.');
       return BeamerProvider.of(context)!.routerDelegate;
     }
-    if (root) {
-      return _delegate.root;
-    }
-    return _delegate;
   }
 
   /// Change the strategy to use for handling browser URL to `PathUrlStrategy`.
@@ -60,6 +56,9 @@ class Beamer extends StatefulWidget {
 
 /// A [State] for [Beamer].
 class BeamerState extends State<Beamer> {
+  /// A parent Router of this Beamer / Router.
+  late Router parent;
+
   /// A getter for [BeamerDelegate] of the [Beamer] whose state is this.
   BeamerDelegate get routerDelegate => widget.routerDelegate;
 
@@ -69,14 +68,12 @@ class BeamerState extends State<Beamer> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    routerDelegate.parent ??=
-        Router.of(context).routerDelegate as BeamerDelegate;
+    parent = Router.of(context);
+    routerDelegate.parent = parent.routerDelegate as BeamerDelegate;
   }
 
   @override
   Widget build(BuildContext context) {
-    final parent = Router.of(context);
-    routerDelegate.parent ??= parent.routerDelegate as BeamerDelegate;
     final backButtonDispatcher = widget.backButtonDispatcher ??
         ((parent.backButtonDispatcher is BeamerBackButtonDispatcher &&
                 widget.createBackButtonDispatcher)

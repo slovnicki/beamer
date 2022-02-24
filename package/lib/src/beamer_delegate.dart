@@ -55,14 +55,31 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   BeamerDelegate? _parent;
 
+  final Set<BeamerDelegate> _children = {};
+
+  /// Takes priority over all other siblings,
+  /// i.e. sets itself as active and all other siblings as inactive.
+  void takePriority() {
+    if (_parent?._children.isNotEmpty ?? false) {
+      for (var child in _parent!._children) {
+        child.active = false;
+      }
+    }
+    active = true;
+  }
+
   /// A delegate of a parent of the [Beamer] that has this delegate.
   ///
   /// This is not null only if multiple [Beamer]s are used;
   /// `*App.router` and at least one more [Beamer] in the Widget tree.
   BeamerDelegate? get parent => _parent;
   set parent(BeamerDelegate? parent) {
-    _parent = parent!;
-    _initialize();
+    if (parent == null || _parent == parent) {
+      return;
+    }
+    _parent = parent;
+    _parent!._children.add(this);
+    _initializeChild();
     if (updateFromParent) {
       _parent!.addListener(_updateFromParent);
     }
@@ -350,7 +367,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     bool updateParent = true,
     bool updateRouteInformation = true,
     bool replaceRouteInformation = false,
+    bool takePriority = true,
   }) {
+    if (takePriority) {
+      this.takePriority();
+    }
+
     if (_buildInProgress) {
       rebuild = false;
     }
@@ -913,6 +935,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   void _setBrowserTitle(BuildContext context) {
     if (active && kIsWeb && setBrowserTabTitle) {
+      // print('setting browser title.... ${currentBeamLocation}');
       SystemChrome.setApplicationSwitcherDescription(
           ApplicationSwitcherDescription(
         label: _currentPages.last.title ??
@@ -967,37 +990,54 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     return route.didPop(result);
   }
 
-  void _initialize() {
-    final parent = _parent;
-    if (parent == null) {
-      return;
+  // When a nested Beamer gets into a Widget tree, it must initialize.
+  // It will try to take the configuration from parent,
+  // but act differently depending on whether it can handle that configuration.
+  void _initializeChild() {
+    final parentConfiguration = _parent!.configuration.copyWith();
+    if (initializeFromParent) {
+      _beamLocationCandidate =
+          locationBuilder(parentConfiguration, _currentBeamParameters);
     }
-    configuration = initializeFromParent
-        ? parent.configuration.copyWith()
-        : parent.configuration.copyWith(location: initialPath);
-    var location = locationBuilder(
-      configuration,
-      _currentBeamParameters.copyWith(),
-    );
-    if (location is NotFound) {
-      configuration = RouteInformation(location: initialPath);
-      location = locationBuilder(
-        configuration,
-        _currentBeamParameters.copyWith(),
+
+    // If this couldn't handle parents configuration,
+    // it will update itself to initialPath and declare itself inactive.
+    if (_beamLocationCandidate is EmptyBeamLocation ||
+        _beamLocationCandidate is NotFound) {
+      update(
+        configuration: RouteInformation(location: initialPath),
+        rebuild: false,
+        updateParent: false,
+        updateRouteInformation: false,
+        takePriority: false,
+      );
+      active = false;
+    } else {
+      update(
+        configuration: parentConfiguration,
+        rebuild: false,
+        updateParent: false,
+        updateRouteInformation: false,
       );
     }
-    _beamLocationCandidate = location;
   }
 
   void _update() => update();
 
+  // Updates only if it can handle the configuration
   void _updateFromParent({bool rebuild = true}) {
-    update(
-      configuration: _parent!.configuration.copyWith(),
-      rebuild: rebuild,
-      updateParent: false,
-      updateRouteInformation: false,
-    );
+    final parentConfiguration = _parent!.configuration.copyWith();
+    final beamLocation =
+        locationBuilder(parentConfiguration, _currentBeamParameters);
+
+    if (beamLocation is! NotFound) {
+      update(
+        configuration: parentConfiguration,
+        rebuild: false,
+        updateParent: false,
+        updateRouteInformation: false,
+      );
+    }
   }
 
   void _updateFromCurrentBeamLocation({bool rebuild = true}) {
@@ -1016,8 +1056,30 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     );
   }
 
+  // This is a temporary implementation
+  // as there is a ?bug? when navigating with browser buttons
+  // that keeps creating new delegates **but** persisting the children List.
+  // The children list then grows unnecessary.
+  //
+  // Also tried with navigatorKey, but this is also newly created
+  // Using initialPath is not perfect,
+  // but should be good until I investigate further.
+  //
+  // These overrides are for the inserting into a Set of children
+  @override
+  bool operator ==(other) {
+    if (other is! BeamerDelegate) {
+      return false;
+    }
+    return initialPath == other.initialPath;
+  }
+
+  @override
+  int get hashCode => initialPath.hashCode;
+
   @override
   void dispose() {
+    _children.clear();
     _parent?.removeListener(_updateFromParent);
     _disposeBeamLocation(currentBeamLocation);
     currentBeamLocation.dispose();

@@ -321,7 +321,7 @@ void main() {
                   routerDelegate: childDelegate,
                   backButtonDispatcher: BeamerChildBackButtonDispatcher(
                     parent: rootBackButtonDispatcher,
-                    delegate: childDelegate..active = false,
+                    delegate: childDelegate,
                     onBack: (delegate) async => true,
                   ),
                 ),
@@ -340,6 +340,7 @@ void main() {
       );
       delegate.beamToNamed('/test');
       await tester.pump();
+      childDelegate.active = false;
       await rootBackButtonDispatcher.invokeCallback(Future.value(false));
       expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
     });
