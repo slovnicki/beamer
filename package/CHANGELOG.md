@@ -1,3 +1,18 @@
+# 1.4.0
+
+- **Added:** Relative beaming, i.e. being able to call `beamToNamed('path')` instead of `beamToNamed('/my/path')` if we're already at `/my`
+- **Added:** New `BeamPageType`s; `slideRightTransition`, `slideLeftTransition` and `slideTopTransition` ([Shiba-Kar](https://github.com/Shiba-Kar), [#477](https://github.com/slovnicki/beamer/pull/477))
+- **Improved:** Interactions between nested and sibling Beamers by having children automatically take priority and more carefully handle locally not found cases
+- **Fixed:** Unnecessary update of `ChangeNotifier` custom state ([jmysliv](https://github.com/jmysliv), [#475](https://github.com/slovnicki/beamer/pull/475))
+- **Fixed::** Target `BeamLocation` initialization during `beamBack`
+- **Fixed:** Insufficiently detailed automatic `BeamPage.key` in some `RoutesLocationBuilder.routes` usage of `*`
+
+### Examples
+
+- Added a new example: [multiple_beamers](https://github.com/slovnicki/beamer/tree/master/examples/multiple_beamers)
+- Improved and simplified [bottom_navigation_multiple_beamers](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation_multiple_beamers) example
+- Fixed updating Beamer in [authentication_riverpod](https://github.com/slovnicki/beamer/tree/master/examples/authentication_riverpod) example
+
 # 1.3.0
 
 - **Added:** `strictPathPatterns` to `BeamLocation` which will do only exact matches of URI and path pattern ([5810c9c](https://github.com/slovnicki/beamer/commit/5810c9ca7d821fd7fb85a6ad1c4a482abe86d728))
