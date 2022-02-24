@@ -48,6 +48,7 @@ Handle your application routing on all platforms, synchronize it with browser's 
     - [Android back button](#android-back-button)
   - [Accessing nearest Beamer](#accessing-nearest-beamer)
   - [Using "Navigator 1.0"](#using-navigator-10)
+- [Resources](#resources)
 - [Key Concepts](#key-concepts)
   - [BeamLocation](#beamlocation)
   - [BeamState](#beamstate)
@@ -191,9 +192,14 @@ Pages pushed with `Navigator.of(context).push` (or any similar action) will not 
 
 In general, every navigation scenario should be implementable declaratively (defining page stacks) instead of imperatively (pushing), but the difficulty to do so may vary.
 
----
+# Resources
 
-For intermediate and advanced usage, we now introduce some key concepts; `BeamLocation` and `BeamState`.
+Here's a list of some useful articles and videos about Beamer:
+
+- [An easy package to use Flutter Navigator 2 | Pair program with the author of the Beamer!](https://www.youtube.com/watch?v=r7zFewwsXqU) (YouTube video from Majid's [Flutter Original Series](https://www.youtube.com/playlist?list=PLCOnzDflrUcc0500ydJ15Leje9l2HpZBR))
+- [Beamer v1.0.0](https://medium.com/flutter-community/beamer-v1-0-0-is-out-whats-new-and-how-to-migrate-b251b3758e3c) (Medium article)
+- ["Navigator 2.0" and Beamer](https://github.com/slovnicki/beamer/blob/master/resources/navigator-2.0-and-beamer.pdf) (Slides from [Flutter ZG Meetup](https://www.meetup.com/Flutter-ZG/))
+- [Explaining Flutter Nav 2.0 and Beamer](https://tobycetera.medium.com/explaining-flutter-navigator-2-0-f357509735e5) (Medium article by Toby Lewis)
 
 # Key Concepts
 
@@ -800,24 +806,26 @@ See you at our list of awesome contributors!
 4. [youssefali424](https://github.com/youssefali424)
 5. [schultek](https://github.com/schultek)
 6. [hatem-u](https://github.com/hatem-u)
-7. [jeduden](https://github.com/jeduden)
-8. [omacranger](https://github.com/omacranger)
-9. [samdogg7](https://github.com/samdogg7)
-10. [Goddchen](https://github.com/Goddchen)
-11. [spicybackend](https://github.com/spicybackend)
-12. [cedvdb](https://github.com/cedvdb)
-13. [gabriel-mocioaca](https://github.com/gabriel-mocioaca)
-14. [AdamBuchweitz](https://github.com/AdamBuchweitz)
-15. [nikitadol](https://github.com/nikitadol)
-16. [ened](https://github.com/ened)
-17. [luketg8](https://github.com/luketg8)
-18. [Zambrella](https://github.com/Zambrella)
-19. [piyushchauhan](https://github.com/piyushchauhan)
-20. [marcguilera](https://github.com/marcguilera)
-21. [mat100payette](https://github.com/mat100payette)
-21. [Lorenzohidalgo](https://github.com/Lorenzohidalgo)
-22. [timshadel](https://github.com/timshadel)
-23. [definev](https://github.com/definev)
-24. [britannio](https://github.com/britannio)
-25. [satyajitghana](https://github.com/satyajitghana)
-26. [jpangburn](https://github.com/jpangburn)
+7. [jmysliv](https://github.com/jmysliv)
+8. [jeduden](https://github.com/jeduden)
+9. [omacranger](https://github.com/omacranger)
+10. [samdogg7](https://github.com/samdogg7)
+11. [Goddchen](https://github.com/Goddchen)
+12. [spicybackend](https://github.com/spicybackend)
+13. [cedvdb](https://github.com/cedvdb)
+14. [Shiba-Kar](https://github.com/Shiba-Kar)
+15. [gabriel-mocioaca](https://github.com/gabriel-mocioaca)
+16. [AdamBuchweitz](https://github.com/AdamBuchweitz)
+17. [nikitadol](https://github.com/nikitadol)
+18. [ened](https://github.com/ened)
+19. [luketg8](https://github.com/luketg8)
+20. [Zambrella](https://github.com/Zambrella)
+21. [piyushchauhan](https://github.com/piyushchauhan)
+22. [marcguilera](https://github.com/marcguilera)
+23. [mat100payette](https://github.com/mat100payette)
+24. [Lorenzohidalgo](https://github.com/Lorenzohidalgo)
+25. [timshadel](https://github.com/timshadel)
+26. [definev](https://github.com/definev)
+27. [britannio](https://github.com/britannio)
+28. [satyajitghana](https://github.com/satyajitghana)
+29. [jpangburn](https://github.com/jpangburn)
