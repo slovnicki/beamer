@@ -7,6 +7,7 @@ void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   final routerDelegate = BeamerDelegate(
+    transitionDelegate: const NoAnimationTransitionDelegate(),
     locationBuilder: (routeInformation, _) => HomeLocation(routeInformation),
   );
 
