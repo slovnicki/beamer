@@ -36,7 +36,7 @@
 <a href="https://www.buymeacoffee.com/slovnicki" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="30px" width= "108px"></a>
 </p>
 
-A Flutter package to help you handle your application routing and synchronize it with browser URL. Beamer uses the power of Router and implements all the underlying logic for you. To find out more, follow these links:
+A Flutter package to help you handle your application routing on all platforms. Beamer uses the power of [Router](https://api.flutter.dev/flutter/widgets/Router-class.html) and implements all the underlying logic for you, letting you explore arbitrarily complex navigation scenarios with ease. To find out more, follow these links:
 
 - [Package Source Code and Documentation](https://github.com/slovnicki/beamer/tree/master/package)
 - [Examples of Using Beamer](https://github.com/slovnicki/beamer/tree/master/examples)

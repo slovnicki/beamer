@@ -1,5 +1,5 @@
 name: beamer
-description: A routing package that lets you navigate through guarded page stacks and URLs using the Router and Navigator's Pages API, aka "Navigator 2.0".
+description: A routing package built on top of Router and Navigator's pages API, supporting arbitrary nested navigation, guards and more.
 version: 1.4.0
 homepage: https://github.com/slovnicki/beamer
 repository: https://github.com/slovnicki/beamer
