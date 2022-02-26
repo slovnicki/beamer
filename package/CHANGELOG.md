@@ -1,3 +1,9 @@
+# 1.4.0+1
+
+### Documentation
+
+- Various README improvements and tweaks
+
 # 1.4.0
 
 - **Added:** Relative beaming, i.e. being able to call `beamToNamed('path')` instead of `beamToNamed('/my/path')` if we're already at `/my`
