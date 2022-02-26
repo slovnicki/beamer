@@ -215,30 +215,39 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
   }
 }
 
+class HomeScreen extends StatelessWidget {
+  HomeScreen({Key? key}) : super(key: key);
+
+  final _beamerKey = GlobalKey<BeamerState>();
+  final _routerDelegate = BeamerDelegate(
+    locationBuilder: BeamerLocationBuilder(
+      beamLocations: [
+        BooksLocation(),
+        ArticlesLocation(),
+      ],
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Beamer(
+        key: _beamerKey,
+        routerDelegate: _routerDelegate,
+      ),
+      bottomNavigationBar: BottomNavigationBarWidget(
+        beamerKey: _beamerKey,
+      ),
+    );
+  }
+}
+
 class MyApp extends StatelessWidget {
   final routerDelegate = BeamerDelegate(
     initialPath: '/books',
     locationBuilder: RoutesLocationBuilder(
       routes: {
-        '*': (context, state, data) {
-          final beamerKey = GlobalKey<BeamerState>();
-          return Scaffold(
-            body: Beamer(
-              key: beamerKey,
-              routerDelegate: BeamerDelegate(
-                locationBuilder: BeamerLocationBuilder(
-                  beamLocations: [
-                    BooksLocation(),
-                    ArticlesLocation(),
-                  ],
-                ),
-              ),
-            ),
-            bottomNavigationBar: BottomNavigationBarWidget(
-              beamerKey: beamerKey,
-            ),
-          );
-        }
+        '*': (context, state, data) => HomeScreen(),
       },
     ),
   );
@@ -246,12 +255,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
       routerDelegate: routerDelegate,
       routeInformationParser: BeamerParser(),
-      backButtonDispatcher: BeamerBackButtonDispatcher(
-        delegate: routerDelegate,
-      ),
     );
   }
 }
