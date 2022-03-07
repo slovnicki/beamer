@@ -71,13 +71,6 @@ class BeamerState extends State<Beamer> {
     parent = Router.of(context);
     routerDelegate.parent = parent!.routerDelegate as BeamerDelegate;
   }
-  
-  @override
-  void dispose() {
-    parent = null; 
-    routerDelegate.parent = null;
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +89,13 @@ class BeamerState extends State<Beamer> {
       routerDelegate: routerDelegate,
       backButtonDispatcher: backButtonDispatcher?..takePriority(),
     );
+  }
+
+  @override
+  void dispose() {
+    parent = null;
+    routerDelegate.parent = null;
+    super.dispose();
   }
 }
 
