@@ -57,7 +57,7 @@ class Beamer extends StatefulWidget {
 /// A [State] for [Beamer].
 class BeamerState extends State<Beamer> {
   /// A parent Router of this Beamer / Router.
-  late Router parent;
+  late Router? parent;
 
   /// A getter for [BeamerDelegate] of the [Beamer] whose state is this.
   BeamerDelegate get routerDelegate => widget.routerDelegate;
@@ -69,17 +69,26 @@ class BeamerState extends State<Beamer> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     parent = Router.of(context);
-    routerDelegate.parent = parent.routerDelegate as BeamerDelegate;
+    routerDelegate.parent = parent!.routerDelegate as BeamerDelegate;
+  }
+  
+  @override
+  void dispose() {
+    parent = null; 
+    routerDelegate.parent = null;
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // The parent will only be null, if this state is disposed and therefore 
+    // `build` cannot be called on it any more.
     final backButtonDispatcher = widget.backButtonDispatcher ??
-        ((parent.backButtonDispatcher is BeamerBackButtonDispatcher &&
+        ((parent!.backButtonDispatcher is BeamerBackButtonDispatcher &&
                 widget.createBackButtonDispatcher)
             ? BeamerChildBackButtonDispatcher(
                 parent:
-                    parent.backButtonDispatcher! as BeamerBackButtonDispatcher,
+                    parent!.backButtonDispatcher! as BeamerBackButtonDispatcher,
                 delegate: routerDelegate,
               )
             : null);
