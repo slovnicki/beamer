@@ -397,8 +397,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     }
 
     // run guards on _beamLocationCandidate
-    if (_context != null && _context is Element && (_context as Element).dirty == false) {
-      final didApply = _runGuards(_context!, _beamLocationCandidate);
+    final context = _context;
+    if (context != null && context is Element && (context as Element).dirty == false) {      
+      final didApply = _runGuards(context, _beamLocationCandidate);
       _didRunGuards = true;
       if (didApply) {
         return;
