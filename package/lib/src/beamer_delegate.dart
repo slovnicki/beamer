@@ -397,7 +397,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     }
 
     // run guards on _beamLocationCandidate
-    if (_context != null) {
+    if (_context != null && _context is Element && (_context as Element).dirty == false) {
       final didApply = _runGuards(_context!, _beamLocationCandidate);
       _didRunGuards = true;
       if (didApply) {
@@ -713,7 +713,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   @override
   Widget build(BuildContext context) {
     _buildInProgress = true;
-    _context ??= context;
+    _context = context;
 
     if (!_didRunGuards) {
       _runGuards(_context!, _beamLocationCandidate);
