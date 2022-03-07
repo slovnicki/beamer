@@ -139,7 +139,7 @@ Beamer.of(context).beamToNamed('/books/2');
 context.beamToNamed('/books/2');
 
 // Beaming with additional data that persist 
-// throughout navigation withing the same BeamLocation
+// throughout navigation within the same BeamLocation
 context.beamToNamed('/book/2', data: MyObject());
 ```
 
