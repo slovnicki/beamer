@@ -74,7 +74,13 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// `*App.router` and at least one more [Beamer] in the Widget tree.
   BeamerDelegate? get parent => _parent;
   set parent(BeamerDelegate? parent) {
-    if (parent == null || _parent == parent) {
+    if(parent == null && _parent != null) {
+      _parent!.removeListener(_updateFromParent);
+      _parent!._children.remove(this);
+      _parent = null;
+      return;
+    }
+    if (_parent == parent) {
       return;
     }
     _parent = parent;
@@ -397,8 +403,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     }
 
     // run guards on _beamLocationCandidate
-    if (_context != null) {
-      final didApply = _runGuards(_context!, _beamLocationCandidate);
+    final context = _context;
+    if (context != null) {
+      final didApply = _runGuards(context, _beamLocationCandidate);
       _didRunGuards = true;
       if (didApply) {
         return;
@@ -713,7 +720,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   @override
   Widget build(BuildContext context) {
     _buildInProgress = true;
-    _context ??= context;
+    _context = context;
 
     if (!_didRunGuards) {
       _runGuards(_context!, _beamLocationCandidate);
