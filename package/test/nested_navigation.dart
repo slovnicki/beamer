@@ -16,7 +16,7 @@ void main() {
         notFoundRedirectNamed: '/home',
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '*': (context, state, data) => MainLocation(),
+            '*': (context, state, data) => const MainLocation(),
           },
         ),
       );
@@ -60,8 +60,9 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  AuthenticationNotifier _authenticationNotifier;
-  MyApp(this._authenticationNotifier, {Key? key}) : super(key: key);
+  const MyApp(this._authenticationNotifier, {Key? key}) : super(key: key);
+
+  final AuthenticationNotifier _authenticationNotifier;
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +71,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MainLocation extends StatefulWidget {
-  MainLocation({Key? key}) : super(key: key);
+  const MainLocation({Key? key}) : super(key: key);
 
   @override
   State<MainLocation> createState() => _MainLocationState();
@@ -103,7 +104,7 @@ class _MainLocationState extends State<MainLocation> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     subscription?.cancel();
-    var authenticationNotifier = AuthenticationNotifier.of(context);
+    final authenticationNotifier = AuthenticationNotifier.of(context);
     subscription = authenticationNotifier.isAuthenticatedStreamController.stream
         .listen((element) {
       if (authenticationNotifier.isUserAuthenticated) {
@@ -127,9 +128,9 @@ class _MainLocationState extends State<MainLocation> {
 }
 
 class SomePage extends StatelessWidget {
-  final String text;
-
   const SomePage({Key? key, required this.text}) : super(key: key);
+
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -137,13 +138,15 @@ class SomePage extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class AuthenticationNotifier extends InheritedWidget {
+  AuthenticationNotifier({Key? key, required Widget child})
+      : super(key: key, child: child);
+
   final StreamController<bool> isAuthenticatedStreamController =
       StreamController<bool>.broadcast();
-  bool isUserAuthenticated = true;
 
-  AuthenticationNotifier({Key? key, required Widget child})
-      : super(key: key, child: child) {}
+  bool isUserAuthenticated = true;
 
   static AuthenticationNotifier of(BuildContext context) {
     return context
