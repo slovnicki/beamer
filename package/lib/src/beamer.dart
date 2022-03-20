@@ -34,6 +34,9 @@ class Beamer extends StatefulWidget {
   final BackButtonDispatcher? backButtonDispatcher;
 
   /// Access Beamer's [routerDelegate].
+  ///
+  /// Giving `true` to [root] gets the root beamer if the closest beamer is 
+  /// nested under another beamer. 
   static BeamerDelegate of(BuildContext context, {bool root = false}) {
     try {
       final delegate = Router.of(context).routerDelegate as BeamerDelegate;
