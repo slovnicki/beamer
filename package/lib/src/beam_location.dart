@@ -522,7 +522,7 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
           path += '/${uriPathSegments[i]}';
 
           if (routePathSegments[i] == '*') {
-            if (i == 0 || i == uriPathSegments.length - 1) {
+            if (i == 0 || i == routePathSegments.length - 1) {
               path = uri.path;
               overrideNotFound = true;
               break;
