@@ -706,8 +706,8 @@ void main() {
           '/t1/t2');
     });
   });
-  
-  test('description', () {
+
+  test('Properly preserve history part when using popToNamed(...)', () {
     final delegate = BeamerDelegate(
       locationBuilder: RoutesLocationBuilder(
         routes: {
