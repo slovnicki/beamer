@@ -706,4 +706,26 @@ void main() {
           '/t1/t2');
     });
   });
+
+  test('Properly preserve history part when using popToNamed(...)', () {
+    final delegate = BeamerDelegate(
+      locationBuilder: RoutesLocationBuilder(
+        routes: {
+          '/': (context, state, data) => Container(),
+          '/t1': (context, state, data) => Container(),
+          '/t2': (context, state, data) => Container(),
+          '/t3': (context, state, data) => Container(),
+        },
+      ),
+    );
+    delegate.beamToNamed('/t1');
+    delegate.beamToNamed('/t2');
+    delegate.beamToNamed('/t3');
+    delegate.popToNamed('/t2');
+
+    expect(
+        delegate.currentBeamLocation.history
+            .map((HistoryElement e) => e.routeInformation.location),
+        orderedEquals(<String>['/t1', '/t2']));
+  });
 }
