@@ -325,6 +325,13 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// Used to determine not to [notifyListeners].
   bool _buildInProgress = false;
 
+  /// Whether the [configuration] is ready to be consumed by platform,
+  /// most importantly - the browser URL bar.
+  ///
+  /// This is important for first build, i.e. [setInitialRoutePath],
+  /// to avoid setting URL when the guards have not been run yet.
+  bool _initialConfigurationReady = false;
+
   /// Main method to update the [configuration] of this delegate and its
   /// [currentBeamLocation].
   ///
@@ -713,7 +720,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   @override
   RouteInformation? get currentConfiguration =>
-      _parent == null ? configuration : null;
+      _parent == null && _initialConfigurationReady ? configuration : null;
 
   @override
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
@@ -727,6 +734,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       _runGuards(_context!, _beamLocationCandidate);
       _addToBeamingHistory(_beamLocationCandidate);
     }
+    if (!_initialConfigurationReady) {
+      updateRouteInformation(configuration);
+    }
+    _initialConfigurationReady = true;
 
     if (currentBeamLocation is NotFound) {
       _handleNotFoundRedirect();
@@ -759,6 +770,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   @override
   SynchronousFuture<void> setInitialRoutePath(RouteInformation configuration) {
+    _initialConfigurationReady = false;
     final uri = Uri.parse(configuration.location ?? '/');
     if (currentBeamLocation is! EmptyBeamLocation) {
       configuration = currentBeamLocation.state.routeInformation;
@@ -788,8 +800,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   void updateRouteInformation(RouteInformation routeInformation) {
     if (_parent == null) {
       SystemNavigator.routeInformationUpdated(
-        location: configuration.location ?? '/',
-        state: configuration.state,
+        location: routeInformation.location ?? '/',
+        state: routeInformation.state,
       );
     } else {
       if (updateParent) {

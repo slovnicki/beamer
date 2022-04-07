@@ -373,6 +373,7 @@ void main() {
       final childDelegate = BeamerDelegate(
         initializeFromParent: false,
         updateFromParent: false,
+        updateParent: false,
         locationBuilder: RoutesLocationBuilder(
           routes: {
             '/': (context, state, data) => Container(),
@@ -401,7 +402,7 @@ void main() {
       );
 
       rootDelegate.beamToNamed('/test');
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(rootDelegate.configuration.location, '/test');
       expect(childDelegate.configuration.location, childDelegate.initialPath);
       expect(childDelegate.beamingHistory.last.history.length, 1);

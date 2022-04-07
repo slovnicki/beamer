@@ -723,4 +723,80 @@ void main() {
       expect(routerDelegate.configuration.location, '/s1/s2/s3');
     },
   );
+
+  group('Initial guarding is correct', () {
+    testWidgets(
+      'When initially on guarded path, calls update twice',
+      (tester) async {
+        var updateCounter = 0;
+
+        final delegate = BeamerDelegate(
+          initialPath: '/guarded',
+          routeListener: (_, __) => updateCounter++,
+          locationBuilder: RoutesLocationBuilder(
+            routes: <Pattern,
+                dynamic Function(BuildContext, BeamState, Object?)>{
+              '/ok': (_, __, ___) => Container(),
+              '/guarded': (_, __, ___) => Container(),
+            },
+          ),
+          guards: <BeamGuard>[
+            BeamGuard(
+              pathPatterns: <Pattern>['/guarded'],
+              check: (_, __) => false,
+              beamToNamed: (_, __) => '/ok',
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(
+          MaterialApp.router(
+            routeInformationParser: BeamerParser(),
+            routerDelegate: delegate,
+          ),
+        );
+
+        expect(delegate.configuration.location, '/ok');
+        expect(delegate.beamingHistory.length, 1);
+        expect(updateCounter, 2);
+      },
+    );
+
+    testWidgets(
+      'When initially on OK path, calls update once',
+      (tester) async {
+        var updateCounter = 0;
+
+        final delegate = BeamerDelegate(
+          initialPath: '/ok',
+          routeListener: (_, __) => updateCounter++,
+          locationBuilder: RoutesLocationBuilder(
+            routes: <Pattern,
+                dynamic Function(BuildContext, BeamState, Object?)>{
+              '/ok': (_, __, ___) => Container(),
+              '/guarded': (_, __, ___) => Container(),
+            },
+          ),
+          guards: <BeamGuard>[
+            BeamGuard(
+              pathPatterns: <Pattern>['/guarded'],
+              check: (_, __) => false,
+              beamToNamed: (_, __) => '/ok',
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(
+          MaterialApp.router(
+            routeInformationParser: BeamerParser(),
+            routerDelegate: delegate,
+          ),
+        );
+
+        expect(delegate.configuration.location, '/ok');
+        expect(delegate.beamingHistory.length, 1);
+        expect(updateCounter, 1);
+      },
+    );
+  });
 }
