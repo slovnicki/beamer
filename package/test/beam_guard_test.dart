@@ -688,7 +688,6 @@ void main() {
           routes: <Pattern, dynamic Function(BuildContext, BeamState, Object?)>{
             '/s1': (_, __, ___) => Container(),
             '/s1/*': (_, __, ___) => Container(),
-            '/s1/s2/s3': (_, __, ___) => Container(),
           },
         ),
         guards: <BeamGuard>[

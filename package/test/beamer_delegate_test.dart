@@ -354,18 +354,19 @@ void main() {
           routerDelegate: rootDelegate,
         ),
       );
+      // initial will update history with /
 
-      rootDelegate.beamToNamed('/test'); // initial will update
+      rootDelegate.beamToNamed('/test');
       await tester.pump();
       expect(rootDelegate.configuration.location, '/test');
       expect(childDelegate.configuration.location, '/test');
-      expect(childDelegate.beamingHistory.last.history.length, 1);
+      expect(childDelegate.beamingHistory.last.history.length, 2);
 
       rootDelegate.beamToNamed('/test2');
       await tester.pump();
       expect(rootDelegate.configuration.location, '/test2');
       expect(childDelegate.configuration.location, '/test2');
-      expect(childDelegate.beamingHistory.last.history.length, 2);
+      expect(childDelegate.beamingHistory.last.history.length, 3);
     });
 
     testWidgets("navigation on parent doesn't update nested Beamer",
