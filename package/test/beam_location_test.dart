@@ -152,31 +152,26 @@ void main() {
         );
       }
 
-      checkMatch('/home', '/home', true);
-      checkMatch('/*', '/home', true);
-      checkMatch('/home/*', '/home/', true);
-      checkMatch('/home/*', '/home/one', true);
-      checkMatch('/home/*', '/home/one/two', true);
+      checkMatch('*', '/', true);
       checkMatch('*', '/home', true);
       checkMatch('*', '/home/one/two', true);
       checkMatch('*', 'pretty much anything', true);
       checkMatch('/*', '/home', true);
-      checkMatch('/*', 'home', true);
       checkMatch('/*', '/home/one/two', true);
-      checkMatch('/*', 'home/one/two', true);
-      checkMatch('/*', '/leading slashes should be ignored', true);
-      checkMatch('/*', 'leading slashed should be ignored', true);
+      checkMatch('/*', '/', true);
+      checkMatch('/home', '/home', true);
+      checkMatch('/home', '/home/', true);
+      checkMatch('/home/*', '/home/one', true);
+      checkMatch('/home/*', '/home/one/two', true);
 
+      checkMatch('*', '', false);
+      checkMatch('/*', '', false);
+      checkMatch('/*', 'home', false);
       checkMatch('/', '/home', false);
-      checkMatch('/home', '/home/', false);
       checkMatch('/home', '/home/one', false);
       checkMatch('/home', '/home/one/two', false);
       checkMatch('/home/*', '/home', false);
-      checkMatch('/home*', '/home/one', false);
-      checkMatch('*', '', false);
-      checkMatch('*', '/', false);
-      checkMatch('/*', '', false);
-      checkMatch('/*', '/', false);
+      checkMatch('/home/*', '/home/', false);
     });
   });
 }

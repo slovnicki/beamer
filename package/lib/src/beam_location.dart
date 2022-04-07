@@ -504,11 +504,44 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
     RouteInformation routeInformation,
     Iterable<Pattern> routes,
   ) {
+    String createMatch(String path, Map<String, String> queryParameters) => Uri(
+          path: path == '' ? '/' : path,
+          queryParameters: queryParameters.isEmpty ? null : queryParameters,
+        ).toString();
+
     final matched = <Pattern, String>{};
     var overrideNotFound = false;
+    if (routeInformation.location != '/' &&
+        (routeInformation.location?.endsWith('/') ?? false)) {
+      final location = routeInformation.location!;
+      routeInformation = routeInformation.copyWith(
+        location: location.substring(0, location.length - 1),
+      );
+    }
     final uri = Uri.parse(routeInformation.location ?? '/');
+
     for (final route in routes) {
       if (route is String) {
+        if (uri.path.isEmpty) {
+          continue;
+        }
+
+        if (route.startsWith('/') && !uri.path.startsWith('/')) {
+          continue;
+        }
+
+        if (route == '*') {
+          matched[route] = createMatch(uri.path, uri.queryParameters);
+          overrideNotFound = true;
+          continue;
+        }
+
+        if (route == '/*' && uri.path == '/') {
+          matched[route] = createMatch(uri.path, uri.queryParameters);
+          overrideNotFound = true;
+          continue;
+        }
+
         final uriPathSegments = uri.pathSegments.toList();
         final routePathSegments = Uri.parse(route).pathSegments;
 
@@ -522,7 +555,7 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
           path += '/${uriPathSegments[i]}';
 
           if (routePathSegments[i] == '*') {
-            if (i == 0 || i == routePathSegments.length - 1) {
+            if (i == routePathSegments.length - 1) {
               path = uri.path;
               overrideNotFound = true;
               break;
@@ -539,21 +572,13 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
         }
 
         if (checksPassed) {
-          matched[route] = Uri(
-            path: path == '' ? '/' : path,
-            queryParameters:
-                uri.queryParameters.isEmpty ? null : uri.queryParameters,
-          ).toString();
+          matched[route] = createMatch(path, uri.queryParameters);
         }
       } else {
         final regexp = Utils.tryCastToRegExp(route);
         if (regexp.hasMatch(uri.toString())) {
           final path = uri.toString();
-          matched[regexp] = Uri(
-            path: path == '' ? '/' : path,
-            queryParameters:
-                uri.queryParameters.isEmpty ? null : uri.queryParameters,
-          ).toString();
+          matched[regexp] = createMatch(path, uri.queryParameters);
         }
       }
     }

@@ -74,7 +74,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// `*App.router` and at least one more [Beamer] in the Widget tree.
   BeamerDelegate? get parent => _parent;
   set parent(BeamerDelegate? parent) {
-    if(parent == null && _parent != null) {
+    if (parent == null && _parent != null) {
       _parent!.removeListener(_updateFromParent);
       _parent!._children.remove(this);
       _parent = null;
