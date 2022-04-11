@@ -1,3 +1,14 @@
+# 1.4.1
+
+- **Fixed:** Deeper routes matching with asterisk ([cgaisl](https://github.com/cgaisl), [#494](https://github.com/slovnicki/beamer/pull/494), [#502](https://github.com/slovnicki/beamer/pull/502))
+- **Fixed:** Nested navigation crash with guards ([svsk417](https://github.com/svsk417), [#490](https://github.com/slovnicki/beamer/pull/490))
+- **Fixed:** Breaking out of `popToNamed` loop ([Goddchen](https://github.com/Goddchen), [#500](https://github.com/slovnicki/beamer/pull/500))
+
+### Documentation
+
+- Added [website](https://github.com/slovnicki/beamer/tree/master/website) app; a starting point for extensive, self-explanatory Beamer documentation at [beamer.dev](https://beamer.dev/)
+- Fixed typos and added doc comment for accessing root Beamer ([gazialankus](https://github.com/gazialankus))
+
 # 1.4.0+1
 
 ### Documentation
