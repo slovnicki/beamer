@@ -7,6 +7,10 @@
 </p>
 
 <p align="center">
+<a href="https://pub.dev/packages/beamer">beamer.dev</a>
+</p>
+
+<p align="center">
 <a href="https://pub.dev/packages/beamer"><img src="https://img.shields.io/pub/v/beamer.svg" alt="pub"></a>
 <a href="https://codecov.io/gh/slovnicki/beamer">
 <img src="https://codecov.io/gh/slovnicki/beamer/branch/master/graph/badge.svg?token=TO09CQU09C"/>
@@ -206,6 +210,7 @@ Here's a list of some useful articles and videos about Beamer:
 - [Beamer v1.0.0](https://medium.com/flutter-community/beamer-v1-0-0-is-out-whats-new-and-how-to-migrate-b251b3758e3c) (Medium article)
 - ["Navigator 2.0" and Beamer](https://github.com/slovnicki/beamer/blob/master/resources/navigator-2.0-and-beamer.pdf) (Slides from [Flutter ZG Meetup](https://www.meetup.com/Flutter-ZG/))
 - [Explaining Flutter Nav 2.0 and Beamer](https://tobycetera.medium.com/explaining-flutter-navigator-2-0-f357509735e5) (Medium article by Toby Lewis)
+- [Router; Problems and Solutions](https://github.com/slovnicki/flutter-festival-london) (slides from [Flutter Festival London talk](https://youtu.be/j_0DoJBj42k?t=19595))
 
 # Key Concepts
 

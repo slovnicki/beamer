@@ -7,6 +7,10 @@
 </p>
 
 <p align="center">
+<a href="https://pub.dev/packages/beamer">beamer.dev</a>
+</p>
+
+<p align="center">
 <a href="https://pub.dev/packages/beamer"><img src="https://img.shields.io/pub/v/beamer.svg" alt="pub"></a>
 <a href="https://codecov.io/gh/slovnicki/beamer">
 <img src="https://codecov.io/gh/slovnicki/beamer/branch/master/graph/badge.svg?token=TO09CQU09C"/>
@@ -38,13 +42,20 @@
 
 A Flutter package to help you handle your application routing on all platforms. Beamer uses the power of [Router](https://api.flutter.dev/flutter/widgets/Router-class.html) and implements all the underlying logic for you, letting you explore arbitrarily complex navigation scenarios with ease. To find out more, follow these links:
 
+- [Beamer on pub.dev](https://pub.dev/packages/beamer)
 - [Package Source Code and Documentation](https://github.com/slovnicki/beamer/tree/master/package)
+- [Beamer Website](https://beamer.dev/)
 - [Examples of Using Beamer](https://github.com/slovnicki/beamer/tree/master/examples)
 - Articles and Videos
   - [Flutter Original - pair programming with Majid](https://www.youtube.com/watch?v=r7zFewwsXqU)
   - [Beamer v1.0.0](https://medium.com/flutter-community/beamer-v1-0-0-is-out-whats-new-and-how-to-migrate-b251b3758e3c)
-  - ["Navigator 2.0" and Beamer](https://github.com/slovnicki/beamer/blob/master/resources/navigator-2.0-and-beamer.pdf) (presentation from [Flutter ZG Meetup](https://www.meetup.com/Flutter-ZG/))
+  - ["Navigator 2.0" and Beamer](https://github.com/slovnicki/beamer/blob/master/resources/navigator-2.0-and-beamer.pdf) (slides from [Flutter ZG Meetup](https://www.meetup.com/Flutter-ZG/))
+  - [Router; Problems and Solutions](https://github.com/slovnicki/flutter-festival-london) (slides from [Flutter Festival London talk](https://youtu.be/j_0DoJBj42k?t=19595))
   - [Explaining Flutter Nav 2.0 and Beamer](https://tobycetera.medium.com/explaining-flutter-navigator-2-0-f357509735e5)
   - [Finally, A Better Navigator 2.0 | Beamer Package Tutorial](https://www.youtube.com/watch?v=9kIS_MUWuPA)
-- [Beamer on pub.dev](https://pub.dev/packages/beamer)
-- [Beamer Website](https://beamer.dev/)
+
+<p align="center">
+<img alt="Nested navigation" src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/nested_navigation/example-nested-navigation.gif" height="200px" style="padding:4px">
+<img alt="Bottom navigation" src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/bottom_navigation_2/example-bottom-navigation-2.gif" height="200px" style="padding:4px">
+<img alt="Multiple Beamers" src="https://raw.githubusercontent.com/slovnicki/beamer/master/examples/multiple_beamers/example-multiple-beamers.gif" height="200px" style="padding:4px">
+</p>
