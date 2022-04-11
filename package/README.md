@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-<a href="https://pub.dev/packages/beamer">beamer.dev</a>
+<a href="https://beamer.dev/">beamer.dev</a>
 </p>
 
 <p align="center">
