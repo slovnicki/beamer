@@ -29,7 +29,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  beamer: ^1.4.0+1
+  beamer:
+    path: ../package
   url_launcher: ^6.0.20
   flutter_highlight: ^0.7.0
   google_fonts: ^2.3.1

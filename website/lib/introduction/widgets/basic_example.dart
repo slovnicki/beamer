@@ -2,10 +2,17 @@ import 'package:collection/collection.dart';
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 
-class BasicExample extends StatelessWidget {
-  BasicExample({Key? key}) : super(key: key);
+class BasicExample extends StatefulWidget {
+  const BasicExample({Key? key}) : super(key: key);
 
+  @override
+  State<BasicExample> createState() => _BasicExampleState();
+}
+
+class _BasicExampleState extends State<BasicExample> {
   final beamerDelegate = BeamerDelegate(
+    updateParent: false,
+    setBrowserTabTitle: false,
     locationBuilder: RoutesLocationBuilder(
       routes: {
         '/': (_, __, ___) => const HomeScreen(),
@@ -14,7 +21,11 @@ class BasicExample extends StatelessWidget {
           final bookIdParameter = state.pathParameters['bookId']!;
           final bookId = int.tryParse(bookIdParameter);
           final book = books.firstWhereOrNull((book) => book.id == bookId);
-          return BookDetailsScreen(book: book);
+          return BeamPage(
+            key: ValueKey('book-$bookId'),
+            type: BeamPageType.scaleTransition,
+            child: BookDetailsScreen(book: book),
+          );
         },
       },
     ),

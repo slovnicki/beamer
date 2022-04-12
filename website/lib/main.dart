@@ -1,21 +1,31 @@
 import 'package:beamer/beamer.dart';
 import 'package:beamer_website/introduction/introduction_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 void main() => runApp(App());
 
-class App extends StatelessWidget {
-  App({Key? key}) : super(key: key);
+class App extends StatefulWidget {
+  const App({Key? key}) : super(key: key);
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  bool _isDarkTheme = false;
 
   final rootBeamerDelegate = BeamerDelegate(
     initialPath: '/',
     transitionDelegate: const NoAnimationTransitionDelegate(),
     locationBuilder: RoutesLocationBuilder(
       routes: {
-        RegExp(r'^(?!(/quick-start|/beam-locations)$).*$'): (_, __, ___) =>
-            const IntroductionScreen(),
+        RegExp(r'^(?!(/quick-start|/beam-locations)$).*$'): (_, state, ___) =>
+            BeamPage(
+              key: ValueKey(state.uri),
+              title: 'Introduction',
+              child: const IntroductionScreen(),
+            ),
         '/quick-start': (_, __, ___) => WIPScreen(),
         '/beam-locations': (_, __, ___) => WIPScreen(),
       },
@@ -23,11 +33,18 @@ class App extends StatelessWidget {
   );
 
   @override
+  void initState() {
+    super.initState();
+    _isDarkTheme =
+        WidgetsBinding.instance!.window.platformBrightness == Brightness.dark;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BeamerProvider(
       routerDelegate: rootBeamerDelegate,
       child: MaterialApp.router(
-        theme: ThemeData.light(),
+        theme: _isDarkTheme ? ThemeData.dark() : ThemeData.light(),
         routerDelegate: rootBeamerDelegate,
         routeInformationParser: BeamerParser(),
         builder: (context, child) {
@@ -56,7 +73,12 @@ class App extends StatelessWidget {
   Widget _body(Widget child) => Expanded(
         child: Column(
           children: [
-            const Header(),
+            Header(
+              isDarkTheme: _isDarkTheme,
+              onThemeSwitch: (value) => setState(
+                () => _isDarkTheme = value,
+              ),
+            ),
             Expanded(child: child),
           ],
         ),
@@ -64,13 +86,28 @@ class App extends StatelessWidget {
 }
 
 class Header extends StatefulWidget {
-  const Header({Key? key}) : super(key: key);
+  const Header({
+    Key? key,
+    required this.isDarkTheme,
+    required this.onThemeSwitch,
+  }) : super(key: key);
+
+  final bool isDarkTheme;
+  final void Function(bool) onThemeSwitch;
 
   @override
   State<Header> createState() => _HeaderState();
 }
 
 class _HeaderState extends State<Header> {
+  late bool _isDarkTheme;
+
+  @override
+  void initState() {
+    super.initState();
+    _isDarkTheme = widget.isDarkTheme;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -78,8 +115,8 @@ class _HeaderState extends State<Header> {
       width: double.infinity,
       color: Colors.blue,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
         children: [
+          const SizedBox(width: 16.0),
           Text(
             'Check Beamer on pub.dev',
             style: Theme.of(context)
@@ -92,6 +129,22 @@ class _HeaderState extends State<Header> {
           InkWell(
             onTap: () => launch('https://pub.dev/packages/beamer'),
             child: const Icon(Icons.launch, color: Colors.white),
+          ),
+          const Spacer(),
+          Text(
+            'Dark theme',
+            style: Theme.of(context)
+                .textTheme
+                .button!
+                .copyWith(color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
+          Switch(
+            value: _isDarkTheme,
+            onChanged: (value) {
+              setState(() => _isDarkTheme = value);
+              widget.onThemeSwitch(value);
+            },
           ),
           const SizedBox(width: 8.0),
         ],
@@ -123,7 +176,7 @@ class NavigationBar extends StatefulWidget {
 }
 
 class _NavigationBarState extends State<NavigationBar> {
-  late final BeamerDelegate _beamer;
+  late BeamerDelegate _beamer;
 
   void _setStateListener() => setState(() {});
 
@@ -138,7 +191,7 @@ class _NavigationBarState extends State<NavigationBar> {
 
   @override
   Widget build(BuildContext context) {
-    final path = _beamer.currentConfiguration!.location!;
+    final path = _beamer.configuration.location!;
     return Container(
       color: Colors.blue[300],
       child: widget.type == NavigationBarType.row
