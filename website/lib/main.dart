@@ -113,19 +113,19 @@ class _HeaderState extends State<Header> {
     return Container(
       height: kToolbarHeight,
       width: double.infinity,
-      color: Colors.blue,
+      color: Theme.of(context).primaryColor,
       child: Row(
         children: [
           const SizedBox(width: 16.0),
           Text(
-            'Check Beamer on pub.dev',
+            'pub.dev',
             style: Theme.of(context)
                 .textTheme
                 .button!
                 .copyWith(color: Colors.white),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(width: 8.0),
+          const SizedBox(width: 4.0),
           InkWell(
             onTap: () => launch('https://pub.dev/packages/beamer'),
             child: const Icon(Icons.launch, color: Colors.white),
@@ -192,8 +192,9 @@ class _NavigationBarState extends State<NavigationBar> {
   @override
   Widget build(BuildContext context) {
     final path = _beamer.configuration.location!;
+    final theme = Theme.of(context);
     return Container(
-      color: Colors.blue[300],
+      color: theme.secondaryHeaderColor,
       child: widget.type == NavigationBarType.row
           ? Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -211,11 +212,13 @@ class _NavigationBarState extends State<NavigationBar> {
 
   Widget _title(ThemeData theme) => Container(
         height: kToolbarHeight,
-        color: Colors.blue[900],
-        child: Center(
-          child: Text(
-            'Content',
-            style: theme.textTheme.titleLarge!.copyWith(color: Colors.white),
+        color: theme.highlightColor,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Center(
+            child: Image.network(
+              'https://raw.githubusercontent.com/slovnicki/beamer/master/resources/logo.png',
+            ),
           ),
         ),
       );
@@ -272,17 +275,19 @@ class NavigationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return InkWell(
       onTap: onTap,
       child: Container(
         height: 48,
-        color: isSelected ? Colors.blue : Colors.transparent,
+        color: isSelected ? theme.primaryColor : Colors.transparent,
         child: Center(
           child: Text(
             text,
             style: Theme.of(context).textTheme.button!.copyWith(
-                  color: Colors.white,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color: isSelected
+                      ? theme.selectedRowColor
+                      : theme.unselectedWidgetColor,
                 ),
             textAlign: TextAlign.center,
           ),
