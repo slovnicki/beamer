@@ -1,5 +1,10 @@
+# 1.4.1+1
+
+- **Fixed:** formatting of `beamer.dart` file
+
 # 1.4.1
 
+- **Fixed:** Initial guarding browser URL ([#501](https://github.com/slovnicki/beamer/issues/501), [b2a9f0b](https://github.com/slovnicki/beamer/commit/b2a9f0b52b9e462192a4a036415aa38fb803b0fa))
 - **Fixed:** Deeper routes matching with asterisk ([cgaisl](https://github.com/cgaisl), [#494](https://github.com/slovnicki/beamer/pull/494), [#502](https://github.com/slovnicki/beamer/pull/502))
 - **Fixed:** Nested navigation crash with guards ([svsk417](https://github.com/svsk417), [#490](https://github.com/slovnicki/beamer/pull/490))
 - **Fixed:** Breaking out of `popToNamed` loop ([Goddchen](https://github.com/Goddchen), [#500](https://github.com/slovnicki/beamer/pull/500))
