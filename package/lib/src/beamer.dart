@@ -35,8 +35,8 @@ class Beamer extends StatefulWidget {
 
   /// Access Beamer's [routerDelegate].
   ///
-  /// Giving `true` to [root] gets the root beamer if the closest beamer is 
-  /// nested under another beamer. 
+  /// Giving `true` to [root] gets the root beamer if the closest beamer is
+  /// nested under another beamer.
   static BeamerDelegate of(BuildContext context, {bool root = false}) {
     try {
       final delegate = Router.of(context).routerDelegate as BeamerDelegate;
@@ -77,7 +77,7 @@ class BeamerState extends State<Beamer> {
 
   @override
   Widget build(BuildContext context) {
-    // The parent will only be null, if this state is disposed and therefore 
+    // The parent will only be null, if this state is disposed and therefore
     // `build` cannot be called on it any more.
     final backButtonDispatcher = widget.backButtonDispatcher ??
         ((parent!.backButtonDispatcher is BeamerBackButtonDispatcher &&
