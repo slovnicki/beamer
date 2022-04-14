@@ -22,8 +22,10 @@ class ParagraphTitle extends Paragraph {
   const ParagraphTitle(String text, {Key? key}) : super(text, key: key);
 
   @override
-  TextStyle? getTextStyle(BuildContext context) =>
-      Theme.of(context).textTheme.headline6;
+  TextStyle? getTextStyle(BuildContext context) => Theme.of(context)
+      .textTheme
+      .headline5!
+      .copyWith(fontWeight: FontWeight.bold);
 }
 
 class ParagraphText extends Paragraph {
@@ -31,5 +33,5 @@ class ParagraphText extends Paragraph {
 
   @override
   TextStyle? getTextStyle(BuildContext context) =>
-      Theme.of(context).textTheme.bodyLarge;
+      Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 16.0);
 }
