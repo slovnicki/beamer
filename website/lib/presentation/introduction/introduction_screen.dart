@@ -1,6 +1,6 @@
-import 'package:beamer_website/introduction/widgets/basic_example.dart';
-import 'package:beamer_website/shared/code_snippet.dart';
-import 'package:beamer_website/shared/paragraph.dart';
+import 'package:beamer_website/presentation/introduction/widgets/basic_example.dart';
+import 'package:beamer_website/presentation/core/code_snippet.dart';
+import 'package:beamer_website/presentation/core/paragraph.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -92,24 +92,16 @@ class IntroductionScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16.0),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    const CodeSnippet(code: code),
-                    Padding(
-                      padding: const EdgeInsets.all(32.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.blue),
-                        ),
-                        width: 256.0,
-                        height: 420.0,
-                        child: const BasicExample(),
-                      ),
+                Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.blue),
                     ),
-                  ],
+                    width: 256.0,
+                    height: 420.0,
+                    child: const BasicExample(),
+                  ),
                 ),
               ],
             ),
@@ -119,34 +111,3 @@ class IntroductionScreen extends StatelessWidget {
     );
   }
 }
-
-const code = '''
-class ExampleApp extends StatelessWidget {
-  final routerDelegate = BeamerDelegate(
-    locationBuilder: RoutesLocationBuilder(
-      routes: {
-        '/': (_, __, ___) => const HomeScreen(),
-        '/books': (_, __, ___) => const BooksScreen(),
-        '/books/:bookId': (_, state, __) {
-          final bookIdParameter = state.pathParameters['bookId']!;
-          final bookId = int.tryParse(bookIdParameter);
-          final book = books.firstWhereOrNull((book) => book.id == bookId);
-          return BeamPage(
-            key: ValueKey('book-\$bookId'),
-            type: BeamPageType.scaleTransition,
-            child: BookDetailsScreen(book: book),
-          );
-        },
-      },
-    ),
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routeInformationParser: BeamerParser(),
-      routerDelegate: routerDelegate,
-    );
-  }
-}
-''';
