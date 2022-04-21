@@ -23,7 +23,10 @@ abstract class Utils {
           location: uri.toString(),
           state: routeState,
         );
-        return beamLocation..create(routeInformation);
+        if (!beamLocation.isCurrent) {
+          beamLocation.create(routeInformation);
+        }
+        return beamLocation;
       }
     }
     return NotFound(path: uri.path);

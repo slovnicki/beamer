@@ -1,5 +1,6 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:mocktail/mocktail.dart';
 
 class Location1 extends BeamLocation<BeamState> {
   Location1([RouteInformation? routeInformation]) : super(routeInformation);
@@ -150,5 +151,29 @@ class StrictPatternsLocation extends BeamLocation<BeamState> {
           child: Container(),
         ),
     ];
+  }
+}
+
+class UpdateStateStub extends Mock {
+  void call();
+}
+
+class UpdateStateStubBeamLocation extends BeamLocation {
+  UpdateStateStubBeamLocation(this.updateStateStub) : super();
+
+  final UpdateStateStub updateStateStub;
+
+  @override
+  List<Pattern> get pathPatterns => ['*'];
+
+  @override
+  List<BeamPage> buildPages(
+          BuildContext context, RouteInformationSerializable state) =>
+      [BeamPage.notFound];
+
+  @override
+  void updateState(RouteInformation routeInformation) {
+    super.updateState(routeInformation);
+    updateStateStub.call();
   }
 }

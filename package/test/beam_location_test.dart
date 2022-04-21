@@ -2,11 +2,13 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 
 import 'test_locations.dart';
 
 void main() {
   final location2 = Location2(const RouteInformation(location: '/l2/1'));
+
   group('prepare', () {
     test('BeamLocation can create valid URI', () {
       location2.state = location2.state.copyWith(
@@ -172,6 +174,42 @@ void main() {
       checkMatch('/home', '/home/one/two', false);
       checkMatch('/home/*', '/home', false);
       checkMatch('/home/*', '/home/', false);
+    });
+  });
+
+  group('Lifecycle', () {
+    testWidgets('updateState gets called on every beaming', (tester) async {
+      final updateStateStub = UpdateStateStub();
+
+      final delegate = BeamerDelegate(
+        locationBuilder: BeamerLocationBuilder(
+          beamLocations: [UpdateStateStubBeamLocation(updateStateStub)],
+        ),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerDelegate: delegate,
+          routeInformationParser: BeamerParser(),
+        ),
+      );
+
+      registerFallbackValue(const RouteInformation());
+
+      delegate.update(
+        configuration: const RouteInformation(location: '/x'),
+      );
+      verify(() => updateStateStub.call()).called(1);
+
+      delegate.update(
+        configuration: const RouteInformation(location: '/x?y=z'),
+      );
+      verify(() => updateStateStub.call()).called(1);
+
+      delegate.update(
+        configuration: const RouteInformation(location: '/x?y=w'),
+      );
+      verify(() => updateStateStub.call()).called(1);
     });
   });
 }
