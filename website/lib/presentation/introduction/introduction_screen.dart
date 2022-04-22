@@ -69,7 +69,7 @@ class IntroductionScreen extends StatelessWidget {
                     children: [
                       const ParagraphTitle('Why "Beamer"?'),
                       const ParagraphText(
-                        'There was a time, sometime in late 2020, when Beamer was just a routing part of a particular application, serving it pretty well in production. It seemed reasonable to share it on pub.dev, but then a name needed to be coined. I believe it took at least a month to settle on a name. The idea was to have a simple and descriptive name, but this was not so easy as many of most obvious choices are already taken (Router, Navigator, ...).',
+                        'There was a time, sometime in late 2020, when Beamer was just a routing part of a particular application, serving it pretty well in production. It seemed reasonable to share it on pub.dev, but then a name needed to be coined. I believe it took at least a month to settle on a name. The idea was to have a simple and descriptive name, but this was not so easy as many of the most obvious choices are already taken (Router, Navigator, ...).',
                       ),
                       Center(
                         child: Image.network(
