@@ -1,6 +1,5 @@
-import 'package:beamer_website/presentation/introduction/widgets/basic_example.dart';
-import 'package:beamer_website/presentation/core/code_snippet.dart';
 import 'package:beamer_website/presentation/core/paragraph.dart';
+import 'package:beamer_website/presentation/introduction/widgets/basic_example.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 

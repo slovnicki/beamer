@@ -121,7 +121,7 @@ class ExpandableNavigationButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final path = Beamer.of(context).configuration.location!;
+
     return Material(
       child: InkWell(
         hoverColor: theme.hoverColor,
