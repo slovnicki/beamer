@@ -1,7 +1,7 @@
 import 'package:beamer_website/presentation/core/paragraph.dart';
 import 'package:beamer_website/presentation/introduction/widgets/basic_example.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/link.dart';
 
 class IntroductionScreen extends StatelessWidget {
   const IntroductionScreen({Key? key}) : super(key: key);
@@ -13,25 +13,32 @@ class IntroductionScreen extends StatelessWidget {
       body: ListView(
         children: [
           const SizedBox(height: 64.0),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Center(
-              child: Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(32),
-                    child: Image.network(
-                      'https://raw.githubusercontent.com/slovnicki/beamer/master/resources/logo.png',
+          Center(
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Link(
+                    uri: Uri.parse('https://pub.dev/packages/beamer'),
+                    builder: (context, followLink) => InkWell(
+                      hoverColor: Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: followLink,
+                      child: Image.network(
+                        'https://raw.githubusercontent.com/slovnicki/beamer/master/resources/logo.png',
+                      ),
                     ),
                   ),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: InkWell(
-                      hoverColor: Colors.transparent,
-                      onTap: () => launch(
-                        'https://docs.flutter.dev/development/packages-and-plugins/favorites',
-                      ),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Link(
+                    uri: Uri.parse(
+                        'https://docs.flutter.dev/development/packages-and-plugins/favorites'),
+                    builder: (context, followLink) => InkWell(
+                      borderRadius: BorderRadius.circular(32),
+                      onTap: followLink,
                       child: SizedBox(
                         width: 64.0,
                         height: 64.0,
@@ -41,8 +48,8 @@ class IntroductionScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           Padding(
