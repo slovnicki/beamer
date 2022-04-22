@@ -17,14 +17,16 @@ class IntroductionScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Center(
               child: Stack(
-                clipBehavior: Clip.none,
                 children: [
-                  Image.network(
-                    'https://raw.githubusercontent.com/slovnicki/beamer/master/resources/logo.png',
+                  Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Image.network(
+                      'https://raw.githubusercontent.com/slovnicki/beamer/master/resources/logo.png',
+                    ),
                   ),
                   Positioned(
-                    top: -32.0,
-                    right: -32.0,
+                    top: 0,
+                    right: 0,
                     child: InkWell(
                       hoverColor: Colors.transparent,
                       onTap: () => launch(
