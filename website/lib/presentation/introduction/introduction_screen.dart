@@ -47,12 +47,12 @@ class IntroductionScreen extends StatelessWidget {
             padding: const EdgeInsets.all(32.0),
             child: Column(
               children: [
-                Text(
+                SelectableText(
                   'Welcome to Beamer documentation!',
                   style: theme.textTheme.headlineLarge,
                   textAlign: TextAlign.center,
                 ),
-                Text(
+                SelectableText(
                   '🎉 ...built with Beamer... 🎉',
                   style: theme.textTheme.titleLarge!.copyWith(
                     fontWeight: FontWeight.bold,

@@ -9,7 +9,7 @@ class WIPScreen extends StatelessWidget {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(32.0),
-          child: Text(
+          child: SelectableText(
             'Coming soon...',
             style: Theme.of(context).textTheme.headline6,
             textAlign: TextAlign.center,
