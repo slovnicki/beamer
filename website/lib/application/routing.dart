@@ -14,15 +14,39 @@ final rootBeamerDelegate = BeamerDelegate(
       RegExp(r'^(?!(/start.*|/concepts.*|/examples.*)$).*$'): (_, state, ___) =>
           BeamPage(
             key: ValueKey(state.uri),
-            title: 'Introduction',
+            title: 'Introduction - beamer.dev',
             child: const IntroductionScreen(),
           ),
-      '/start/routes': (_, __, ___) => const RoutesScreen(),
-      '/start/beaming': (_, __, ___) => const BeamingScreen(),
-      '/start/accessing': (_, __, ___) => const AccessingScreen(),
-      '/concepts': (_, __, ___) => const WIPScreen(),
-      '/concepts/*': (_, __, ___) => const WIPScreen(),
-      '/examples': (_, __, ___) => const WIPScreen(),
+      '/start/routes': (_, __, ___) => const BeamPage(
+            key: ValueKey('/start/routes'),
+            title: 'Routes - beamer.dev',
+            child: RoutesScreen(),
+          ),
+      '/start/beaming': (_, __, ___) => const BeamPage(
+            key: ValueKey('/start/beaming'),
+            title: 'Beaming - beamer.dev',
+            child: BeamingScreen(),
+          ),
+      '/start/accessing': (_, __, ___) => const BeamPage(
+            key: ValueKey('/start/accessing'),
+            title: 'Accessing - beamer.dev',
+            child: AccessingScreen(),
+          ),
+      '/concepts': (_, __, ___) => const BeamPage(
+            key: ValueKey('/concepts'),
+            title: 'Concepts - beamer.dev',
+            child: WIPScreen(),
+          ),
+      '/concepts/*': (_, __, ___) => const BeamPage(
+            key: ValueKey('/concepts/*'),
+            title: 'Concepts - beamer.dev',
+            child: WIPScreen(),
+          ),
+      '/examples': (_, __, ___) => const BeamPage(
+            key: ValueKey('/examples'),
+            title: 'Examples - beamer.dev',
+            child: WIPScreen(),
+          ),
     },
   ),
 );
