@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
-import 'package:flutter_highlight/themes/dark.dart';
+import 'package:flutter_highlight/themes/androidstudio.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CodeSnippet extends StatelessWidget {
@@ -22,7 +22,7 @@ class CodeSnippet extends StatelessWidget {
           HighlightView(
             code,
             language: 'dart',
-            theme: darkTheme,
+            theme: androidstudioTheme,
             padding: const EdgeInsets.all(16.0),
             textStyle: GoogleFonts.robotoMono(),
           ),
@@ -30,24 +30,28 @@ class CodeSnippet extends StatelessWidget {
             Positioned(
               top: 8.0,
               right: 8.0,
-              child: InkWell(
-                onTap: () {
-                  Clipboard.setData(ClipboardData(text: code));
-                  ScaffoldMessenger.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Copied to clipboard',
-                          textAlign: TextAlign.center,
+              child: Tooltip(
+                message: 'Copy to clipboard',
+                child: InkWell(
+                  onTap: () {
+                    Clipboard.setData(ClipboardData(text: code));
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Copied to clipboard',
+                            textAlign: TextAlign.center,
+                          ),
+                          behavior: SnackBarBehavior.floating,
                         ),
-                      ),
-                    );
-                },
-                child: const Icon(
-                  Icons.copy_all_rounded,
-                  color: Colors.white,
-                  size: 28.0,
+                      );
+                  },
+                  child: const Icon(
+                    Icons.copy_all_rounded,
+                    color: Colors.white,
+                    size: 28.0,
+                  ),
                 ),
               ),
             ),

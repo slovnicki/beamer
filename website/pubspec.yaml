@@ -15,8 +15,13 @@ dependencies:
   beamer:
     path: ../package
   url_launcher: ^6.0.20
-  flutter_highlight: ^0.7.0
   google_fonts: ^2.3.1
+  # This fork contains the ability to select the text in the code snippet:
+  # (see https://github.com/git-touch/highlight.dart/pull/25)
+  flutter_highlight:
+    git:
+      url: https://github.com/shreyas1599/highlight.dart
+      path: flutter_highlight
 
 dev_dependencies:
   flutter_lints: ^1.0.4
