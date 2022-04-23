@@ -45,19 +45,19 @@ class _HeaderState extends State<Header> {
             style: theme.textTheme.headline6!.copyWith(color: Colors.white),
           ),
           const Spacer(),
-          Text(
-            'Dark theme',
-            style: Theme.of(context)
-                .textTheme
-                .button!
-                .copyWith(color: Colors.white),
-            textAlign: TextAlign.center,
-          ),
-          Switch(
-            value: _isDarkTheme,
-            onChanged: (value) {
-              setState(() => _isDarkTheme = value);
-              widget.onThemeSwitch(value);
+          IconButton(
+            icon: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 100),
+              child: Icon(
+                _isDarkTheme ? Icons.wb_sunny_rounded : Icons.dark_mode_rounded,
+                key: ValueKey(_isDarkTheme),
+              ),
+            ),
+            color: Colors.white,
+            splashRadius: 24,
+            onPressed: () {
+              setState(() => _isDarkTheme = !_isDarkTheme);
+              widget.onThemeSwitch(_isDarkTheme);
             },
           ),
         ],
