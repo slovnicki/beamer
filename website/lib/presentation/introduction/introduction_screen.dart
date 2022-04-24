@@ -1,8 +1,7 @@
-import 'package:beamer_website/presentation/introduction/widgets/basic_example.dart';
-import 'package:beamer_website/presentation/core/code_snippet.dart';
 import 'package:beamer_website/presentation/core/paragraph.dart';
+import 'package:beamer_website/presentation/introduction/widgets/basic_example.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/link.dart';
 
 class IntroductionScreen extends StatelessWidget {
   const IntroductionScreen({Key? key}) : super(key: key);
@@ -14,23 +13,32 @@ class IntroductionScreen extends StatelessWidget {
       body: ListView(
         children: [
           const SizedBox(height: 64.0),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Center(
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Image.network(
-                    'https://raw.githubusercontent.com/slovnicki/beamer/master/resources/logo.png',
-                  ),
-                  Positioned(
-                    top: -32.0,
-                    right: -32.0,
-                    child: InkWell(
+          Center(
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Link(
+                    uri: Uri.parse('https://pub.dev/packages/beamer'),
+                    builder: (context, followLink) => InkWell(
                       hoverColor: Colors.transparent,
-                      onTap: () => launch(
-                        'https://docs.flutter.dev/development/packages-and-plugins/favorites',
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: followLink,
+                      child: Image.network(
+                        'https://raw.githubusercontent.com/slovnicki/beamer/master/resources/logo.png',
                       ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Link(
+                    uri: Uri.parse(
+                        'https://docs.flutter.dev/development/packages-and-plugins/favorites'),
+                    builder: (context, followLink) => InkWell(
+                      borderRadius: BorderRadius.circular(32),
+                      onTap: followLink,
                       child: SizedBox(
                         width: 64.0,
                         height: 64.0,
@@ -40,20 +48,20 @@ class IntroductionScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(32.0),
             child: Column(
               children: [
-                Text(
+                SelectableText(
                   'Welcome to Beamer documentation!',
                   style: theme.textTheme.headlineLarge,
                   textAlign: TextAlign.center,
                 ),
-                Text(
+                SelectableText(
                   '🎉 ...built with Beamer... 🎉',
                   style: theme.textTheme.titleLarge!.copyWith(
                     fontWeight: FontWeight.bold,
@@ -69,7 +77,7 @@ class IntroductionScreen extends StatelessWidget {
                     children: [
                       const ParagraphTitle('Why "Beamer"?'),
                       const ParagraphText(
-                        'There was a time, sometime in late 2020, when Beamer was just a routing part of a particular application, serving it pretty well in production. It seemed reasonable to share it on pub.dev, but then a name needed to be coined. I believe it took at least a month to settle on a name. The idea was to have a simple and descriptive name, but this was not so easy as many of most obvious choices are already taken (Router, Navigator, ...).',
+                        'There was a time, sometime in late 2020, when Beamer was just a routing part of a particular application, serving it pretty well in production. It seemed reasonable to share it on pub.dev, but then a name needed to be coined. I believe it took at least a month to settle on a name. The idea was to have a simple and descriptive name, but this was not so easy as many of the most obvious choices are already taken (Router, Navigator, ...).',
                       ),
                       Center(
                         child: Image.network(
