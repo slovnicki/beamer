@@ -30,6 +30,7 @@
 .pub-cache/
 .pub/
 /build/
+**/.mason/
 
 # Web related
 lib/generated_plugin_registrant.dart

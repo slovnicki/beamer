@@ -64,26 +64,21 @@ class _NavigationSidebarState extends State<NavigationSidebar> {
             onTap: () => _beamer.beamToNamed('/concepts'),
             children: [
               NavigationButton(
-                text: 'BeamLocation',
-                isSelected: path.contains('beam-location'),
+                text: 'Beam Locations',
+                isSelected: path.contains('beam-locations'),
                 onTap: () =>
-                    Beamer.of(context).beamToNamed('/concepts/beam-location'),
+                    Beamer.of(context).beamToNamed('/concepts/beam-locations'),
               ),
               NavigationButton(
-                text: 'BeamerDelegate',
-                isSelected: path.contains('delegate'),
-                onTap: () =>
-                    Beamer.of(context).beamToNamed('/concepts/delegate'),
-              ),
-              NavigationButton(
-                text: 'BeamGuard',
-                isSelected: path.contains('guard'),
-                onTap: () => Beamer.of(context).beamToNamed('/concepts/guard'),
+                text: 'Guards',
+                isSelected: path.contains('guards'),
+                onTap: () => Beamer.of(context).beamToNamed('/concepts/guards'),
               ),
               NavigationButton(
                 text: 'Nested Navigation',
                 isSelected: path.contains('nested'),
-                onTap: () => Beamer.of(context).beamToNamed('/concepts/nested'),
+                onTap: () => Beamer.of(context)
+                    .beamToNamed('/concepts/nested-navigation'),
               ),
             ],
           ),

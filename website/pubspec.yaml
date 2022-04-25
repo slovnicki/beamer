@@ -11,10 +11,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
+
   beamer:
     path: ../package
   url_launcher: ^6.0.20
+  markdown: ^5.0.0
+  flutter_markdown: ^0.6.10
   google_fonts: ^2.3.1
   # This fork contains the ability to select the text in the code snippet:
   # (see https://github.com/git-touch/highlight.dart/pull/25)
@@ -28,3 +30,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/markdown/

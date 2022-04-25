@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/themes/androidstudio.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:markdown/markdown.dart' as md;
 import 'package:google_fonts/google_fonts.dart';
 
 class CodeSnippet extends StatelessWidget {
@@ -58,5 +60,22 @@ class CodeSnippet extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class CodeElementBuilder extends MarkdownElementBuilder {
+  @override
+  Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
+    final isMultiline = element.textContent.split('\n').length > 1;
+    return isMultiline
+        ? CodeSnippet(
+            code: element.textContent,
+          )
+        : Text(
+            element.textContent,
+            style: GoogleFonts.robotoMono().copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          );
   }
 }

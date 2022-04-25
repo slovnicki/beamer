@@ -1,4 +1,7 @@
 import 'package:beamer/beamer.dart';
+import 'package:beamer_website/presentation/concepts/beam_locations_screen.dart';
+import 'package:beamer_website/presentation/concepts/guards_screen.dart';
+import 'package:beamer_website/presentation/concepts/nested_navigation_screen.dart';
 import 'package:beamer_website/presentation/core/wip_screen.dart';
 import 'package:beamer_website/presentation/introduction/introduction_screen.dart';
 import 'package:beamer_website/presentation/quick_start/accessing_screen.dart';
@@ -37,11 +40,14 @@ final rootBeamerDelegate = BeamerDelegate(
             title: 'Concepts - beamer.dev',
             child: WIPScreen(),
           ),
-      '/concepts/*': (_, __, ___) => const BeamPage(
-            key: ValueKey('/concepts/*'),
-            title: 'Concepts - beamer.dev',
-            child: WIPScreen(),
+      '/concepts/beam-locations': (_, __, ___) => const BeamPage(
+            key: ValueKey('/concepts/beam-locations'),
+            title: 'Beam Locations - beamer.dev',
+            child: BeamLocationsScreen(),
           ),
+      '/concepts/guards': (_, __, ___) => GuardsScreen.page,
+      '/concepts/nested-navigation': (_, __, ___) =>
+          NestedNavigationScreen.page,
       '/examples': (_, __, ___) => const BeamPage(
             key: ValueKey('/examples'),
             title: 'Examples - beamer.dev',
