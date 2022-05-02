@@ -1,0 +1,14 @@
+name: beam_location
+description: Generates a BeamLocation for the Beamer package.
+version: 0.1.0+1
+repository: https://github.com/slovnicki/beamer/tree/master/bricks/beam_location
+
+environment:
+  mason: ">=0.1.0-dev <0.1.0"
+
+vars:
+  name:
+    type: string
+    description: The name for the BeamLocation class
+    default: My
+    prompt: What is the name of BeamLocation?
