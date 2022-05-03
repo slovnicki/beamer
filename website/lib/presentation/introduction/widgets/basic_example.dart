@@ -33,7 +33,9 @@ class _BasicExampleState extends State<BasicExample> {
 
   @override
   Widget build(BuildContext context) {
-    return Beamer(routerDelegate: beamerDelegate);
+    return ClipRRect(
+      child: Beamer(routerDelegate: beamerDelegate),
+    );
   }
 }
 

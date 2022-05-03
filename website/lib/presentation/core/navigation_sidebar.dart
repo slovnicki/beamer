@@ -2,13 +2,16 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 
 class NavigationSidebar extends StatefulWidget {
-  const NavigationSidebar({Key? key}) : super(key: key);
+  const NavigationSidebar({Key? key, this.closeDrawer}) : super(key: key);
+
+  final void Function()? closeDrawer;
 
   @override
   State<NavigationSidebar> createState() => _NavigationSidebarState();
 }
 
 class _NavigationSidebarState extends State<NavigationSidebar> {
+  late bool _isDrawer;
   late BeamerDelegate _beamer;
 
   void _setStateListener() => setState(() {});
@@ -16,6 +19,7 @@ class _NavigationSidebarState extends State<NavigationSidebar> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _isDrawer = widget.closeDrawer != null;
     _beamer = Beamer.of(context);
     _beamer.removeListener(_setStateListener);
     WidgetsBinding.instance!.addPostFrameCallback(
@@ -26,68 +30,93 @@ class _NavigationSidebarState extends State<NavigationSidebar> {
   @override
   Widget build(BuildContext context) {
     final path = _beamer.configuration.location!;
-    return SizedBox(
-      width: 256,
-      child: Column(
-        children: [
-          NavigationButton(
-            text: 'Introduction',
-            isSelected: path == '/' || path.contains('books'),
-            onTap: () => _beamer.beamToNamed('/'),
-            padLeft: false,
-          ),
-          ExpandableNavigationButton(
-            text: 'Quick Start',
-            isSelected: path.contains('start'),
-            onTap: () => _beamer.beamToNamed('/start'),
+    final size = MediaQuery.of(context).size;
+    return Padding(
+      padding: EdgeInsets.only(top: _isDrawer ? kToolbarHeight : 0.0),
+      child: SizedBox(
+        width: 256,
+        child: MaybeDrawer(
+          isDrawer: _isDrawer,
+          child: ListView(
             children: [
               NavigationButton(
-                text: 'Routes',
-                isSelected: path.contains('routes'),
-                onTap: () => Beamer.of(context).beamToNamed('/start/routes'),
+                text: 'Introduction',
+                isSelected: path == '/' || path.contains('books'),
+                onTap: () {
+                  _beamer.beamToNamed('/');
+                  widget.closeDrawer?.call();
+                },
+                padLeft: false,
               ),
-              NavigationButton(
-                text: 'Beaming',
-                isSelected: path.contains('beaming'),
-                onTap: () => Beamer.of(context).beamToNamed('/start/beaming'),
+              ExpandableNavigationButton(
+                text: 'Quick Start',
+                isSelected: path.contains('start'),
+                children: [
+                  NavigationButton(
+                    text: 'Routes',
+                    isSelected: path.contains('routes'),
+                    onTap: () {
+                      Beamer.of(context).beamToNamed('/start/routes');
+                      widget.closeDrawer?.call();
+                    },
+                  ),
+                  NavigationButton(
+                    text: 'Beaming',
+                    isSelected: path.contains('beaming'),
+                    onTap: () {
+                      Beamer.of(context).beamToNamed('/start/beaming');
+                      widget.closeDrawer?.call();
+                    },
+                  ),
+                  NavigationButton(
+                    text: 'Accessing',
+                    isSelected: path.contains('accessing'),
+                    onTap: () {
+                      Beamer.of(context).beamToNamed('/start/accessing');
+                      widget.closeDrawer?.call();
+                    },
+                  ),
+                ],
               ),
-              NavigationButton(
-                text: 'Accessing',
-                isSelected: path.contains('accessing'),
-                onTap: () => Beamer.of(context).beamToNamed('/start/accessing'),
+              ExpandableNavigationButton(
+                text: 'Key Concepts',
+                isSelected: path.contains('concepts'),
+                children: [
+                  NavigationButton(
+                    text: 'Beam Locations',
+                    isSelected: path.contains('beam-locations'),
+                    onTap: () {
+                      Beamer.of(context)
+                          .beamToNamed('/concepts/beam-locations');
+                      widget.closeDrawer?.call();
+                    },
+                  ),
+                  NavigationButton(
+                    text: 'Guards',
+                    isSelected: path.contains('guards'),
+                    onTap: () {
+                      Beamer.of(context).beamToNamed('/concepts/guards');
+                      widget.closeDrawer?.call();
+                    },
+                  ),
+                  NavigationButton(
+                    text: 'Nested Navigation',
+                    isSelected: path.contains('nested'),
+                    onTap: () {
+                      Beamer.of(context)
+                          .beamToNamed('/concepts/nested-navigation');
+                      widget.closeDrawer?.call();
+                    },
+                  ),
+                ],
+              ),
+              ExpandableNavigationButton(
+                text: 'Examples',
+                isSelected: path.contains('examples'),
               ),
             ],
           ),
-          ExpandableNavigationButton(
-            text: 'Key Concepts',
-            isSelected: path.contains('concepts'),
-            onTap: () => _beamer.beamToNamed('/concepts'),
-            children: [
-              NavigationButton(
-                text: 'Beam Locations',
-                isSelected: path.contains('beam-locations'),
-                onTap: () =>
-                    Beamer.of(context).beamToNamed('/concepts/beam-locations'),
-              ),
-              NavigationButton(
-                text: 'Guards',
-                isSelected: path.contains('guards'),
-                onTap: () => Beamer.of(context).beamToNamed('/concepts/guards'),
-              ),
-              NavigationButton(
-                text: 'Nested Navigation',
-                isSelected: path.contains('nested'),
-                onTap: () => Beamer.of(context)
-                    .beamToNamed('/concepts/nested-navigation'),
-              ),
-            ],
-          ),
-          ExpandableNavigationButton(
-            text: 'Examples',
-            isSelected: path.contains('examples'),
-            onTap: () => _beamer.beamToNamed('/examples'),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -99,18 +128,32 @@ class _NavigationSidebarState extends State<NavigationSidebar> {
   }
 }
 
+class MaybeDrawer extends StatelessWidget {
+  const MaybeDrawer({
+    Key? key,
+    this.isDrawer = false,
+    required this.child,
+  }) : super(key: key);
+
+  final bool isDrawer;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return isDrawer ? Drawer(child: child) : child;
+  }
+}
+
 class ExpandableNavigationButton extends StatelessWidget {
   const ExpandableNavigationButton({
     Key? key,
     required this.text,
     required this.isSelected,
-    required this.onTap,
     this.children = const [],
   }) : super(key: key);
 
   final String text;
   final bool isSelected;
-  final void Function() onTap;
   final List<NavigationButton> children;
 
   @override

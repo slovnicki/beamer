@@ -31,30 +31,21 @@ class _AppState extends State<App> {
         routeInformationParser: BeamerParser(),
         builder: (context, child) => LayoutBuilder(
           builder: (context, constraints) {
-            return Scaffold(
-              body: Column(
-                children: [
-                  Header(
+            return constraints.maxWidth < 600
+                ? NarrowApp(
                     isDarkTheme: _isDarkTheme,
                     onThemeSwitch: (value) => setState(
                       () => _isDarkTheme = value,
                     ),
-                    openNavigationSidebar: () {},
-                  ),
-                  Expanded(
-                    child: constraints.maxWidth < 600
-                        ? MobileApp(child: child!)
-                        : Row(
-                            children: [
-                              const NavigationSidebar(),
-                              const VerticalDivider(),
-                              Expanded(child: child!),
-                            ],
-                          ),
-                  ),
-                ],
-              ),
-            );
+                    child: child!,
+                  )
+                : WideApp(
+                    isDarkTheme: _isDarkTheme,
+                    onThemeSwitch: (value) => setState(
+                      () => _isDarkTheme = value,
+                    ),
+                    child: child!,
+                  );
           },
         ),
       ),
@@ -62,85 +53,70 @@ class _AppState extends State<App> {
   }
 }
 
-class MobileApp extends StatefulWidget {
-  const MobileApp({
+class NarrowApp extends StatelessWidget {
+  NarrowApp({
     Key? key,
+    required this.isDarkTheme,
+    required this.onThemeSwitch,
     required this.child,
   }) : super(key: key);
 
+  final bool isDarkTheme;
+  final void Function(bool) onThemeSwitch;
   final Widget child;
 
-  @override
-  _MobileAppState createState() => _MobileAppState();
-}
-
-class _MobileAppState extends State<MobileApp> {
-  bool _animate = false;
-  bool _isOpening = false;
-  late double _drawerWidth;
-  late double _dx;
-
-  Duration get _animationDuration => Duration(milliseconds: _animate ? 200 : 0);
-
-  void _openDrawer() => setState(() {
-        _isOpening = false;
-        _animate = true;
-        _dx = 0;
-      });
-
-  void _closeDrawer({bool? animate}) => setState(() {
-        _isOpening = false;
-        _animate = animate ?? true;
-        _dx = -_drawerWidth;
-      });
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _drawerWidth = 256;
-    _dx = -_drawerWidth;
-  }
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onHorizontalDragUpdate: (details) {
-        _isOpening = details.delta.dx > 0;
-        _dx += details.delta.dx;
-        _dx = _dx.clamp(-_drawerWidth, 0);
-        setState(() => _animate = false);
-      },
-      onHorizontalDragEnd: (details) {
-        if (_dx > _drawerWidth / 4 || _isOpening) {
-          _openDrawer();
-        } else {
-          _closeDrawer();
-        }
-      },
-      child: Stack(
+    return Scaffold(
+      key: _scaffoldKey,
+      drawer: NavigationSidebar(
+        closeDrawer: () => _scaffoldKey.currentState!.openEndDrawer(),
+      ),
+      body: Column(
         children: [
-          AnimatedContainer(
-            duration: _animationDuration,
-            transform: Matrix4.translationValues(_drawerWidth + _dx, 0, 0),
-            child: GestureDetector(
-              onTap: _closeDrawer,
-              child: widget.child,
-            ),
+          Header(
+            isDarkTheme: isDarkTheme,
+            onThemeSwitch: onThemeSwitch,
+            openNavigationSidebar: () =>
+                _scaffoldKey.currentState!.openDrawer(),
           ),
-          AnimatedContainer(
-            duration: _animationDuration,
-            transform: Matrix4.translationValues(_dx, 0, 0),
-            child: SizedBox(
-              width: _drawerWidth,
-              child: const NavigationSidebar(),
-            ),
+          Expanded(child: child),
+        ],
+      ),
+    );
+  }
+}
+
+class WideApp extends StatelessWidget {
+  const WideApp({
+    Key? key,
+    required this.isDarkTheme,
+    required this.onThemeSwitch,
+    required this.child,
+  }) : super(key: key);
+
+  final bool isDarkTheme;
+  final void Function(bool) onThemeSwitch;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          Header(
+            isDarkTheme: isDarkTheme,
+            onThemeSwitch: onThemeSwitch,
           ),
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: AnimatedOpacity(
-              opacity: -_dx / 256,
-              duration: _animationDuration,
-              child: const Icon(Icons.swipe_right),
+          Expanded(
+            child: Row(
+              children: [
+                const NavigationSidebar(),
+                const VerticalDivider(),
+                Expanded(child: child),
+              ],
             ),
           ),
         ],
