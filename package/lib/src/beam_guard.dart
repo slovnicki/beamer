@@ -134,6 +134,11 @@ class BeamGuard {
         // just block if this will produce an immediate infinite loop
         return true;
       }
+      if (redirectBeamLocation.state.routeInformation.location ==
+          origin.state.routeInformation.location) {
+        // just block if redirect is the current route
+        return true;
+      }
       if (replaceCurrentStack) {
         delegate.beamToReplacement(redirectBeamLocation);
       } else {
@@ -146,6 +151,10 @@ class BeamGuard {
       final redirectNamed = beamToNamed!(origin, target);
       if (redirectNamed == target.state.routeInformation.location) {
         // just block if this will produce an immediate infinite loop
+        return true;
+      }
+      if (redirectNamed == origin.state.routeInformation.location) {
+        // just block if redirect is the current route
         return true;
       }
       if (replaceCurrentStack) {

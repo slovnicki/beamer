@@ -966,7 +966,6 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   void _setBrowserTitle(BuildContext context) {
     if (active && kIsWeb && setBrowserTabTitle) {
-      // print('setting browser title.... ${currentBeamLocation}');
       SystemChrome.setApplicationSwitcherDescription(
           ApplicationSwitcherDescription(
         label: _currentPages.last.title ??
