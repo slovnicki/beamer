@@ -17,9 +17,15 @@ class _NavigationSidebarState extends State<NavigationSidebar> {
   void _setStateListener() => setState(() {});
 
   @override
+  void initState() {
+    super.initState();
+    _isDrawer = widget.closeDrawer != null;
+    Future.delayed(Duration.zero, () => setState(() {}));
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _isDrawer = widget.closeDrawer != null;
     _beamer = Beamer.of(context);
     _beamer.removeListener(_setStateListener);
     WidgetsBinding.instance!.addPostFrameCallback(
@@ -159,11 +165,11 @@ class ExpandableNavigationButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Material(
       child: InkWell(
         hoverColor: theme.hoverColor,
         child: ExpansionTile(
+          key: ValueKey('$isSelected'),
           initiallyExpanded: isSelected,
           tilePadding: const EdgeInsets.all(0),
           title: Container(
