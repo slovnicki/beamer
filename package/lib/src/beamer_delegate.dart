@@ -719,8 +719,14 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   }
 
   @override
-  RouteInformation? get currentConfiguration =>
-      _parent == null && _initialConfigurationReady ? configuration : null;
+  RouteInformation? get currentConfiguration {
+    final response =
+        _parent == null && _initialConfigurationReady ? configuration : null;
+    if (response != null) {
+      _lastReportedRouteInformation = response.copyWith();
+    }
+    return response;
+  }
 
   @override
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
@@ -791,6 +797,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     return SynchronousFuture(null);
   }
 
+  RouteInformation? _lastReportedRouteInformation;
+
   /// Pass this call to [root] which notifies the platform for a [configuration]
   /// change.
   ///
@@ -799,10 +807,13 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// See [SystemNavigator.routeInformationUpdated].
   void updateRouteInformation(RouteInformation routeInformation) {
     if (_parent == null) {
-      SystemNavigator.routeInformationUpdated(
-        location: routeInformation.location ?? '/',
-        state: routeInformation.state,
-      );
+      if (!routeInformation.isEqualTo(_lastReportedRouteInformation)) {
+        SystemNavigator.routeInformationUpdated(
+          location: routeInformation.location ?? '/',
+          state: routeInformation.state,
+        );
+        _lastReportedRouteInformation = routeInformation.copyWith();
+      }
     } else {
       if (updateParent) {
         _parent!.configuration = routeInformation.copyWith();
