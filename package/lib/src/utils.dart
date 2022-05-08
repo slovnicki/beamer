@@ -282,3 +282,27 @@ abstract class Utils {
     return maybeAppend(current, incoming);
   }
 }
+
+/// Some convenient extension methods on [RouteInformation].
+extension BeamerRouteInformationExtension on RouteInformation {
+  /// Returns a new [RouteInformation] created from this.
+  RouteInformation copyWith({
+    String? location,
+    Object? state,
+  }) {
+    return RouteInformation(
+      location: location ?? this.location,
+      state: state ?? this.state,
+    );
+  }
+
+  /// Whether two `RouteInformation`s have the same location and state.
+  ///
+  /// This is intentionally **not** overriding the equality operator.
+  bool isEqualTo(Object? other) {
+    if (other is! RouteInformation) {
+      return false;
+    }
+    return location == other.location && state == other.state;
+  }
+}

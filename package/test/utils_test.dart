@@ -150,4 +150,47 @@ void main() {
       );
     });
   });
+
+  group('RouteInformation equality', () {
+    test('identical are equal', () {
+      const ri = RouteInformation();
+
+      expect(ri.isEqualTo(ri), isTrue);
+    });
+
+    test('empty are equal', () {
+      const ri1 = RouteInformation();
+      const ri2 = RouteInformation();
+
+      expect(ri1.isEqualTo(ri2), isTrue);
+    });
+
+    test('full are equal', () {
+      const ri1 = RouteInformation(location: '/x', state: 1);
+      const ri2 = RouteInformation(location: '/x', state: 1);
+
+      expect(ri1.isEqualTo(ri2), isTrue);
+    });
+
+    test('not equal with type mismatch', () {
+      const ri1 = RouteInformation(location: '/x', state: 1);
+      const ri2 = null;
+
+      expect(ri1.isEqualTo(ri2), isFalse);
+    });
+
+    test('not equal with location diff', () {
+      const ri1 = RouteInformation(location: '/x', state: 1);
+      const ri2 = RouteInformation(location: '/y', state: 1);
+
+      expect(ri1.isEqualTo(ri2), isFalse);
+    });
+
+    test('not equal with state diff', () {
+      const ri1 = RouteInformation(location: '/x', state: 1);
+      const ri2 = RouteInformation(location: '/x', state: 2);
+
+      expect(ri1.isEqualTo(ri2), isFalse);
+    });
+  });
 }

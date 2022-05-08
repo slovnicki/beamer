@@ -240,17 +240,3 @@ extension BeamerExtensions on BuildContext {
   /// {@macro canPopBeamLocation}
   bool get canPopBeamLocation => Beamer.of(this).canPopBeamLocation;
 }
-
-/// Some convenient extension methods on [RouteInformation].
-extension BeamerRouteInformationExtension on RouteInformation {
-  /// Returns a new [RouteInformation] created from this.
-  RouteInformation copyWith({
-    String? location,
-    Object? state,
-  }) {
-    return RouteInformation(
-      location: location ?? this.location,
-      state: state ?? this.state,
-    );
-  }
-}
