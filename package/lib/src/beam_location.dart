@@ -38,13 +38,16 @@ class BeamParameters {
   BeamParameters copyWith({
     TransitionDelegate? transitionDelegate,
     RouteInformation? popConfiguration,
+    bool resetPopConfiguration = false,
     bool? beamBackOnPop,
     bool? popBeamLocationOnPop,
     bool? stacked,
   }) {
     return BeamParameters(
       transitionDelegate: transitionDelegate ?? this.transitionDelegate,
-      popConfiguration: popConfiguration ?? this.popConfiguration,
+      popConfiguration: resetPopConfiguration
+          ? null
+          : popConfiguration ?? this.popConfiguration,
       beamBackOnPop: beamBackOnPop ?? this.beamBackOnPop,
       popBeamLocationOnPop: popBeamLocationOnPop ?? this.popBeamLocationOnPop,
       stacked: stacked ?? this.stacked,

@@ -987,6 +987,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         configuration: _currentBeamParameters.popConfiguration,
         beamParameters: _currentBeamParameters.copyWith(
           transitionDelegate: beamBackTransitionDelegate,
+          resetPopConfiguration: true,
         ),
         // replaceCurrent: true,
       );

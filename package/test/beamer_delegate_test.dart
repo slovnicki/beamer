@@ -131,21 +131,56 @@ void main() {
     delegate.beamBack();
   });
 
-  testWidgets('popToNamed forces pop to specified location', (tester) async {
-    delegate.beamingHistory.clear();
-    await tester.pumpWidget(
-      MaterialApp.router(
-        routeInformationParser: BeamerParser(),
-        routerDelegate: delegate,
-      ),
-    );
-    delegate.beamToNamed('/l1/one', popToNamed: '/l2');
-    await tester.pump();
-    expect(delegate.currentBeamLocation, isA<Location1>());
-    delegate.navigator.pop();
-    await tester.pump();
-    expect(delegate.currentBeamLocation, isA<Location2>());
+  group('popToNamed parameter', () {
+    testWidgets('forces pop to specified location', (tester) async {
+      delegate.beamingHistory.clear();
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: delegate,
+        ),
+      );
+      delegate.beamToNamed('/l1/one', popToNamed: '/l2');
+      await tester.pump();
+      expect(delegate.currentBeamLocation, isA<Location1>());
+      delegate.navigator.pop();
+      await tester.pump();
+      expect(delegate.currentBeamLocation, isA<Location2>());
+    });
+
+    testWidgets('is a one-time thing', (tester) async {
+      final delegate = BeamerDelegate(
+        locationBuilder: RoutesLocationBuilder(
+          routes: {
+            '/': (_, __, ___) => Container(),
+            '/test': (_, __, ___) => Container(),
+            '/test/one': (_, __, ___) => Container(),
+            '/test/one/two': (_, __, ___) => Container(),
+          },
+        ),
+      );
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: delegate,
+        ),
+      );
+      delegate.beamToNamed('/test/one/two', popToNamed: '/test');
+      await tester.pump();
+      expect(delegate.configuration.location, '/test/one/two');
+      delegate.navigator.pop();
+      await tester.pump();
+      expect(delegate.configuration.location, '/test');
+
+      delegate.beamToNamed('/test/one/two');
+      await tester.pump();
+      expect(delegate.configuration.location, '/test/one/two');
+      delegate.navigator.pop();
+      await tester.pump();
+      expect(delegate.configuration.location, '/test/one');
+    });
   });
+
   test('beamBack keeps data and can override it', () {
     delegate.beamToNamed('/l1', data: {'x': 'y'});
     delegate.beamToNamed('/l2');
