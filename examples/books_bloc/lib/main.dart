@@ -14,9 +14,7 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Center(
         child: ElevatedButton(
-          onPressed: () => context
-            ..read<BooksBloc>().add(LoadBooks())
-            ..beamToNamed('/books'),
+          onPressed: () => context.beamToNamed('/books'),
           child: Text('See books'),
         ),
       ),
@@ -40,9 +38,7 @@ class BooksScreen extends StatelessWidget {
                     (book) => ListTile(
                       title: Text(book.title),
                       subtitle: Text(book.author),
-                      onTap: () => context
-                        ..read<BooksBloc>().add(LoadBook(book.id))
-                        ..beamToNamed('/books/${book.id}'),
+                      onTap: () => context.beamToNamed('/books/${book.id}'),
                     ),
                   )
                   .toList(),
@@ -83,13 +79,22 @@ class BookDetailsScreen extends StatelessWidget {
 
 // LOCATIONS
 class BooksLocation extends BeamLocation<BeamState> {
-  BooksLocation() : super() {
-    addListener(_listener);
+  late BooksBloc _booksBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _booksBloc = BooksBloc();
   }
 
-  final BooksBloc _booksBloc = BooksBloc();
+  @override
+  void disposeState() {
+    _booksBloc.close();
+    super.disposeState();
+  }
 
-  void _listener() {
+  @override
+  void onUpdate() {
     if (state.pathPatternSegments.isEmpty) return;
 
     final bookId = state.pathParameters.containsKey('bookId')

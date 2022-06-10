@@ -846,6 +846,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   void _initBeamLocation(BeamLocation beamLocation) {
     beamLocation.initState();
+    beamLocation.onUpdate();
     beamLocation.addListener(_updateFromCurrentBeamLocation);
   }
 

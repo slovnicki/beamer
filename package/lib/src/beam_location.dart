@@ -194,6 +194,12 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
     state = createState(routeInformation);
   }
 
+  /// Called after [initState] and on each [update],
+  /// i.e. whenever we navigate with this [BeamLocation].
+  ///
+  /// Useful for delegating some tasks that depend on navigation.
+  void onUpdate() {}
+
   /// How to release any resources used by [state].
   ///
   /// Override this if
@@ -248,6 +254,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
         );
       }
     }
+    onUpdate();
     if (rebuild) {
       notifyListeners();
     }
