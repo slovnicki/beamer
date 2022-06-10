@@ -740,7 +740,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       _runGuards(_context!, _beamLocationCandidate);
       _addToBeamingHistory(_beamLocationCandidate);
     }
-    if (!_initialConfigurationReady) {
+    if (!_initialConfigurationReady && active && parent != null) {
       updateRouteInformation(configuration);
     }
     _initialConfigurationReady = true;
