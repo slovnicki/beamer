@@ -22,7 +22,7 @@
 
 # 1.4.0
 
-- **Added:** Relative beaming, i.e. being able to call `beamToNamed('path')` instead of `beamToNamed('/my/path')` if we're already at `/my`
+- **Added:** Relative beaming, i.e. being able to call `beamToNamed('path')` instead of `beamToNamed('/my/path')` if we're already at `/my`. **Important note:** This will affect **all** beaming that is not using the leading `/`, i.e. it will treat it as relative and append it to current path.
 - **Added:** New `BeamPageType`s; `slideRightTransition`, `slideLeftTransition` and `slideTopTransition` ([Shiba-Kar](https://github.com/Shiba-Kar), [#477](https://github.com/slovnicki/beamer/pull/477))
 - **Improved:** Interactions between nested and sibling Beamers by having children automatically take priority and more carefully handle locally not found cases
 - **Fixed:** Unnecessary update of `ChangeNotifier` custom state ([jmysliv](https://github.com/jmysliv), [#475](https://github.com/slovnicki/beamer/pull/475))
