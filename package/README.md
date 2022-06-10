@@ -78,7 +78,7 @@ Beamer uses the power of [Router](https://api.flutter.dev/flutter/widgets/Router
 
 # Quick Start
 
-The simplest setup is achieved by using the `RoutesLocationBuilder` which yields the least amount of code. This is a great choice for applications with fewer navigation scenarios or with shallow page stacks, i.e. when pages are rarely stacked on top of each other.
+For most navigation scenarios, using the `RoutesLocationBuilder` is a great choice which yields the least amount of code. After setting up our `App` like this, we can start navigating with `Beamer.of(context).beamToNamed('/books/2')`.
 
 ```dart
 class MyApp extends StatelessWidget {
@@ -117,11 +117,12 @@ class MyApp extends StatelessWidget {
 ```
 
 `RoutesLocationBuilder` will pick and sort `routes` based on their paths.  
-For example, navigating to `/books/1` will match all 3 entries from `routes` and stack them on top of each other. Navigating to `/books` will match the first 2 entries from `routes`.
+For example;
+
+- navigating to `/books/1` will match all 3 entries from `routes` and stack them on top of each other
+- navigating to `/books` will match the first 2 entries from `routes`
 
 The corresponding pages are put into `Navigator.pages` and `BeamerDelegate` (re)builds the `Navigator`, showing the selected stack of pages on the screen.
-
----
 
 **Why do we have a `locationBuilder` and what is a `BeamLocation`, the output of it?**
 
@@ -389,6 +390,12 @@ When nested navigation (i.e. nested `Navigator`) is needed, one can just put `Be
 - [Nested Navigation drawers](https://github.com/slovnicki/beamer/tree/master/examples/nested_navigation)
 - [Sibling Beamers](https://github.com/slovnicki/beamer/tree/master/examples/multiple_beamers)
 
+There are some special attributes of `BeamerDelegate` that are used only when there are multiple `Beamer`s in the tree. Their function is quite complicated so we try to have sensible defaults (all `true`) that work well for most use cases;
+
+- `initializeFromParent`: This is used to initialize the `BeamLocation` of child `BeamerDelegate` when its `Beamer` gets built in the Widget tree. It is `true` by default, meaning that the `BeamerDelegate` will create its `BeamLocation` from the `configuration` of the parent `BeamerDelegate`. If `false`, the `BeamerDelegate` will use its `initialPath` for initialization, regardless of what is the current `configuration` on parent.
+- `updateFromParent`: Similar to `initializeFromParent`, but this, if `true` (default), sets up a listener that calls `BeamerDelegate.update` with parent's `configuration` whenever the parent updates, regardless of whether this caused a rebuild of its (child's) `Beamer`.
+- `updateParent`: This is used for updating the other way around, for the child `BeamerDelegate` to update its parent `BeamerDelegate`. Most notably, it keeps the `beamingHistory` of both in sync. This is important for `BeamerBackButtonDispatcher` which is connected to just the root `BeamerDelegate` and may want to execute `beamBack()`. Also, the Widget tree will get built as it were when we do a global rebuild.
+
 ```dart
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -533,7 +540,7 @@ This example showcases all 3 options of using `locationBuilder`.
 
 # Migrating
 
-## From 0.14 to 1.0.0
+## From 0.14 to 1.X
 
 An article explaning changes and providing a migration guide is available [here at Medium](https://medium.com/flutter-community/beamer-v1-0-0-is-out-whats-new-and-how-to-migrate-b251b3758e3c).
 Most notable breaking changes:
