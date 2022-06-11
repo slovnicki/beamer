@@ -1,3 +1,24 @@
+# 1.5.0
+
+- **Added:** `onUpdate` method to `BeamLocation` which is called after `initState` and on every `update`. ([#507](https://github.com/slovnicki/beamer/issues/507), [#88c8537](https://github.com/slovnicki/beamer/commit/88c853711c4df4182b1ce0c460179ca5f6e6872c)). See [this example](https://github.com/slovnicki/beamer/tree/master/examples/books_bloc) that demonstrates its possible usage.
+- **Added:** `isEqualTo` extension method to `RouteInformation` (intentionally not overriding the equality operator)
+- **Fixed:** Possible wrong URL after global rebuild with multiple child Beamers ([#523](https://github.com/slovnicki/beamer/issues/523))
+- **Fixed:** Consistency of calls to `BeamLocation.updateState` ([#484](https://github.com/slovnicki/beamer/issues/484))
+- **Fixed:**  Resetting `popConfiguration` after `popToNamed` parameter has been used in a `beamToNamed` call ([#521](https://github.com/slovnicki/beamer/issues/521))
+
+### Documentation
+
+- Added explanation of some specific parameters at [Nested Navigation section](https://github.com/slovnicki/beamer/tree/master/package#nested-navigation) in README ([#514](https://github.com/slovnicki/beamer/issues/514))
+
+### Examples
+
+- Improved [books_blos example](https://github.com/slovnicki/beamer/tree/master/examples/books_bloc) with usage of new `BeamLocation.onUpdate`
+
+### Ecosystem
+
+- Added a [beam_location brick](https://github.com/slovnicki/beamer/tree/master/bricks/beam_location)
+- Various improvements on [website](https://github.com/slovnicki/beamer/tree/master/website) ([devj3ns](https://github.com/devj3ns))
+
 # 1.4.1+1
 
 - **Fixed:** formatting of `beamer.dart` file
