@@ -625,7 +625,7 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: ['/guarded'],
         check: (_, __) => false,
-        showPage: BeamPage(child: Container()),
+        showPage: BeamPage(key: const ValueKey('page'), child: Container()),
         replaceCurrentStack: false,
       );
 
@@ -654,7 +654,7 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: ['/guarded'],
         check: (_, __) => false,
-        showPage: BeamPage(child: Container()),
+        showPage: BeamPage(key: const ValueKey('page'), child: Container()),
       );
 
       final delegate = _createDelegate(guard);

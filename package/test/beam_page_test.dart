@@ -456,6 +456,7 @@ void main() {
             '/': (context, state, data) => Container(),
             '/test': (context, state, data) => Container(),
             '/test/2': (context, state, data) => BeamPage(
+                  key: const ValueKey('/test/2'),
                   onPopPage: BeamPage.routePop,
                   child: Container(),
                 ),

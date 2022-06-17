@@ -41,8 +41,10 @@ class BeamPage extends Page {
   /// Creates a [BeamPage] with specified properties.
   ///
   /// [child] is required and typically represents a screen of the app.
+  ///
+  /// [key] is required since [Navigator] needs it to tell [BeamPage]s apart.
   const BeamPage({
-    LocalKey? key,
+    required LocalKey key,
     String? name,
     required this.child,
     this.title,
