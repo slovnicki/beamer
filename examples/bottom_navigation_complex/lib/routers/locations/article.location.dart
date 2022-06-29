@@ -10,9 +10,10 @@ class ArticleLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         ...LayoutLocation().buildPages(context, state),
-        BeamPage(
-          key: ValueKey('article-details-${state.pathParameters["articleID"]}'),
-          child: ArticleDetailsScreen(articleID: state.pathParameters["articleID"]!),
-        )
+        if (state.pathParameters.containsKey('articleID'))
+          BeamPage(
+            key: ValueKey('article-details-${state.pathParameters["articleID"]}'),
+            child: ArticleDetailsScreen(articleID: state.pathParameters["articleID"]!),
+          )
       ];
 }

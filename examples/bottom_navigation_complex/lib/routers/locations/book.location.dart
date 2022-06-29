@@ -10,9 +10,10 @@ class BookLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         ...LayoutLocation().buildPages(context, state),
-        BeamPage(
-          key: ValueKey('book-details-${state.pathParameters["bookID"]}'),
-          child: BookDetailsScreen(bookID: state.pathParameters["bookID"]!),
-        )
+        if (state.pathParameters.containsKey('bookID'))
+          BeamPage(
+            key: ValueKey('book-details-${state.pathParameters["bookID"]}'),
+            child: BookDetailsScreen(bookID: state.pathParameters["bookID"]!),
+          )
       ];
 }
