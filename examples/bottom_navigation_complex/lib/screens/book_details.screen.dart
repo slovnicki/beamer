@@ -12,12 +12,38 @@ class BookDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Book ${book.title}')),
-      body: Center(
-        child: ElevatedButton(
-          child: Text('Open ${book.id} in root page'),
-          onPressed: () => Beamer.of(context).root.beamToNamed('/Book/${book.id}'),
-        ),
+      appBar: AppBar(
+        title: Text('Book ${book.title}'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.open_in_new),
+            onPressed: () => Beamer.of(context).root.beamToNamed('/Book/${book.id}'),
+          )
+        ],
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+            child: Text('Other books:', style: Theme.of(context).textTheme.titleLarge),
+          ),
+          ...books
+              .where((book) => book.id != bookID)
+              .map(
+                (book) => ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    child: Text(book.id),
+                  ),
+                  title: Text(book.title),
+                  subtitle: Text(book.author),
+                  onTap: () => context.beamToNamed('/Books/${book.id}'),
+                  onLongPress: () => Beamer.of(context).root.beamToNamed('/Book/${book.id}'),
+                ),
+              )
+              .toList(),
+        ],
       ),
     );
   }

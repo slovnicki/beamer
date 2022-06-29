@@ -12,12 +12,38 @@ class ArticleDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Article ${article.title}')),
-      body: Center(
-        child: ElevatedButton(
-          child: Text('Open ${article.id} in root page'),
-          onPressed: () => App.router.beamToNamed('/Article/${article.id}'),
-        ),
+      appBar: AppBar(
+        title: Text('Article ${article.title}'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.open_in_new),
+            onPressed: () => App.router.beamToNamed('/Article/${article.id}'),
+          )
+        ],
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+            child: Text('Other articles:', style: Theme.of(context).textTheme.titleLarge),
+          ),
+          ...articles
+              .where((article) => article.id != articleID)
+              .map(
+                (article) => ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    child: Text(article.id),
+                  ),
+                  title: Text(article.title),
+                  subtitle: Text(article.seller),
+                  onTap: () => App.router.beamToNamed('/Books/${article.id}'),
+                  onLongPress: () => App.router.beamToNamed('/Book/${article.id}'),
+                ),
+              )
+              .toList(),
+        ],
       ),
     );
   }

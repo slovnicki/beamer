@@ -21,6 +21,10 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
         children: articles
             .map(
               (article) => ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  child: Text(article.id),
+                ),
                 title: Text(article.title),
                 subtitle: Text(article.seller),
                 onTap: () => context.beamToNamed('/Articles/${article.id}'),

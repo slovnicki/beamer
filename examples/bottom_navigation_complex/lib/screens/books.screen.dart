@@ -20,6 +20,10 @@ class _BooksState extends State<Books> {
         children: books
             .map(
               (book) => ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  child: Text(book.id),
+                ),
                 title: Text(book.title),
                 subtitle: Text(book.author),
                 onTap: () => context.beamToNamed('/Books/${book.id}'),
