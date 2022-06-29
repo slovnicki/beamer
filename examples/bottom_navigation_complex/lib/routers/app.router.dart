@@ -9,11 +9,11 @@ final BeamerDelegate routerDelegate = BeamerDelegate(
   initialPath: '/Books',
   routeListener: (_, delegate) {
     print("${'=' * 15} History ${'=' * 15}");
-    delegate.beamingHistory.asMap().entries.forEach((beamHistory) {
-      for (var history in beamHistory.value.history) {
-        print('beamlocation ${beamHistory.key}: \t path: ${history.routeInformation.location}');
+    for (var beamHistory in delegate.beamingHistory) {
+      for (var history in beamHistory.history) {
+        print('BeamLocation: ${beamHistory.runtimeType} \t path: ${history.routeInformation.location}');
       }
-    });
+    }
   },
   locationBuilder: BeamerLocationBuilder(
     beamLocations: [
