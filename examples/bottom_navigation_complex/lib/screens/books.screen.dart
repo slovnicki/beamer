@@ -1,4 +1,6 @@
+import 'package:bottom_navigation_complex/data/data.dart';
 import 'package:flutter/material.dart';
+import 'package:beamer/beamer.dart';
 
 class Books extends StatefulWidget {
   const Books({super.key});
@@ -14,6 +16,17 @@ class _BooksState extends State<Books> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Books')),
+      body: ListView(
+        children: books
+            .map(
+              (book) => ListTile(
+                title: Text(book.title),
+                subtitle: Text(book.author),
+                onTap: () => context.beamToNamed('/Books/${book.id}'),
+              ),
+            )
+            .toList(),
+      ),
       floatingActionButton: FloatingActionButton(
         heroTag: null,
         child: Text('$counter'),
