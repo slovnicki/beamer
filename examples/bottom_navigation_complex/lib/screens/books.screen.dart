@@ -23,6 +23,7 @@ class _BooksState extends State<Books> {
                 title: Text(book.title),
                 subtitle: Text(book.author),
                 onTap: () => context.beamToNamed('/Books/${book.id}'),
+                onLongPress: () => Beamer.of(context).root.beamToNamed('/Book/${book.id}'),
               ),
             )
             .toList(),

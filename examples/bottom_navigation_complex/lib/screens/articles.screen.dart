@@ -1,3 +1,4 @@
+import 'package:bottom_navigation_complex/app.dart';
 import 'package:bottom_navigation_complex/data/data.dart';
 import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
@@ -23,6 +24,7 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
                 title: Text(article.title),
                 subtitle: Text(article.seller),
                 onTap: () => context.beamToNamed('/Articles/${article.id}'),
+                onLongPress: () => App.router.beamToNamed('/Article/${article.id}'),
               ),
             )
             .toList(),

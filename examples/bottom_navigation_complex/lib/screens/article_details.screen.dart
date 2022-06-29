@@ -1,3 +1,4 @@
+import 'package:bottom_navigation_complex/app.dart';
 import 'package:bottom_navigation_complex/data/data.dart';
 import 'package:bottom_navigation_complex/models/article.models.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class ArticleDetailsScreen extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           child: Text('Open ${article.id} in root page'),
-          onPressed: () {}, // TODO: Open in root page
+          onPressed: () => App.router.beamToNamed('/Article/${article.id}'),
         ),
       ),
     );

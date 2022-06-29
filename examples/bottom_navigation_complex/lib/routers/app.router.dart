@@ -1,4 +1,6 @@
 import 'package:beamer/beamer.dart';
+import 'package:bottom_navigation_complex/routers/locations/article.location.dart';
+import 'package:bottom_navigation_complex/routers/locations/book.location.dart';
 import 'package:bottom_navigation_complex/routers/locations/layout.locations.dart';
 import 'package:bottom_navigation_complex/routers/locations/settings.locations.dart';
 
@@ -16,6 +18,8 @@ final BeamerDelegate routerDelegate = BeamerDelegate(
   locationBuilder: BeamerLocationBuilder(
     beamLocations: [
       LayoutLocation(),
+      BookLocation(),
+      ArticleLocation(),
       SettingsLocation(),
     ],
   ),
