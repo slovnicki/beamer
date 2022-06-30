@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 
 class LayoutLocation extends BeamLocation<BeamState> {
   @override
-  List<String> get pathPatterns => ['/Books', '/Articles'];
+  List<String> get pathPatterns => ['/Books', '/Books/*', '/Articles', '/Articles/*'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
