@@ -24,3 +24,18 @@ final BeamerDelegate routerDelegate = BeamerDelegate(
     ],
   ),
 );
+
+extension PreviousRouteParsing on BeamLocation {
+  String? get previousLocation {
+    BeamLocation lastLocation = routerDelegate.beamingHistory.last;
+    if (lastLocation.history.length > 1) {
+      return lastLocation.history[lastLocation.history.length - 2].routeInformation.location;
+    }
+
+    if (routerDelegate.beamingHistory.length > 1) {
+      return routerDelegate.beamingHistory[routerDelegate.beamingHistory.length - 2].history.last.routeInformation.location;
+    }
+
+    return null;
+  }
+}

@@ -2,6 +2,7 @@ import 'package:beamer/beamer.dart';
 import 'package:bottom_navigation_complex/routers/locations/layout.locations.dart';
 import 'package:bottom_navigation_complex/screens/book_details.screen.dart';
 import 'package:flutter/widgets.dart';
+import 'package:bottom_navigation_complex/routers/app.router.dart';
 
 class BookLocation extends BeamLocation<BeamState> {
   @override
@@ -14,6 +15,7 @@ class BookLocation extends BeamLocation<BeamState> {
           BeamPage(
             key: ValueKey('book-details-${state.pathParameters["bookID"]}'),
             child: BookDetailsScreen(bookID: state.pathParameters["bookID"]!),
+            popToNamed: previousLocation,
           )
       ];
 }
