@@ -38,8 +38,8 @@ class ArticleDetailsScreen extends StatelessWidget {
                   ),
                   title: Text(article.title),
                   subtitle: Text(article.seller),
-                  onTap: () => App.router.beamToNamed('/Books/${article.id}'),
-                  onLongPress: () => App.router.beamToNamed('/Book/${article.id}'),
+                  onTap: () => App.router.beamToNamed('/Articles/${article.id}'),
+                  onLongPress: () => App.router.beamToNamed('/Article/${article.id}'),
                 ),
               )
               .toList(),

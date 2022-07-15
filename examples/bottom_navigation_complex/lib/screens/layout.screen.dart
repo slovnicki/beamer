@@ -1,5 +1,6 @@
 import 'package:bottom_navigation_complex/routers/books.router.dart';
 import 'package:bottom_navigation_complex/routers/articles.router.dart';
+import 'package:lazy_load_indexed_stack/lazy_load_indexed_stack.dart';
 import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
 
@@ -13,8 +14,13 @@ class LayoutScreen extends StatefulWidget {
 class _LayoutScreenState extends State<LayoutScreen> {
   final List<String> routes = ['/Books', '/Articles'];
   final List<BeamerDelegate> routerDelegates = [booksRouterDelegate, articlesRouterDelegate];
-  late List<Widget> children = List.generate(routes.length, (_) => const SizedBox.shrink());
-  late int currentIndex;
+  late List<Beamer> children = List.generate(
+      routes.length,
+      (index) => Beamer(
+            backButtonDispatcher: BeamerBackButtonDispatcher(delegate: routerDelegates[index], alwaysBeamBack: true),
+            routerDelegate: routerDelegates[index],
+          ));
+  late int currentIndex = -1;
 
   @override
   void didChangeDependencies() {
@@ -25,14 +31,16 @@ class _LayoutScreenState extends State<LayoutScreen> {
   }
 
   void _updateCurrentIndex(int index) {
-    if (children[index] is SizedBox) {
-      children[index] = Beamer(
-        backButtonDispatcher: BeamerBackButtonDispatcher(delegate: Beamer.of(context).root, alwaysBeamBack: true),
-        routerDelegate: routerDelegates[index],
-      );
+    // if the index is not the same, then we need to update the route
+    if (currentIndex != index) {
+      // Fix: After build complete of the new screen (lazy), update the route to trigger the history
+      if (currentIndex != -1) WidgetsBinding.instance.addPostFrameCallback((_) => children[index].routerDelegate.update(rebuild: false));
+      setState(() => currentIndex = index);
+    } else {
+      // If the index is the same, reset the Beamer to the initial state.
+      // TODO: Remove all history entry of the beamerdelegate.
+      children[index].routerDelegate.beamToReplacementNamed(routes[index]);
     }
-    (children[index] as Beamer).routerDelegate.update(rebuild: false);
-    setState(() => currentIndex = index);
   }
 
   @override
@@ -47,7 +55,7 @@ class _LayoutScreenState extends State<LayoutScreen> {
           )
         ],
       ),
-      body: IndexedStack(index: currentIndex, children: children),
+      body: LazyLoadIndexedStack(index: currentIndex, children: children),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(label: 'Books', icon: Icon(Icons.book)),
