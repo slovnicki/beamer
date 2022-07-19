@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 final BeamerDelegate booksRouterDelegate = BeamerDelegate(
   setBrowserTabTitle: false,
   initialPath: '/Books',
+  clearBeamingHistoryOn: {'/Books'},
   locationBuilder: RoutesLocationBuilder(
     routes: {
       '/Books': (context, state, data) => const BeamPage(key: ValueKey('books'), child: Books()),

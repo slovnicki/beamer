@@ -7,6 +7,7 @@ import 'package:bottom_navigation_complex/routers/app.router.dart';
 final BeamerDelegate articlesRouterDelegate = BeamerDelegate(
   setBrowserTabTitle: false,
   initialPath: '/Articles',
+  clearBeamingHistoryOn: {'/Articles'},
   locationBuilder: RoutesLocationBuilder(
     routes: {
       '/Articles': (context, state, data) => const BeamPage(key: ValueKey('articles'), child: ArticlesScreen()),

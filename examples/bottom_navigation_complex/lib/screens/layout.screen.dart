@@ -38,7 +38,6 @@ class _LayoutScreenState extends State<LayoutScreen> {
       setState(() => currentIndex = index);
     } else {
       // If the index is the same, reset the Beamer to the initial state.
-      // TODO: Remove all history entry of the beamerdelegate.
       children[index].routerDelegate.beamToReplacementNamed(routes[index]);
     }
   }
