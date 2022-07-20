@@ -1,4 +1,5 @@
 import 'package:bottom_navigation_complex/routers/app.router.dart';
+import 'package:bottom_navigation_complex/screens/splash.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
 
@@ -14,6 +15,7 @@ class App extends StatelessWidget {
       routerDelegate: router,
       routeInformationParser: BeamerParser(),
       backButtonDispatcher: BeamerBackButtonDispatcher(delegate: router, alwaysBeamBack: true),
+      builder: (context, child) => SplashScreen(screen: child),
     );
   }
 }
