@@ -25,12 +25,30 @@ class _BooksState extends State<Books> {
                   child: Text(book.id),
                 ),
                 title: Text(book.title),
-                subtitle: Text(book.author),
+                subtitle: Text("Book - ${book.author}"),
                 onTap: () => context.beamToNamed('/Books/${book.id}'),
                 onLongPress: () => Beamer.of(context).root.beamToNamed('/Book/${book.id}'),
               ),
             )
-            .toList(),
+            .toList()
+          ..add(ListTile(
+            title: Text('Articles'),
+            onTap: () => Beamer.of(context).root.beamToNamed("/Articles"),
+          ))
+          ..addAll(articles
+              .map(
+                (article) => ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    child: Text(article.id),
+                  ),
+                  title: Text(article.title),
+                  subtitle: Text("Article - ${article.seller}"),
+                  onTap: () => context.beamToNamed('/Articles/${article.id}'),
+                  onLongPress: () => Beamer.of(context).root.beamToNamed('/Article/${article.id}'),
+                ),
+              )
+              .toList()),
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: null,
