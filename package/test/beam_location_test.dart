@@ -212,4 +212,65 @@ void main() {
       verify(() => updateStateStub.call()).called(1);
     });
   });
+
+  group('Route Structure', () {
+    testWidgets(
+      'Structure is used for pops in custom BeamLocation',
+      (tester) async {
+        final delegate = BeamerDelegate(
+          locationBuilder: BeamerLocationBuilder(
+            beamLocations: [BeamLocationWithStructure()],
+          ),
+        );
+
+        await tester.pumpWidget(
+          MaterialApp.router(
+            routerDelegate: delegate,
+            routeInformationParser: BeamerParser(),
+          ),
+        );
+
+        delegate.beamToNamed('/some/thing/deeper');
+        await tester.pumpAndSettle();
+        expect(delegate.configuration.location, '/some/thing/deeper');
+
+        await delegate.navigator.maybePop();
+        await tester.pumpAndSettle();
+        expect(delegate.configuration.location, '/');
+      },
+    );
+    testWidgets(
+      'Structure is used for pops in RoutesBeamLocation',
+      (tester) async {
+        final delegate = BeamerDelegate(
+          locationBuilder: RoutesLocationBuilder(
+            structure: const {
+              '/': {
+                '/some/thing/deeper',
+              },
+            },
+            routes: {
+              '/': (_, __, ___) => Container(),
+              '/some/thing/deeper': (_, __, ___) => Container(),
+            },
+          ),
+        );
+
+        await tester.pumpWidget(
+          MaterialApp.router(
+            routerDelegate: delegate,
+            routeInformationParser: BeamerParser(),
+          ),
+        );
+
+        delegate.beamToNamed('/some/thing/deeper');
+        await tester.pumpAndSettle();
+        expect(delegate.configuration.location, '/some/thing/deeper');
+
+        await delegate.navigator.maybePop();
+        await tester.pumpAndSettle();
+        expect(delegate.configuration.location, '/');
+      },
+    );
+  });
 }
