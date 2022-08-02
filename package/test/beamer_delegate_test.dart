@@ -365,9 +365,9 @@ void main() {
       final childDelegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
-            '/': (context, state, data) => Container(),
-            '/test': (context, state, data) => Container(),
-            '/test2': (context, state, data) => Container(),
+            '/': (context, state, data) => const Text('/'),
+            '/test': (context, state, data) => const Text('/test'),
+            '/test2': (context, state, data) => const Text('/test2'),
           },
         ),
       );
@@ -393,12 +393,14 @@ void main() {
 
       rootDelegate.beamToNamed('/test');
       await tester.pump();
+      expect(find.text('/test'), findsOneWidget);
       expect(rootDelegate.configuration.location, '/test');
       expect(childDelegate.configuration.location, '/test');
       expect(childDelegate.beamingHistory.last.history.length, 2);
 
       rootDelegate.beamToNamed('/test2');
       await tester.pump();
+      expect(find.text('/test2'), findsOneWidget);
       expect(rootDelegate.configuration.location, '/test2');
       expect(childDelegate.configuration.location, '/test2');
       expect(childDelegate.beamingHistory.last.history.length, 3);
