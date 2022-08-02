@@ -1065,7 +1065,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     if (beamLocation is! NotFound) {
       update(
         configuration: parentConfiguration,
-        rebuild: false,
+        rebuild: rebuild,
         updateParent: false,
         updateRouteInformation: false,
       );
