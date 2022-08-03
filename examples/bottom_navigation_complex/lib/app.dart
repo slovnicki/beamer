@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
 
 class App extends StatelessWidget {
-  static BeamerDelegate router = routerDelegate;
+  static final BeamerDelegate _router = routerDelegate;
 
   const App({super.key});
 
@@ -12,7 +12,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      routerDelegate: router,
+      routerDelegate: _router,
       routeInformationParser: BeamerParser(),
       builder: (context, child) => SplashScreen(screen: child),
     );

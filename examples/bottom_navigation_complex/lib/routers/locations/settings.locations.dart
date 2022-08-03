@@ -11,6 +11,6 @@ class SettingsLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         ...LayoutLocation().buildPages(context, state),
-        BeamPage(key: ValueKey('settings'), child: SettingsScreen(), popToNamed: previousLocation),
+        BeamPage(key: const ValueKey('settings'), child: const SettingsScreen(), popToNamed: previousLocation),
       ];
 }

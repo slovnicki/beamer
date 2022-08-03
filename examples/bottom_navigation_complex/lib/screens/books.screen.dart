@@ -15,7 +15,7 @@ class _BooksState extends State<Books> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Books')),
+      appBar: AppBar(title: const Text('Books')),
       body: ListView(
         children: books
             .map(
@@ -32,7 +32,7 @@ class _BooksState extends State<Books> {
             )
             .toList()
           ..add(ListTile(
-            title: Text('Articles'),
+            title: const Text('Articles'),
             onTap: () => Beamer.of(context).root.beamToNamed("/Articles"),
           ))
           ..addAll(articles

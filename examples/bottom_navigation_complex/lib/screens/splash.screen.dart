@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!loading && widget.screen != null) return widget.screen!;
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
-      body: Center(
+      body: const Center(
         child: Text(
           'Splash',
           style: TextStyle(color: Colors.white, fontSize: 30),

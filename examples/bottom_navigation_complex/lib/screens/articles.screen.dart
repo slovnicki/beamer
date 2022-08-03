@@ -1,4 +1,3 @@
-import 'package:bottom_navigation_complex/app.dart';
 import 'package:bottom_navigation_complex/data/data.dart';
 import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
@@ -16,7 +15,7 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Articles')),
+      appBar: AppBar(title: const Text('Articles')),
       body: ListView(
         children: articles
             .map(
@@ -28,7 +27,7 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
                 title: Text(article.title),
                 subtitle: Text(article.seller),
                 onTap: () => context.beamToNamed('/Articles/${article.id}'),
-                onLongPress: () => App.router.beamToNamed('/Article/${article.id}'),
+                onLongPress: () => Beamer.of(context).root.beamToNamed('/Article/${article.id}'),
               ),
             )
             .toList(),

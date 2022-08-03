@@ -16,7 +16,7 @@ class BookDetailsScreen extends StatelessWidget {
         title: Text('Book ${book.title}'),
         actions: [
           IconButton(
-            icon: Icon(Icons.open_in_new),
+            icon: const Icon(Icons.open_in_new),
             onPressed: () => Beamer.of(context).root.beamToNamed('/Book/${book.id}'),
           )
         ],

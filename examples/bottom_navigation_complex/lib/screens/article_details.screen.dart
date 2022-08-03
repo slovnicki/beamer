@@ -1,4 +1,4 @@
-import 'package:bottom_navigation_complex/app.dart';
+import 'package:beamer/beamer.dart';
 import 'package:bottom_navigation_complex/data/data.dart';
 import 'package:bottom_navigation_complex/models/article.models.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +16,8 @@ class ArticleDetailsScreen extends StatelessWidget {
         title: Text('Article ${article.title}'),
         actions: [
           IconButton(
-            icon: Icon(Icons.open_in_new),
-            onPressed: () => App.router.beamToNamed('/Article/${article.id}'),
+            icon: const Icon(Icons.open_in_new),
+            onPressed: () => Beamer.of(context).root.beamToNamed('/Article/${article.id}'),
           )
         ],
       ),
@@ -38,8 +38,8 @@ class ArticleDetailsScreen extends StatelessWidget {
                   ),
                   title: Text(article.title),
                   subtitle: Text(article.seller),
-                  onTap: () => App.router.beamToNamed('/Articles/${article.id}'),
-                  onLongPress: () => App.router.beamToNamed('/Article/${article.id}'),
+                  onTap: () => context.beamToNamed('/Articles/${article.id}'),
+                  onLongPress: () => Beamer.of(context).root.beamToNamed('/Article/${article.id}'),
                 ),
               )
               .toList(),
