@@ -14,7 +14,6 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routerDelegate: router,
       routeInformationParser: BeamerParser(),
-      backButtonDispatcher: BeamerBackButtonDispatcher(delegate: router, alwaysBeamBack: true),
       builder: (context, child) => SplashScreen(screen: child),
     );
   }

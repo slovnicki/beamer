@@ -13,11 +13,15 @@ class LayoutScreen extends StatefulWidget {
 
 class _LayoutScreenState extends State<LayoutScreen> {
   final List<String> routes = ['/Books', '/Articles'];
-  final List<BeamerDelegate> routerDelegates = [booksRouterDelegate, articlesRouterDelegate];
+  final List<BeamerDelegate> routerDelegates = [
+    booksRouterDelegate,
+    articlesRouterDelegate
+  ];
   late List<Beamer> children = List.generate(
       routes.length,
       (index) => Beamer(
-            backButtonDispatcher: BeamerBackButtonDispatcher(delegate: routerDelegates[index], alwaysBeamBack: true),
+            backButtonDispatcher:
+                BeamerBackButtonDispatcher(delegate: routerDelegates[index]),
             routerDelegate: routerDelegates[index],
           ));
   late int currentIndex = -1;
@@ -34,7 +38,9 @@ class _LayoutScreenState extends State<LayoutScreen> {
     // if the index is not the same, then we need to update the route
     if (currentIndex != index) {
       // Fix: After build complete of the new screen (lazy), update the route to trigger the history
-      if (currentIndex != -1) WidgetsBinding.instance.addPostFrameCallback((_) => children[index].routerDelegate.update(rebuild: false));
+      if (currentIndex != -1)
+        WidgetsBinding.instance.addPostFrameCallback(
+            (_) => children[index].routerDelegate.update(rebuild: false));
       setState(() => currentIndex = index);
     } else {
       // If the index is the same, reset the Beamer to the initial state.
