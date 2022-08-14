@@ -272,5 +272,42 @@ void main() {
         expect(delegate.configuration.location, '/');
       },
     );
+
+    testWidgets(
+      'Structure is preferred when stacking pages',
+      (tester) async {
+        final delegate = BeamerDelegate(
+          initialPath: '/route1',
+          locationBuilder: RoutesLocationBuilder(
+            structure: const {
+              '/route1': {
+                '/route2',
+              },
+            },
+            routes: {
+              '/route1': (_, __, ___) => Container(),
+              '/route2': (_, __, ___) => Container(),
+            },
+          ),
+        );
+
+        await tester.pumpWidget(
+          MaterialApp.router(
+            routerDelegate: delegate,
+            routeInformationParser: BeamerParser(),
+          ),
+        );
+
+        delegate.beamToNamed('/route2');
+        await tester.pumpAndSettle();
+        expect(delegate.configuration.location, '/route2');
+        expect(delegate.currentPages.length, 2);
+
+        await delegate.navigator.maybePop();
+        await tester.pumpAndSettle();
+        expect(delegate.configuration.location, '/route1');
+        expect(delegate.currentPages.length, 1);
+      },
+    );
   });
 }

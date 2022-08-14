@@ -82,6 +82,8 @@ class BeamPage extends Page {
     return didStructurePop;
   }
 
+  /// Uses [RouteStructure] Set from [BeamLocation.buildStructure]
+  /// to determine a route that should be popped to.
   static bool? structurePop(
     BuildContext context,
     BeamerDelegate delegate,
@@ -94,13 +96,13 @@ class BeamPage extends Page {
       state.routeInformation.location ?? '/',
     );
     if (result.target != null) {
-      if (result.parent == null) {
+      if (result.stack.isEmpty) {
         return false;
       }
       delegate.removeFirstHistoryElement();
       delegate.update(
         configuration: RouteInformation(
-          location: result.parent!.route.toString(),
+          location: result.stack.last.route.toString(),
         ),
       );
       return true;

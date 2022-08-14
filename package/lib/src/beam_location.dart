@@ -78,10 +78,10 @@ class HistoryElement {
 /// A data class for the result of lookup used when popping.
 class RouteStructureLookupResult {
   /// Creates a [RouteStructureLookupResult].
-  const RouteStructureLookupResult(this.parent, this.target);
+  const RouteStructureLookupResult(this.stack, this.target);
 
-  /// Parent of the [target], within the [RouteStructure].
-  final RouteStructure? parent;
+  /// A path to [target], i.e. the stack of routes beneath [target].
+  final List<RouteStructure> stack;
 
   /// The [RouteStructure] that was being looked up.
   final RouteStructure? target;
@@ -102,31 +102,37 @@ class RouteStructure {
   final Set<RouteStructure>? children;
 
   /// Find route [pattern] within [RouteStructure] or return null.
-  RouteStructureLookupResult lookup(Pattern pattern, [RouteStructure? parent]) {
+  RouteStructureLookupResult lookup(
+    Pattern pattern, [
+    List<RouteStructure> stack = const [],
+  ]) {
     if (route.toString() == pattern.toString()) {
-      return RouteStructureLookupResult(parent, this);
+      return RouteStructureLookupResult(stack, this);
     }
     if (children == null) {
-      return RouteStructureLookupResult(parent, null);
+      return RouteStructureLookupResult(stack, null);
     }
     for (final routeStructure in children!) {
-      final result = routeStructure.lookup(pattern, this);
+      final result = routeStructure.lookup(pattern, stack + [this]);
       if (result.target != null) {
         return result;
       }
     }
-    return RouteStructureLookupResult(parent, null);
+    return RouteStructureLookupResult(stack, null);
   }
 
+  /// Finds route [pattern] within arbitrary [RouteStructure] subset.
   static RouteStructureLookupResult lookupWithin(
-      Set<RouteStructure> structure, Pattern pattern) {
+    Set<RouteStructure> structure,
+    Pattern pattern,
+  ) {
     for (final routeStructure in structure) {
       final result = routeStructure.lookup(pattern);
       if (result.target != null) {
         return result;
       }
     }
-    return const RouteStructureLookupResult(null, null);
+    return const RouteStructureLookupResult([], null);
   }
 
   /// Does [lookup] on [pattern], but returns the parent.
@@ -143,6 +149,7 @@ class RouteStructure {
         return result;
       }
     }
+    return null;
   }
 }
 
@@ -597,38 +604,84 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
   }
 
   Set<RouteStructure> _routeStructureSetFromPatternSet(
-      Set<Pattern>? structure) {
+    Set<Pattern>? structure,
+  ) {
     if (structure == null) {
       return {};
     }
     final routeStructure = <RouteStructure>{};
-    structure.forEach((pattern) {
+    for (final pattern in structure) {
       routeStructure.add(
         RouteStructure(pattern, null),
       );
-    });
+    }
     return routeStructure;
+  }
+
+  String _fillPathParameters(Pattern pattern) {
+    final patternSegments = pattern.toString().split('/');
+    if (patternSegments.every((segment) => !segment.startsWith(':'))) {
+      return pattern.toString();
+    }
+    final filledSegments = [];
+    for (final segment in patternSegments) {
+      if (segment.startsWith(':')) {
+        filledSegments.add(state.pathParameters[segment.substring(1)]);
+      } else {
+        filledSegments.add(segment);
+      }
+    }
+    return filledSegments.join('/');
+  }
+
+  Map<Pattern, String> _makeFilledRoutesMap(Iterable<Pattern> patterns) {
+    final filledRoutes = <Pattern, String>{};
+    for (final pattern in patterns) {
+      filledRoutes[pattern] = _fillPathParameters(pattern);
+    }
+    return filledRoutes;
   }
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
+    List<BeamPage> makePages(
+      Iterable<Pattern> stackedRoutes,
+      Map<Pattern, String> filledRoutes,
+    ) {
+      return stackedRoutes.map<BeamPage>(
+        (route) {
+          final routeElement = routes[route]!(context, state, data);
+          if (routeElement is BeamPage) {
+            return routeElement;
+          } else {
+            return BeamPage(
+              key: ValueKey(filledRoutes[route]),
+              child: routeElement,
+            );
+          }
+        },
+      ).toList();
+    }
+
+    // If route can be found in the structure
+    final structure = buildStructure(context, state);
+    final result =
+        RouteStructure.lookupWithin(structure, state.uriBlueprint.toString());
+    if (result.target != null) {
+      final stackedRoutes =
+          result.stack.map((rs) => rs.route).toList() + [result.target!.route];
+      final filledRoutes = _makeFilledRoutesMap(stackedRoutes);
+      return makePages(stackedRoutes, filledRoutes);
+    }
+
+    // Choose all sub-matching routes
     final filteredRoutes = chooseRoutes(state.routeInformation, routes.keys);
     final routeBuilders = Map.of(routes)
       ..removeWhere((key, value) => !filteredRoutes.containsKey(key));
     final sortedRoutes = routeBuilders.keys.toList()
       ..sort((a, b) => _compareKeys(a, b));
-    final pages = sortedRoutes.map<BeamPage>((route) {
-      final routeElement = routes[route]!(context, state, data);
-      if (routeElement is BeamPage) {
-        return routeElement;
-      } else {
-        return BeamPage(
-          key: ValueKey(filteredRoutes[route]),
-          child: routeElement,
-        );
-      }
-    }).toList();
-    return pages;
+
+    return makePages(sortedRoutes, filteredRoutes);
   }
 
   /// Chooses all the routes that "sub-match" [routeInformation] to stack their
