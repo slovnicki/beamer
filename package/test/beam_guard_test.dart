@@ -798,4 +798,43 @@ void main() {
       },
     );
   });
+
+  testWidgets('Bug with lagging route check, issue #532', (tester) async {
+    var checkTriggered = false;
+    final delegate = BeamerDelegate(
+      locationBuilder: BeamerLocationBuilder(
+        beamLocations: [
+          SimpleBeamLocation(),
+        ],
+      ),
+      guards: [
+        BeamGuard(
+          pathPatterns: ['/route'],
+          check: (_, __) {
+            checkTriggered = true;
+            return false;
+          },
+          beamToNamed: (_, __) => '/',
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routeInformationParser: BeamerParser(),
+        routerDelegate: delegate,
+      ),
+    );
+
+    expect(delegate.configuration.location, '/');
+
+    delegate.beamToNamed('/route');
+    await tester.pumpAndSettle();
+    expect(checkTriggered, true);
+
+    checkTriggered = false;
+    delegate.beamToNamed('/route/deeper');
+    await tester.pumpAndSettle();
+    expect(checkTriggered, false);
+  });
 }

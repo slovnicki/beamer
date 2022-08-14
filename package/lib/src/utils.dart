@@ -25,6 +25,8 @@ abstract class Utils {
         );
         if (!beamLocation.isCurrent) {
           beamLocation.create(routeInformation);
+        } else {
+          beamLocation.update(null, routeInformation, null, false);
         }
         return beamLocation;
       }

@@ -177,3 +177,34 @@ class UpdateStateStubBeamLocation extends BeamLocation {
     updateStateStub.call();
   }
 }
+
+class SimpleBeamLocation extends BeamLocation<BeamState> {
+  @override
+  List<Pattern> get pathPatterns => [
+        '/',
+        '/route',
+        '/route/deeper',
+      ];
+
+  @override
+  List<BeamPage> buildPages(
+    BuildContext context,
+    BeamState state,
+  ) =>
+      [
+        BeamPage(
+          key: const ValueKey('/'),
+          child: Container(),
+        ),
+        if (state.pathPatternSegments.contains('route'))
+          BeamPage(
+            key: const ValueKey('route'),
+            child: Container(),
+          ),
+        if (state.pathPatternSegments.contains('deeper'))
+          BeamPage(
+            key: const ValueKey('deeper'),
+            child: Container(),
+          ),
+      ];
+}
