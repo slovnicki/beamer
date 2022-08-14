@@ -1,3 +1,7 @@
+# 1.5.1
+
+- **Fixed:** Lagging `BeamGuard` check when using `BeamerLocationBuilder` ([#532](https://github.com/slovnicki/beamer/issues/532))
+
 # 1.5.0
 
 - **Added:** `onUpdate` method to `BeamLocation` which is called after `initState` and on every `update`. ([#507](https://github.com/slovnicki/beamer/issues/507), [#88c8537](https://github.com/slovnicki/beamer/commit/88c853711c4df4182b1ce0c460179ca5f6e6872c)). See [this example](https://github.com/slovnicki/beamer/tree/master/examples/books_bloc) that demonstrates its possible usage.
