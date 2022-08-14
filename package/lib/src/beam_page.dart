@@ -48,7 +48,7 @@ class BeamPage extends Page {
     String? name,
     required this.child,
     this.title,
-    this.onPopPage = pathSegmentPop,
+    this.onPopPage = structureOrPathSegmentPop,
     this.popToNamed,
     this.type = BeamPageType.material,
     this.routeBuilder,
@@ -64,12 +64,59 @@ class BeamPage extends Page {
     child: Scaffold(body: Center(child: Text('Not found'))),
   );
 
+  /// Tries to do [structurePop], but falls back to [pathSegmentPop].
+  static bool structureOrPathSegmentPop(
+    BuildContext context,
+    BeamerDelegate delegate,
+    Set<RouteStructure> structure,
+    RouteInformationSerializable state,
+    BeamPage poppedPage,
+  ) {
+    final didStructurePop =
+        structurePop(context, delegate, structure, state, poppedPage);
+
+    if (didStructurePop == null) {
+      return pathSegmentPop(context, delegate, structure, state, poppedPage);
+    }
+
+    return didStructurePop;
+  }
+
+  /// Uses [RouteStructure] Set from [BeamLocation.buildStructure]
+  /// to determine a route that should be popped to.
+  static bool? structurePop(
+    BuildContext context,
+    BeamerDelegate delegate,
+    Set<RouteStructure> structure,
+    RouteInformationSerializable state,
+    BeamPage poppedPage,
+  ) {
+    final result = RouteStructure.lookupWithin(
+      structure,
+      state.routeInformation.location ?? '/',
+    );
+    if (result.target != null) {
+      if (result.stack.isEmpty) {
+        return false;
+      }
+      delegate.removeFirstHistoryElement();
+      delegate.update(
+        configuration: RouteInformation(
+          location: result.stack.last.route.toString(),
+        ),
+      );
+      return true;
+    }
+    return null;
+  }
+
   /// The default pop behavior for [BeamPage].
   ///
   /// Pops the last path segment from URI and calls [BeamerDelegate.update].
   static bool pathSegmentPop(
     BuildContext context,
     BeamerDelegate delegate,
+    Set<RouteStructure> structure,
     RouteInformationSerializable state,
     BeamPage poppedPage,
   ) {
@@ -163,6 +210,7 @@ class BeamPage extends Page {
   static bool routePop(
     BuildContext context,
     BeamerDelegate delegate,
+    Set<RouteStructure> structure,
     RouteInformationSerializable state,
     BeamPage poppedPage,
   ) {
@@ -198,6 +246,7 @@ class BeamPage extends Page {
   final bool Function(
     BuildContext context,
     BeamerDelegate delegate,
+    Set<RouteStructure> structure,
     RouteInformationSerializable state,
     BeamPage poppedPage,
   ) onPopPage;

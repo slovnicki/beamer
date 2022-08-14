@@ -17,7 +17,7 @@ class TestLocation extends BeamLocation<BeamState> {
         if (state.pathPatternSegments.contains('books'))
           BeamPage(
             key: const ValueKey('books'),
-            onPopPage: (context, delegate, _, page) {
+            onPopPage: (context, delegate, _, __, page) {
               return false;
             },
             child: Container(),
@@ -31,7 +31,7 @@ class TestLocation extends BeamLocation<BeamState> {
         if (state.pathPatternSegments.contains('details'))
           BeamPage(
             key: ValueKey('book-${state.pathParameters['bookId']}-details'),
-            onPopPage: (context, delegate, _, page) {
+            onPopPage: (context, delegate, _, __, page) {
               delegate.currentBeamLocation.update(
                 (state) => (state as BeamState).copyWith(
                   pathPatternSegments: ['books'],

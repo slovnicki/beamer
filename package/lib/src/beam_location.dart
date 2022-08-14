@@ -75,6 +75,84 @@ class HistoryElement {
   final BeamParameters parameters;
 }
 
+/// A data class for the result of lookup used when popping.
+class RouteStructureLookupResult {
+  /// Creates a [RouteStructureLookupResult].
+  const RouteStructureLookupResult(this.stack, this.target);
+
+  /// A path to [target], i.e. the stack of routes beneath [target].
+  final List<RouteStructure> stack;
+
+  /// The [RouteStructure] that was being looked up.
+  final RouteStructure? target;
+}
+
+/// Represents an entry in [BeamLocation.buildStructure] return value.
+/// Consists of route String and optional (recursive) list of [RouteStructure].
+class RouteStructure {
+  /// Creates a [RouteStructure].
+  const RouteStructure(this.route, [this.children]);
+
+  /// A Pattern representation of a route matching the ones
+  /// in [BeamLocation.pathPatterns] or [RoutesBeamLocation.routes] Map keys.
+  final Pattern route;
+
+  /// A Set of [RouteStructure] that are placed above [route]
+  /// in the route stack.
+  final Set<RouteStructure>? children;
+
+  /// Find route [pattern] within [RouteStructure] or return null.
+  RouteStructureLookupResult lookup(
+    Pattern pattern, [
+    List<RouteStructure> stack = const [],
+  ]) {
+    if (route.toString() == pattern.toString()) {
+      return RouteStructureLookupResult(stack, this);
+    }
+    if (children == null) {
+      return RouteStructureLookupResult(stack, null);
+    }
+    for (final routeStructure in children!) {
+      final result = routeStructure.lookup(pattern, stack + [this]);
+      if (result.target != null) {
+        return result;
+      }
+    }
+    return RouteStructureLookupResult(stack, null);
+  }
+
+  /// Finds route [pattern] within arbitrary [RouteStructure] subset.
+  static RouteStructureLookupResult lookupWithin(
+    Set<RouteStructure> structure,
+    Pattern pattern,
+  ) {
+    for (final routeStructure in structure) {
+      final result = routeStructure.lookup(pattern);
+      if (result.target != null) {
+        return result;
+      }
+    }
+    return const RouteStructureLookupResult([], null);
+  }
+
+  /// Does [lookup] on [pattern], but returns the parent.
+  RouteStructure? parentOf(Pattern pattern, [RouteStructure? parent]) {
+    if (route.toString() == pattern.toString()) {
+      return parent;
+    }
+    if (children == null) {
+      return null;
+    }
+    for (final routeStructure in children!) {
+      final result = routeStructure.parentOf(pattern);
+      if (result != null) {
+        return result;
+      }
+    }
+    return null;
+  }
+}
+
 /// Configuration for a navigatable application region.
 ///
 /// Responsible for
@@ -363,6 +441,10 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   /// If this is true, then it will match just '/some/path'.
   bool get strictPathPatterns => false;
 
+  /// Creates and returns a structure of routes which is used to determine
+  /// how route path is updated upon `Navigator.pop`.
+  Set<RouteStructure> buildStructure(BuildContext context, T state) => {};
+
   /// Creates and returns the list of pages to be built by the [Navigator]
   /// when this [BeamLocation] is beamed to or internally inferred.
   ///
@@ -449,9 +531,13 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
     required RouteInformation routeInformation,
     Object? data,
     BeamParameters? beamParameters,
+    this.structure,
     required this.routes,
     this.navBuilder,
   }) : super(routeInformation, beamParameters);
+
+  /// A representation of route structure.
+  Map<Pattern, dynamic>? structure;
 
   /// Map of all routes this location handles.
   Map<Pattern, dynamic Function(BuildContext, BeamState, Object? data)> routes;
@@ -484,24 +570,118 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
   List<Pattern> get pathPatterns => routes.keys.toList();
 
   @override
+  Set<RouteStructure> buildStructure(BuildContext context, BeamState state) =>
+      _routeStructureSetFromDynamicMap(structure);
+
+  Set<RouteStructure> _routeStructureSetFromDynamicMap(
+      Map<Pattern, dynamic>? structure) {
+    if (structure == null) {
+      return {};
+    }
+    final routeStructure = <RouteStructure>{};
+    structure.forEach((key, value) {
+      if (value is Map<Pattern, dynamic>) {
+        routeStructure.add(
+          RouteStructure(
+            key,
+            _routeStructureSetFromDynamicMap(value),
+          ),
+        );
+      } else if (value is Set<Pattern>) {
+        routeStructure.add(
+          RouteStructure(
+            key,
+            _routeStructureSetFromPatternSet(value),
+          ),
+        );
+      } else {
+        routeStructure.add(
+          RouteStructure(key, null),
+        );
+      }
+    });
+    return routeStructure;
+  }
+
+  Set<RouteStructure> _routeStructureSetFromPatternSet(
+    Set<Pattern>? structure,
+  ) {
+    if (structure == null) {
+      return {};
+    }
+    final routeStructure = <RouteStructure>{};
+    for (final pattern in structure) {
+      routeStructure.add(
+        RouteStructure(pattern, null),
+      );
+    }
+    return routeStructure;
+  }
+
+  String _fillPathParameters(Pattern pattern) {
+    final patternSegments = pattern.toString().split('/');
+    if (patternSegments.every((segment) => !segment.startsWith(':'))) {
+      return pattern.toString();
+    }
+    final filledSegments = [];
+    for (final segment in patternSegments) {
+      if (segment.startsWith(':')) {
+        filledSegments.add(state.pathParameters[segment.substring(1)]);
+      } else {
+        filledSegments.add(segment);
+      }
+    }
+    return filledSegments.join('/');
+  }
+
+  Map<Pattern, String> _makeFilledRoutesMap(Iterable<Pattern> patterns) {
+    final filledRoutes = <Pattern, String>{};
+    for (final pattern in patterns) {
+      filledRoutes[pattern] = _fillPathParameters(pattern);
+    }
+    return filledRoutes;
+  }
+
+  @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
+    List<BeamPage> makePages(
+      Iterable<Pattern> stackedRoutes,
+      Map<Pattern, String> filledRoutes,
+    ) {
+      return stackedRoutes.map<BeamPage>(
+        (route) {
+          final routeElement = routes[route]!(context, state, data);
+          if (routeElement is BeamPage) {
+            return routeElement;
+          } else {
+            return BeamPage(
+              key: ValueKey(filledRoutes[route]),
+              child: routeElement,
+            );
+          }
+        },
+      ).toList();
+    }
+
+    // If route can be found in the structure
+    final structure = buildStructure(context, state);
+    final result =
+        RouteStructure.lookupWithin(structure, state.uriBlueprint.toString());
+    if (result.target != null) {
+      final stackedRoutes =
+          result.stack.map((rs) => rs.route).toList() + [result.target!.route];
+      final filledRoutes = _makeFilledRoutesMap(stackedRoutes);
+      return makePages(stackedRoutes, filledRoutes);
+    }
+
+    // Choose all sub-matching routes
     final filteredRoutes = chooseRoutes(state.routeInformation, routes.keys);
     final routeBuilders = Map.of(routes)
       ..removeWhere((key, value) => !filteredRoutes.containsKey(key));
     final sortedRoutes = routeBuilders.keys.toList()
       ..sort((a, b) => _compareKeys(a, b));
-    final pages = sortedRoutes.map<BeamPage>((route) {
-      final routeElement = routes[route]!(context, state, data);
-      if (routeElement is BeamPage) {
-        return routeElement;
-      } else {
-        return BeamPage(
-          key: ValueKey(filteredRoutes[route]),
-          child: routeElement,
-        );
-      }
-    }).toList();
-    return pages;
+
+    return makePages(sortedRoutes, filteredRoutes);
   }
 
   /// Chooses all the routes that "sub-match" [routeInformation] to stack their

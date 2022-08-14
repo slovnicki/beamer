@@ -45,7 +45,10 @@ class RoutesLocationBuilder {
   /// Creates a [RoutesLocationBuilder] with specified properties.
   ///
   /// [routes] are required to build pages from.
-  RoutesLocationBuilder({required this.routes, this.builder});
+  RoutesLocationBuilder({this.structure, required this.routes, this.builder});
+
+  /// A representation of routes structure.
+  final Map<Pattern, dynamic>? structure;
 
   /// List of all routes this builder handles.
   final Map<Pattern, dynamic Function(BuildContext, BeamState, Object?)> routes;
@@ -65,6 +68,7 @@ class RoutesLocationBuilder {
     if (matched.isNotEmpty) {
       return RoutesBeamLocation(
         routeInformation: routeInformation,
+        structure: structure,
         routes: routes,
         navBuilder: builder,
       );

@@ -285,6 +285,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   BeamLocation get currentBeamLocation =>
       beamingHistory.isEmpty ? EmptyBeamLocation() : beamingHistory.last;
 
+  Set<RouteStructure> _currentStructure = {};
+
   List<BeamPage> _currentPages = [];
 
   /// {@template currentPages}
@@ -755,6 +757,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
     final navigator = Builder(
       builder: (context) {
+        _setCurrentStructure(context);
         _setCurrentPages(context);
         _setBrowserTitle(context);
 
@@ -951,6 +954,13 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     _updateFromBeamLocationCandidate();
   }
 
+  void _setCurrentStructure(BuildContext context) {
+    _currentStructure = currentBeamLocation.buildStructure(
+      context,
+      currentBeamLocation.state,
+    );
+  }
+
   void _setCurrentPages(BuildContext context) {
     if (currentBeamLocation is NotFound) {
       _currentPages = [notFoundPage];
@@ -976,7 +986,11 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     }
   }
 
-  bool _onPopPage(BuildContext context, Route<dynamic> route, dynamic result) {
+  bool _onPopPage(
+    BuildContext context,
+    Route<dynamic> route,
+    dynamic result,
+  ) {
     if (route.willHandlePopInternally) {
       if (!route.didPop(result)) {
         return false;
@@ -1010,6 +1024,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         final shouldPop = lastPage.onPopPage(
           context,
           this,
+          _currentStructure,
           currentBeamLocation.state,
           lastPage,
         );
