@@ -1,0 +1,24 @@
+name: bottom_rail_navigation_multiple_beamers
+description: Bottom and rail navigation with multiple Beamers example.
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  beamer:
+    path: ../../package
+
+  cupertino_icons: ^1.0.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
