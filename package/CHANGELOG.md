@@ -1,3 +1,7 @@
+# 1.5.2
+
+- **Fixed:** Rebuilding of nested `Beamer`s upon deep-links ([#554](https://github.com/slovnicki/beamer/issues/554), [#555](https://github.com/slovnicki/beamer/issues/555), [#46ebf6b](https://github.com/slovnicki/beamer/commit/46ebf6b6db47f4f6b6fc4ca5e30ed7d30e8f5487))
+
 # 1.5.1
 
 - **Fixed:** Lagging `BeamGuard` check when using `BeamerLocationBuilder` ([#532](https://github.com/slovnicki/beamer/issues/532))
