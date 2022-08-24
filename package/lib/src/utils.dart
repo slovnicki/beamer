@@ -16,6 +16,7 @@ abstract class Utils {
     List<BeamLocation> beamLocations, {
     Object? data,
     Object? routeState,
+    BeamParameters? beamParameters,
   }) {
     for (final beamLocation in beamLocations) {
       if (canBeamLocationHandleUri(beamLocation, uri)) {
@@ -24,7 +25,7 @@ abstract class Utils {
           state: routeState,
         );
         if (!beamLocation.isCurrent) {
-          beamLocation.create(routeInformation);
+          beamLocation.create(routeInformation, beamParameters);
         } else {
           beamLocation.update(null, routeInformation, null, false);
         }

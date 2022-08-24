@@ -33,6 +33,7 @@ class BeamerLocationBuilder {
       Uri.parse(routeInformation.location ?? '/'),
       beamLocations,
       routeState: routeInformation.state,
+      beamParameters: beamParameters,
     );
   }
 }
