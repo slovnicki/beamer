@@ -196,7 +196,7 @@ class BeamState with RouteInformationSerializable<BeamState> {
       );
 
   @override
-  int get hashCode => hashValues(uri, json.encode(routeState));
+  int get hashCode => Object.hash(uri, json.encode(routeState));
 
   @override
   bool operator ==(Object other) {
