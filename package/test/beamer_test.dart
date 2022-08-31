@@ -36,6 +36,7 @@ void main() {
                   key: beamerKey,
                   routerDelegate: BeamerProvider.of(context)!.routerDelegate,
                 ),
+            '/test3': (context, state, data) => Container(),
           },
         ),
       ),
@@ -169,5 +170,21 @@ void main() {
       (tester) async {
     await tester.pumpWidget(app);
     expect(testContext!.beamingHistory.length, greaterThan(0));
+  });
+
+  testWidgets('Beaming updates location state with queryParameters',
+      (tester) async {
+    const queryParams = {'testParam': 'test'};
+    await tester.pumpWidget(app);
+    testContext!.beamToReplacementNamed('/test3', queryParameters: queryParams);
+    await tester.pump();
+    expect(testContext!.currentBeamLocation.state.routeInformation.location,
+        '/test3?testParam=test');
+    expect(
+        (testContext!.currentBeamLocation.state as BeamState)
+            .uriBlueprint
+            .toString(),
+        '/test3?testParam=test');
+    expect(testContext!.currentBeamPages.length, 2);
   });
 }
