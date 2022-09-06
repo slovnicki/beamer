@@ -41,4 +41,30 @@ void main() {
     final copy = state.copyForLocation(Location2(), null);
     expect(copy.pathParameters['id'], 'xx');
   });
+
+  testWidgets('pathParameters are present in RoutesLocationBuilder',
+      (tester) async {
+    late BeamState _state;
+    final delegate = BeamerDelegate(
+      locationBuilder: RoutesLocationBuilder(
+        routes: {
+          '/profile/:address': (context, state, data) {
+            _state = state;
+            return Container();
+          }
+        },
+      ),
+    );
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routerDelegate: delegate,
+        routeInformationParser: BeamerParser(),
+      ),
+    );
+
+    delegate.beamToNamed('/profile/xxx');
+    await tester.pumpAndSettle();
+
+    expect(_state.pathParameters['address'], 'xxx');
+  });
 }
