@@ -767,4 +767,58 @@ void main() {
             .map((HistoryElement e) => e.routeInformation.location),
         orderedEquals(<String>['/t1', '/t2']));
   });
+
+  group('Deep Link', () {
+    testWidgets('Deep link is preserved throughout guarding flow',
+        (tester) async {
+      bool isLoading = true;
+      bool isAuthenticated = false;
+      final delegate = BeamerDelegate(
+        locationBuilder: RoutesLocationBuilder(
+          routes: {
+            '/splash': (_, __, ___) => Container(),
+            '/login': (_, __, ___) => Container(),
+            '/home': (_, __, ___) => Container(),
+            '/home/deeper': (_, __, ___) => Container(),
+          },
+        ),
+        guards: [
+          BeamGuard(
+            pathPatterns: ['/splash'],
+            check: (_, __) => isLoading,
+            beamToNamed: (_, __, deepLink) =>
+                isAuthenticated ? (deepLink ?? '/home') : '/login',
+          ),
+          BeamGuard(
+            pathPatterns: ['/login'],
+            check: (_, __) => !isAuthenticated && !isLoading,
+            beamToNamed: (_, __, deepLink) =>
+                isAuthenticated ? (deepLink ?? '/home') : '/splash',
+          ),
+          BeamGuard(
+            pathPatterns: ['/splash', '/login'],
+            guardNonMatching: true,
+            check: (_, __) => isAuthenticated,
+            beamToNamed: (_, __, ___) => isLoading ? '/splash' : '/login',
+          ),
+        ],
+      );
+      delegate.setDeepLink('/home/deeper');
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerDelegate: delegate,
+          routeInformationParser: BeamerParser(),
+        ),
+      );
+
+      expect(delegate.configuration.location, '/splash');
+
+      isLoading = false;
+      isAuthenticated = true;
+      delegate.update();
+      await tester.pumpAndSettle();
+
+      expect(delegate.configuration.location, '/home/deeper');
+    });
+  });
 }
