@@ -702,7 +702,7 @@ void main() {
         BeamGuard(
           pathPatterns: ['/r1'],
           check: (_, __) => guardCheck.value,
-          beamToNamed: (_, __) => '/r2',
+          beamToNamed: (_, __, ___) => '/r2',
         ),
       ],
       updateListenable: guardCheck,
