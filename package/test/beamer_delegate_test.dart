@@ -771,8 +771,8 @@ void main() {
   group('Deep Link', () {
     testWidgets('Deep link is preserved throughout guarding flow',
         (tester) async {
-      bool isLoading = true;
-      bool isAuthenticated = false;
+      var isLoading = true;
+      var isAuthenticated = false;
       final delegate = BeamerDelegate(
         locationBuilder: RoutesLocationBuilder(
           routes: {
