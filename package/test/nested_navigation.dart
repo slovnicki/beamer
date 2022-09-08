@@ -87,7 +87,7 @@ class _MainLocationState extends State<MainLocation> {
             guardNonMatching: true,
             check: (context, state) =>
                 AuthenticationNotifier.of(context).isUserAuthenticated,
-            beamToNamed: (origin, target) => '/login')
+            beamToNamed: (origin, target, _) => '/login')
       ],
       clearBeamingHistoryOn: {
         '/login'

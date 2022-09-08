@@ -19,7 +19,7 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: [pathBlueprint],
         check: (_, __) => true,
-        beamTo: (context, _, __) => Location2(const RouteInformation()),
+        beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
       );
 
       expect(guard.shouldGuard(testLocation), isTrue);
@@ -31,7 +31,7 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: [pathBlueprint],
         check: (_, __) => true,
-        beamTo: (context, _, __) => Location2(const RouteInformation()),
+        beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
       );
 
       expect(guard.shouldGuard(testLocationWithQuery), isTrue);
@@ -43,7 +43,7 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: [RegExp(pathBlueprint)],
         check: (_, __) => true,
-        beamTo: (context, _, __) => Location2(const RouteInformation()),
+        beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
       );
 
       expect(guard.shouldGuard(testLocation), isTrue);
@@ -55,7 +55,7 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: [RegExp(pathBlueprint)],
         check: (_, __) => true,
-        beamTo: (context, _, __) => Location2(const RouteInformation()),
+        beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
       );
 
       expect(guard.shouldGuard(testLocationWithQuery), isTrue);
@@ -66,7 +66,7 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: ['/not-a-match'],
         check: (_, __) => true,
-        beamTo: (context, _, __) => Location2(const RouteInformation()),
+        beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
       );
 
       expect(guard.shouldGuard(testLocation), isFalse);
@@ -78,7 +78,7 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: ['/not-a-match'],
         check: (_, __) => true,
-        beamTo: (context, _, __) => Location2(const RouteInformation()),
+        beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
       );
 
       expect(guard.shouldGuard(testLocationWithQuery), isFalse);
@@ -90,7 +90,7 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: [RegExp('/not-a-match')],
         check: (_, __) => true,
-        beamTo: (context, _, __) => Location2(const RouteInformation()),
+        beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
       );
 
       expect(guard.shouldGuard(testLocation), isFalse);
@@ -102,7 +102,7 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: ['/not-a-match'],
         check: (_, __) => true,
-        beamTo: (context, _, __) => Location2(const RouteInformation()),
+        beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
       );
 
       expect(guard.shouldGuard(testLocationWithQuery), isFalse);
@@ -119,7 +119,7 @@ void main() {
                 '/*',
           ],
           check: (_, __) => true,
-          beamTo: (context, _, __) => Location2(const RouteInformation()),
+          beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
         );
 
         expect(guard.shouldGuard(testLocation), isTrue);
@@ -131,7 +131,7 @@ void main() {
         final guard = BeamGuard(
           pathPatterns: [RegExp('(/[a-z]*|[0-9]*/one)')],
           check: (_, __) => true,
-          beamTo: (context, _, __) => Location2(const RouteInformation()),
+          beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
         );
 
         expect(guard.shouldGuard(testLocation), isTrue);
@@ -144,7 +144,7 @@ void main() {
             '/not-a-match/*',
           ],
           check: (_, __) => true,
-          beamTo: (context, _, __) => Location2(const RouteInformation()),
+          beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
         );
 
         expect(guard.shouldGuard(testLocation), isFalse);
@@ -158,7 +158,7 @@ void main() {
             RegExp('(/[a-z]*[0-9]/no-match)'),
           ],
           check: (_, __) => true,
-          beamTo: (context, _, __) => Location2(const RouteInformation()),
+          beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
         );
 
         expect(guard.shouldGuard(testLocation), isFalse);
@@ -172,7 +172,7 @@ void main() {
             pathBlueprint,
           ],
           check: (_, __) => true,
-          beamTo: (context, _, __) => Location2(const RouteInformation()),
+          beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
           guardNonMatching: true,
         );
 
@@ -187,7 +187,7 @@ void main() {
             RegExp(pathBlueprint),
           ],
           check: (_, __) => true,
-          beamTo: (context, _, __) => Location2(const RouteInformation()),
+          beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
           guardNonMatching: true,
         );
 
@@ -200,7 +200,7 @@ void main() {
         final guard = BeamGuard(
           pathPatterns: ['/not-a-match'],
           check: (_, __) => true,
-          beamTo: (context, _, __) => Location2(const RouteInformation()),
+          beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
           guardNonMatching: true,
         );
 
@@ -213,7 +213,7 @@ void main() {
         final guard = BeamGuard(
           pathPatterns: [RegExp('/not-a-match')],
           check: (_, __) => true,
-          beamTo: (context, _, __) => Location2(const RouteInformation()),
+          beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
           guardNonMatching: true,
         );
 
@@ -231,7 +231,8 @@ void main() {
                   '/*',
             ],
             check: (_, __) => true,
-            beamTo: (context, _, __) => Location2(const RouteInformation()),
+            beamTo: (context, _, __, ___) =>
+                Location2(const RouteInformation()),
             guardNonMatching: true,
           );
 
@@ -246,7 +247,8 @@ void main() {
               RegExp('/[a-z]+'),
             ],
             check: (_, __) => true,
-            beamTo: (context, _, __) => Location2(const RouteInformation()),
+            beamTo: (context, _, __, ___) =>
+                Location2(const RouteInformation()),
             guardNonMatching: true,
           );
 
@@ -261,7 +263,8 @@ void main() {
               '/not-a-match/*',
             ],
             check: (_, __) => true,
-            beamTo: (context, _, __) => Location2(const RouteInformation()),
+            beamTo: (context, _, __, ___) =>
+                Location2(const RouteInformation()),
             guardNonMatching: true,
           );
 
@@ -276,7 +279,8 @@ void main() {
               RegExp('/not-a-match/[a-z]+'),
             ],
             check: (_, __) => true,
-            beamTo: (context, _, __) => Location2(const RouteInformation()),
+            beamTo: (context, _, __, ___) =>
+                Location2(const RouteInformation()),
             guardNonMatching: true,
           );
 
@@ -299,7 +303,7 @@ void main() {
             BeamGuard(
               pathPatterns: ['/l2'],
               check: (context, loc) => false,
-              beamTo: (context, _, __) =>
+              beamTo: (context, _, __, ___) =>
                   Location1(const RouteInformation(location: '/l1')),
             ),
           ],
@@ -330,7 +334,7 @@ void main() {
             BeamGuard(
               pathPatterns: ['/l2'],
               check: (context, loc) => false,
-              beamTo: (context, _, __) =>
+              beamTo: (context, _, __, ___) =>
                   Location1(const RouteInformation(location: '/l1')),
               replaceCurrentStack: false,
             ),
@@ -362,7 +366,7 @@ void main() {
             BeamGuard(
               pathPatterns: ['/l2'],
               check: (context, loc) => false,
-              beamToNamed: (_, __) => '/l1',
+              beamToNamed: (_, __, ___) => '/l1',
             ),
           ],
         );
@@ -397,12 +401,12 @@ void main() {
           BeamGuard(
             pathPatterns: ['/2'],
             check: (_, __) => false,
-            beamToNamed: (_, __) => '/3',
+            beamToNamed: (_, __, ___) => '/3',
           ),
           BeamGuard(
             pathPatterns: ['/3'],
             check: (_, __) => false,
-            beamToNamed: (_, __) => '/1',
+            beamToNamed: (_, __, ___) => '/1',
           ),
         ],
       );
@@ -475,7 +479,7 @@ void main() {
           BeamGuard(
             pathPatterns: ['/2'],
             check: (context, location) => false,
-            beamToNamed: (origin, target) {
+            beamToNamed: (origin, target, _) {
               final targetState = target.state as BeamState;
               final destinationUri =
                   Uri(path: '/1', queryParameters: targetState.queryParameters)
@@ -519,7 +523,7 @@ void main() {
           BeamGuard(
             pathPatterns: ['/l2'],
             check: (context, location) => false,
-            beamTo: (context, origin, target) {
+            beamTo: (context, origin, target, _) {
               final targetState = target.state as BeamState;
               final destinationUri = Uri(
                   path: '/l1', queryParameters: targetState.queryParameters);
@@ -584,6 +588,7 @@ void main() {
         delegate.currentBeamLocation,
         delegate.currentPages,
         guardedBeamLocation,
+        null,
       );
 
       expect(
@@ -597,7 +602,7 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: ['/guarded'],
         check: (_, __) => false,
-        beamToNamed: (_, __) => '/allowed',
+        beamToNamed: (_, __, ___) => '/allowed',
         replaceCurrentStack: false,
       );
 
@@ -612,6 +617,7 @@ void main() {
         delegate.currentBeamLocation,
         delegate.currentPages,
         guardedBeamLocation,
+        null,
       );
 
       expect(
@@ -640,6 +646,7 @@ void main() {
         delegate.currentBeamLocation,
         delegate.currentPages,
         guardedBeamLocation,
+        null,
       );
 
       expect(
@@ -668,6 +675,7 @@ void main() {
         delegate.currentBeamLocation,
         delegate.currentPages,
         guardedBeamLocation,
+        null,
       );
 
       expect(
@@ -695,12 +703,12 @@ void main() {
             pathPatterns: <Pattern>['/x'],
             guardNonMatching: true,
             check: (_, __) => true,
-            beamToNamed: (_, __) => '/s1',
+            beamToNamed: (_, __, ___) => '/s1',
           ),
           BeamGuard(
             pathPatterns: <Pattern>['/s1/s2'],
             check: (_, __) => false,
-            beamToNamed: (_, to) {
+            beamToNamed: (_, to, __) {
               return to.state.routeInformation.location! + '/s3';
             },
           ),
@@ -743,7 +751,7 @@ void main() {
             BeamGuard(
               pathPatterns: <Pattern>['/guarded'],
               check: (_, __) => false,
-              beamToNamed: (_, __) => '/ok',
+              beamToNamed: (_, __, ___) => '/ok',
             ),
           ],
         );
@@ -780,7 +788,7 @@ void main() {
             BeamGuard(
               pathPatterns: <Pattern>['/guarded'],
               check: (_, __) => false,
-              beamToNamed: (_, __) => '/ok',
+              beamToNamed: (_, __, ___) => '/ok',
             ),
           ],
         );
@@ -814,7 +822,7 @@ void main() {
             checkTriggered = true;
             return false;
           },
-          beamToNamed: (_, __) => '/',
+          beamToNamed: (_, __, ___) => '/',
         ),
       ],
     );

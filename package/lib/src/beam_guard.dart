@@ -64,15 +64,27 @@ class BeamGuard {
   /// `origin` holds the origin [BeamLocation] from where it is being beamed from, `null` if there's no origin,
   /// which may happen if it's the first navigation or the history was cleared.
   /// `target` holds the [BeamLocation] to where we tried to beam to, i.e. the one on which the check failed.
+  /// `deepLink` holds the potential deep-link that was set manually via
+  /// [BeamerDelegate.setDeepLink] or came from the platforms.
   final BeamLocation Function(
-      BuildContext context, BeamLocation? origin, BeamLocation target)? beamTo;
+    BuildContext context,
+    BeamLocation? origin,
+    BeamLocation target,
+    String? deepLink,
+  )? beamTo;
 
   /// If guard [check] returns `false`, beam to this URI string.
   ///
   /// `origin` holds the origin [BeamLocation] from where it is being beamed from. `null` if there's no origin,
   /// which may happen if it's the first navigation or the history was cleared.
   /// `target` holds the [BeamLocation] to where we tried to beam to, i.e. the one on which the check failed.
-  final String Function(BeamLocation? origin, BeamLocation target)? beamToNamed;
+  /// `deepLink` holds the potential deep-link that was set manually via
+  /// [BeamerDelegate.setDeepLink] or came from the platforms.
+  final String Function(
+    BeamLocation? origin,
+    BeamLocation target,
+    String? deepLink,
+  )? beamToNamed;
 
   /// If guard [check] returns `false`, beam to a [BeamLocation] with just that page.
   ///
@@ -101,6 +113,7 @@ class BeamGuard {
     BeamLocation origin,
     List<BeamPage> currentPages,
     BeamLocation target,
+    String? deepLink,
   ) {
     final checkPassed = check(context, target);
     if (checkPassed) {
@@ -128,7 +141,7 @@ class BeamGuard {
     }
 
     if (beamTo != null) {
-      final redirectBeamLocation = beamTo!(context, origin, target);
+      final redirectBeamLocation = beamTo!(context, origin, target, deepLink);
       if (redirectBeamLocation.state.routeInformation.location ==
           target.state.routeInformation.location) {
         // just block if this will produce an immediate infinite loop
@@ -144,11 +157,14 @@ class BeamGuard {
       } else {
         delegate.beamTo(redirectBeamLocation);
       }
+      if (redirectBeamLocation.state.routeInformation.location == deepLink) {
+        delegate.setDeepLink(null);
+      }
       return true;
     }
 
     if (beamToNamed != null) {
-      final redirectNamed = beamToNamed!(origin, target);
+      final redirectNamed = beamToNamed!(origin, target, deepLink);
       if (redirectNamed == target.state.routeInformation.location) {
         // just block if this will produce an immediate infinite loop
         return true;
@@ -161,6 +177,9 @@ class BeamGuard {
         delegate.beamToReplacementNamed(redirectNamed);
       } else {
         delegate.beamToNamed(redirectNamed);
+      }
+      if (redirectNamed == deepLink) {
+        delegate.setDeepLink(null);
       }
       return true;
     }

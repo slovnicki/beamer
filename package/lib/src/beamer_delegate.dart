@@ -154,6 +154,22 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// when there are no path segments.
   final String initialPath;
 
+  /// An initial deep-link that should be stored until used.
+  ///
+  /// This can be used in [BeamGuard.beamToNamed] to redirect properly after
+  /// some auth flows that need to be executed, during which the [initialPath]
+  /// information is lost.
+  String? _deepLink;
+
+  /// Sets the deep-link route path that
+  /// - will be used as [initialPath]
+  /// - can be used in [BeamGuard.beamToNamed] to redirect properly
+  /// after some auth flows that need to be executed,
+  /// during which the [initialPath] information is lost.
+  ///
+  /// Once a [BeamGuard] uses the deep-link, it will be reset to null.
+  void setDeepLink(String? deepLink) => _deepLink = deepLink;
+
   /// The routeListener will be called on every navigation event
   /// and will receive the [configuration] and a reference to this delegate.
   final void Function(RouteInformation, BeamerDelegate)? routeListener;
@@ -785,13 +801,18 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         location: initialPath + (uri.query.isNotEmpty ? '?${uri.query}' : ''),
       );
     }
+    _deepLink ??= configuration.location;
     return setNewRoutePath(configuration);
   }
 
   @override
   SynchronousFuture<void> setNewRoutePath(RouteInformation configuration) {
-    if (configuration.location == '/' && initialPath != '/') {
-      configuration = configuration.copyWith(location: initialPath);
+    if (!_initialConfigurationReady &&
+        configuration.location == '/' &&
+        (_deepLink != null || initialPath != '/')) {
+      configuration = configuration.copyWith(
+        location: _deepLink ?? initialPath,
+      );
     }
     update(configuration: configuration);
     return SynchronousFuture(null);
@@ -833,6 +854,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
           currentBeamLocation,
           _currentPages,
           targetBeamLocation,
+          _deepLink,
         );
 
         // Return true on the first guard that was fully applied

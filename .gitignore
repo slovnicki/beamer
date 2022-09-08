@@ -78,3 +78,11 @@ example/*.lock
 # tests
 package/coverage/
 package/test/.test_coverage.dart
+
+# Examples Platforms
+**/android/
+**/ios/
+**/web/
+**/linux/
+**/macos/
+**/windows/
