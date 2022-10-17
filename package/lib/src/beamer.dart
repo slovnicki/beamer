@@ -1,10 +1,9 @@
 import 'package:beamer/beamer.dart';
+import 'package:beamer/src/utils.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:beamer/src/path_url_strategy_nonweb.dart'
     if (dart.library.html) 'path_url_strategy_web.dart' as url_strategy;
-
-part 'path_url_query_parameters.dart';
 
 /// Represents a navigation area and is a wrapper for [Router].
 ///

@@ -1,4 +1,4 @@
-import 'package:beamer/beamer.dart';
+import 'package:beamer/src/utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
