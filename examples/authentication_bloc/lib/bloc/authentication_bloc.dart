@@ -40,8 +40,7 @@ class AuthenticationBloc
 
   bool isAuthenticated() => state.status == AuthenticationStatus.authenticated;
 
-  void logout() =>
-      add(AuthenticationStatusChanged(AuthenticationStatus.unauthenticated));
+  void logout() => add(AuthenticationLogoutRequested());
 
   @override
   Future<void> close() {
