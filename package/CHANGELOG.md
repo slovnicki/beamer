@@ -1,3 +1,7 @@
+# 1.5.4
+
+- **Fixed:** Usage of `Object.hash`
+
 # 1.5.3
 
 - **Fixed:** Warning for usage of deprecated `hashValues`
