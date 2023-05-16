@@ -196,12 +196,38 @@ class BeamState with RouteInformationSerializable<BeamState> {
       );
 
   @override
-  int get hashCode => Object.hash(uri, json.encode(routeState));
+  int get hashCode =>
+      _SystemHash.hash2(uri.hashCode, routeState.hashCode, _hashSeed);
 
   @override
   bool operator ==(Object other) {
     return other is BeamState &&
         other.uri == uri &&
         json.encode(other.routeState) == json.encode(routeState);
+  }
+}
+
+final int _hashSeed = identityHashCode(Object);
+
+// Copied from dart._internal because Object.hash is unavailable in Dart <2.14
+// Used for BeamState.hashCode
+class _SystemHash {
+  static int combine(int hash, int value) {
+    hash = 0x1fffffff & (hash + value);
+    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
+    return hash ^ (hash >> 6);
+  }
+
+  static int finish(int hash) {
+    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
+    hash = hash ^ (hash >> 11);
+    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
+  }
+
+  static int hash2(int v1, int v2, [int seed = 0]) {
+    int hash = seed;
+    hash = combine(hash, v1);
+    hash = combine(hash, v2);
+    return finish(hash);
   }
 }
