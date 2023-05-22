@@ -1,3 +1,7 @@
+# 1.5.5
+
+- Increase SDK upper bound to `<4.0.0`
+
 # 1.5.4
 
 - **Fixed:** Usage of `Object.hash`
