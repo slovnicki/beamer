@@ -1,3 +1,27 @@
+# 1.5.6
+
+- **Fixed:** copying of route state when relative beaming is used ([Panz99](https://github.com/Panz99), [#624](https://github.com/slovnicki/beamer/pull/624), [#623](https://github.com/slovnicki/beamer/issues/623))
+
+# 1.5.5
+
+- Increase SDK upper bound to `<4.0.0`
+
+# 1.5.4
+
+- **Fixed:** Usage of `Object.hash`
+
+# 1.5.3
+
+- **Fixed:** Warning for usage of deprecated `hashValues`
+
+# 1.5.2
+
+- **Fixed:** Rebuilding of nested `Beamer`s upon deep-links ([#554](https://github.com/slovnicki/beamer/issues/554), [#555](https://github.com/slovnicki/beamer/issues/555), [#46ebf6b](https://github.com/slovnicki/beamer/commit/46ebf6b6db47f4f6b6fc4ca5e30ed7d30e8f5487))
+
+# 1.5.1
+
+- **Fixed:** Lagging `BeamGuard` check when using `BeamerLocationBuilder` ([#532](https://github.com/slovnicki/beamer/issues/532))
+
 # 1.5.0
 
 - **Added:** `onUpdate` method to `BeamLocation` which is called after `initState` and on every `update`. ([#507](https://github.com/slovnicki/beamer/issues/507), [#88c8537](https://github.com/slovnicki/beamer/commit/88c853711c4df4182b1ce0c460179ca5f6e6872c)). See [this example](https://github.com/slovnicki/beamer/tree/master/examples/books_bloc) that demonstrates its possible usage.
