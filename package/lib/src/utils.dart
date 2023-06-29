@@ -261,10 +261,11 @@ abstract class Utils {
     }
     if (!incomingLocation.startsWith('/')) {
       return current.copyWith(
-          location: current.location?.endsWith('/') ?? false
-              ? '${current.location}$incomingLocation'
-              : '${current.location}/$incomingLocation',
-          state: incoming.state);
+        location: current.location?.endsWith('/') ?? false
+            ? '${current.location}$incomingLocation'
+            : '${current.location}/$incomingLocation',
+        state: incoming.state,
+      );
     }
     return incoming;
   }
