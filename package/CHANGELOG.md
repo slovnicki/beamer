@@ -1,3 +1,7 @@
+# 1.5.6
+
+- **Fixed:** copying of route state when relative beaming is used ([Panz99](https://github.com/Panz99), [#624](https://github.com/slovnicki/beamer/pull/624), [#623](https://github.com/slovnicki/beamer/issues/623))
+
 # 1.5.5
 
 - Increase SDK upper bound to `<4.0.0`
