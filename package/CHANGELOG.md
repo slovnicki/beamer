@@ -1,3 +1,23 @@
+# 2.0.0-dev.0
+
+## **DISCLAIMER**
+
+This is in no way a big fancy release, just a push of all the important and breaking changes that have been sitting in `master` for too long, hoping for a major release that didn't come yet. Now we can continue towards `v2`...
+
+---
+
+- **BREAKING:** bump lower SDK constraint to 2.14
+- **BREAKING:** `BeamPage.key` is now required ([#443](https://github.com/slovnicki/beamer/pull/443))
+- **BREAKING:** `BeamGuard` function now have 1 additional parameter which is a persistent deep link set by the platform or developer ([#567](https://github.com/slovnicki/beamer/pull/567))
+- **Fixed:** rebuild of nested `Beamer` upon deep link ([MarkRunWu](https://github.com/MarkRunWu), [#557](https://github.com/slovnicki/beamer/pull/557))
+- **Fixed:** `BeamParameters` 1-off in history ([themartorana](https://github.com/themartorana), [#562](https://github.com/slovnicki/beamer/pull/562))
+
+### Examples
+
+- Added [bottom_navigation_riverpod](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation_riverpod) ([vduseev](https://github.com/vduseev), [#601](https://github.com/slovnicki/beamer/pull/601))
+- Added [bottom_rail_navigation_multiple_beamers](https://github.com/slovnicki/beamer/tree/master/examples/bottom_rail_navigation_multiple_beamers) ([Protoss78](https://github.com/Protoss78), [#539](https://github.com/slovnicki/beamer/pull/539))
+- Fixed logout behavior in [authentication_bloc](https://github.com/slovnicki/beamer/tree/master/examples/authentication_bloc) ([fallouh](https://github.com/fallouh), [#590](https://github.com/slovnicki/beamer/pull/590))
+
 # 1.5.6
 
 - **Fixed:** copying of route state when relative beaming is used ([Panz99](https://github.com/Panz99), [#624](https://github.com/slovnicki/beamer/pull/624), [#623](https://github.com/slovnicki/beamer/issues/623))
