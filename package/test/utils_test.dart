@@ -131,7 +131,7 @@ void main() {
       expect(Utils.trimmed('/xxx/'), '/xxx');
     });
 
-    test('Appending', () {
+    test('Appending without new routeState', () {
       const current = RouteInformation(location: '/current');
       expect(
         Utils.maybeAppend(current, const RouteInformation()).location,
@@ -147,6 +147,26 @@ void main() {
                 current, const RouteInformation(location: '/incoming'))
             .location,
         '/incoming',
+      );
+    });
+
+    test('Appending with new routeState', () {
+      const current = RouteInformation(location: '/current');
+      expect(
+        Utils.maybeAppend(current, const RouteInformation(state: 42)).state,
+        42,
+      );
+      expect(
+        Utils.maybeAppend(current,
+                const RouteInformation(location: 'incoming', state: 42))
+            .state,
+        42,
+      );
+      expect(
+        Utils.maybeAppend(current,
+                const RouteInformation(location: '/incoming', state: 42))
+            .state,
+        42,
       );
     });
   });
