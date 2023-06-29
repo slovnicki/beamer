@@ -256,14 +256,14 @@ abstract class Utils {
   ) {
     final incomingLocation = incoming.location;
     if (incomingLocation == null) {
-      return current.copyWith();
+      return current.copyWith(state: incoming.state);
     }
     if (!incomingLocation.startsWith('/')) {
       return current.copyWith(
-        location: current.location?.endsWith('/') ?? false
-            ? '${current.location}$incomingLocation'
-            : '${current.location}/$incomingLocation',
-      );
+          location: current.location?.endsWith('/') ?? false
+              ? '${current.location}$incomingLocation'
+              : '${current.location}/$incomingLocation',
+          state: incoming.state);
     }
     return incoming;
   }
