@@ -1,4 +1,5 @@
 import 'package:beamer/beamer.dart';
+import 'package:beamer/src/utils.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:beamer/src/path_url_strategy_nonweb.dart'
@@ -153,6 +154,7 @@ extension BeamerExtensions on BuildContext {
     String uri, {
     Object? routeState,
     Object? data,
+    Map<String, dynamic>? queryParameters,
     String? popToNamed,
     TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
@@ -161,7 +163,7 @@ extension BeamerExtensions on BuildContext {
     bool replaceRouteInformation = false,
   }) {
     Beamer.of(this).beamToNamed(
-      uri,
+      constructUri(uri, queryParameters),
       routeState: routeState,
       data: data,
       popToNamed: popToNamed,
@@ -178,6 +180,7 @@ extension BeamerExtensions on BuildContext {
     String uri, {
     Object? routeState,
     Object? data,
+    Map<String, dynamic>? queryParameters,
     String? popToNamed,
     TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
@@ -185,7 +188,7 @@ extension BeamerExtensions on BuildContext {
     bool stacked = true,
   }) {
     Beamer.of(this).beamToReplacementNamed(
-      uri,
+      constructUri(uri, queryParameters),
       routeState: routeState,
       data: data,
       popToNamed: popToNamed,
@@ -201,6 +204,7 @@ extension BeamerExtensions on BuildContext {
     String uri, {
     Object? routeState,
     Object? data,
+    Map<String, dynamic>? queryParameters,
     String? popToNamed,
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
@@ -208,7 +212,7 @@ extension BeamerExtensions on BuildContext {
     bool replaceRouteInformation = false,
   }) {
     Beamer.of(this).popToNamed(
-      uri,
+      constructUri(uri, queryParameters),
       routeState: routeState,
       data: data,
       popToNamed: popToNamed,

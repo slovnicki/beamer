@@ -562,9 +562,13 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     bool popBeamLocationOnPop = false,
     bool stacked = true,
     bool replaceRouteInformation = false,
+    Map<String, dynamic>? queryParameters,
   }) {
     update(
-      configuration: RouteInformation(location: uri, state: routeState),
+      configuration: RouteInformation(
+        location: constructUri(uri, queryParameters),
+        state: routeState,
+      ),
       beamParameters: _currentBeamParameters.copyWith(
         popConfiguration:
             popToNamed != null ? RouteInformation(location: popToNamed) : null,
@@ -589,10 +593,11 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     bool beamBackOnPop = false,
     bool popBeamLocationOnPop = false,
     bool stacked = true,
+    Map<String, dynamic>? queryParameters,
   }) {
     removeLastHistoryElement();
     beamToNamed(
-      uri,
+      constructUri(uri, queryParameters),
       routeState: routeState,
       data: data,
       popToNamed: popToNamed,
@@ -620,10 +625,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     bool popBeamLocationOnPop = false,
     bool stacked = true,
     bool replaceRouteInformation = false,
+    Map<String, dynamic>? queryParameters,
   }) {
+    final fullUri = constructUri(uri, queryParameters);
     while (beamingHistory.isNotEmpty) {
       final index = beamingHistory.last.history.lastIndexWhere(
-        (element) => element.routeInformation.location == uri,
+        (element) => element.routeInformation.location == fullUri,
       );
       if (index == -1) {
         _disposeBeamLocation(beamingHistory.last);
@@ -636,7 +643,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       }
     }
     beamToNamed(
-      uri,
+      fullUri,
       routeState: routeState,
       data: data,
       popToNamed: popToNamed,
