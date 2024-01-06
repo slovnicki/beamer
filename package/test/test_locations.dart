@@ -53,7 +53,7 @@ class CustomState with RouteInformationSerializable {
 
   @override
   CustomState fromRouteInformation(RouteInformation routeInformation) {
-    final uri = Uri.parse(routeInformation.location ?? '/');
+    final uri = routeInformation.uri;
     if (uri.pathSegments.length > 1) {
       return CustomState(customVar: uri.pathSegments[1]);
     }
@@ -62,7 +62,7 @@ class CustomState with RouteInformationSerializable {
 
   @override
   RouteInformation toRouteInformation() => RouteInformation(
-        location: '/custom' + (customVar.isNotEmpty ? '/$customVar' : ''),
+        uri: Uri.parse('/custom' + (customVar.isNotEmpty ? '/$customVar' : '')),
       );
 }
 

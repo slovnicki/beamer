@@ -91,7 +91,7 @@ class BeamState with RouteInformationSerializable<BeamState> {
     BeamLocation? beamLocation,
   }) {
     return BeamState.fromUri(
-      Uri.parse(routeInformation.location ?? '/'),
+      routeInformation.uri,
       beamLocation: beamLocation,
       routeState: routeInformation.state,
     );
@@ -190,10 +190,8 @@ class BeamState with RouteInformationSerializable<BeamState> {
       BeamState.fromRouteInformation(routeInformation);
 
   @override
-  RouteInformation toRouteInformation() => RouteInformation(
-        location: uri.toString(),
-        state: routeState,
-      );
+  RouteInformation toRouteInformation() =>
+      RouteInformation(uri: uri, state: routeState);
 
   @override
   int get hashCode =>

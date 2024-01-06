@@ -30,7 +30,7 @@ class BeamerLocationBuilder {
     BeamParameters? beamParameters,
   ) {
     return Utils.chooseBeamLocation(
-      Uri.parse(routeInformation.location ?? '/'),
+      routeInformation.uri,
       beamLocations,
       routeState: routeInformation.state,
     );
@@ -69,7 +69,7 @@ class RoutesLocationBuilder {
         navBuilder: builder,
       );
     } else {
-      return NotFound(path: routeInformation.location ?? '/');
+      return NotFound(path: routeInformation.uri.toString());
     }
   }
 }

@@ -8,7 +8,7 @@ import 'test_locations.dart';
 void main() {
   final beamLocations = <BeamLocation>[
     Location1(),
-    Location2(const RouteInformation()),
+    Location2(RouteInformation(uri: Uri())),
     CustomStateLocation(),
     RegExpLocation(),
     AsteriskLocation(),
@@ -132,39 +132,38 @@ void main() {
     });
 
     test('Appending without new routeState', () {
-      const current = RouteInformation(location: '/current');
+      final current = RouteInformation(uri: Uri.parse('/current'));
       expect(
-        Utils.maybeAppend(current, const RouteInformation()).location,
-        current.location,
-      );
-      expect(
-        Utils.maybeAppend(current, const RouteInformation(location: 'incoming'))
-            .location,
+        Utils.maybeAppend(current, RouteInformation(uri: Uri.parse('incoming')))
+            .uri
+            .toString(),
         '/current/incoming',
       );
       expect(
         Utils.maybeAppend(
-                current, const RouteInformation(location: '/incoming'))
-            .location,
+                current, RouteInformation(uri: Uri.parse('/incoming')))
+            .uri
+            .toString(),
         '/incoming',
       );
     });
 
     test('Appending with new routeState', () {
-      const current = RouteInformation(location: '/current');
+      final current = RouteInformation(uri: Uri.parse('/current'));
       expect(
-        Utils.maybeAppend(current, const RouteInformation(state: 42)).state,
-        42,
-      );
-      expect(
-        Utils.maybeAppend(current,
-                const RouteInformation(location: 'incoming', state: 42))
+        Utils.maybeAppend(current, RouteInformation(uri: Uri(), state: 42))
             .state,
         42,
       );
       expect(
         Utils.maybeAppend(current,
-                const RouteInformation(location: '/incoming', state: 42))
+                RouteInformation(uri: Uri.parse('incoming'), state: 42))
+            .state,
+        42,
+      );
+      expect(
+        Utils.maybeAppend(current,
+                RouteInformation(uri: Uri.parse('/incoming'), state: 42))
             .state,
         42,
       );
@@ -173,42 +172,42 @@ void main() {
 
   group('RouteInformation equality', () {
     test('identical are equal', () {
-      const ri = RouteInformation();
+      final ri = RouteInformation(uri: Uri());
 
       expect(ri.isEqualTo(ri), isTrue);
     });
 
     test('empty are equal', () {
-      const ri1 = RouteInformation();
-      const ri2 = RouteInformation();
+      final ri1 = RouteInformation(uri: Uri());
+      final ri2 = RouteInformation(uri: Uri());
 
       expect(ri1.isEqualTo(ri2), isTrue);
     });
 
     test('full are equal', () {
-      const ri1 = RouteInformation(location: '/x', state: 1);
-      const ri2 = RouteInformation(location: '/x', state: 1);
+      final ri1 = RouteInformation(uri: Uri.parse('/x'), state: 1);
+      final ri2 = RouteInformation(uri: Uri.parse('/x'), state: 1);
 
       expect(ri1.isEqualTo(ri2), isTrue);
     });
 
     test('not equal with type mismatch', () {
-      const ri1 = RouteInformation(location: '/x', state: 1);
-      const ri2 = null;
+      final ri1 = RouteInformation(uri: Uri.parse('/x'), state: 1);
+      final ri2 = null;
 
       expect(ri1.isEqualTo(ri2), isFalse);
     });
 
     test('not equal with location diff', () {
-      const ri1 = RouteInformation(location: '/x', state: 1);
-      const ri2 = RouteInformation(location: '/y', state: 1);
+      final ri1 = RouteInformation(uri: Uri.parse('/x'), state: 1);
+      final ri2 = RouteInformation(uri: Uri.parse('/y'), state: 1);
 
       expect(ri1.isEqualTo(ri2), isFalse);
     });
 
     test('not equal with state diff', () {
-      const ri1 = RouteInformation(location: '/x', state: 1);
-      const ri2 = RouteInformation(location: '/x', state: 2);
+      final ri1 = RouteInformation(uri: Uri.parse('/x'), state: 1);
+      final ri2 = RouteInformation(uri: Uri.parse('/x'), state: 2);
 
       expect(ri1.isEqualTo(ri2), isFalse);
     });

@@ -87,14 +87,10 @@ class BeamPage extends Page {
         : null;
 
     // Convert both to Uri as their path and query will be compared.
-    final poppedUri = Uri.parse(
-      poppedHistoryElement.routeInformation.location ?? '/',
-    );
-    final previousUri = Uri.parse(
-      previousHistoryElement != null
-          ? previousHistoryElement.routeInformation.location ?? '/'
-          : delegate.initialPath,
-    );
+    final poppedUri = poppedHistoryElement.routeInformation.uri;
+    final previousUri = previousHistoryElement != null
+        ? previousHistoryElement.routeInformation.uri
+        : Uri.parse(delegate.initialPath);
 
     final poppedPathSegments = poppedUri.pathSegments;
     final poppedQueryParameters = poppedUri.queryParameters;
@@ -135,8 +131,7 @@ class BeamPage extends Page {
           break;
         }
         for (var historyElement in beamLocation.history.reversed) {
-          final uri =
-              Uri.parse(historyElement.routeInformation.location ?? '/');
+          final uri = historyElement.routeInformation.uri;
           if (uri.path == popPath) {
             lastRouteInformation = historyElement.routeInformation;
             found = true;

@@ -19,10 +19,7 @@ abstract class Utils {
   }) {
     for (final beamLocation in beamLocations) {
       if (canBeamLocationHandleUri(beamLocation, uri)) {
-        final routeInformation = RouteInformation(
-          location: uri.toString(),
-          state: routeState,
-        );
+        final routeInformation = RouteInformation(uri: uri, state: routeState);
         if (!beamLocation.isCurrent) {
           beamLocation.create(routeInformation);
         } else {
@@ -254,15 +251,12 @@ abstract class Utils {
     RouteInformation current,
     RouteInformation incoming,
   ) {
-    final incomingLocation = incoming.location;
-    if (incomingLocation == null) {
-      return current.copyWith(state: incoming.state);
-    }
+    final incomingLocation = incoming.uri.toString();
     if (!incomingLocation.startsWith('/')) {
       return current.copyWith(
-        location: current.location?.endsWith('/') ?? false
-            ? '${current.location}$incomingLocation'
-            : '${current.location}/$incomingLocation',
+        location: current.uri.toString().endsWith('/')
+            ? '${current.uri}$incomingLocation'
+            : '${current.uri}/$incomingLocation',
         state: incoming.state,
       );
     }
@@ -280,7 +274,7 @@ abstract class Utils {
     RouteInformation incoming,
   ) {
     incoming = incoming.copyWith(
-      location: trimmed(incoming.location),
+      location: trimmed(incoming.uri.toString()),
     );
     return maybeAppend(current, incoming);
   }
@@ -294,7 +288,7 @@ extension BeamerRouteInformationExtension on RouteInformation {
     Object? state,
   }) {
     return RouteInformation(
-      location: location ?? this.location,
+      uri: Uri.parse(location ?? this.uri.toString()),
       state: state ?? this.state,
     );
   }
@@ -306,6 +300,6 @@ extension BeamerRouteInformationExtension on RouteInformation {
     if (other is! RouteInformation) {
       return false;
     }
-    return location == other.location && state == other.state;
+    return uri == other.uri && state == other.state;
   }
 }

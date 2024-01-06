@@ -25,16 +25,16 @@ void main() {
       );
       delegate.beamToNamed('/test');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.location,
+      expect(delegate.currentBeamLocation.state.routeInformation.uri.path,
           '/test');
 
       await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pumpAndSettle();
-      expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
+      expect(delegate.currentBeamLocation.state.routeInformation.uri.path, '/');
 
       await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pumpAndSettle();
-      expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
+      expect(delegate.currentBeamLocation.state.routeInformation.uri.path, '/');
     });
 
     testWidgets('back button beams back if cannot pop', (tester) async {
@@ -59,11 +59,11 @@ void main() {
       );
       delegate.beamToNamed('/');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
+      expect(delegate.currentBeamLocation.state.routeInformation.uri.path, '/');
 
       await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.location,
+      expect(delegate.currentBeamLocation.state.routeInformation.uri.path,
           '/test/deeper');
     });
 
@@ -93,13 +93,13 @@ void main() {
       );
       delegate.beamToNamed('/');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
+      expect(delegate.currentBeamLocation.state.routeInformation.uri.path, '/');
 
       final didBeamBack =
           await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pump();
       expect(didBeamBack, false);
-      expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
+      expect(delegate.currentBeamLocation.state.routeInformation.uri.path, '/');
     });
 
     testWidgets('onBack has priority', (tester) async {
@@ -124,12 +124,12 @@ void main() {
       );
       delegate.beamToNamed('/test');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.location,
+      expect(delegate.currentBeamLocation.state.routeInformation.uri.path,
           '/test');
 
       await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.location,
+      expect(delegate.currentBeamLocation.state.routeInformation.uri.path,
           '/test');
     });
 
@@ -156,15 +156,15 @@ void main() {
       );
       delegate.beamToNamed('/test');
       await tester.pump(const Duration(seconds: 1));
-      expect(delegate.configuration.location, '/test');
+      expect(delegate.configuration.uri.path, '/test');
 
       delegate.beamToNamed('/test2');
       await tester.pump(const Duration(seconds: 1));
-      expect(delegate.configuration.location, '/test2');
+      expect(delegate.configuration.uri.path, '/test2');
 
       await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pump(const Duration(seconds: 1));
-      expect(delegate.configuration.location, '/test');
+      expect(delegate.configuration.uri.path, '/test');
     });
   });
 
@@ -200,9 +200,9 @@ void main() {
       );
       delegate.beamToNamed('/test');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.location,
+      expect(delegate.currentBeamLocation.state.routeInformation.uri.path,
           '/test');
-      expect(childDelegate.currentBeamLocation.state.routeInformation.location,
+      expect(childDelegate.currentBeamLocation.state.routeInformation.uri.path,
           '/test');
 
       // final did =
@@ -249,11 +249,11 @@ void main() {
       await tester.pump();
       childDelegate.beamToNamed('/');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
+      expect(delegate.currentBeamLocation.state.routeInformation.uri.path, '/');
 
       await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.location,
+      expect(delegate.currentBeamLocation.state.routeInformation.uri.path,
           '/test');
     });
 
@@ -297,12 +297,12 @@ void main() {
       );
       delegate.beamToNamed('/test');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.location,
+      expect(delegate.currentBeamLocation.state.routeInformation.uri.path,
           '/test');
 
       await rootBackButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.location,
+      expect(delegate.currentBeamLocation.state.routeInformation.uri.path,
           '/test');
       final value =
           await rootBackButtonDispatcher.invokeCallback(Future.value(false));
@@ -350,7 +350,7 @@ void main() {
       await tester.pump();
       childDelegate.active = false;
       await rootBackButtonDispatcher.invokeCallback(Future.value(false));
-      expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
+      expect(delegate.currentBeamLocation.state.routeInformation.uri.path, '/');
     });
   });
 }

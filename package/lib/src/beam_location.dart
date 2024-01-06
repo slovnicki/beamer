@@ -153,7 +153,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
       history.clear();
     }
     state = createState(
-      routeInformation ?? const RouteInformation(location: '/'),
+      routeInformation ?? RouteInformation(uri: Uri.parse('/')),
     );
     addToHistory(
       state.routeInformation,
@@ -237,7 +237,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
     } else {
       if (routeInformation == null) {
         updateState(history.last.routeInformation);
-      } else if (routeInformation.location == state.routeInformation.location) {
+      } else if (routeInformation.uri == state.routeInformation.uri) {
         // if the new route information is the same as in the state it means
         // the state changed first and notified listeners, so updating it
         // will be unnecessary. Let's just add route to history with [tryPoppingHistory] set to true
@@ -277,15 +277,14 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   ]) {
     if (tryPopping) {
       final sameStateIndex = history.indexWhere((element) {
-        return element.routeInformation.location ==
-            state.routeInformation.location;
+        return element.routeInformation.uri == state.routeInformation.uri;
       });
       if (sameStateIndex != -1) {
         history.removeRange(sameStateIndex, history.length);
       }
     }
     if (history.isEmpty ||
-        routeInformation.location != history.last.routeInformation.location) {
+        routeInformation.uri != history.last.routeInformation.uri) {
       history.add(HistoryElement(routeInformation, beamParameters));
     }
   }
@@ -395,7 +394,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
 class NotFound extends BeamLocation<BeamState> {
   /// Creates a [NotFound] [BeamLocation] with
   /// `RouteInformation(location: path)` as its state.
-  NotFound({String path = '/'}) : super(RouteInformation(location: path));
+  NotFound({String path = '/'}) : super(RouteInformation(uri: Uri.parse(path)));
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [];
@@ -435,7 +434,7 @@ class GuardShowPage extends BeamLocation<BeamState> {
       [beamPage];
 
   @override
-  List<String> get pathPatterns => [routeInformation.location!];
+  List<String> get pathPatterns => [routeInformation.uri.path];
 }
 
 /// A beam location for [RoutesLocationBuilder], but can be used freely.
@@ -521,14 +520,14 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
 
     final matched = <Pattern, String>{};
     var overrideNotFound = false;
-    if (routeInformation.location != '/' &&
-        (routeInformation.location?.endsWith('/') ?? false)) {
-      final location = routeInformation.location!;
+    if (routeInformation.uri.toString() != '/' &&
+        (routeInformation.uri.toString().endsWith('/'))) {
+      final location = routeInformation.uri.toString();
       routeInformation = routeInformation.copyWith(
         location: location.substring(0, location.length - 1),
       );
     }
-    final uri = Uri.parse(routeInformation.location ?? '/');
+    final uri = routeInformation.uri;
 
     for (final route in routes) {
       if (route is String) {

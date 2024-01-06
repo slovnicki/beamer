@@ -22,7 +22,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       'No longer used by this package, please remove any references to it. '
       'This feature was deprecated after v1.0.0.',
     )
-        this.preferUpdate = true,
+    this.preferUpdate = true,
     this.removeDuplicateHistory = true,
     this.notFoundPage = BeamPage.notFound,
     this.notFoundRedirect,
@@ -42,7 +42,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       transitionDelegate: transitionDelegate,
     );
 
-    configuration = RouteInformation(location: initialPath);
+    configuration = RouteInformation(uri: Uri.parse(initialPath));
 
     updateListenable?.addListener(_update);
   }
@@ -548,10 +548,11 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     bool replaceRouteInformation = false,
   }) {
     update(
-      configuration: RouteInformation(location: uri, state: routeState),
+      configuration: RouteInformation(uri: Uri.parse(uri), state: routeState),
       beamParameters: _currentBeamParameters.copyWith(
-        popConfiguration:
-            popToNamed != null ? RouteInformation(location: popToNamed) : null,
+        popConfiguration: popToNamed != null
+            ? RouteInformation(uri: Uri.parse(popToNamed))
+            : null,
         transitionDelegate: transitionDelegate ?? this.transitionDelegate,
         beamBackOnPop: beamBackOnPop,
         popBeamLocationOnPop: popBeamLocationOnPop,
@@ -607,7 +608,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   }) {
     while (beamingHistory.isNotEmpty) {
       final index = beamingHistory.last.history.lastIndexWhere(
-        (element) => element.routeInformation.location == uri,
+        (element) => element.routeInformation.uri == Uri.parse(uri),
       );
       if (index == -1) {
         _disposeBeamLocation(beamingHistory.last);
@@ -777,12 +778,14 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   @override
   SynchronousFuture<void> setInitialRoutePath(RouteInformation configuration) {
     _initialConfigurationReady = false;
-    final uri = Uri.parse(configuration.location ?? '/');
+    final uri = configuration.uri;
     if (currentBeamLocation is! EmptyBeamLocation) {
       configuration = currentBeamLocation.state.routeInformation;
     } else if (uri.path == '/') {
       configuration = RouteInformation(
-        location: initialPath + (uri.query.isNotEmpty ? '?${uri.query}' : ''),
+        uri: Uri.parse(
+          initialPath + (uri.query.isNotEmpty ? '?${uri.query}' : ''),
+        ),
       );
     }
     return setNewRoutePath(configuration);
@@ -790,7 +793,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   @override
   SynchronousFuture<void> setNewRoutePath(RouteInformation configuration) {
-    if (configuration.location == '/' && initialPath != '/') {
+    if (configuration.uri.toString() == '/' && initialPath != '/') {
       configuration = configuration.copyWith(location: initialPath);
     }
     update(configuration: configuration);
@@ -809,7 +812,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     if (_parent == null) {
       if (!routeInformation.isEqualTo(_lastReportedRouteInformation)) {
         SystemNavigator.routeInformationUpdated(
-          location: routeInformation.location ?? '/',
+          uri: routeInformation.uri,
           state: routeInformation.state,
         );
         _lastReportedRouteInformation = routeInformation.copyWith();
@@ -883,7 +886,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       );
     }
 
-    if (clearBeamingHistoryOn.contains(configuration.location)) {
+    if (clearBeamingHistoryOn.contains(configuration.uri.toString())) {
       _clearBeamingHistory();
     }
   }
@@ -944,7 +947,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       _beamLocationCandidate = notFoundRedirect!;
     } else if (notFoundRedirectNamed != null) {
       _beamLocationCandidate = locationBuilder(
-        RouteInformation(location: notFoundRedirectNamed),
+        RouteInformation(uri: Uri.parse(notFoundRedirectNamed!)),
         _currentBeamParameters.copyWith(),
       );
     }
@@ -970,7 +973,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       SystemChrome.setApplicationSwitcherDescription(
           ApplicationSwitcherDescription(
         label: _currentPages.last.title ??
-            currentBeamLocation.state.routeInformation.location,
+            currentBeamLocation.state.routeInformation.uri.path,
         primaryColor: Theme.of(context).primaryColor.value,
       ));
     }
@@ -1037,7 +1040,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     if (_beamLocationCandidate is EmptyBeamLocation ||
         _beamLocationCandidate is NotFound) {
       update(
-        configuration: RouteInformation(location: initialPath),
+        configuration: RouteInformation(uri: Uri.parse(initialPath)),
         rebuild: false,
         updateParent: false,
         updateRouteInformation: false,
