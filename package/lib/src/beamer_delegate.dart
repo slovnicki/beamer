@@ -20,8 +20,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     this.updateListenable,
     @Deprecated(
       'No longer used by this package, please remove any references to it. '
-          'This feature was deprecated after v1.0.0.',
-    ) this.preferUpdate = true,
+      'This feature was deprecated after v1.0.0.',
+    )
+    this.preferUpdate = true,
     this.removeDuplicateHistory = true,
     this.notFoundPage = BeamPage.notFound,
     this.notFoundRedirect,
@@ -184,7 +185,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   @Deprecated(
     'No longer used by this package, please remove any references to it. '
-        'This feature was deprecated after v1.0.0.',
+    'This feature was deprecated after v1.0.0.',
   )
   // ignore: public_member_api_docs
   final bool preferUpdate;
@@ -237,7 +238,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   ///
   /// See [build] for details on how beamer handles [Navigator.onPopPage].
   bool Function(BuildContext context, Route<dynamic> route, dynamic result)?
-  onPopPage;
+      onPopPage;
 
   /// Whether the title attribute of [BeamPage] should
   /// be used to set and update the browser tab title.
@@ -434,7 +435,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     final context = _context;
     if (context != null) {
       if (updateBrowserTitleIndependent && configuration != null) {
-        _setBrowserTitle(context, fixTitle: configuration.uri.pathSegments.last);
+        _setBrowserTitle(context,
+            fixTitle: configuration.uri.pathSegments.last);
       }
 
       final didApply = _runGuards(context, _beamLocationCandidate);
@@ -497,7 +499,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   ///
   /// See [update] for more details.
   /// {@endtemplate}
-  void beamTo(BeamLocation location, {
+  void beamTo(
+    BeamLocation location, {
     Object? data,
     BeamLocation? popTo,
     TransitionDelegate? transitionDelegate,
@@ -524,7 +527,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   /// The same as [beamTo], but replaces the last state in history,
   /// i.e. removes it from the `beamingHistory.last.history` and then does [beamTo].
-  void beamToReplacement(BeamLocation location, {
+  void beamToReplacement(
+    BeamLocation location, {
     Object? data,
     BeamLocation? popTo,
     TransitionDelegate? transitionDelegate,
@@ -559,7 +563,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   ///
   /// See [update] for more details.
   /// {@endtemplate}
-  void beamToNamed(String uri, {
+  void beamToNamed(
+    String uri, {
     Object? routeState,
     Object? data,
     String? popToNamed,
@@ -573,7 +578,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       configuration: RouteInformation(location: uri, state: routeState),
       beamParameters: _currentBeamParameters.copyWith(
         popConfiguration:
-        popToNamed != null ? RouteInformation(location: popToNamed) : null,
+            popToNamed != null ? RouteInformation(location: popToNamed) : null,
         transitionDelegate: transitionDelegate ?? this.transitionDelegate,
         beamBackOnPop: beamBackOnPop,
         popBeamLocationOnPop: popBeamLocationOnPop,
@@ -586,7 +591,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   /// The same as [beamToNamed], but replaces the last state in history,
   /// i.e. removes it from the `beamingHistory.last.history` and then does [beamToNamed].
-  void beamToReplacementNamed(String uri, {
+  void beamToReplacementNamed(
+    String uri, {
     Object? routeState,
     Object? data,
     String? popToNamed,
@@ -616,7 +622,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   ///
   /// See [beamToNamed] for more details.
   /// {@endtemplate}
-  void popToNamed(String uri, {
+  void popToNamed(
+    String uri, {
     Object? routeState,
     Object? data,
     String? popToNamed,
@@ -627,7 +634,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   }) {
     while (beamingHistory.isNotEmpty) {
       final index = beamingHistory.last.history.lastIndexWhere(
-            (element) => element.routeInformation.location == uri,
+        (element) => element.routeInformation.location == uri,
       );
       if (index == -1) {
         _disposeBeamLocation(beamingHistory.last);
@@ -741,7 +748,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   @override
   RouteInformation? get currentConfiguration {
     final response =
-    _parent == null && _initialConfigurationReady ? configuration : null;
+        _parent == null && _initialConfigurationReady ? configuration : null;
     if (response != null) {
       _lastReportedRouteInformation = response.copyWith();
     }
@@ -885,7 +892,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     _disposeBeamLocation(currentBeamLocation);
     if (removeDuplicateHistory) {
       final index = beamingHistory.indexWhere((historyLocation) =>
-      historyLocation.runtimeType == beamLocation.runtimeType);
+          historyLocation.runtimeType == beamLocation.runtimeType);
       if (index != -1) {
         _disposeBeamLocation(beamingHistory[index]);
         beamingHistory.removeAt(index);
@@ -984,10 +991,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       _currentPages = _currentBeamParameters.stacked
           ? currentBeamLocation.buildPages(context, currentBeamLocation.state)
           : [
-        currentBeamLocation
-            .buildPages(context, currentBeamLocation.state)
-            .last
-      ];
+              currentBeamLocation
+                  .buildPages(context, currentBeamLocation.state)
+                  .last
+            ];
     }
   }
 
@@ -1002,12 +1009,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       }
       SystemChrome.setApplicationSwitcherDescription(
           ApplicationSwitcherDescription(
-            label: label,
-            primaryColor: Theme
-                .of(context)
-                .primaryColor
-                .value,
-          ));
+        label: label,
+        primaryColor: Theme.of(context).primaryColor.value,
+      ));
     }
   }
 
@@ -1095,7 +1099,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   void _updateFromParent({bool rebuild = true}) {
     final parentConfiguration = _parent!.configuration.copyWith();
     final beamLocation =
-    locationBuilder(parentConfiguration, _currentBeamParameters);
+        locationBuilder(parentConfiguration, _currentBeamParameters);
 
     if (beamLocation is! NotFound) {
       update(
