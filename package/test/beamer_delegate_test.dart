@@ -810,14 +810,14 @@ void main() {
         ),
       );
 
-      expect(delegate.configuration.location, '/splash');
+      expect(delegate.configuration.uri.toString(), '/splash');
 
       isLoading = false;
       isAuthenticated = true;
       delegate.update();
       await tester.pumpAndSettle();
 
-      expect(delegate.configuration.location, '/home/deeper');
+      expect(delegate.configuration.uri.toString(), '/home/deeper');
     });
   });
 }

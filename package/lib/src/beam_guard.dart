@@ -157,7 +157,8 @@ class BeamGuard {
       } else {
         delegate.beamTo(redirectBeamLocation);
       }
-      if (redirectBeamLocation.state.routeInformation.location == deepLink) {
+      if (redirectBeamLocation.state.routeInformation.uri.toString() ==
+          deepLink) {
         delegate.setDeepLink(null);
       }
       return true;

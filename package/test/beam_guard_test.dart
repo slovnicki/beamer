@@ -21,7 +21,7 @@ void main() {
         pathPatterns: [pathBlueprint],
         check: (_, __) => true,
         beamTo: (context, _, __, ___) =>
-            Location2(RouteInformation(location: '/')),
+            Location2(RouteInformation(uri: Uri.parse('/'))),
       );
 
       expect(guard.shouldGuard(testLocation), isTrue);
@@ -34,7 +34,7 @@ void main() {
         pathPatterns: [pathBlueprint],
         check: (_, __) => true,
         beamTo: (context, _, __, ___) =>
-            Location2(RouteInformation(location: '/')),
+            Location2(RouteInformation(uri: Uri.parse('/'))),
       );
 
       expect(guard.shouldGuard(testLocationWithQuery), isTrue);
@@ -47,7 +47,7 @@ void main() {
         pathPatterns: [RegExp(pathBlueprint)],
         check: (_, __) => true,
         beamTo: (context, _, __, ___) =>
-            Location2(RouteInformation(location: '/')),
+            Location2(RouteInformation(uri: Uri.parse('/'))),
       );
 
       expect(guard.shouldGuard(testLocation), isTrue);
@@ -60,7 +60,7 @@ void main() {
         pathPatterns: [RegExp(pathBlueprint)],
         check: (_, __) => true,
         beamTo: (context, _, __, ___) =>
-            Location2(RouteInformation(location: '/')),
+            Location2(RouteInformation(uri: Uri.parse('/'))),
       );
 
       expect(guard.shouldGuard(testLocationWithQuery), isTrue);
@@ -72,7 +72,7 @@ void main() {
         pathPatterns: ['/not-a-match'],
         check: (_, __) => true,
         beamTo: (context, _, __, ___) =>
-            Location2(RouteInformation(location: '/')),
+            Location2(RouteInformation(uri: Uri.parse('/'))),
       );
 
       expect(guard.shouldGuard(testLocation), isFalse);
@@ -85,7 +85,7 @@ void main() {
         pathPatterns: ['/not-a-match'],
         check: (_, __) => true,
         beamTo: (context, _, __, ___) =>
-            Location2(RouteInformation(location: '/')),
+            Location2(RouteInformation(uri: Uri.parse('/'))),
       );
 
       expect(guard.shouldGuard(testLocationWithQuery), isFalse);
@@ -98,7 +98,7 @@ void main() {
         pathPatterns: [RegExp('/not-a-match')],
         check: (_, __) => true,
         beamTo: (context, _, __, ___) =>
-            Location2(RouteInformation(location: '/')),
+            Location2(RouteInformation(uri: Uri.parse('/'))),
       );
 
       expect(guard.shouldGuard(testLocation), isFalse);
@@ -111,7 +111,7 @@ void main() {
         pathPatterns: ['/not-a-match'],
         check: (_, __) => true,
         beamTo: (context, _, __, ___) =>
-            Location2(RouteInformation(location: '/')),
+            Location2(RouteInformation(uri: Uri.parse('/'))),
       );
 
       expect(guard.shouldGuard(testLocationWithQuery), isFalse);
@@ -129,7 +129,7 @@ void main() {
           ],
           check: (_, __) => true,
           beamTo: (context, _, __, ___) =>
-              Location2(RouteInformation(location: '/')),
+              Location2(RouteInformation(uri: Uri.parse('/'))),
         );
 
         expect(guard.shouldGuard(testLocation), isTrue);
@@ -142,7 +142,7 @@ void main() {
           pathPatterns: [RegExp('(/[a-z]*|[0-9]*/one)')],
           check: (_, __) => true,
           beamTo: (context, _, __, ___) =>
-              Location2(RouteInformation(location: '/')),
+              Location2(RouteInformation(uri: Uri.parse('/'))),
         );
 
         expect(guard.shouldGuard(testLocation), isTrue);
@@ -156,7 +156,7 @@ void main() {
           ],
           check: (_, __) => true,
           beamTo: (context, _, __, ___) =>
-              Location2(RouteInformation(location: '/')),
+              Location2(RouteInformation(uri: Uri.parse('/'))),
         );
 
         expect(guard.shouldGuard(testLocation), isFalse);
@@ -171,7 +171,7 @@ void main() {
           ],
           check: (_, __) => true,
           beamTo: (context, _, __, ___) =>
-              Location2(RouteInformation(location: '/')),
+              Location2(RouteInformation(uri: Uri.parse('/'))),
         );
 
         expect(guard.shouldGuard(testLocation), isFalse);
@@ -186,7 +186,7 @@ void main() {
           ],
           check: (_, __) => true,
           beamTo: (context, _, __, ___) =>
-              Location2(RouteInformation(location: '/')),
+              Location2(RouteInformation(uri: Uri.parse('/'))),
           guardNonMatching: true,
         );
 
@@ -202,7 +202,7 @@ void main() {
           ],
           check: (_, __) => true,
           beamTo: (context, _, __, ___) =>
-              Location2(RouteInformation(location: '/')),
+              Location2(RouteInformation(uri: Uri.parse('/'))),
           guardNonMatching: true,
         );
 
@@ -216,7 +216,7 @@ void main() {
           pathPatterns: ['/not-a-match'],
           check: (_, __) => true,
           beamTo: (context, _, __, ___) =>
-              Location2(RouteInformation(location: '/')),
+              Location2(RouteInformation(uri: Uri.parse('/'))),
           guardNonMatching: true,
         );
 
@@ -230,7 +230,7 @@ void main() {
           pathPatterns: [RegExp('/not-a-match')],
           check: (_, __) => true,
           beamTo: (context, _, __, ___) =>
-              Location2(RouteInformation(location: '/')),
+              Location2(RouteInformation(uri: Uri.parse('/'))),
           guardNonMatching: true,
         );
 
@@ -249,7 +249,7 @@ void main() {
             ],
             check: (_, __) => true,
             beamTo: (context, _, __, ___) =>
-                Location2(RouteInformation(location: '/')),
+                Location2(RouteInformation(uri: Uri.parse('/'))),
             guardNonMatching: true,
           );
 
@@ -265,7 +265,7 @@ void main() {
             ],
             check: (_, __) => true,
             beamTo: (context, _, __, ___) =>
-                Location2(RouteInformation(location: '/')),
+                Location2(RouteInformation(uri: Uri.parse('/'))),
             guardNonMatching: true,
           );
 
@@ -281,7 +281,7 @@ void main() {
             ],
             check: (_, __) => true,
             beamTo: (context, _, __, ___) =>
-                Location2(RouteInformation(location: '/')),
+                Location2(RouteInformation(uri: Uri.parse('/'))),
             guardNonMatching: true,
           );
 
@@ -297,7 +297,7 @@ void main() {
             ],
             check: (_, __) => true,
             beamTo: (context, _, __, ___) =>
-                Location2(RouteInformation(location: '/')),
+                Location2(RouteInformation(uri: Uri.parse('/'))),
             guardNonMatching: true,
           );
 
@@ -311,7 +311,7 @@ void main() {
         final router = BeamerDelegate(
           initialPath: '/l1',
           locationBuilder: (routeInformation, _) {
-            if (routeInformation.location.contains('l1')) {
+            if (routeInformation.uri.toFilePath().contains('l1')) {
               return Location1(routeInformation);
             }
             return Location2(routeInformation);

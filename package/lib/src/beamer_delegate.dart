@@ -804,7 +804,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         ),
       );
     }
-    _deepLink ??= configuration.location;
+    _deepLink ??= configuration.uri.toString();
     return setNewRoutePath(configuration);
   }
 
