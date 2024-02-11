@@ -1,4 +1,7 @@
 import 'package:beamer/beamer.dart';
+import 'package:beamer/src/browser_tab_title_util_non_web.dart'
+    if (dart.library.html) 'package:beamer/src/browser_tab_title_util_web.dart'
+    as browser_tab_title_util;
 import 'package:beamer/src/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -987,13 +990,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   }
 
   void _setBrowserTitle(BuildContext context) {
-    if (active && kIsWeb && setBrowserTabTitle) {
-      SystemChrome.setApplicationSwitcherDescription(
-          ApplicationSwitcherDescription(
-        label: _currentPages.last.title ??
-            currentBeamLocation.state.routeInformation.uri.path,
-        primaryColor: Theme.of(context).primaryColor.value,
-      ));
+    if (active && setBrowserTabTitle) {
+      final String title = _currentPages.last.title ??
+          currentBeamLocation.state.routeInformation.uri.path;
+      browser_tab_title_util.setTabTitle(title);
     }
   }
 
