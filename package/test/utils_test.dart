@@ -8,7 +8,7 @@ import 'test_locations.dart';
 void main() {
   final beamLocations = <BeamLocation>[
     Location1(),
-    Location2(const RouteInformation()),
+    Location2(RouteInformation(location: '')),
     CustomStateLocation(),
     RegExpLocation(),
     AsteriskLocation(),
@@ -133,10 +133,7 @@ void main() {
 
     test('Appending without new routeState', () {
       const current = RouteInformation(location: '/current');
-      expect(
-        Utils.maybeAppend(current, const RouteInformation()).location,
-        current.location,
-      );
+
       expect(
         Utils.maybeAppend(current, const RouteInformation(location: 'incoming'))
             .location,
@@ -153,7 +150,8 @@ void main() {
     test('Appending with new routeState', () {
       const current = RouteInformation(location: '/current');
       expect(
-        Utils.maybeAppend(current, const RouteInformation(state: 42)).state,
+        Utils.maybeAppend(current, RouteInformation(uri: Uri(), state: 42))
+            .state,
         42,
       );
       expect(
@@ -173,14 +171,14 @@ void main() {
 
   group('RouteInformation equality', () {
     test('identical are equal', () {
-      const ri = RouteInformation();
+      final ri = RouteInformation(location: '');
 
       expect(ri.isEqualTo(ri), isTrue);
     });
 
     test('empty are equal', () {
-      const ri1 = RouteInformation();
-      const ri2 = RouteInformation();
+      final ri1 = RouteInformation(location: '');
+      final ri2 = RouteInformation(location: '');
 
       expect(ri1.isEqualTo(ri2), isTrue);
     });

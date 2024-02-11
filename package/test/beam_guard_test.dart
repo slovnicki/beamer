@@ -19,7 +19,8 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: [pathBlueprint],
         check: (_, __) => true,
-        beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
+        beamTo: (context, _, __, ___) =>
+            Location2(RouteInformation(location: '/')),
       );
 
       expect(guard.shouldGuard(testLocation), isTrue);
@@ -31,7 +32,8 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: [pathBlueprint],
         check: (_, __) => true,
-        beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
+        beamTo: (context, _, __, ___) =>
+            Location2(RouteInformation(location: '/')),
       );
 
       expect(guard.shouldGuard(testLocationWithQuery), isTrue);
@@ -43,7 +45,8 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: [RegExp(pathBlueprint)],
         check: (_, __) => true,
-        beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
+        beamTo: (context, _, __, ___) =>
+            Location2(RouteInformation(location: '/')),
       );
 
       expect(guard.shouldGuard(testLocation), isTrue);
@@ -55,7 +58,8 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: [RegExp(pathBlueprint)],
         check: (_, __) => true,
-        beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
+        beamTo: (context, _, __, ___) =>
+            Location2(RouteInformation(location: '/')),
       );
 
       expect(guard.shouldGuard(testLocationWithQuery), isTrue);
@@ -66,7 +70,8 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: ['/not-a-match'],
         check: (_, __) => true,
-        beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
+        beamTo: (context, _, __, ___) =>
+            Location2(RouteInformation(location: '/')),
       );
 
       expect(guard.shouldGuard(testLocation), isFalse);
@@ -78,7 +83,8 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: ['/not-a-match'],
         check: (_, __) => true,
-        beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
+        beamTo: (context, _, __, ___) =>
+            Location2(RouteInformation(location: '/')),
       );
 
       expect(guard.shouldGuard(testLocationWithQuery), isFalse);
@@ -90,7 +96,8 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: [RegExp('/not-a-match')],
         check: (_, __) => true,
-        beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
+        beamTo: (context, _, __, ___) =>
+            Location2(RouteInformation(location: '/')),
       );
 
       expect(guard.shouldGuard(testLocation), isFalse);
@@ -102,7 +109,8 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: ['/not-a-match'],
         check: (_, __) => true,
-        beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
+        beamTo: (context, _, __, ___) =>
+            Location2(RouteInformation(location: '/')),
       );
 
       expect(guard.shouldGuard(testLocationWithQuery), isFalse);
@@ -119,7 +127,8 @@ void main() {
                 '/*',
           ],
           check: (_, __) => true,
-          beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
+          beamTo: (context, _, __, ___) =>
+              Location2(RouteInformation(location: '/')),
         );
 
         expect(guard.shouldGuard(testLocation), isTrue);
@@ -131,7 +140,8 @@ void main() {
         final guard = BeamGuard(
           pathPatterns: [RegExp('(/[a-z]*|[0-9]*/one)')],
           check: (_, __) => true,
-          beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
+          beamTo: (context, _, __, ___) =>
+              Location2(RouteInformation(location: '/')),
         );
 
         expect(guard.shouldGuard(testLocation), isTrue);
@@ -144,7 +154,8 @@ void main() {
             '/not-a-match/*',
           ],
           check: (_, __) => true,
-          beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
+          beamTo: (context, _, __, ___) =>
+              Location2(RouteInformation(location: '/')),
         );
 
         expect(guard.shouldGuard(testLocation), isFalse);
@@ -158,7 +169,8 @@ void main() {
             RegExp('(/[a-z]*[0-9]/no-match)'),
           ],
           check: (_, __) => true,
-          beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
+          beamTo: (context, _, __, ___) =>
+              Location2(RouteInformation(location: '/')),
         );
 
         expect(guard.shouldGuard(testLocation), isFalse);
@@ -172,7 +184,8 @@ void main() {
             pathBlueprint,
           ],
           check: (_, __) => true,
-          beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
+          beamTo: (context, _, __, ___) =>
+              Location2(RouteInformation(location: '/')),
           guardNonMatching: true,
         );
 
@@ -187,7 +200,8 @@ void main() {
             RegExp(pathBlueprint),
           ],
           check: (_, __) => true,
-          beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
+          beamTo: (context, _, __, ___) =>
+              Location2(RouteInformation(location: '/')),
           guardNonMatching: true,
         );
 
@@ -200,7 +214,8 @@ void main() {
         final guard = BeamGuard(
           pathPatterns: ['/not-a-match'],
           check: (_, __) => true,
-          beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
+          beamTo: (context, _, __, ___) =>
+              Location2(RouteInformation(location: '/')),
           guardNonMatching: true,
         );
 
@@ -213,7 +228,8 @@ void main() {
         final guard = BeamGuard(
           pathPatterns: [RegExp('/not-a-match')],
           check: (_, __) => true,
-          beamTo: (context, _, __, ___) => Location2(const RouteInformation()),
+          beamTo: (context, _, __, ___) =>
+              Location2(RouteInformation(location: '/')),
           guardNonMatching: true,
         );
 
@@ -232,7 +248,7 @@ void main() {
             ],
             check: (_, __) => true,
             beamTo: (context, _, __, ___) =>
-                Location2(const RouteInformation()),
+                Location2(RouteInformation(location: '/')),
             guardNonMatching: true,
           );
 
@@ -248,7 +264,7 @@ void main() {
             ],
             check: (_, __) => true,
             beamTo: (context, _, __, ___) =>
-                Location2(const RouteInformation()),
+                Location2(RouteInformation(location: '/')),
             guardNonMatching: true,
           );
 
@@ -264,7 +280,7 @@ void main() {
             ],
             check: (_, __) => true,
             beamTo: (context, _, __, ___) =>
-                Location2(const RouteInformation()),
+                Location2(RouteInformation(location: '/')),
             guardNonMatching: true,
           );
 
@@ -280,7 +296,7 @@ void main() {
             ],
             check: (_, __) => true,
             beamTo: (context, _, __, ___) =>
-                Location2(const RouteInformation()),
+                Location2(RouteInformation(location: '/')),
             guardNonMatching: true,
           );
 
@@ -294,7 +310,7 @@ void main() {
         final router = BeamerDelegate(
           initialPath: '/l1',
           locationBuilder: (routeInformation, _) {
-            if (routeInformation.location?.contains('l1') ?? false) {
+            if (routeInformation.location.contains('l1') ?? false) {
               return Location1(routeInformation);
             }
             return Location2(routeInformation);
@@ -325,7 +341,7 @@ void main() {
           removeDuplicateHistory: false,
           initialPath: '/l1',
           locationBuilder: (routeInformation, _) {
-            if (routeInformation.location?.contains('l1') ?? false) {
+            if (routeInformation.location.contains('l1') ?? false) {
               return Location1(routeInformation);
             }
             return Location2(routeInformation);
@@ -357,7 +373,7 @@ void main() {
         final router = BeamerDelegate(
           initialPath: '/l1',
           locationBuilder: (routeInformation, _) {
-            if (routeInformation.location?.contains('l1') ?? false) {
+            if (routeInformation.location.contains('l1') ?? false) {
               return Location1(routeInformation);
             }
             return Location2(routeInformation);
@@ -514,7 +530,7 @@ void main() {
       final delegate = BeamerDelegate(
         initialPath: '/l1',
         locationBuilder: (routeInformation, _) {
-          if (routeInformation.location?.contains('l1') ?? false) {
+          if (routeInformation.location.contains('l1') ?? false) {
             return Location1(routeInformation);
           }
           return Location2(routeInformation);
@@ -709,7 +725,7 @@ void main() {
             pathPatterns: <Pattern>['/s1/s2'],
             check: (_, __) => false,
             beamToNamed: (_, to, __) {
-              return to.state.routeInformation.location! + '/s3';
+              return to.state.routeInformation.location + '/s3';
             },
           ),
         ],

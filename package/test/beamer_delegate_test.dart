@@ -22,10 +22,10 @@ void main() {
         lastCurrentPagesFromBuildListner.addAll(delegate.currentPages);
       },
       locationBuilder: (routeInformation, __) {
-        if (routeInformation.location?.contains('l1') ?? false) {
+        if (routeInformation.location.contains('l1') ?? false) {
           return Location1(routeInformation);
         }
-        if (routeInformation.location?.contains('l2') ?? false) {
+        if (routeInformation.location.contains('l2') ?? false) {
           return Location2(routeInformation);
         }
         if (CustomStateLocation()
@@ -228,7 +228,7 @@ void main() {
           CustomStateLocation(),
         ],
       ),
-      notFoundRedirect: Location1(const RouteInformation()),
+      notFoundRedirect: Location1(RouteInformation(location: '/')),
     );
     await tester.pumpWidget(
       MaterialApp.router(
@@ -303,10 +303,10 @@ void main() {
   group('Keeping data', () {
     final delegate = BeamerDelegate(
       locationBuilder: (routeInformation, _) {
-        if (routeInformation.location?.contains('l1') ?? false) {
+        if (routeInformation.location.contains('l1') ?? false) {
           return Location1(routeInformation);
         }
-        if (routeInformation.location?.contains('l2') ?? false) {
+        if (routeInformation.location.contains('l2') ?? false) {
           return Location2(routeInformation);
         }
         return NotFound(path: routeInformation.location ?? '/');

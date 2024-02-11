@@ -5,8 +5,7 @@ homepage: https://beamer.dev
 repository: https://github.com/slovnicki/beamer
 
 environment:
-  sdk: '>=2.14.0 <4.0.0'
-  flutter: '>=1.17.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:

@@ -194,7 +194,7 @@ void main() {
         ),
       );
 
-      registerFallbackValue(const RouteInformation());
+      registerFallbackValue(RouteInformation(location: '/'));
 
       delegate.update(
         configuration: const RouteInformation(location: '/x'),

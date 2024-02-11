@@ -34,10 +34,10 @@ void main() {
     setUp(() {
       delegate = BeamerDelegate(
         locationBuilder: (routeInformation, __) {
-          if (routeInformation.location?.contains('l1') ?? false) {
+          if (routeInformation.location.contains('l1') ?? false) {
             return Location1(routeInformation);
           }
-          if (routeInformation.location?.contains('l2') ?? false) {
+          if (routeInformation.location.contains('l2') ?? false) {
             return Location2(routeInformation);
           }
           if (CustomStateLocation()

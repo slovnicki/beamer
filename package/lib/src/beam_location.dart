@@ -435,7 +435,7 @@ class GuardShowPage extends BeamLocation<BeamState> {
       [beamPage];
 
   @override
-  List<String> get pathPatterns => [routeInformation.location!];
+  List<String> get pathPatterns => [routeInformation.location];
 }
 
 /// A beam location for [RoutesLocationBuilder], but can be used freely.
@@ -522,8 +522,8 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
     final matched = <Pattern, String>{};
     var overrideNotFound = false;
     if (routeInformation.location != '/' &&
-        (routeInformation.location?.endsWith('/') ?? false)) {
-      final location = routeInformation.location!;
+        (routeInformation.location.endsWith('/') ?? false)) {
+      final location = routeInformation.location;
       routeInformation = routeInformation.copyWith(
         location: location.substring(0, location.length - 1),
       );
