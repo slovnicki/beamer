@@ -20,11 +20,11 @@ void main() {
 
   test('fromRouteInformation', () {
     final state = BeamState()
-        .fromRouteInformation(const RouteInformation(location: '/test'));
+        .fromRouteInformation(RouteInformation(uri: Uri.parse('/test')));
     expect(state.uri.pathSegments[0], 'test');
 
-    final state2 = BeamState().fromRouteInformation(const RouteInformation(
-      location: '/test',
+    final state2 = BeamState().fromRouteInformation(RouteInformation(
+      uri: Uri.parse('/test'),
       state: {'x': 'y'},
     ));
     expect(state2.routeState, {'x': 'y'});

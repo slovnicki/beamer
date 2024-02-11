@@ -142,13 +142,13 @@ class BeamGuard {
 
     if (beamTo != null) {
       final redirectBeamLocation = beamTo!(context, origin, target, deepLink);
-      if (redirectBeamLocation.state.routeInformation.location ==
-          target.state.routeInformation.location) {
+      if (redirectBeamLocation.state.routeInformation.uri ==
+          target.state.routeInformation.uri) {
         // just block if this will produce an immediate infinite loop
         return true;
       }
-      if (redirectBeamLocation.state.routeInformation.location ==
-          origin.state.routeInformation.location) {
+      if (redirectBeamLocation.state.routeInformation.uri ==
+          origin.state.routeInformation.uri) {
         // just block if redirect is the current route
         return true;
       }
@@ -165,11 +165,11 @@ class BeamGuard {
 
     if (beamToNamed != null) {
       final redirectNamed = beamToNamed!(origin, target, deepLink);
-      if (redirectNamed == target.state.routeInformation.location) {
+      if (redirectNamed == target.state.routeInformation.uri.toString()) {
         // just block if this will produce an immediate infinite loop
         return true;
       }
-      if (redirectNamed == origin.state.routeInformation.location) {
+      if (redirectNamed == origin.state.routeInformation.uri.toString()) {
         // just block if redirect is the current route
         return true;
       }
@@ -195,12 +195,11 @@ class BeamGuard {
   /// must be equal to the pathPattern.
   bool _hasMatch(BeamLocation location) {
     for (final pathPattern in pathPatterns) {
-      final path =
-          Uri.parse(location.state.routeInformation.location ?? '/').path;
+      final path = location.state.routeInformation.uri.path;
       if (pathPattern is String) {
         final asteriskIndex = pathPattern.indexOf('*');
         if (asteriskIndex != -1) {
-          if (location.state.routeInformation.location
+          if (location.state.routeInformation.uri
               .toString()
               .contains(pathPattern.substring(0, asteriskIndex))) {
             return true;

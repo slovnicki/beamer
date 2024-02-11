@@ -22,17 +22,16 @@ void main() {
         lastCurrentPagesFromBuildListner.addAll(delegate.currentPages);
       },
       locationBuilder: (routeInformation, __) {
-        if (routeInformation.location.contains('l1') ?? false) {
+        if (routeInformation.uri.path.contains('l1')) {
           return Location1(routeInformation);
         }
-        if (routeInformation.location.contains('l2') ?? false) {
+        if (routeInformation.uri.path.contains('l2')) {
           return Location2(routeInformation);
         }
-        if (CustomStateLocation()
-            .canHandle(Uri.parse(routeInformation.location ?? '/'))) {
+        if (CustomStateLocation().canHandle(routeInformation.uri)) {
           return CustomStateLocation(routeInformation);
         }
-        return NotFound(path: routeInformation.location ?? '/');
+        return NotFound(path: routeInformation.uri.toString());
       },
     );
     lastCurrentPagesFromBuildListner.clear();
@@ -50,7 +49,7 @@ void main() {
     });
 
     test('beamTo changes locations', () {
-      delegate.beamTo(Location2(const RouteInformation(location: '/l2')));
+      delegate.beamTo(Location2(RouteInformation(uri: Uri.parse('/l2'))));
       expect(delegate.currentBeamLocation, isA<Location2>());
     });
 
@@ -97,10 +96,10 @@ void main() {
   });
 
   testWidgets('routeListener is called when update is called', (tester) async {
-    const routeInfo = RouteInformation(location: '/l1');
+    final routeInfo = RouteInformation(uri: Uri.parse('/l1'));
     delegate.update(configuration: routeInfo);
     expect(lastBeamLocationFromRouteListener, isA<Location1>());
-    expect(lastRouteInfoFromRouteListener!.location, equals('/l1'));
+    expect(lastRouteInfoFromRouteListener!.uri.path, equals('/l1'));
   });
 
   testWidgets('buildListener is called when build is called', (tester) async {
@@ -167,17 +166,17 @@ void main() {
       );
       delegate.beamToNamed('/test/one/two', popToNamed: '/test');
       await tester.pump();
-      expect(delegate.configuration.location, '/test/one/two');
+      expect(delegate.configuration.uri.path, '/test/one/two');
       delegate.navigator.pop();
       await tester.pump();
-      expect(delegate.configuration.location, '/test');
+      expect(delegate.configuration.uri.path, '/test');
 
       delegate.beamToNamed('/test/one/two');
       await tester.pump();
-      expect(delegate.configuration.location, '/test/one/two');
+      expect(delegate.configuration.uri.path, '/test/one/two');
       delegate.navigator.pop();
       await tester.pump();
-      expect(delegate.configuration.location, '/test/one');
+      expect(delegate.configuration.uri.path, '/test/one');
     });
   });
 
@@ -186,25 +185,25 @@ void main() {
     delegate.beamToNamed('/l2');
 
     expect(delegate.beamBack(), true);
-    expect(delegate.configuration.location,
-        delegate.currentBeamLocation.state.routeInformation.location);
-    expect(delegate.configuration.location, '/l1');
+    expect(delegate.configuration.uri,
+        delegate.currentBeamLocation.state.routeInformation.uri);
+    expect(delegate.configuration.uri.path, '/l1');
     expect(delegate.currentBeamLocation.data, {'x': 'y'});
 
     delegate.beamToNamed('/l2');
 
     expect(delegate.beamBack(), true);
-    expect(delegate.configuration.location,
-        delegate.currentBeamLocation.state.routeInformation.location);
-    expect(delegate.configuration.location, '/l1');
+    expect(delegate.configuration.uri,
+        delegate.currentBeamLocation.state.routeInformation.uri);
+    expect(delegate.configuration.uri.path, '/l1');
     expect(delegate.currentBeamLocation.data, {'x': 'y'});
 
     delegate.beamToNamed('/l2');
 
     expect(delegate.beamBack(data: {'xx': 'yy'}), true);
-    expect(delegate.configuration.location,
-        delegate.currentBeamLocation.state.routeInformation.location);
-    expect(delegate.configuration.location, '/l1');
+    expect(delegate.configuration.uri,
+        delegate.currentBeamLocation.state.routeInformation.uri);
+    expect(delegate.configuration.uri.path, '/l1');
     expect(delegate.currentBeamLocation.data, {'xx': 'yy'});
   });
 
@@ -228,7 +227,7 @@ void main() {
           CustomStateLocation(),
         ],
       ),
-      notFoundRedirect: Location1(RouteInformation(location: '/')),
+      notFoundRedirect: Location1(RouteInformation(uri: Uri.parse('/'))),
     );
     await tester.pumpWidget(
       MaterialApp.router(
@@ -239,7 +238,7 @@ void main() {
     delegate.beamToNamed('/xxx');
     await tester.pump();
     expect(delegate.currentBeamLocation, isA<Location1>());
-    expect(delegate.configuration.location, '/');
+    expect(delegate.configuration.uri.path, '/');
   });
 
   testWidgets('notFoundRedirectNamed works', (tester) async {
@@ -261,7 +260,7 @@ void main() {
     delegate.beamToNamed('/xxx');
     await tester.pump();
     expect(delegate.currentBeamLocation, isA<Location1>());
-    expect(delegate.configuration.location, '/');
+    expect(delegate.configuration.uri.path, '/');
   });
 
   testWidgets("popping drawer doesn't change BeamState", (tester) async {
@@ -287,29 +286,29 @@ void main() {
     delegate.beamToNamed('/test');
     await tester.pump();
     expect(scaffoldKey.currentState?.isDrawerOpen, isFalse);
-    expect(delegate.configuration.location, '/test');
+    expect(delegate.configuration.uri.path, '/test');
 
     scaffoldKey.currentState?.openDrawer();
     await tester.pumpAndSettle();
     expect(scaffoldKey.currentState?.isDrawerOpen, isTrue);
-    expect(delegate.configuration.location, '/test');
+    expect(delegate.configuration.uri.path, '/test');
 
     delegate.navigatorKey.currentState?.pop();
     await tester.pumpAndSettle();
     expect(scaffoldKey.currentState?.isDrawerOpen, isFalse);
-    expect(delegate.configuration.location, '/test');
+    expect(delegate.configuration.uri.path, '/test');
   });
 
   group('Keeping data', () {
     final delegate = BeamerDelegate(
       locationBuilder: (routeInformation, _) {
-        if (routeInformation.location.contains('l1') ?? false) {
+        if (routeInformation.uri.path.contains('l1')) {
           return Location1(routeInformation);
         }
-        if (routeInformation.location.contains('l2') ?? false) {
+        if (routeInformation.uri.path.contains('l2')) {
           return Location2(routeInformation);
         }
-        return NotFound(path: routeInformation.location ?? '/');
+        return NotFound(path: routeInformation.uri.path);
       },
     );
     testWidgets('pop keeps data', (tester) async {
@@ -394,15 +393,15 @@ void main() {
       rootDelegate.beamToNamed('/test');
       await tester.pump();
       expect(find.text('/test'), findsOneWidget);
-      expect(rootDelegate.configuration.location, '/test');
-      expect(childDelegate.configuration.location, '/test');
+      expect(rootDelegate.configuration.uri.path, '/test');
+      expect(childDelegate.configuration.uri.path, '/test');
       expect(childDelegate.beamingHistory.last.history.length, 2);
 
       rootDelegate.beamToNamed('/test2');
       await tester.pump();
       expect(find.text('/test2'), findsOneWidget);
-      expect(rootDelegate.configuration.location, '/test2');
-      expect(childDelegate.configuration.location, '/test2');
+      expect(rootDelegate.configuration.uri.path, '/test2');
+      expect(childDelegate.configuration.uri.path, '/test2');
       expect(childDelegate.beamingHistory.last.history.length, 3);
     });
 
@@ -441,14 +440,14 @@ void main() {
 
       rootDelegate.beamToNamed('/test');
       await tester.pumpAndSettle();
-      expect(rootDelegate.configuration.location, '/test');
-      expect(childDelegate.configuration.location, childDelegate.initialPath);
+      expect(rootDelegate.configuration.uri.path, '/test');
+      expect(childDelegate.configuration.uri.path, childDelegate.initialPath);
       expect(childDelegate.beamingHistory.last.history.length, 1);
 
       rootDelegate.beamToNamed('/test2');
       await tester.pump();
-      expect(rootDelegate.configuration.location, '/test2');
-      expect(childDelegate.configuration.location, childDelegate.initialPath);
+      expect(rootDelegate.configuration.uri.path, '/test2');
+      expect(childDelegate.configuration.uri.path, childDelegate.initialPath);
       expect(childDelegate.beamingHistory.last.history.length, 1);
     });
   });
@@ -465,19 +464,19 @@ void main() {
         ),
       );
 
-      expect(delegate.configuration.location, '/');
+      expect(delegate.configuration.uri.path, '/');
 
       delegate.update(
-        configuration: const RouteInformation(location: '/test'),
+        configuration: RouteInformation(uri: Uri.parse('/test')),
         rebuild: false,
       );
-      expect(delegate.configuration.location, '/test');
+      expect(delegate.configuration.uri.path, '/test');
 
       delegate.update(
-        configuration: const RouteInformation(location: '/any'),
+        configuration: RouteInformation(uri: Uri.parse('/any')),
         rebuild: false,
       );
-      expect(delegate.configuration.location, '/any');
+      expect(delegate.configuration.uri.path, '/any');
     });
 
     testWidgets(
@@ -515,22 +514,22 @@ void main() {
       rootDelegate.beamToNamed('/test');
       await tester.pump();
 
-      expect(rootDelegate.configuration.location, '/test');
-      expect(childDelegate.configuration.location, '/test');
+      expect(rootDelegate.configuration.uri.path, '/test');
+      expect(childDelegate.configuration.uri.path, '/test');
       expect(childDelegate.parent, rootDelegate);
 
       childDelegate.beamToNamed('/test2');
       await tester.pump();
 
-      expect(rootDelegate.configuration.location, '/test');
-      expect(childDelegate.configuration.location, '/test2');
+      expect(rootDelegate.configuration.uri.path, '/test');
+      expect(childDelegate.configuration.uri.path, '/test2');
 
       childDelegate.update(
-        configuration: const RouteInformation(location: '/xx'),
+        configuration: RouteInformation(uri: Uri.parse('/xx')),
         rebuild: false,
       );
-      expect(rootDelegate.configuration.location, '/test');
-      expect(childDelegate.configuration.location, '/xx');
+      expect(rootDelegate.configuration.uri.path, '/test');
+      expect(childDelegate.configuration.uri.path, '/xx');
     });
   });
 
@@ -556,12 +555,12 @@ void main() {
 
       delegate.beamToNamed('/test/deeper');
       await tester.pump();
-      expect(delegate.configuration.location, '/test/deeper');
+      expect(delegate.configuration.uri.path, '/test/deeper');
       expect(delegate.beamingHistory.last.history.length, 2);
 
       delegate.beamToNamed('/');
       await tester.pump(const Duration(milliseconds: 16));
-      expect(delegate.configuration.location, '/');
+      expect(delegate.configuration.uri.path, '/');
       expect(delegate.beamingHistory.last.history.length, 1);
     });
 
@@ -584,17 +583,17 @@ void main() {
 
       delegate.beamToNamed('/test');
       await tester.pump();
-      expect(delegate.configuration.location, '/test');
+      expect(delegate.configuration.uri.path, '/test');
       expect(delegate.beamingHistory.last.history.length, 2);
 
       delegate.beamToNamed('/test/deeper');
       await tester.pump();
-      expect(delegate.configuration.location, '/test/deeper');
+      expect(delegate.configuration.uri.path, '/test/deeper');
       expect(delegate.beamingHistory.last.history.length, 3);
 
       delegate.popToNamed('/');
       await tester.pump(const Duration(milliseconds: 16));
-      expect(delegate.configuration.location, '/');
+      expect(delegate.configuration.uri.path, '/');
       expect(delegate.beamingHistory.last.history.length, 1);
     });
 
@@ -619,27 +618,27 @@ void main() {
 
       delegate.beamToNamed('/test');
       await tester.pump();
-      expect(delegate.configuration.location, '/test');
+      expect(delegate.configuration.uri.path, '/test');
       expect(delegate.beamingHistory.last.history.length, 2);
 
       delegate.beamToNamed('/test/deeper');
       await tester.pump();
-      expect(delegate.configuration.location, '/test/deeper');
+      expect(delegate.configuration.uri.path, '/test/deeper');
       expect(delegate.beamingHistory.last.history.length, 3);
 
       delegate.beamToNamed('/');
       await tester.pump(const Duration(milliseconds: 16));
-      expect(delegate.configuration.location, '/');
+      expect(delegate.configuration.uri.path, '/');
       expect(delegate.beamingHistory.last.history.length, 1);
 
       delegate.beamToNamed('/test/deeper');
       await tester.pump();
-      expect(delegate.configuration.location, '/test/deeper');
+      expect(delegate.configuration.uri.path, '/test/deeper');
       expect(delegate.beamingHistory.last.history.length, 2);
 
       delegate.popToNamed('/');
       await tester.pump(const Duration(seconds: 1));
-      expect(delegate.configuration.location, '/');
+      expect(delegate.configuration.uri.path, '/');
       expect(delegate.beamingHistory.last.history.length, 1);
     });
 
@@ -662,27 +661,27 @@ void main() {
         ),
       );
 
-      expect(delegate.configuration.location, '/');
+      expect(delegate.configuration.uri.path, '/');
       expect(delegate.beamingHistory.last.history.length, 1);
 
       delegate.beamToNamed('/test');
       await tester.pump();
-      expect(delegate.configuration.location, '/test');
+      expect(delegate.configuration.uri.path, '/test');
       expect(delegate.beamingHistory.last.history.length, 1);
 
       delegate.beamToNamed('/test/deeper');
       await tester.pump();
-      expect(delegate.configuration.location, '/test/deeper');
+      expect(delegate.configuration.uri.path, '/test/deeper');
       expect(delegate.beamingHistory.last.history.length, 2);
 
       delegate.beamToNamed('/');
       await tester.pump(const Duration(milliseconds: 16));
-      expect(delegate.configuration.location, '/');
+      expect(delegate.configuration.uri.path, '/');
       expect(delegate.beamingHistory.last.history.length, 3);
 
       delegate.beamToNamed('/test');
       await tester.pump();
-      expect(delegate.configuration.location, '/test');
+      expect(delegate.configuration.uri.path, '/test');
       expect(delegate.beamingHistory.last.history.length, 1);
     });
   });
@@ -714,11 +713,11 @@ void main() {
       ),
     );
 
-    expect(delegate.configuration.location, '/r1');
+    expect(delegate.configuration.uri.path, '/r1');
 
     guardCheck.value = false;
 
-    expect(delegate.configuration.location, '/r2');
+    expect(delegate.configuration.uri.path, '/r2');
   });
 
   group('Relative beaming', () {
@@ -735,13 +734,13 @@ void main() {
       );
 
       delegate.beamToNamed('t1');
-      expect(delegate.configuration.location, '/t1');
+      expect(delegate.configuration.uri.path, '/t1');
       expect(
-          delegate.currentBeamLocation.state.routeInformation.location, '/t1');
+          delegate.currentBeamLocation.state.routeInformation.uri.path, '/t1');
 
       delegate.beamToNamed('t2');
-      expect(delegate.configuration.location, '/t1/t2');
-      expect(delegate.currentBeamLocation.state.routeInformation.location,
+      expect(delegate.configuration.uri.path, '/t1/t2');
+      expect(delegate.currentBeamLocation.state.routeInformation.uri.path,
           '/t1/t2');
     });
   });
@@ -764,7 +763,7 @@ void main() {
 
     expect(
         delegate.currentBeamLocation.history
-            .map((HistoryElement e) => e.routeInformation.location),
+            .map((HistoryElement e) => e.routeInformation.uri.path),
         orderedEquals(<String>['/t1', '/t2']));
   });
 

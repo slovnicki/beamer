@@ -50,7 +50,7 @@ void main() {
     await tester.pumpWidget(app);
     testContext!.beamToNamed('/test');
     await tester.pump();
-    expect(testContext!.currentBeamLocation.state.routeInformation.location,
+    expect(testContext!.currentBeamLocation.state.routeInformation.uri.path,
         '/test');
     expect(
         (testContext!.currentBeamLocation.state as BeamState)
@@ -71,7 +71,7 @@ void main() {
     expect(Beamer.of(testContext!).beamingHistoryCompleteLength, 1);
     expect(testContext!.canBeamBack, false);
     expect(
-        testContext!.currentBeamLocation.state.routeInformation.location, '/');
+        testContext!.currentBeamLocation.state.routeInformation.uri.path, '/');
   });
 
   testWidgets(
@@ -98,7 +98,7 @@ void main() {
     expect(beamerKey.currentState, isNotNull);
     expect(
         beamerKey
-            .currentState!.currentBeamLocation.state.routeInformation.location,
+            .currentState!.currentBeamLocation.state.routeInformation.uri.path,
         '/test2/x');
   });
 

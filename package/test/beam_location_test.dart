@@ -7,7 +7,7 @@ import 'package:mocktail/mocktail.dart';
 import 'test_locations.dart';
 
 void main() {
-  final location2 = Location2(const RouteInformation(location: '/l2/1'));
+  final location2 = Location2(RouteInformation(uri: Uri.parse('/l2/1')));
 
   group('prepare', () {
     test('BeamLocation can create valid URI', () {
@@ -61,11 +61,11 @@ void main() {
     test('updating state directly will add to history', () {
       final beamLocation = Location1();
       expect(beamLocation.history.length, 1);
-      expect(beamLocation.history[0].routeInformation.location, '/');
+      expect(beamLocation.history[0].routeInformation.uri.path, '/');
 
       beamLocation.state = BeamState.fromUriString('/l1');
       expect(beamLocation.history.length, 2);
-      expect(beamLocation.history[1].routeInformation.location, '/l1');
+      expect(beamLocation.history[1].routeInformation.uri.path, '/l1');
     });
   });
 
@@ -147,7 +147,7 @@ void main() {
       ) {
         expect(
           RoutesBeamLocation.chooseRoutes(
-            RouteInformation(location: routeToBeMatched),
+            RouteInformation(uri: Uri.parse(routeToBeMatched)),
             [routeMatcher],
           ),
           shouldMatch ? isNotEmpty : isEmpty,
@@ -194,20 +194,20 @@ void main() {
         ),
       );
 
-      registerFallbackValue(RouteInformation(location: '/'));
+      registerFallbackValue(RouteInformation(uri: Uri.parse('/')));
 
       delegate.update(
-        configuration: const RouteInformation(location: '/x'),
+        configuration: RouteInformation(uri: Uri.parse('/x')),
       );
       verify(() => updateStateStub.call()).called(1);
 
       delegate.update(
-        configuration: const RouteInformation(location: '/x?y=z'),
+        configuration: RouteInformation(uri: Uri.parse('/x?y=z')),
       );
       verify(() => updateStateStub.call()).called(1);
 
       delegate.update(
-        configuration: const RouteInformation(location: '/x?y=w'),
+        configuration: RouteInformation(uri: Uri.parse('/x?y=w')),
       );
       verify(() => updateStateStub.call()).called(1);
     });

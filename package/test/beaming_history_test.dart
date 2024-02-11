@@ -34,17 +34,16 @@ void main() {
     setUp(() {
       delegate = BeamerDelegate(
         locationBuilder: (routeInformation, __) {
-          if (routeInformation.location.contains('l1') ?? false) {
+          if (routeInformation.uri.path.contains('l1')) {
             return Location1(routeInformation);
           }
-          if (routeInformation.location.contains('l2') ?? false) {
+          if (routeInformation.uri.path.contains('l2')) {
             return Location2(routeInformation);
           }
-          if (CustomStateLocation()
-              .canHandle(Uri.parse(routeInformation.location ?? '/'))) {
+          if (CustomStateLocation().canHandle(routeInformation.uri)) {
             return CustomStateLocation(routeInformation);
           }
-          return NotFound(path: routeInformation.location ?? '/');
+          return NotFound(path: routeInformation.uri.toString());
         },
       );
     });
@@ -82,7 +81,7 @@ void main() {
       expect(delegate.currentBeamLocation, isA<Location1>());
 
       delegate.beamToReplacement(
-        Location2(const RouteInformation(location: '/l2')),
+        Location2(RouteInformation(uri: Uri.parse('/l2'))),
       );
       expect(delegate.beamingHistory.length, 1);
       expect(delegate.currentBeamLocation, isA<Location2>());
@@ -114,7 +113,7 @@ void main() {
       expect(delegate.currentBeamLocation, isA<Location2>());
       expect(delegate.beamingHistory.last.history.length, 2);
       expect(
-          delegate.beamingHistory.last.history.last.routeInformation.location,
+          delegate.beamingHistory.last.history.last.routeInformation.uri.path,
           '/l2/y');
       expect(delegate.beamingHistoryCompleteLength, 3);
     });

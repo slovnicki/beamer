@@ -1,3 +1,8 @@
+# 2.0.0-dev.1
+
+- **Fixed:** Usage of deprecated `RouteInformation.location`
+- **Improved:** Package metadata
+
 # 2.0.0-dev.0
 
 ## **DISCLAIMER**

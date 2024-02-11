@@ -7,25 +7,25 @@ void main() {
 
   test('parsing from RouteInformation to RouteInformation', () async {
     final routeInformation = await parser.parseRouteInformation(
-      const RouteInformation(
-        location: '/test',
+      RouteInformation(
+        uri: Uri.parse('/test'),
         state: {'x': 'y'},
       ),
     );
 
-    expect(routeInformation.location, equals('/test'));
+    expect(routeInformation.uri.path, equals('/test'));
     expect(routeInformation.state, equals({'x': 'y'}));
   });
 
   test('parsing from RouteInformation to RouteInformation', () {
     final routeInformation = parser.restoreRouteInformation(
-      const RouteInformation(
-        location: '/test',
+      RouteInformation(
+        uri: Uri.parse('/test'),
         state: {'x': 'y'},
       ),
     );
 
-    expect(routeInformation.location, equals('/test'));
+    expect(routeInformation.uri.path, equals('/test'));
     expect(routeInformation.state, equals({'x': 'y'}));
   });
 }

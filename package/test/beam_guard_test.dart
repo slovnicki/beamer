@@ -10,9 +10,10 @@ class MockBuildContext extends Mock implements BuildContext {}
 void main() {
   const pathBlueprint = '/l1/one';
   final testLocation =
-      Location1(const RouteInformation(location: pathBlueprint));
+      Location1(RouteInformation(uri: Uri.parse(pathBlueprint)));
   final testLocationWithQuery = Location1(
-      const RouteInformation(location: pathBlueprint + '?query=true'));
+    RouteInformation(uri: Uri.parse(pathBlueprint + '?query=true')),
+  );
 
   group('shouldGuard', () {
     test('is true if the location has a blueprint matching the guard', () {
@@ -310,7 +311,7 @@ void main() {
         final router = BeamerDelegate(
           initialPath: '/l1',
           locationBuilder: (routeInformation, _) {
-            if (routeInformation.location.contains('l1') ?? false) {
+            if (routeInformation.location.contains('l1')) {
               return Location1(routeInformation);
             }
             return Location2(routeInformation);
@@ -320,7 +321,7 @@ void main() {
               pathPatterns: ['/l2'],
               check: (context, loc) => false,
               beamTo: (context, _, __, ___) =>
-                  Location1(const RouteInformation(location: '/l1')),
+                  Location1(RouteInformation(uri: Uri.parse('/l1'))),
             ),
           ],
         );
@@ -341,7 +342,7 @@ void main() {
           removeDuplicateHistory: false,
           initialPath: '/l1',
           locationBuilder: (routeInformation, _) {
-            if (routeInformation.location.contains('l1') ?? false) {
+            if (routeInformation.uri.path.contains('l1')) {
               return Location1(routeInformation);
             }
             return Location2(routeInformation);
@@ -351,7 +352,7 @@ void main() {
               pathPatterns: ['/l2'],
               check: (context, loc) => false,
               beamTo: (context, _, __, ___) =>
-                  Location1(const RouteInformation(location: '/l1')),
+                  Location1(RouteInformation(uri: Uri.parse('/l1'))),
               replaceCurrentStack: false,
             ),
           ],
@@ -373,7 +374,7 @@ void main() {
         final router = BeamerDelegate(
           initialPath: '/l1',
           locationBuilder: (routeInformation, _) {
-            if (routeInformation.location.contains('l1') ?? false) {
+            if (routeInformation.uri.path.contains('l1')) {
               return Location1(routeInformation);
             }
             return Location2(routeInformation);
@@ -432,10 +433,10 @@ void main() {
         routeInformationParser: BeamerParser(),
       ));
 
-      expect(delegate.configuration.location, '/1');
+      expect(delegate.configuration.uri.path, '/1');
       delegate.beamToNamed('/2');
       await tester.pump();
-      expect(delegate.configuration.location, '/1');
+      expect(delegate.configuration.uri.path, '/1');
     });
   });
 
@@ -462,18 +463,18 @@ void main() {
         routeInformationParser: BeamerParser(),
       ));
 
-      expect(delegate.configuration.location, '/1');
+      expect(delegate.configuration.uri.path, '/1');
       expect(
-          delegate.currentBeamLocation.state.routeInformation.location, '/1');
+          delegate.currentBeamLocation.state.routeInformation.uri.path, '/1');
       expect(delegate.beamingHistory.length, 1);
       expect(delegate.beamingHistory.last.history.length, 1);
 
       delegate.beamToNamed('/2');
       await tester.pump();
 
-      expect(delegate.configuration.location, '/1');
+      expect(delegate.configuration.uri.path, '/1');
       expect(
-          delegate.currentBeamLocation.state.routeInformation.location, '/1');
+          delegate.currentBeamLocation.state.routeInformation.uri.path, '/1');
       expect(delegate.beamingHistory.length, 1);
       expect(delegate.beamingHistory.last.history.length, 1);
     });
@@ -512,15 +513,15 @@ void main() {
         routeInformationParser: BeamerParser(),
       ));
 
-      expect(delegate.configuration.location, '/1');
+      expect(delegate.configuration.uri.path, '/1');
       expect(
-          delegate.currentBeamLocation.state.routeInformation.location, '/1');
+          delegate.currentBeamLocation.state.routeInformation.uri.path, '/1');
 
       delegate.beamToNamed('/2?param1=a&param2=b');
       await tester.pump();
 
-      expect(delegate.configuration.location, '/1?param1=a&param2=b');
-      expect(delegate.currentBeamLocation.state.routeInformation.location,
+      expect(delegate.configuration.uri.toString(), '/1?param1=a&param2=b');
+      expect(delegate.currentBeamLocation.state.routeInformation.uri.toString(),
           '/1?param1=a&param2=b');
     });
 
@@ -530,7 +531,7 @@ void main() {
       final delegate = BeamerDelegate(
         initialPath: '/l1',
         locationBuilder: (routeInformation, _) {
-          if (routeInformation.location.contains('l1') ?? false) {
+          if (routeInformation.uri.path.contains('l1')) {
             return Location1(routeInformation);
           }
           return Location2(routeInformation);
@@ -555,15 +556,15 @@ void main() {
         routeInformationParser: BeamerParser(),
       ));
 
-      expect(delegate.configuration.location, '/l1');
+      expect(delegate.configuration.uri.path, '/l1');
       expect(
-          delegate.currentBeamLocation.state.routeInformation.location, '/l1');
+          delegate.currentBeamLocation.state.routeInformation.uri.path, '/l1');
 
       delegate.beamToNamed('/l2?param1=a&param2=b');
       await tester.pump();
 
-      expect(delegate.configuration.location, '/l1?param1=a&param2=b');
-      expect(delegate.currentBeamLocation.state.routeInformation.location,
+      expect(delegate.configuration.uri.toString(), '/l1?param1=a&param2=b');
+      expect(delegate.currentBeamLocation.state.routeInformation.uri.toString(),
           '/l1?param1=a&param2=b');
     });
   });
@@ -584,7 +585,7 @@ void main() {
 
     BeamLocation _createGuardedBeamLocation(BeamerDelegate delegate) {
       return delegate.locationBuilder(
-          const RouteInformation(location: '/guarded'), null);
+          RouteInformation(uri: Uri.parse('/guarded')), null);
     }
 
     test('does nothing', () {
@@ -608,7 +609,7 @@ void main() {
       );
 
       expect(
-        delegate.currentBeamLocation.state.routeInformation.location,
+        delegate.currentBeamLocation.state.routeInformation.uri.path,
         '/allowed',
       );
       expect(delegate.beamingHistoryCompleteLength, 1);
@@ -637,7 +638,7 @@ void main() {
       );
 
       expect(
-        delegate.currentBeamLocation.state.routeInformation.location,
+        delegate.currentBeamLocation.state.routeInformation.uri.path,
         '/allowed',
       );
       expect(delegate.beamingHistoryCompleteLength, 1);
@@ -666,7 +667,7 @@ void main() {
       );
 
       expect(
-        delegate.currentBeamLocation.state.routeInformation.location,
+        delegate.currentBeamLocation.state.routeInformation.uri.path,
         '/guarded',
       );
       expect(delegate.currentBeamLocation, isA<GuardShowPage>());
@@ -695,7 +696,7 @@ void main() {
       );
 
       expect(
-        delegate.currentBeamLocation.state.routeInformation.location,
+        delegate.currentBeamLocation.state.routeInformation.uri.path,
         '/guarded',
       );
       expect(delegate.currentBeamLocation, isA<GuardShowPage>());
@@ -725,7 +726,7 @@ void main() {
             pathPatterns: <Pattern>['/s1/s2'],
             check: (_, __) => false,
             beamToNamed: (_, to, __) {
-              return to.state.routeInformation.location + '/s3';
+              return to.state.routeInformation.uri.path + '/s3';
             },
           ),
         ],
@@ -738,12 +739,12 @@ void main() {
         ),
       );
 
-      expect(routerDelegate.configuration.location, '/s1');
+      expect(routerDelegate.configuration.uri.path, '/s1');
 
       routerDelegate.beamToNamed('/s1/s2');
       await tester.pumpAndSettle();
 
-      expect(routerDelegate.configuration.location, '/s1/s2/s3');
+      expect(routerDelegate.configuration.uri.path, '/s1/s2/s3');
     },
   );
 
@@ -779,7 +780,7 @@ void main() {
           ),
         );
 
-        expect(delegate.configuration.location, '/ok');
+        expect(delegate.configuration.uri.path, '/ok');
         expect(delegate.beamingHistory.length, 1);
         expect(updateCounter, 2);
       },
@@ -816,7 +817,7 @@ void main() {
           ),
         );
 
-        expect(delegate.configuration.location, '/ok');
+        expect(delegate.configuration.uri.path, '/ok');
         expect(delegate.beamingHistory.length, 1);
         expect(updateCounter, 1);
       },
@@ -850,7 +851,7 @@ void main() {
       ),
     );
 
-    expect(delegate.configuration.location, '/');
+    expect(delegate.configuration.uri.path, '/');
 
     delegate.beamToNamed('/route');
     await tester.pumpAndSettle();

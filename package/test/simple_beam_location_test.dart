@@ -40,7 +40,7 @@ void main() {
           },
         ),
       );
-      delegate.setNewRoutePath(const RouteInformation(location: '/'));
+      delegate.setNewRoutePath(RouteInformation(uri: Uri.parse('/')));
 
       await tester.pumpWidget(
         MaterialApp.router(
@@ -55,7 +55,7 @@ void main() {
   });
 
   group('Keys', () {
-    testWidgets('each BeamPage has a differenet ValueKey', (tester) async {
+    testWidgets('each BeamPage has a different ValueKey', (tester) async {
       await tester.pumpWidget(MaterialApp.router(
         routeInformationParser: BeamerParser(),
         routerDelegate: delegate,
@@ -131,7 +131,7 @@ void main() {
           },
         ),
       );
-      delegate1.setNewRoutePath(const RouteInformation(location: '/anything'));
+      delegate1.setNewRoutePath(RouteInformation(uri: Uri.parse('/anything')));
       expect(delegate1.currentBeamLocation, isA<RoutesBeamLocation>());
 
       final delegate2 = BeamerDelegate(
@@ -141,7 +141,7 @@ void main() {
           },
         ),
       );
-      delegate2.setNewRoutePath(const RouteInformation(location: '/anything'));
+      delegate2.setNewRoutePath(RouteInformation(uri: Uri.parse('/anything')));
       expect(delegate2.currentBeamLocation, isA<RoutesBeamLocation>());
     });
 
@@ -153,7 +153,7 @@ void main() {
           },
         ),
       );
-      delegate1.setNewRoutePath(const RouteInformation(location: '/test/1'));
+      delegate1.setNewRoutePath(RouteInformation(uri: Uri.parse('/test/1')));
       expect(delegate1.currentBeamLocation, isA<RoutesBeamLocation>());
     });
   });
