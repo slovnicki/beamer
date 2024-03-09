@@ -1,8 +1,7 @@
+import 'package:beamer/beamer.dart';
 import 'package:beamer/src/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'package:beamer/beamer.dart';
 
 /// Types for how to route should be built.
 ///
@@ -143,7 +142,7 @@ class BeamPage extends Page {
 
     delegate.update(
       configuration: delegate.configuration.copyWith(
-        location: popUri.toString(),
+        uri: popUri,
         state: lastRouteInformation?.state,
       ),
       data: data,

@@ -520,9 +520,7 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
 
     final matched = <Pattern, String>{};
     var overrideNotFound = false;
-    final uri = routeInformation.uri.replace(
-      path: Utils.trimmed(routeInformation.uri.path),
-    );
+    final uri = Utils.removeTrailingSlash(routeInformation.uri);
 
     for (final route in routes) {
       if (route is String) {
