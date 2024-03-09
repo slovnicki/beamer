@@ -1,9 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutter/widgets.dart';
-
-import 'package:beamer/src/utils.dart';
 import 'package:beamer/src/beam_location.dart';
+import 'package:beamer/src/utils.dart';
+import 'package:flutter/widgets.dart';
 
 /// A class to mix with when defining a custom state for [BeamLocation].
 ///
@@ -71,10 +70,8 @@ class BeamState with RouteInformationSerializable<BeamState> {
     BeamLocation? beamLocation,
     Object? routeState,
   }) {
-    uriString = Utils.trimmed(uriString);
-    final uri = Uri.parse(uriString);
     return BeamState.fromUri(
-      uri,
+      Utils.removeTrailingSlash(Uri.parse(uriString)),
       beamLocation: beamLocation,
       routeState: routeState,
     );

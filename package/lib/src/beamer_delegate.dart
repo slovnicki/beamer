@@ -803,8 +803,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       configuration = currentBeamLocation.state.routeInformation;
     } else if (uri.path == '/') {
       configuration = RouteInformation(
-        uri: Uri.parse(
-          initialPath + (uri.query.isNotEmpty ? '?${uri.query}' : ''),
+        uri: uri.replace(
+          path: initialPath,
+          query: uri.hasQuery ? uri.query : null,
         ),
       );
     }
@@ -815,7 +816,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   @override
   SynchronousFuture<void> setNewRoutePath(RouteInformation configuration) {
     if (configuration.uri.path == '/' && initialPath != '/') {
-      configuration = configuration.copyWith(location: initialPath);
+      configuration = configuration.copyWith(uri: Uri.parse(initialPath));
     }
     update(configuration: configuration);
     return SynchronousFuture(null);
