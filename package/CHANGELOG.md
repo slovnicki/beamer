@@ -1,6 +1,8 @@
 # 2.0.0-dev.1
 
+- **Fixed:** Handling deep links after refactor to `Uri`s ([Bungeefan](https://github.com/Bungeefan): [#660](https://github.com/slovnicki/beamer/pull/660), [#654](https://github.com/slovnicki/beamer/issues/654))
 - **Fixed:** Usage of deprecated `RouteInformation.location`
+- **Improved:** Setting the browser title ([lenzpaul](https://github.com/lenzpaul): [#657](https://github.com/slovnicki/beamer/pull/657))
 - **Improved:** Package metadata
 
 # 2.0.0-dev.0

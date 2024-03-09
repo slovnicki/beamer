@@ -1,6 +1,6 @@
 name: beamer
 description: A routing package built on top of Router and Navigator's pages API, supporting arbitrary nested navigation, guards and more.
-version: 2.0.0-dev.0
+version: 2.0.0-dev.1
 homepage: https://beamer.dev
 repository: https://github.com/slovnicki/beamer/tree/master/package
 issue_tracker: https://github.com/slovnicki/beamer/issues
