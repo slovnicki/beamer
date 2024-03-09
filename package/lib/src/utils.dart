@@ -231,37 +231,42 @@ abstract class Utils {
     }
   }
 
-  /// Removes the trailing / in an URI String and returns the result.
+  /// Removes the trailing / in an URI path and returns the new URI.
   ///
-  /// If there is no trailing /, returns the input.
-  static String trimmed(String? uriString) {
-    if (uriString == null) {
-      return '';
+  /// If there is no trailing /, returns the input URI.
+  static Uri removeTrailingSlash(Uri uri) {
+    String path = uri.path;
+    if (path.length > 1 && path.endsWith('/')) {
+      return uri.replace(path: path.substring(0, path.length - 1));
     }
-    if (uriString.length > 1 && uriString.endsWith('/')) {
-      return uriString.substring(0, uriString.length - 1);
-    }
-    return uriString;
+    return uri;
   }
 
-  /// If incoming RouteInformation doesn't start with slash,
-  /// append it to the current RouteInformation.location.
-  ///
-  /// Else, return incoming RouteInformation
-  static RouteInformation maybeAppend(
-    RouteInformation current,
-    RouteInformation incoming,
-  ) {
-    final incomingLocation = incoming.uri.toString();
-    if (!incomingLocation.startsWith('/')) {
-      return current.copyWith(
-        location: current.uri.toString().endsWith('/')
-            ? '${current.uri}$incomingLocation'
-            : '${current.uri}/$incomingLocation',
-        state: incoming.state,
+  /// If [incoming] is a relative URI append it to [current].
+  /// Else, return incoming URI.
+  static Uri maybeAppend(Uri current, Uri incoming) {
+    if (!incoming.hasAbsolutePath && !incoming.hasEmptyPath) {
+      String currentPath =
+          current.path.endsWith('/') ? current.path : '${current.path}/';
+      return current.replace(
+        path: currentPath + incoming.path,
+        query: incoming.hasQuery ? incoming.query : null,
+        fragment: incoming.hasFragment ? incoming.fragment : null,
       );
     }
     return incoming;
+  }
+
+  /// Merges the URIs of the RouteInformation's.
+  ///
+  /// See [maybeAppend] and [removeTrailingSlash].
+  static RouteInformation mergeConfiguration(
+    RouteInformation current,
+    RouteInformation incoming,
+  ) {
+    return incoming.copyWith(
+      uri: maybeAppend(current.uri, removeTrailingSlash(incoming.uri)),
+    );
   }
 
   /// Creates a new configuration for [BeamerDelegate.update].
@@ -269,15 +274,12 @@ abstract class Utils {
   /// Takes into consideration trimming and potentially appending
   /// the incoming to current (used in relative beaming).
   ///
-  /// See [trimmed] and [maybeAppend].
+  /// See [removeTrailingSlash] and [maybeAppend].
   static RouteInformation createNewConfiguration(
     RouteInformation current,
     RouteInformation incoming,
   ) {
-    incoming = incoming.copyWith(
-      location: trimmed(incoming.uri.toString()),
-    );
-    return maybeAppend(current, incoming);
+    return mergeConfiguration(current, incoming);
   }
 }
 
@@ -285,11 +287,11 @@ abstract class Utils {
 extension BeamerRouteInformationExtension on RouteInformation {
   /// Returns a new [RouteInformation] created from this.
   RouteInformation copyWith({
-    String? location,
+    Uri? uri,
     Object? state,
   }) {
     return RouteInformation(
-      uri: Uri.parse(location ?? this.uri.toString()),
+      uri: uri ?? this.uri,
       state: state ?? this.state,
     );
   }

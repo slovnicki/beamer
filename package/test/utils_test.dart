@@ -125,46 +125,118 @@ void main() {
   });
 
   group('Creating new configuration for BeamerDelegate', () {
-    test('Trimming', () {
-      expect(Utils.trimmed(null), '');
-      expect(Utils.trimmed('/'), '/');
-      expect(Utils.trimmed('/xxx/'), '/xxx');
+    test('Remove trailing slashes', () {
+      expect(Utils.removeTrailingSlash(Uri.parse('')), Uri.parse(''));
+      expect(Utils.removeTrailingSlash(Uri.parse('/')), Uri.parse('/'));
+      expect(Utils.removeTrailingSlash(Uri.parse('/xxx/')), Uri.parse('/xxx'));
+      expect(
+        Utils.removeTrailingSlash(Uri.parse('https://example.com/')),
+        Uri.parse('https://example.com/'),
+      );
+      expect(
+        Utils.removeTrailingSlash(Uri.parse('https://example.com/test/')),
+        Uri.parse('https://example.com/test'),
+      );
     });
 
-    test('Appending without new routeState', () {
-      final current = RouteInformation(uri: Uri.parse('/current'));
+    test('Appending URIs to relative URI', () {
+      final current = Uri.parse('/current');
       expect(
-        Utils.maybeAppend(current, RouteInformation(uri: Uri.parse('incoming')))
-            .uri
-            .toString(),
+        Utils.maybeAppend(current, Uri.parse('incoming')).toString(),
         '/current/incoming',
       );
       expect(
-        Utils.maybeAppend(
-                current, RouteInformation(uri: Uri.parse('/incoming')))
-            .uri
-            .toString(),
+        Utils.maybeAppend(current, Uri.parse('/incoming')).toString(),
         '/incoming',
+      );
+      expect(
+        Utils.maybeAppend(current, Uri.parse('')).toString(),
+        '',
+      );
+      expect(
+        Utils.maybeAppend(current, Uri.parse('/')).toString(),
+        '/',
+      );
+      expect(
+        Utils.maybeAppend(
+          current,
+          Uri.parse('example://app/incoming'),
+        ).toString(),
+        'example://app/incoming',
+      );
+      expect(
+        Utils.maybeAppend(current, Uri.parse('//app/incoming')).toString(),
+        '//app/incoming',
       );
     });
 
-    test('Appending with new routeState', () {
+    test('Appending URIs to absolute URI', () {
+      final current = Uri.parse('example://app/current');
+      expect(
+        Utils.maybeAppend(current, Uri.parse('incoming')).toString(),
+        'example://app/current/incoming',
+      );
+      expect(
+        Utils.maybeAppend(current, Uri.parse('/incoming')).toString(),
+        '/incoming',
+      );
+      expect(
+        Utils.maybeAppend(current, Uri.parse('')).toString(),
+        '',
+      );
+      expect(
+        Utils.maybeAppend(current, Uri.parse('/')).toString(),
+        '/',
+      );
+      expect(
+        Utils.maybeAppend(
+          current,
+          Uri.parse('example://app/incoming'),
+        ).toString(),
+        'example://app/incoming',
+      );
+      expect(
+        Utils.maybeAppend(current, Uri.parse('//app/incoming')).toString(),
+        '//app/incoming',
+      );
+    });
+
+    test('Merging with new routeState', () {
       final current = RouteInformation(uri: Uri.parse('/current'));
       expect(
-        Utils.maybeAppend(current, RouteInformation(uri: Uri(), state: 42))
+        Utils.mergeConfiguration(
+                current, RouteInformation(uri: Uri(), state: 42))
             .state,
         42,
       );
       expect(
-        Utils.maybeAppend(current,
+        Utils.mergeConfiguration(current,
                 RouteInformation(uri: Uri.parse('incoming'), state: 42))
             .state,
         42,
       );
       expect(
-        Utils.maybeAppend(current,
+        Utils.mergeConfiguration(current,
                 RouteInformation(uri: Uri.parse('/incoming'), state: 42))
             .state,
+        42,
+      );
+      expect(
+        Utils.mergeConfiguration(
+            current,
+            RouteInformation(
+              uri: Uri.parse('example://app/incoming'),
+              state: 42,
+            )).state,
+        42,
+      );
+      expect(
+        Utils.mergeConfiguration(
+            current,
+            RouteInformation(
+              uri: Uri.parse('//app/incoming'),
+              state: 42,
+            )).state,
         42,
       );
     });

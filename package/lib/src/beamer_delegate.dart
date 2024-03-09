@@ -76,6 +76,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// This is not null only if multiple [Beamer]s are used;
   /// `*App.router` and at least one more [Beamer] in the Widget tree.
   BeamerDelegate? get parent => _parent;
+
   set parent(BeamerDelegate? parent) {
     if (parent == null && _parent != null) {
       _parent!.removeListener(_updateFromParent);
@@ -802,8 +803,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       configuration = currentBeamLocation.state.routeInformation;
     } else if (uri.path == '/') {
       configuration = RouteInformation(
-        uri: Uri.parse(
-          initialPath + (uri.query.isNotEmpty ? '?${uri.query}' : ''),
+        uri: uri.replace(
+          path: initialPath,
+          query: uri.hasQuery ? uri.query : null,
         ),
       );
     }
@@ -813,8 +815,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   @override
   SynchronousFuture<void> setNewRoutePath(RouteInformation configuration) {
-    if (configuration.uri.toString() == '/' && initialPath != '/') {
-      configuration = configuration.copyWith(location: initialPath);
+    if (configuration.uri.path == '/' && initialPath != '/') {
+      configuration = configuration.copyWith(uri: Uri.parse(initialPath));
     }
     update(configuration: configuration);
     return SynchronousFuture(null);
@@ -907,7 +909,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       );
     }
 
-    if (clearBeamingHistoryOn.contains(configuration.uri.toString())) {
+    if (clearBeamingHistoryOn.contains(configuration.uri.path)) {
       _clearBeamingHistory();
     }
   }
