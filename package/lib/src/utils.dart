@@ -251,12 +251,18 @@ abstract class Utils {
     RouteInformation current,
     RouteInformation incoming,
   ) {
-    final incomingLocation = incoming.uri.toString();
-    if (!incomingLocation.startsWith('/')) {
+    if (!incoming.uri.hasAbsolutePath && !incoming.uri.hasEmptyPath) {
+      String currentPath = current.uri.path.endsWith('/')
+          ? current.uri.path
+          : '${current.uri.path}/';
       return current.copyWith(
-        location: current.uri.toString().endsWith('/')
-            ? '${current.uri}$incomingLocation'
-            : '${current.uri}/$incomingLocation',
+        location: current.uri
+            .replace(
+              path: currentPath + incoming.uri.path,
+              query: incoming.uri.hasQuery ? incoming.uri.query : null,
+              fragment: incoming.uri.hasFragment ? incoming.uri.fragment : null,
+            )
+            .toString(),
         state: incoming.state,
       );
     }

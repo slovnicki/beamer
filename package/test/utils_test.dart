@@ -146,6 +146,39 @@ void main() {
             .toString(),
         '/incoming',
       );
+      expect(
+        Utils.maybeAppend(current, RouteInformation(uri: Uri.parse('')))
+            .uri
+            .toString(),
+        '',
+      );
+      expect(
+        Utils.maybeAppend(current, RouteInformation(uri: Uri.parse('/')))
+            .uri
+            .toString(),
+        '/',
+      );
+      expect(
+        Utils.maybeAppend(current,
+                RouteInformation(uri: Uri.parse('example://app/incoming')))
+            .uri
+            .toString(),
+        'example://app/incoming',
+      );
+      expect(
+        Utils.maybeAppend(current,
+                RouteInformation(uri: Uri.parse('example://app/incoming')))
+            .uri
+            .toString(),
+        'example://app/incoming',
+      );
+      expect(
+        Utils.maybeAppend(
+                current, RouteInformation(uri: Uri.parse('//app/incoming')))
+            .uri
+            .toString(),
+        '//app/incoming',
+      );
     });
 
     test('Appending with new routeState', () {
@@ -165,6 +198,24 @@ void main() {
         Utils.maybeAppend(current,
                 RouteInformation(uri: Uri.parse('/incoming'), state: 42))
             .state,
+        42,
+      );
+      expect(
+        Utils.maybeAppend(
+            current,
+            RouteInformation(
+              uri: Uri.parse('example://app/incoming'),
+              state: 42,
+            )).state,
+        42,
+      );
+      expect(
+        Utils.maybeAppend(
+            current,
+            RouteInformation(
+              uri: Uri.parse('//app/incoming'),
+              state: 42,
+            )).state,
         42,
       );
     });
