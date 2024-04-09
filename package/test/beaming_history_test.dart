@@ -1,9 +1,9 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'test_locations.dart';
+import 'test_stacks.dart';
 
-class LocationA extends BeamLocation<BeamState> {
+class StackA extends BeamStack<BeamState> {
   @override
   List<Pattern> get pathPatterns => ['/a'];
 
@@ -12,7 +12,7 @@ class LocationA extends BeamLocation<BeamState> {
       [BeamPage(key: const ValueKey('a'), child: Container())];
 }
 
-class LocationB extends BeamLocation<BeamState> {
+class StackB extends BeamStack<BeamState> {
   @override
   List<Pattern> get pathPatterns => ['/b1', '/b2'];
 
@@ -33,22 +33,22 @@ void main() {
 
     setUp(() {
       delegate = BeamerDelegate(
-        locationBuilder: (routeInformation, __) {
+        stackBuilder: (routeInformation, __) {
           if (routeInformation.uri.path.contains('l1')) {
-            return Location1(routeInformation);
+            return Stack1(routeInformation);
           }
           if (routeInformation.uri.path.contains('l2')) {
-            return Location2(routeInformation);
+            return Stack2(routeInformation);
           }
-          if (CustomStateLocation().canHandle(routeInformation.uri)) {
-            return CustomStateLocation(routeInformation);
+          if (CustomStateStack().canHandle(routeInformation.uri)) {
+            return CustomStateStack(routeInformation);
           }
           return NotFound(path: routeInformation.uri.toString());
         },
       );
     });
 
-    test('beaming to the same location type will not add it to history', () {
+    test('beaming to the same stack type will not add it to history', () {
       delegate.beamToNamed('/l2');
       final historyLength = delegate.beamingHistory.length;
 
@@ -56,61 +56,61 @@ void main() {
       expect(delegate.beamingHistory.length, historyLength);
     });
 
-    test('duplicate locations are removed from history', () {
+    test('duplicate stacks are removed from history', () {
       delegate.beamToNamed('/l1');
       expect(delegate.beamingHistory.length, 1);
-      expect(delegate.beamingHistory[0], isA<Location1>());
+      expect(delegate.beamingHistory[0], isA<Stack1>());
 
       delegate.beamToNamed('/l2');
       expect(delegate.beamingHistory.length, 2);
-      expect(delegate.beamingHistory[0], isA<Location1>());
+      expect(delegate.beamingHistory[0], isA<Stack1>());
 
       delegate.beamToNamed('/l1');
       expect(delegate.beamingHistory.length, 2);
-      expect(delegate.beamingHistory[0], isA<Location2>());
+      expect(delegate.beamingHistory[0], isA<Stack2>());
     });
 
     test(
-        'beamToReplacement removes currentBeamLocation from history before appending new',
+        'beamToReplacement removes currentBeamStack from history before appending new',
         () {
       delegate.beamToNamed('/l2');
       delegate.beamToNamed('/l1');
 
       expect(delegate.beamingHistory.length, 2);
-      expect(delegate.beamingHistory[0], isA<Location2>());
-      expect(delegate.currentBeamLocation, isA<Location1>());
+      expect(delegate.beamingHistory[0], isA<Stack2>());
+      expect(delegate.currentBeamStack, isA<Stack1>());
 
       delegate.beamToReplacement(
-        Location2(RouteInformation(uri: Uri.parse('/l2'))),
+        Stack2(RouteInformation(uri: Uri.parse('/l2'))),
       );
       expect(delegate.beamingHistory.length, 1);
-      expect(delegate.currentBeamLocation, isA<Location2>());
+      expect(delegate.currentBeamStack, isA<Stack2>());
     });
 
     test('beamToReplacementNamed removes previous history element', () {
       delegate.beamingHistory.clear();
       delegate.beamToNamed('/l1');
       expect(delegate.beamingHistory.length, 1);
-      expect(delegate.beamingHistory[0], isA<Location1>());
+      expect(delegate.beamingHistory[0], isA<Stack1>());
       expect(delegate.beamingHistoryCompleteLength, 1);
 
       delegate.beamToNamed('/l2');
       expect(delegate.beamingHistory.length, 2);
-      expect(delegate.beamingHistory[0], isA<Location1>());
-      expect(delegate.currentBeamLocation, isA<Location2>());
+      expect(delegate.beamingHistory[0], isA<Stack1>());
+      expect(delegate.currentBeamStack, isA<Stack2>());
       expect(delegate.beamingHistoryCompleteLength, 2);
 
       delegate.beamToNamed('/l2/x');
       expect(delegate.beamingHistory.length, 2);
-      expect(delegate.beamingHistory[0], isA<Location1>());
-      expect(delegate.currentBeamLocation, isA<Location2>());
+      expect(delegate.beamingHistory[0], isA<Stack1>());
+      expect(delegate.currentBeamStack, isA<Stack2>());
       expect(delegate.beamingHistory.last.history.length, 2);
       expect(delegate.beamingHistoryCompleteLength, 3);
 
       delegate.beamToReplacementNamed('/l2/y');
       expect(delegate.beamingHistory.length, 2);
-      expect(delegate.beamingHistory[0], isA<Location1>());
-      expect(delegate.currentBeamLocation, isA<Location2>());
+      expect(delegate.beamingHistory[0], isA<Stack1>());
+      expect(delegate.currentBeamStack, isA<Stack2>());
       expect(delegate.beamingHistory.last.history.length, 2);
       expect(
           delegate.beamingHistory.last.history.last.routeInformation.uri.path,
@@ -124,36 +124,35 @@ void main() {
       delegate.beamToNamed('/l2');
 
       expect(delegate.beamingHistoryCompleteLength, 2);
-      expect(delegate.currentBeamLocation, isA<Location2>());
+      expect(delegate.currentBeamStack, isA<Stack2>());
       expect(delegate.canBeamBack, true);
 
       delegate.beamToNamed('/l1/one');
       delegate.beamToNamed('/l1/two');
       expect(delegate.beamingHistoryCompleteLength, 3);
-      expect(delegate.currentBeamLocation, isA<Location1>());
+      expect(delegate.currentBeamStack, isA<Stack1>());
 
       delegate.beamToNamed('/l1/two');
       expect(delegate.beamingHistoryCompleteLength, 3);
-      expect(delegate.currentBeamLocation, isA<Location1>());
+      expect(delegate.currentBeamStack, isA<Stack1>());
 
       expect(delegate.beamBack(), true);
-      expect(delegate.currentBeamLocation, isA<Location1>());
-      expect((delegate.currentBeamLocation.state as BeamState).uri.path,
+      expect(delegate.currentBeamStack, isA<Stack1>());
+      expect((delegate.currentBeamStack.state as BeamState).uri.path,
           equals('/l1/one'));
       expect(delegate.beamingHistoryCompleteLength, 2);
 
       expect(delegate.beamBack(), true);
-      expect(delegate.currentBeamLocation, isA<Location2>());
+      expect(delegate.currentBeamStack, isA<Stack2>());
       expect(delegate.beamingHistoryCompleteLength, 1);
     });
   });
 
-  testWidgets("previously used BeamLocation doesn't keep history",
-      (tester) async {
+  testWidgets("previously used BeamStack doesn't keep history", (tester) async {
     final delegate = BeamerDelegate(
       initialPath: '/a',
-      locationBuilder: BeamerLocationBuilder(
-        beamLocations: [LocationA(), LocationB()],
+      stackBuilder: BeamerStackBuilder(
+        beamStacks: [StackA(), StackB()],
       ),
     );
     await tester.pumpWidget(
@@ -162,19 +161,19 @@ void main() {
         routeInformationParser: BeamerParser(),
       ),
     );
-    expect(delegate.currentBeamLocation, isA<LocationA>());
+    expect(delegate.currentBeamStack, isA<StackA>());
 
     delegate.beamToNamed('/b1');
     await tester.pump();
-    expect(delegate.currentBeamLocation, isA<LocationB>());
+    expect(delegate.currentBeamStack, isA<StackB>());
     expect(delegate.currentPages.first.key, const ValueKey('b1'));
-    expect(delegate.currentBeamLocation.history.length, 1);
+    expect(delegate.currentBeamStack.history.length, 1);
 
     delegate.beamBack();
     delegate.beamToNamed('/b2');
     await tester.pump();
-    expect(delegate.currentBeamLocation, isA<LocationB>());
+    expect(delegate.currentBeamStack, isA<StackB>());
     expect(delegate.currentPages.first.key, const ValueKey('b2'));
-    expect(delegate.currentBeamLocation.history.length, 1);
+    expect(delegate.currentBeamStack.history.length, 1);
   });
 }

@@ -3,117 +3,117 @@ import 'package:beamer/src/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'test_locations.dart';
+import 'test_stacks.dart';
 
 void main() {
-  final beamLocations = <BeamLocation>[
-    Location1(),
-    Location2(RouteInformation(uri: Uri())),
-    CustomStateLocation(),
-    RegExpLocation(),
-    AsteriskLocation(),
+  final beamStacks = <BeamStack>[
+    Stack1(),
+    Stack2(RouteInformation(uri: Uri())),
+    CustomStateStack(),
+    RegExpStack(),
+    AsteriskStack(),
   ];
 
   group('createBeamState', () {
-    test('uri and uriBlueprint are correct without BeamLocation', () {
+    test('uri and uriBlueprint are correct without BeamStack', () {
       final uri = Uri.parse('/l2/123');
       final state = Utils.createBeamState(uri);
       expect(state.uri.path, '/l2/123');
       expect(state.uriBlueprint.path, '/l2/123');
     });
 
-    test('uri and uriBlueprint are correct with BeamLocation', () {
+    test('uri and uriBlueprint are correct with BeamStack', () {
       final uri = Uri.parse('/l2/123');
-      final state = Utils.createBeamState(uri, beamLocation: beamLocations[1]);
+      final state = Utils.createBeamState(uri, beamStack: beamStacks[1]);
       expect(state.uri.path, '/l2/123');
       expect(state.uriBlueprint.path, '/l2/:id');
     });
   });
 
-  group('chooseBeamLocation', () {
-    test('Uri is parsed to BeamLocation', () async {
+  group('chooseBeamStack', () {
+    test('Uri is parsed to BeamStack', () async {
       var uri = Uri.parse('/l1');
-      var location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location, isA<Location1>());
+      var stack = Utils.chooseBeamStack(uri, beamStacks);
+      expect(stack, isA<Stack1>());
 
       uri = Uri.parse('/l1/');
-      location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location, isA<Location1>());
+      stack = Utils.chooseBeamStack(uri, beamStacks);
+      expect(stack, isA<Stack1>());
 
       uri = Uri.parse('/l1?q=xxx');
-      location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location, isA<Location1>());
+      stack = Utils.chooseBeamStack(uri, beamStacks);
+      expect(stack, isA<Stack1>());
 
       uri = Uri.parse('/l1/one');
-      location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location, isA<Location1>());
+      stack = Utils.chooseBeamStack(uri, beamStacks);
+      expect(stack, isA<Stack1>());
 
       uri = Uri.parse('/l1/two');
-      location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location, isA<Location1>());
+      stack = Utils.chooseBeamStack(uri, beamStacks);
+      expect(stack, isA<Stack1>());
 
       uri = Uri.parse('/l2');
-      location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location, isA<Location2>());
+      stack = Utils.chooseBeamStack(uri, beamStacks);
+      expect(stack, isA<Stack2>());
 
       uri = Uri.parse('/l2/123?q=xxx');
-      location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location, isA<Location2>());
-      expect((location.state as BeamState).uri.path, '/l2/123');
-      expect((location.state as BeamState).uriBlueprint.path, '/l2/:id');
+      stack = Utils.chooseBeamStack(uri, beamStacks);
+      expect(stack, isA<Stack2>());
+      expect((stack.state as BeamState).uri.path, '/l2/123');
+      expect((stack.state as BeamState).uriBlueprint.path, '/l2/:id');
 
       uri = Uri.parse('/reg');
-      location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location, isA<RegExpLocation>());
+      stack = Utils.chooseBeamStack(uri, beamStacks);
+      expect(stack, isA<RegExpStack>());
 
       uri = Uri.parse('/reg/');
-      location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location, isA<RegExpLocation>());
+      stack = Utils.chooseBeamStack(uri, beamStacks);
+      expect(stack, isA<RegExpStack>());
 
       uri = Uri.parse('/anything');
-      location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location, isA<AsteriskLocation>());
+      stack = Utils.chooseBeamStack(uri, beamStacks);
+      expect(stack, isA<AsteriskStack>());
 
       uri = Uri.parse('/anything/');
-      location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location, isA<AsteriskLocation>());
+      stack = Utils.chooseBeamStack(uri, beamStacks);
+      expect(stack, isA<AsteriskStack>());
 
       uri = Uri.parse('/anything/can/be/here');
-      location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location, isA<AsteriskLocation>());
+      stack = Utils.chooseBeamStack(uri, beamStacks);
+      expect(stack, isA<AsteriskStack>());
     });
 
-    test('Parsed BeamLocation carries URL parameters', () async {
+    test('Parsed BeamStack carries URL parameters', () async {
       var uri = Uri.parse('/l2');
-      var location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect((location.state as BeamState).pathParameters, {});
+      var stack = Utils.chooseBeamStack(uri, beamStacks);
+      expect((stack.state as BeamState).pathParameters, {});
 
       uri = Uri.parse('/l2/123');
-      location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect((location.state as BeamState).pathParameters, {'id': '123'});
+      stack = Utils.chooseBeamStack(uri, beamStacks);
+      expect((stack.state as BeamState).pathParameters, {'id': '123'});
 
       uri = Uri.parse('/l2/123?q=xxx');
-      location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect((location.state as BeamState).pathParameters, {'id': '123'});
-      expect((location.state as BeamState).queryParameters, {'q': 'xxx'});
+      stack = Utils.chooseBeamStack(uri, beamStacks);
+      expect((stack.state as BeamState).pathParameters, {'id': '123'});
+      expect((stack.state as BeamState).queryParameters, {'q': 'xxx'});
     });
 
-    test('Unknown URI yields NotFound location', () async {
+    test('Unknown URI yields NotFound stack', () async {
       final uri = Uri.parse('/x');
-      final location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location, isA<NotFound>());
+      final stack = Utils.chooseBeamStack(uri, beamStacks);
+      expect(stack, isA<NotFound>());
     });
 
     test('Custom state is created', () {
       var uri = Uri.parse('/custom');
-      var location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location, isA<CustomStateLocation>());
-      expect((location as CustomStateLocation).state.customVar, '');
+      var stack = Utils.chooseBeamStack(uri, beamStacks);
+      expect(stack, isA<CustomStateStack>());
+      expect((stack as CustomStateStack).state.customVar, '');
 
       uri = Uri.parse('/custom/test');
-      location = Utils.chooseBeamLocation(uri, beamLocations);
-      expect(location, isA<CustomStateLocation>());
-      expect((location as CustomStateLocation).state.customVar, 'test');
+      stack = Utils.chooseBeamStack(uri, beamStacks);
+      expect(stack, isA<CustomStateStack>());
+      expect((stack as CustomStateStack).state.customVar, 'test');
     });
   });
 
@@ -270,7 +270,7 @@ void main() {
       expect(ri1.isEqualTo(ri2), isFalse);
     });
 
-    test('not equal with location diff', () {
+    test('not equal with stack diff', () {
       final ri1 = RouteInformation(uri: Uri.parse('/x'), state: 1);
       final ri2 = RouteInformation(uri: Uri.parse('/y'), state: 1);
 

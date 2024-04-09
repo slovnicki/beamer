@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   final delegate = BeamerDelegate(
-    locationBuilder: RoutesLocationBuilder(
+    stackBuilder: RoutesStackBuilder(
       routes: {
         '/': (context, state, data) => Container(),
         RegExp('/test'): (context, state, data) => Container(),
@@ -33,7 +33,7 @@ void main() {
         '/ can be at the end of URI and will be ignored when matching, without RegExp',
         (tester) async {
       final delegate = BeamerDelegate(
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '/': (context, state, data) => Container(),
             '/test': (context, state, data) => Container(),
@@ -72,15 +72,15 @@ void main() {
   });
 
   group('Query', () {
-    test('location takes query', () {
-      expect((delegate.currentBeamLocation.state as BeamState).queryParameters,
+    test('stack takes query', () {
+      expect((delegate.currentBeamStack.state as BeamState).queryParameters,
           equals({}));
       delegate.beamToNamed('/?q=t');
-      expect((delegate.currentBeamLocation.state as BeamState).queryParameters,
+      expect((delegate.currentBeamStack.state as BeamState).queryParameters,
           equals({'q': 't'}));
     });
 
-    testWidgets('location includes query in page key', (tester) async {
+    testWidgets('stack includes query in page key', (tester) async {
       await tester.pumpWidget(MaterialApp.router(
         routeInformationParser: BeamerParser(),
         routerDelegate: delegate,
@@ -94,10 +94,10 @@ void main() {
   group('NotFound', () {
     test('can be recognized', () {
       delegate.beamToNamed('/unknown');
-      expect(delegate.currentBeamLocation, isA<NotFound>());
+      expect(delegate.currentBeamStack, isA<NotFound>());
 
       delegate.beamToNamed('/Test/unknown');
-      expect(delegate.currentBeamLocation, isA<NotFound>());
+      expect(delegate.currentBeamStack, isA<NotFound>());
     });
 
     testWidgets('delegate builds notFoundPage', (tester) async {
@@ -111,7 +111,7 @@ void main() {
 
     test('* in path segment will override NotFound', () {
       final delegate = BeamerDelegate(
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '/': (context, state, data) => Container(),
             '/test/*': (context, state, data) => Container(),
@@ -120,48 +120,48 @@ void main() {
       );
 
       delegate.beamToNamed('/test/anything');
-      expect(delegate.currentBeamLocation, isA<RoutesBeamLocation>());
+      expect(delegate.currentBeamStack, isA<RoutesBeamStack>());
     });
 
     test('only * will override NotFound', () {
       final delegate1 = BeamerDelegate(
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '/*': (context, state, data) => Container(),
           },
         ),
       );
       delegate1.setNewRoutePath(RouteInformation(uri: Uri.parse('/anything')));
-      expect(delegate1.currentBeamLocation, isA<RoutesBeamLocation>());
+      expect(delegate1.currentBeamStack, isA<RoutesBeamStack>());
 
       final delegate2 = BeamerDelegate(
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '*': (context, state, data) => Container(),
           },
         ),
       );
       delegate2.setNewRoutePath(RouteInformation(uri: Uri.parse('/anything')));
-      expect(delegate2.currentBeamLocation, isA<RoutesBeamLocation>());
+      expect(delegate2.currentBeamStack, isA<RoutesBeamStack>());
     });
 
     test('path parameters are not considered NotFound', () {
       final delegate1 = BeamerDelegate(
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '/test/:testId': (context, state, data) => Container(),
           },
         ),
       );
       delegate1.setNewRoutePath(RouteInformation(uri: Uri.parse('/test/1')));
-      expect(delegate1.currentBeamLocation, isA<RoutesBeamLocation>());
+      expect(delegate1.currentBeamStack, isA<RoutesBeamStack>());
     });
   });
 
   group('RegExp', () {
     test('can utilize path parameters', () {
       delegate.beamToNamed('/path-param/success');
-      expect((delegate.currentBeamLocation.state as BeamState).pathParameters,
+      expect((delegate.currentBeamStack.state as BeamState).pathParameters,
           contains('test'));
     });
   });

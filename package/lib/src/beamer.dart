@@ -65,8 +65,8 @@ class BeamerState extends State<Beamer> {
   /// A getter for [BeamerDelegate] of the [Beamer] whose state is this.
   BeamerDelegate get routerDelegate => widget.routerDelegate;
 
-  /// A convenience getter for current [BeamLocation] of [routerDelegate].
-  BeamLocation get currentBeamLocation => routerDelegate.currentBeamLocation;
+  /// A convenience getter for current [BeamStack] of [routerDelegate].
+  BeamStack get currentBeamStack => routerDelegate.currentBeamStack;
 
   @override
   void didChangeDependencies() {
@@ -106,22 +106,22 @@ class BeamerState extends State<Beamer> {
 extension BeamerExtensions on BuildContext {
   /// {@macro beamTo}
   void beamTo(
-    BeamLocation location, {
+    BeamStack stack, {
     Object? data,
-    BeamLocation? popTo,
+    BeamStack? popTo,
     TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
-    bool popBeamLocationOnPop = false,
+    bool popBeamStackOnPop = false,
     bool stacked = true,
     bool replaceRouteInformation = false,
   }) {
     Beamer.of(this).beamTo(
-      location,
+      stack,
       data: data,
       popTo: popTo,
       transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
-      popBeamLocationOnPop: popBeamLocationOnPop,
+      popBeamStackOnPop: popBeamStackOnPop,
       stacked: stacked,
       replaceRouteInformation: replaceRouteInformation,
     );
@@ -129,21 +129,21 @@ extension BeamerExtensions on BuildContext {
 
   /// {@macro beamToReplacement}
   void beamToReplacement(
-    BeamLocation location, {
+    BeamStack stack, {
     Object? data,
-    BeamLocation? popTo,
+    BeamStack? popTo,
     TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
-    bool popBeamLocationOnPop = false,
+    bool popBeamStackOnPop = false,
     bool stacked = true,
   }) {
     Beamer.of(this).beamToReplacement(
-      location,
+      stack,
       data: data,
       popTo: popTo,
       transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
-      popBeamLocationOnPop: popBeamLocationOnPop,
+      popBeamStackOnPop: popBeamStackOnPop,
       stacked: stacked,
     );
   }
@@ -156,7 +156,7 @@ extension BeamerExtensions on BuildContext {
     String? popToNamed,
     TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
-    bool popBeamLocationOnPop = false,
+    bool popBeamStackOnPop = false,
     bool stacked = true,
     bool replaceRouteInformation = false,
   }) {
@@ -167,7 +167,7 @@ extension BeamerExtensions on BuildContext {
       popToNamed: popToNamed,
       transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
-      popBeamLocationOnPop: popBeamLocationOnPop,
+      popBeamStackOnPop: popBeamStackOnPop,
       stacked: stacked,
       replaceRouteInformation: replaceRouteInformation,
     );
@@ -181,7 +181,7 @@ extension BeamerExtensions on BuildContext {
     String? popToNamed,
     TransitionDelegate? transitionDelegate,
     bool beamBackOnPop = false,
-    bool popBeamLocationOnPop = false,
+    bool popBeamStackOnPop = false,
     bool stacked = true,
   }) {
     Beamer.of(this).beamToReplacementNamed(
@@ -191,7 +191,7 @@ extension BeamerExtensions on BuildContext {
       popToNamed: popToNamed,
       transitionDelegate: transitionDelegate,
       beamBackOnPop: beamBackOnPop,
-      popBeamLocationOnPop: popBeamLocationOnPop,
+      popBeamStackOnPop: popBeamStackOnPop,
       stacked: stacked,
     );
   }
@@ -203,7 +203,7 @@ extension BeamerExtensions on BuildContext {
     Object? data,
     String? popToNamed,
     bool beamBackOnPop = false,
-    bool popBeamLocationOnPop = false,
+    bool popBeamStackOnPop = false,
     bool stacked = true,
     bool replaceRouteInformation = false,
   }) {
@@ -213,7 +213,7 @@ extension BeamerExtensions on BuildContext {
       data: data,
       popToNamed: popToNamed,
       beamBackOnPop: beamBackOnPop,
-      popBeamLocationOnPop: popBeamLocationOnPop,
+      popBeamStackOnPop: popBeamStackOnPop,
       stacked: stacked,
       replaceRouteInformation: replaceRouteInformation,
     );
@@ -222,21 +222,21 @@ extension BeamerExtensions on BuildContext {
   /// {@macro beamBack}
   bool beamBack({Object? data}) => Beamer.of(this).beamBack(data: data);
 
-  /// {@macro popBeamLocation}
-  bool popBeamLocation() => Beamer.of(this).popBeamLocation();
+  /// {@macro popBeamStack}
+  bool popBeamStack() => Beamer.of(this).popBeamStack();
 
-  /// {@macro currentBeamLocation}
-  BeamLocation get currentBeamLocation => Beamer.of(this).currentBeamLocation;
+  /// {@macro currentBeamStack}
+  BeamStack get currentBeamStack => Beamer.of(this).currentBeamStack;
 
   /// {@macro currentPages}
   List<BeamPage> get currentBeamPages => Beamer.of(this).currentPages;
 
   /// {@macro beamingHistory}
-  List<BeamLocation> get beamingHistory => Beamer.of(this).beamingHistory;
+  List<BeamStack> get beamingHistory => Beamer.of(this).beamingHistory;
 
   /// {@macro canBeamBack}
   bool get canBeamBack => Beamer.of(this).canBeamBack;
 
-  /// {@macro canPopBeamLocation}
-  bool get canPopBeamLocation => Beamer.of(this).canPopBeamLocation;
+  /// {@macro canPopBeamStack}
+  bool get canPopBeamStack => Beamer.of(this).canPopBeamStack;
 }

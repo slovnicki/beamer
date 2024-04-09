@@ -83,7 +83,7 @@ class BookDetailsScreen extends StatelessWidget {
 }
 
 // LOCATIONS
-class BooksLocation extends BeamLocation<BeamState> {
+class BooksStack extends BeamStack<BeamState> {
   @override
   List<Pattern> get pathPatterns => ['/books/:bookId'];
 
@@ -123,8 +123,8 @@ class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
 
   final routerDelegate = BeamerDelegate(
-    locationBuilder: BeamerLocationBuilder(
-      beamLocations: [BooksLocation()],
+    stackBuilder: BeamerStackBuilder(
+      beamStacks: [BooksStack()],
     ),
     notFoundRedirectNamed: '/books',
   );

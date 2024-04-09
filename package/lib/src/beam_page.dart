@@ -76,9 +76,9 @@ class BeamPage extends Page {
       return false;
     }
 
-    // take the data in case we remove the BeamLocation from history
+    // take the data in case we remove the BeamStack from history
     // and generate a new one (but the same).
-    final data = delegate.currentBeamLocation.data;
+    final data = delegate.currentBeamStack.data;
 
     // Take the history element that is being popped and the one before
     // as they will be compared later on to fine-tune the pop experience.
@@ -127,11 +127,11 @@ class BeamPage extends Page {
     } else {
       // find the last
       var found = false;
-      for (var beamLocation in delegate.beamingHistory.reversed) {
+      for (var beamStack in delegate.beamingHistory.reversed) {
         if (found) {
           break;
         }
-        for (var historyElement in beamLocation.history.reversed) {
+        for (var historyElement in beamStack.history.reversed) {
           final uri = historyElement.routeInformation.uri;
           if (uri.path == popPath) {
             lastRouteInformation = historyElement.routeInformation;
@@ -181,7 +181,7 @@ class BeamPage extends Page {
   final String? title;
 
   /// Overrides the default pop by executing an arbitrary closure.
-  /// Mainly used to manually update the `delegate.currentBeamLocation` state.
+  /// Mainly used to manually update the `delegate.currentBeamStack` state.
   ///
   /// `poppedPage` is this [BeamPage].
   ///
@@ -225,7 +225,7 @@ class BeamPage extends Page {
   final bool opaque;
 
   /// When this [BeamPage] pops from [Navigator] stack, whether to keep the
-  /// query parameters within current [BeamLocation].
+  /// query parameters within current [BeamStack].
   ///
   /// Defaults to `false`.
   final bool keepQueryOnPop;

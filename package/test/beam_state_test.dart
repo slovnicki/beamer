@@ -2,7 +2,7 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'test_locations.dart';
+import 'test_stacks.dart';
 
 void main() {
   test('construct', () {
@@ -31,22 +31,22 @@ void main() {
   });
 
   test('copyWith', () {
-    final state = BeamState.fromUriString('/l2', beamLocation: Location2());
+    final state = BeamState.fromUriString('/l2', beamStack: Stack2());
     final copy = state.copyWith();
     expect(copy.pathPatternSegments[0], 'l2');
   });
 
-  test('copyForLocation', () {
+  test('copyForStack', () {
     final state = BeamState.fromUriString('/l2/xx');
-    final copy = state.copyForLocation(Location2(), null);
+    final copy = state.copyForStack(Stack2(), null);
     expect(copy.pathParameters['id'], 'xx');
   });
 
-  testWidgets('pathParameters are present in RoutesLocationBuilder',
+  testWidgets('pathParameters are present in RoutesStackBuilder',
       (tester) async {
     late BeamState _state;
     final delegate = BeamerDelegate(
-      locationBuilder: RoutesLocationBuilder(
+      stackBuilder: RoutesStackBuilder(
         routes: {
           '/profile/:address': (context, state, data) {
             _state = state;

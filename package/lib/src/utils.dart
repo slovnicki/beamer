@@ -3,40 +3,40 @@ import 'package:flutter/material.dart';
 
 /// Some useful methods for beaming process configuration.
 abstract class Utils {
-  /// Traverses [beamLocations] and returns the one whose one of
+  /// Traverses [beamStacks] and returns the one whose one of
   /// `pathPatterns` contains the [uri], ignoring concrete path parameters.
   ///
-  /// Upon finding such [BeamLocation], configures it with
+  /// Upon finding such [BeamStack], configures it with
   /// `pathParameters` and `queryParameters` from [uri].
   ///
-  /// If [beamLocations] don't contain a match, [NotFound] will be returned
+  /// If [beamStacks] don't contain a match, [NotFound] will be returned
   /// configured with [uri].
-  static BeamLocation chooseBeamLocation(
+  static BeamStack chooseBeamStack(
     Uri uri,
-    List<BeamLocation> beamLocations, {
+    List<BeamStack> beamStacks, {
     Object? data,
     Object? routeState,
     BeamParameters? beamParameters,
   }) {
-    for (final beamLocation in beamLocations) {
-      if (canBeamLocationHandleUri(beamLocation, uri)) {
+    for (final beamStack in beamStacks) {
+      if (canBeamStackHandleUri(beamStack, uri)) {
         final routeInformation = RouteInformation(uri: uri, state: routeState);
-        if (!beamLocation.isCurrent) {
-          beamLocation.create(routeInformation, beamParameters);
+        if (!beamStack.isCurrent) {
+          beamStack.create(routeInformation, beamParameters);
         } else {
-          beamLocation.update(null, routeInformation, beamParameters, false);
+          beamStack.update(null, routeInformation, beamParameters, false);
         }
-        return beamLocation;
+        return beamStack;
       }
     }
     return NotFound(path: uri.path);
   }
 
-  /// Can a [beamLocation], depending on its `pathPatterns`, handle the [uri].
+  /// Can a [beamStack], depending on its `pathPatterns`, handle the [uri].
   ///
-  /// Used in [BeamLocation.canHandle] and [chooseBeamLocation].
-  static bool canBeamLocationHandleUri(BeamLocation beamLocation, Uri uri) {
-    for (final pathPattern in beamLocation.pathPatterns) {
+  /// Used in [BeamStack.canHandle] and [chooseBeamStack].
+  static bool canBeamStackHandleUri(BeamStack beamStack, Uri uri) {
+    for (final pathPattern in beamStack.pathPatterns) {
       if (pathPattern is String) {
         // If it is an exact match or asterisk pattern
         if (pathPattern == uri.path ||
@@ -55,7 +55,7 @@ abstract class Utils {
 
         // If we're in strict mode and URI has fewer segments than pattern,
         // we don't have a match so can continue.
-        if (beamLocation.strictPathPatterns &&
+        if (beamStack.strictPathPatterns &&
             uriPathSegments.length < pathPatternSegments.length) {
           continue;
         }
@@ -93,7 +93,7 @@ abstract class Utils {
             break;
           }
         }
-        // If no check failed, beamLocation can handle this URI.
+        // If no check failed, beamStack can handle this URI.
         if (checksPassed) {
           return true;
         }
@@ -105,17 +105,17 @@ abstract class Utils {
     return false;
   }
 
-  /// Creates a state for [BeamLocation] based on incoming [uri].
+  /// Creates a state for [BeamStack] based on incoming [uri].
   ///
-  /// Used in [BeamState.copyForLocation].
+  /// Used in [BeamState.copyForStack].
   static BeamState createBeamState(
     Uri uri, {
-    BeamLocation? beamLocation,
+    BeamStack? beamStack,
     Object? routeState,
   }) {
-    if (beamLocation != null) {
-      // TODO: abstract this and reuse in canBeamLocationHandleUri
-      for (final pathBlueprint in beamLocation.pathPatterns) {
+    if (beamStack != null) {
+      // TODO: abstract this and reuse in canBeamStackHandleUri
+      for (final pathBlueprint in beamStack.pathPatterns) {
         if (pathBlueprint is String) {
           if (pathBlueprint == uri.path || pathBlueprint == '/*') {
             BeamState(
@@ -128,30 +128,29 @@ abstract class Utils {
           if (uriPathSegments.length > 1 && uriPathSegments.last == '') {
             uriPathSegments.removeLast();
           }
-          final beamLocationPathBlueprintSegments =
+          final beamStackPathBlueprintSegments =
               Uri.parse(pathBlueprint).pathSegments;
           var pathSegments = <String>[];
           final pathParameters = <String, String>{};
-          if (uriPathSegments.length >
-                  beamLocationPathBlueprintSegments.length &&
-              !beamLocationPathBlueprintSegments.contains('*')) {
+          if (uriPathSegments.length > beamStackPathBlueprintSegments.length &&
+              !beamStackPathBlueprintSegments.contains('*')) {
             continue;
           }
           var checksPassed = true;
           for (var i = 0; i < uriPathSegments.length; i++) {
-            if (beamLocationPathBlueprintSegments[i] == '*') {
+            if (beamStackPathBlueprintSegments[i] == '*') {
               pathSegments = uriPathSegments.toList();
               checksPassed = true;
               break;
             }
-            if (uriPathSegments[i] != beamLocationPathBlueprintSegments[i] &&
-                beamLocationPathBlueprintSegments[i][0] != ':') {
+            if (uriPathSegments[i] != beamStackPathBlueprintSegments[i] &&
+                beamStackPathBlueprintSegments[i][0] != ':') {
               checksPassed = false;
               break;
-            } else if (beamLocationPathBlueprintSegments[i][0] == ':') {
-              pathParameters[beamLocationPathBlueprintSegments[i]
-                  .substring(1)] = uriPathSegments[i];
-              pathSegments.add(beamLocationPathBlueprintSegments[i]);
+            } else if (beamStackPathBlueprintSegments[i][0] == ':') {
+              pathParameters[beamStackPathBlueprintSegments[i].substring(1)] =
+                  uriPathSegments[i];
+              pathSegments.add(beamStackPathBlueprintSegments[i]);
             } else {
               pathSegments.add(uriPathSegments[i]);
             }
@@ -296,7 +295,7 @@ extension BeamerRouteInformationExtension on RouteInformation {
     );
   }
 
-  /// Whether two `RouteInformation`s have the same location and state.
+  /// Whether two `RouteInformation`s have the same uri and state.
   ///
   /// This is intentionally **not** overriding the equality operator.
   bool isEqualTo(Object? other) {

@@ -2,8 +2,8 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:mocktail/mocktail.dart';
 
-class Location1 extends BeamLocation<BeamState> {
-  Location1([RouteInformation? routeInformation]) : super(routeInformation);
+class Stack1 extends BeamStack<BeamState> {
+  Stack1([RouteInformation? routeInformation]) : super(routeInformation);
 
   bool get doesHaveListeners => hasListeners;
 
@@ -29,8 +29,8 @@ class Location1 extends BeamLocation<BeamState> {
   List<String> get pathPatterns => ['/l1/one', '/l1/two'];
 }
 
-class Location2 extends BeamLocation<BeamState> {
-  Location2([RouteInformation? routeInformation]) : super(routeInformation);
+class Stack2 extends BeamStack<BeamState> {
+  Stack2([RouteInformation? routeInformation]) : super(routeInformation);
 
   bool get doesHaveListeners => hasListeners;
 
@@ -66,8 +66,8 @@ class CustomState with RouteInformationSerializable {
       );
 }
 
-class CustomStateLocation extends BeamLocation<CustomState> {
-  CustomStateLocation([RouteInformation? routeInformation])
+class CustomStateStack extends BeamStack<CustomState> {
+  CustomStateStack([RouteInformation? routeInformation])
       : super(routeInformation);
 
   @override
@@ -86,7 +86,7 @@ class CustomStateLocation extends BeamLocation<CustomState> {
       ];
 }
 
-class NoStateLocation extends BeamLocation<BeamState> {
+class NoStateStack extends BeamStack<BeamState> {
   @override
   List<String> get pathPatterns => ['/page'];
 
@@ -99,9 +99,8 @@ class NoStateLocation extends BeamLocation<BeamState> {
       ];
 }
 
-class RegExpLocation extends BeamLocation<BeamState> {
-  RegExpLocation([RouteInformation? routeInformation])
-      : super(routeInformation);
+class RegExpStack extends BeamStack<BeamState> {
+  RegExpStack([RouteInformation? routeInformation]) : super(routeInformation);
 
   @override
   List<Pattern> get pathPatterns => [RegExp('/reg')];
@@ -115,9 +114,8 @@ class RegExpLocation extends BeamLocation<BeamState> {
       ];
 }
 
-class AsteriskLocation extends BeamLocation<BeamState> {
-  AsteriskLocation([RouteInformation? routeInformation])
-      : super(routeInformation);
+class AsteriskStack extends BeamStack<BeamState> {
+  AsteriskStack([RouteInformation? routeInformation]) : super(routeInformation);
 
   @override
   List<Pattern> get pathPatterns => ['/anything/*'];
@@ -131,7 +129,7 @@ class AsteriskLocation extends BeamLocation<BeamState> {
       ];
 }
 
-class StrictPatternsLocation extends BeamLocation<BeamState> {
+class StrictPatternsStack extends BeamStack<BeamState> {
   @override
   List<Pattern> get pathPatterns => ['/strict', '/strict/deeper'];
 
@@ -158,8 +156,8 @@ class UpdateStateStub extends Mock {
   void call();
 }
 
-class UpdateStateStubBeamLocation extends BeamLocation {
-  UpdateStateStubBeamLocation(this.updateStateStub) : super();
+class UpdateStateStubBeamStack extends BeamStack {
+  UpdateStateStubBeamStack(this.updateStateStub) : super();
 
   final UpdateStateStub updateStateStub;
 
@@ -178,7 +176,7 @@ class UpdateStateStubBeamLocation extends BeamLocation {
   }
 }
 
-class SimpleBeamLocation extends BeamLocation<BeamState> {
+class SimpleBeamStack extends BeamStack<BeamState> {
   @override
   List<Pattern> get pathPatterns => [
         '/',

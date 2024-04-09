@@ -11,7 +11,7 @@ class BeamParameters {
     this.transitionDelegate = const DefaultTransitionDelegate(),
     this.popConfiguration,
     this.beamBackOnPop = false,
-    this.popBeamLocationOnPop = false,
+    this.popBeamStackOnPop = false,
     this.stacked = true,
   });
 
@@ -26,11 +26,11 @@ class BeamParameters {
   /// Whether to implicitly [BeamerDelegate.beamBack] instead of default pop.
   final bool beamBackOnPop;
 
-  /// Whether to remove entire current [BeamLocation] from history,
+  /// Whether to remove entire current [BeamStack] from history,
   /// instead of default pop.
-  final bool popBeamLocationOnPop;
+  final bool popBeamStackOnPop;
 
-  /// Whether all the pages produced by [BeamLocation.buildPages] are stacked.
+  /// Whether all the pages produced by [BeamStack.buildPages] are stacked.
   /// If not (`false`), just the last page is taken.
   final bool stacked;
 
@@ -40,7 +40,7 @@ class BeamParameters {
     RouteInformation? popConfiguration,
     bool resetPopConfiguration = false,
     bool? beamBackOnPop,
-    bool? popBeamLocationOnPop,
+    bool? popBeamStackOnPop,
     bool? stacked,
   }) {
     return BeamParameters(
@@ -49,13 +49,13 @@ class BeamParameters {
           ? null
           : popConfiguration ?? this.popConfiguration,
       beamBackOnPop: beamBackOnPop ?? this.beamBackOnPop,
-      popBeamLocationOnPop: popBeamLocationOnPop ?? this.popBeamLocationOnPop,
+      popBeamStackOnPop: popBeamStackOnPop ?? this.popBeamStackOnPop,
       stacked: stacked ?? this.stacked,
     );
   }
 }
 
-/// An element of [BeamLocation.history] list.
+/// An element of [BeamStack.history] list.
 ///
 /// Contains the [RouteInformation] and [BeamParameters] at the moment
 /// of beaming to it.
@@ -82,13 +82,13 @@ class HistoryElement {
 ///   * knowing how to build a stack of pages: [buildPages]
 ///   * keeping a [state] that provides the link between the first 2
 ///
-/// Extend this class to define your locations to which you can then beam to.
-abstract class BeamLocation<T extends RouteInformationSerializable>
+/// Extend this class to define your stacks to which you can then beam to.
+abstract class BeamStack<T extends RouteInformationSerializable>
     extends ChangeNotifier {
-  /// Creates a [BeamLocation] with specified properties.
+  /// Creates a [BeamStack] with specified properties.
   ///
   /// All attributes can be null.
-  BeamLocation([
+  BeamStack([
     RouteInformation? routeInformation,
     BeamParameters? beamParameters,
   ]) {
@@ -97,7 +97,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
 
   late T _state;
 
-  /// A state of this [BeamLocation].
+  /// A state of this [BeamStack].
   ///
   /// Upon beaming, it will be populated by all necessary attributes.
   /// See also: [BeamState].
@@ -113,10 +113,10 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   BeamParameters get beamParameters => history.last.parameters;
 
   /// An arbitrary data to be stored in this.
-  /// This will persist while navigating within this [BeamLocation].
+  /// This will persist while navigating within this [BeamStack].
   ///
-  /// Therefore, in the case of using [RoutesLocationBuilder] which uses only
-  /// a single [RoutesBeamLocation] for all page stacks, this data will
+  /// Therefore, in the case of using [RoutesStackBuilder] which uses only
+  /// a single [RoutesBeamStack] for all page stacks, this data will
   /// be available always, until overriden with some new data.
   Object? data;
 
@@ -129,14 +129,14 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
 
   bool _isCurrent = false;
 
-  /// Whether this [BeamLocation] is currently in use by [BeamerDelegate].
+  /// Whether this [BeamStack] is currently in use by [BeamerDelegate].
   ///
   /// This influences on the behavior of [create] that gets called on existing
-  /// [BeamLocation]s when using [BeamerLocationBuilder] that uses [Utils.chooseBeamLocation].
+  /// [BeamStack]s when using [BeamerStackBuilder] that uses [Utils.chooseBeamStack].
   bool get isCurrent => _isCurrent;
 
   /// Creates the [state] and adds the [routeInformation] to [history].
-  /// This is called only once during the lifetime of [BeamLocation].
+  /// This is called only once during the lifetime of [BeamStack].
   ///
   /// See [createState] and [addToHistory].
   void create([
@@ -163,16 +163,16 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   }
 
   /// How to create state from [RouteInformation] given by
-  /// [BeamerDelegate] and passed via [BeamerDelegate.locationBuilder].
+  /// [BeamerDelegate] and passed via [BeamerDelegate.stackBuilder].
   ///
-  /// This will be called only once during the lifetime of [BeamLocation].
+  /// This will be called only once during the lifetime of [BeamStack].
   /// One should override this if using a custom state class.
   ///
   /// See [create].
   T createState(RouteInformation routeInformation) =>
       BeamState.fromRouteInformation(
         routeInformation,
-        beamLocation: this,
+        beamStack: this,
       ) as T;
 
   /// What to do on state initialization.
@@ -195,7 +195,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   }
 
   /// Called after [initState] and on each [update],
-  /// i.e. whenever we navigate with this [BeamLocation].
+  /// i.e. whenever we navigate with this [BeamStack].
   ///
   /// Useful for delegating some tasks that depend on navigation.
   void onUpdate() {}
@@ -266,7 +266,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   /// Adds another [HistoryElement] to [history] list.
   /// The history element is created from given [state] and [beamParameters].
   ///
-  /// If [tryPopping] is set to `true`, the state with the same `location`
+  /// If [tryPopping] is set to `true`, the state with the same `stack`
   /// will be searched in [history] and if found, entire history segment
   /// `[foundIndex, history.length-1]` will be removed before adding a new
   /// history element.
@@ -305,10 +305,10 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
     return history.removeLast();
   }
 
-  /// Initialize custom bindings for this [BeamLocation] using [BuildContext].
+  /// Initialize custom bindings for this [BeamStack] using [BuildContext].
   /// Similar to [builder], but is not tied to Widget tree.
   ///
-  /// This will be called on just the first build of this [BeamLocation]
+  /// This will be called on just the first build of this [BeamStack]
   /// and sets [mounted] to true. It is called right before [buildPages].
   @mustCallSuper
   void buildInit(BuildContext context) {
@@ -317,12 +317,12 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
 
   /// Can this handle the [uri] based on its [pathPatterns].
   ///
-  /// Can be useful in a custom [BeamerDelegate.locationBuilder].
-  bool canHandle(Uri uri) => Utils.canBeamLocationHandleUri(this, uri);
+  /// Can be useful in a custom [BeamerDelegate.stackBuilder].
+  bool canHandle(Uri uri) => Utils.canBeamStackHandleUri(this, uri);
 
   /// Gives the ability to wrap the [navigator].
   ///
-  /// Mostly useful for providing something to the entire location,
+  /// Mostly useful for providing something to the entire stack,
   /// i.e. to all of the pages.
   ///
   /// For example:
@@ -338,7 +338,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   /// ```
   Widget builder(BuildContext context, Widget navigator) => navigator;
 
-  /// Represents the "form" of URI paths supported by this [BeamLocation].
+  /// Represents the "form" of URI paths supported by this [BeamStack].
   ///
   /// You can pass in either a String or a RegExp. Beware of using greedy regular
   /// expressions as this might lead to unexpected behavior.
@@ -363,7 +363,7 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   bool get strictPathPatterns => false;
 
   /// Creates and returns the list of pages to be built by the [Navigator]
-  /// when this [BeamLocation] is beamed to or internally inferred.
+  /// when this [BeamStack] is beamed to or internally inferred.
   ///
   /// [context] can be useful while building the pages.
   /// It will also contain anything injected via [builder].
@@ -381,8 +381,8 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
 
   /// A transition delegate to be used by [Navigator].
   ///
-  /// This will be used only by this location, unlike
-  /// [BeamerDelegate.transitionDelegate] that will be used for all locations.
+  /// This will be used only by this stack, unlike
+  /// [BeamerDelegate.transitionDelegate] that will be used for all stacks.
   ///
   /// This transition delegate will override the one in [BeamerDelegate].
   ///
@@ -390,10 +390,10 @@ abstract class BeamLocation<T extends RouteInformationSerializable>
   TransitionDelegate? get transitionDelegate => null;
 }
 
-/// Default location to choose if requested URI doesn't parse to any location.
-class NotFound extends BeamLocation<BeamState> {
-  /// Creates a [NotFound] [BeamLocation] with
-  /// `RouteInformation(location: path)` as its state.
+/// Default stack to choose if requested URI doesn't parse to any stack.
+class NotFound extends BeamStack<BeamState> {
+  /// Creates a [NotFound] [BeamStack] with
+  /// `RouteInformation(uri: Uri.parse(path)` as its state.
   NotFound({String path = '/'}) : super(RouteInformation(uri: Uri.parse(path)));
 
   @override
@@ -403,10 +403,10 @@ class NotFound extends BeamLocation<BeamState> {
   List<String> get pathPatterns => [];
 }
 
-/// Empty location used to initialize a non-nullable BeamLocation variable.
+/// Empty stack used to initialize a non-nullable BeamStack variable.
 ///
-/// See [BeamerDelegate.currentBeamLocation].
-class EmptyBeamLocation extends BeamLocation<BeamState> {
+/// See [BeamerDelegate.currentBeamStack].
+class EmptyBeamStack extends BeamStack<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [];
 
@@ -414,10 +414,10 @@ class EmptyBeamLocation extends BeamLocation<BeamState> {
   List<String> get pathPatterns => [];
 }
 
-/// A specific single-page [BeamLocation] for [BeamGuard.showPage]
-class GuardShowPage extends BeamLocation<BeamState> {
-  /// Creates a [GuardShowPage] [BeamLocation] with
-  /// `RouteInformation(location: path)` as its state.
+/// A specific single-page [BeamStack] for [BeamGuard.showPage]
+class GuardShowPage extends BeamStack<BeamState> {
+  /// Creates a [GuardShowPage] [BeamStack] with
+  /// `RouteInformation(uri: Uri.parse(path)` as its state.
   GuardShowPage(
     this.routeInformation,
     this.beamPage,
@@ -437,14 +437,14 @@ class GuardShowPage extends BeamLocation<BeamState> {
   List<String> get pathPatterns => [routeInformation.uri.path];
 }
 
-/// A beam location for [RoutesLocationBuilder], but can be used freely.
+/// A beam stack for [RoutesStackBuilder], but can be used freely.
 ///
-/// Useful when needing a simple beam location with a single or few pages.
-class RoutesBeamLocation extends BeamLocation<BeamState> {
-  /// Creates a [RoutesBeamLocation] with specified properties.
+/// Useful when needing a simple beam stack with a single or few pages.
+class RoutesBeamStack extends BeamStack<BeamState> {
+  /// Creates a [RoutesBeamStack] with specified properties.
   ///
   /// [routeInformation] and [routes] are required.
-  RoutesBeamLocation({
+  RoutesBeamStack({
     required RouteInformation routeInformation,
     Object? data,
     BeamParameters? beamParameters,
@@ -452,10 +452,10 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
     this.navBuilder,
   }) : super(routeInformation, beamParameters);
 
-  /// Map of all routes this location handles.
+  /// Map of all routes this stack handles.
   Map<Pattern, dynamic Function(BuildContext, BeamState, Object? data)> routes;
 
-  /// A wrapper used as [BeamLocation.builder].
+  /// A wrapper used as [BeamStack.builder].
   Widget Function(BuildContext context, Widget navigator)? navBuilder;
 
   @override
@@ -507,7 +507,7 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
   /// pages.
   ///
   /// If [routeInformation] doesn't match any of the [routes], nothing will be
-  /// selected and [BeamerDelegate] will declare that the location is
+  /// selected and [BeamerDelegate] will declare that the stack is
   /// [NotFound].
   static Map<Pattern, String> chooseRoutes(
     RouteInformation routeInformation,

@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('BeamerProvider overrides shouldNotify with false', () {
     final delegate = BeamerDelegate(
-      locationBuilder: RoutesLocationBuilder(
+      stackBuilder: RoutesStackBuilder(
         routes: {
           '/': (context, state, data) => Container(),
         },
@@ -24,7 +24,7 @@ void main() {
         false);
 
     final delegate2 = BeamerDelegate(
-      locationBuilder: RoutesLocationBuilder(
+      stackBuilder: RoutesStackBuilder(
         routes: {
           '/': (context, state, data) => Container(),
         },

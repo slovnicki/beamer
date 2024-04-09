@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:beamer/src/beam_location.dart';
+import 'package:beamer/src/beam_stack.dart';
 import 'package:beamer/src/utils.dart';
 import 'package:flutter/widgets.dart';
 
-/// A class to mix with when defining a custom state for [BeamLocation].
+/// A class to mix with when defining a custom state for [BeamStack].
 ///
 /// [fromRouteInformation] and [toRouteInformation] need to be implemented in
 /// order to notify the platform of current [RouteInformation] that corresponds
@@ -22,7 +22,7 @@ mixin RouteInformationSerializable<T> {
   RouteInformation get routeInformation => toRouteInformation();
 }
 
-/// Beamer's opinionated state for [BeamLocation]s.
+/// Beamer's opinionated state for [BeamStack]s.
 ///
 /// This can be used when one does not desire to define its own state.
 class BeamState with RouteInformationSerializable<BeamState> {
@@ -43,65 +43,65 @@ class BeamState with RouteInformationSerializable<BeamState> {
 
   /// Creates a [BeamState] from given [uri] and optional [routeState].
   ///
-  /// If [beamLocation] is given, then it will take into consideration
+  /// If [beamStack] is given, then it will take into consideration
   /// its `pathPatterns` to populate the [pathParameters] attribute.
   ///
   /// See [Utils.createBeamState].
   factory BeamState.fromUri(
     Uri uri, {
-    BeamLocation? beamLocation,
+    BeamStack? beamStack,
     Object? routeState,
   }) {
     return Utils.createBeamState(
       uri,
-      beamLocation: beamLocation,
+      beamStack: beamStack,
       routeState: routeState,
     );
   }
 
   /// Creates a [BeamState] from given [uriString] and optional [routeState].
   ///
-  /// If [beamLocation] is given, then it will take into consideration
+  /// If [beamStack] is given, then it will take into consideration
   /// its path blueprints to populate the [pathParameters] attribute.
   ///
   /// See [BeamState.fromUri].
   factory BeamState.fromUriString(
     String uriString, {
-    BeamLocation? beamLocation,
+    BeamStack? beamStack,
     Object? routeState,
   }) {
     return BeamState.fromUri(
       Utils.removeTrailingSlash(Uri.parse(uriString)),
-      beamLocation: beamLocation,
+      beamStack: beamStack,
       routeState: routeState,
     );
   }
 
   /// Creates a [BeamState] from given [routeInformation].
   ///
-  /// If [beamLocation] is given, then it will take into consideration
+  /// If [beamStack] is given, then it will take into consideration
   /// its path blueprints to populate the [pathParameters] attribute.
   ///
   /// See [BeamState.fromUri].
   factory BeamState.fromRouteInformation(
     RouteInformation routeInformation, {
-    BeamLocation? beamLocation,
+    BeamStack? beamStack,
   }) {
     return BeamState.fromUri(
       routeInformation.uri,
-      beamLocation: beamLocation,
+      beamStack: beamStack,
       routeState: routeInformation.state,
     );
   }
 
   /// Path segments of the current URI,
-  /// in the form as it's defined in [BeamLocation.pathPatterns].
+  /// in the form as it's defined in [BeamStack.pathPatterns].
   ///
   /// If current URI is '/books/1', this will be `['books', ':bookId']`.
   final List<String> pathPatternSegments;
 
   /// Path parameters from the URI,
-  /// in the form as it's defined in [BeamLocation.pathPatterns].
+  /// in the form as it's defined in [BeamStack.pathPatterns].
   ///
   /// If current URI is '/books/1', this will be `{'bookId': '1'}`.
   final Map<String, String> pathParameters;
@@ -120,7 +120,7 @@ class BeamState with RouteInformationSerializable<BeamState> {
   late Uri _uriBlueprint;
 
   /// Current URI object in the "blueprint form",
-  /// as it's defined in [BeamLocation.pathPatterns].
+  /// as it's defined in [BeamStack.pathPatterns].
   ///
   /// This is constructed from [pathPatternSegments] and [queryParameters].
   /// See more at [configure].
@@ -138,11 +138,11 @@ class BeamState with RouteInformationSerializable<BeamState> {
   /// See more at [configure].
   Uri get uri => _uri;
 
-  /// Copies this with configuration for specific [BeamLocation].
-  BeamState copyForLocation(BeamLocation beamLocation, Object? routeState) {
+  /// Copies this with configuration for specific [BeamStack].
+  BeamState copyForStack(BeamStack beamStack, Object? routeState) {
     return Utils.createBeamState(
       uri,
-      beamLocation: beamLocation,
+      beamStack: beamStack,
       routeState: routeState,
     );
   }

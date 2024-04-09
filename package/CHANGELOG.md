@@ -1,3 +1,7 @@
+# next version
+
+- **BREAKING:** Renamed `BeamLocation` to `BeamStack`
+
 # 2.0.0-dev.1
 
 - **Fixed:** Handling deep links after refactor to `Uri`s ([Bungeefan](https://github.com/Bungeefan): [#660](https://github.com/slovnicki/beamer/pull/660), [#654](https://github.com/slovnicki/beamer/issues/654))

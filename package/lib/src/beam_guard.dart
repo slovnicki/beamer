@@ -2,10 +2,10 @@ import 'package:beamer/src/utils.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:beamer/src/beamer_delegate.dart';
-import 'package:beamer/src/beam_location.dart';
+import 'package:beamer/src/beam_stack.dart';
 import 'package:beamer/src/beam_page.dart';
 
-/// Checks whether current [BeamLocation] is allowed to be beamed to
+/// Checks whether current [BeamStack] is allowed to be beamed to
 /// and provides steps to be executed following a failed check.
 ///
 /// [BeamGuard] has an authority to change [BeamerDelegate.beamingHistory].
@@ -47,46 +47,45 @@ class BeamGuard {
   /// use `RegExp('/books')`
   final List<Pattern> pathPatterns;
 
-  /// What check should be performed on a given [BeamLocation],
+  /// What check should be performed on a given [BeamStack],
   /// the one to which beaming has been requested.
   ///
   /// `context` is also injected to fetch data up the tree if necessary.
-  final bool Function(BuildContext context, BeamLocation location) check;
+  final bool Function(BuildContext context, BeamStack stack) check;
 
   /// Arbitrary closure to execute when [check] fails.
   ///
   /// This will run before and regardless of [beamTo], [beamToNamed].
-  final void Function(BuildContext context, BeamLocation location)?
-      onCheckFailed;
+  final void Function(BuildContext context, BeamStack stack)? onCheckFailed;
 
-  /// If guard [check] returns `false`, build a [BeamLocation] to be beamed to.
+  /// If guard [check] returns `false`, build a [BeamStack] to be beamed to.
   ///
-  /// `origin` holds the origin [BeamLocation] from where it is being beamed from, `null` if there's no origin,
+  /// `origin` holds the origin [BeamStack] from where it is being beamed from, `null` if there's no origin,
   /// which may happen if it's the first navigation or the history was cleared.
-  /// `target` holds the [BeamLocation] to where we tried to beam to, i.e. the one on which the check failed.
+  /// `target` holds the [BeamStack] to where we tried to beam to, i.e. the one on which the check failed.
   /// `deepLink` holds the potential deep-link that was set manually via
   /// [BeamerDelegate.setDeepLink] or came from the platforms.
-  final BeamLocation Function(
+  final BeamStack Function(
     BuildContext context,
-    BeamLocation? origin,
-    BeamLocation target,
+    BeamStack? origin,
+    BeamStack target,
     String? deepLink,
   )? beamTo;
 
   /// If guard [check] returns `false`, beam to this URI string.
   ///
-  /// `origin` holds the origin [BeamLocation] from where it is being beamed from. `null` if there's no origin,
+  /// `origin` holds the origin [BeamStack] from where it is being beamed from. `null` if there's no origin,
   /// which may happen if it's the first navigation or the history was cleared.
-  /// `target` holds the [BeamLocation] to where we tried to beam to, i.e. the one on which the check failed.
+  /// `target` holds the [BeamStack] to where we tried to beam to, i.e. the one on which the check failed.
   /// `deepLink` holds the potential deep-link that was set manually via
   /// [BeamerDelegate.setDeepLink] or came from the platforms.
   final String Function(
-    BeamLocation? origin,
-    BeamLocation target,
+    BeamStack? origin,
+    BeamStack target,
     String? deepLink,
   )? beamToNamed;
 
-  /// If guard [check] returns `false`, beam to a [BeamLocation] with just that page.
+  /// If guard [check] returns `false`, beam to a [BeamStack] with just that page.
   ///
   /// This has precendence over [beamTo] and [beamToNamed].
   final BeamPage? showPage;
@@ -97,12 +96,12 @@ class BeamGuard {
   /// `false` meaning former and `true` meaning latter.
   final bool guardNonMatching;
 
-  /// Whether or not to replace the current [BeamLocation]'s stack of pages.
+  /// Whether or not to replace the current [BeamStack]'s stack of pages.
   final bool replaceCurrentStack;
 
-  /// Whether or not the guard should [check] the [location].
-  bool shouldGuard(BeamLocation location) {
-    return guardNonMatching ? !_hasMatch(location) : _hasMatch(location);
+  /// Whether or not the guard should [check] the [stack].
+  bool shouldGuard(BeamStack stack) {
+    return guardNonMatching ? !_hasMatch(stack) : _hasMatch(stack);
   }
 
   /// Applies the guard.
@@ -110,9 +109,9 @@ class BeamGuard {
   bool apply(
     BuildContext context,
     BeamerDelegate delegate,
-    BeamLocation origin,
+    BeamStack origin,
     List<BeamPage> currentPages,
-    BeamLocation target,
+    BeamStack target,
     String? deepLink,
   ) {
     final checkPassed = check(context, target);
@@ -123,12 +122,12 @@ class BeamGuard {
     onCheckFailed?.call(context, target);
 
     if (showPage != null) {
-      final redirectBeamLocation =
+      final redirectBeamStack =
           GuardShowPage(target.state.routeInformation, showPage!);
       if (replaceCurrentStack) {
-        delegate.beamToReplacement(redirectBeamLocation);
+        delegate.beamToReplacement(redirectBeamStack);
       } else {
-        delegate.beamTo(redirectBeamLocation);
+        delegate.beamTo(redirectBeamStack);
       }
       return true;
     }
@@ -141,24 +140,23 @@ class BeamGuard {
     }
 
     if (beamTo != null) {
-      final redirectBeamLocation = beamTo!(context, origin, target, deepLink);
-      if (redirectBeamLocation.state.routeInformation.uri ==
+      final redirectBeamStack = beamTo!(context, origin, target, deepLink);
+      if (redirectBeamStack.state.routeInformation.uri ==
           target.state.routeInformation.uri) {
         // just block if this will produce an immediate infinite loop
         return true;
       }
-      if (redirectBeamLocation.state.routeInformation.uri ==
+      if (redirectBeamStack.state.routeInformation.uri ==
           origin.state.routeInformation.uri) {
         // just block if redirect is the current route
         return true;
       }
       if (replaceCurrentStack) {
-        delegate.beamToReplacement(redirectBeamLocation);
+        delegate.beamToReplacement(redirectBeamStack);
       } else {
-        delegate.beamTo(redirectBeamLocation);
+        delegate.beamTo(redirectBeamStack);
       }
-      if (redirectBeamLocation.state.routeInformation.uri.toString() ==
-          deepLink) {
+      if (redirectBeamStack.state.routeInformation.uri.toString() == deepLink) {
         delegate.setDeepLink(null);
       }
       return true;
@@ -188,19 +186,19 @@ class BeamGuard {
     return false;
   }
 
-  /// Matches [location]'s pathBlueprint to [pathPatterns].
+  /// Matches [stack]'s pathBlueprint to [pathPatterns].
   ///
   /// If asterisk is present, it is enough that the pre-asterisk substring is
-  /// contained within location's pathPatterns.
-  /// Else, the path (i.e. the pre-query substring) of the location's uri
+  /// contained within stack's pathPatterns.
+  /// Else, the path (i.e. the pre-query substring) of the stack's uri
   /// must be equal to the pathPattern.
-  bool _hasMatch(BeamLocation location) {
+  bool _hasMatch(BeamStack stack) {
     for (final pathPattern in pathPatterns) {
-      final path = location.state.routeInformation.uri.path;
+      final path = stack.state.routeInformation.uri.path;
       if (pathPattern is String) {
         final asteriskIndex = pathPattern.indexOf('*');
         if (asteriskIndex != -1) {
-          if (location.state.routeInformation.uri
+          if (stack.state.routeInformation.uri
               .toString()
               .contains(pathPattern.substring(0, asteriskIndex))) {
             return true;

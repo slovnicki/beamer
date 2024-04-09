@@ -12,7 +12,7 @@ void main() {
 
   final app = BeamerProvider(
     routerDelegate: BeamerDelegate(
-      locationBuilder: RoutesLocationBuilder(
+      stackBuilder: RoutesStackBuilder(
         routes: {
           '/test2/x': (context, state, data) {
             rootDelegate = Beamer.of(context, root: true);
@@ -25,7 +25,7 @@ void main() {
       routeInformationParser: BeamerParser(),
       routerDelegate: BeamerDelegate(
         transitionDelegate: const NoAnimationTransitionDelegate(),
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '/': (context, state, data) {
               testContext = context;
@@ -46,14 +46,14 @@ void main() {
     expect(Beamer.of(testContext!), isA<BeamerDelegate>());
   });
 
-  testWidgets('Beaming updates location state', (tester) async {
+  testWidgets('Beaming updates stack state', (tester) async {
     await tester.pumpWidget(app);
     testContext!.beamToNamed('/test');
     await tester.pump();
-    expect(testContext!.currentBeamLocation.state.routeInformation.uri.path,
-        '/test');
     expect(
-        (testContext!.currentBeamLocation.state as BeamState)
+        testContext!.currentBeamStack.state.routeInformation.uri.path, '/test');
+    expect(
+        (testContext!.currentBeamStack.state as BeamState)
             .uriBlueprint
             .toString(),
         '/test');
@@ -70,20 +70,19 @@ void main() {
     await tester.pump();
     expect(Beamer.of(testContext!).beamingHistoryCompleteLength, 1);
     expect(testContext!.canBeamBack, false);
-    expect(
-        testContext!.currentBeamLocation.state.routeInformation.uri.path, '/');
+    expect(testContext!.currentBeamStack.state.routeInformation.uri.path, '/');
   });
 
   testWidgets(
-      'Beaming to another location pushes it into history which can be popped',
+      'Beaming to another stack pushes it into history which can be popped',
       (tester) async {
     await tester.pumpWidget(app);
     testContext!.beamTo(NotFound(path: '/not-found'));
     await tester.pump();
-    expect(testContext!.currentBeamLocation, isA<NotFound>());
+    expect(testContext!.currentBeamStack, isA<NotFound>());
     expect(Beamer.of(testContext!).beamingHistory.length, 2);
-    expect(testContext!.canPopBeamLocation, true);
-    testContext!.popBeamLocation();
+    expect(testContext!.canPopBeamStack, true);
+    testContext!.popBeamStack();
   });
 
   testWidgets('Root delegate can be obtained from children', (tester) async {
@@ -98,7 +97,7 @@ void main() {
     expect(beamerKey.currentState, isNotNull);
     expect(
         beamerKey
-            .currentState!.currentBeamLocation.state.routeInformation.uri.path,
+            .currentState!.currentBeamStack.state.routeInformation.uri.path,
         '/test2/x');
   });
 
@@ -108,15 +107,15 @@ void main() {
       MaterialApp.router(
         routeInformationParser: BeamerParser(),
         routerDelegate: BeamerDelegate(
-          locationBuilder: RoutesLocationBuilder(
+          stackBuilder: RoutesStackBuilder(
             routes: {
               '/': (context, state, data) => Beamer(
                     routerDelegate: BeamerDelegate(
-                      locationBuilder: RoutesLocationBuilder(
+                      stackBuilder: RoutesStackBuilder(
                         routes: {
                           '/': (context, state, data) => Beamer(
                                 routerDelegate: BeamerDelegate(
-                                  locationBuilder: RoutesLocationBuilder(
+                                  stackBuilder: RoutesStackBuilder(
                                     routes: {
                                       '/': (context, state, data) {
                                         testContext = context;
@@ -143,7 +142,7 @@ void main() {
       (tester) async {
     BuildContext? testContext;
     final delegate = BeamerDelegate(
-      locationBuilder: RoutesLocationBuilder(
+      stackBuilder: RoutesStackBuilder(
         routes: {
           '/': (context, state, data) => Container(),
         },

@@ -14,9 +14,9 @@ void main() {
       final routerDelegate = BeamerDelegate(
         initialPath: '/home',
         notFoundRedirectNamed: '/home',
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
-            '*': (context, state, data) => const MainLocation(),
+            '*': (context, state, data) => const MainStack(),
           },
         ),
       );
@@ -32,7 +32,7 @@ void main() {
       await tester.pumpWidget(MyApp(authenticationNotifier));
 
       expect(
-          (routerDelegate.currentBeamLocation.state as BeamState)
+          (routerDelegate.currentBeamStack.state as BeamState)
               .pathPatternSegments
               .first,
           'home');
@@ -41,7 +41,7 @@ void main() {
 
       await tester.pumpAndSettle();
       expect(
-          (routerDelegate.currentBeamLocation.state as BeamState)
+          (routerDelegate.currentBeamStack.state as BeamState)
               .pathPatternSegments
               .first,
           'login');
@@ -51,7 +51,7 @@ void main() {
 
       await tester.pumpAndSettle();
       expect(
-          (routerDelegate.currentBeamLocation.state as BeamState)
+          (routerDelegate.currentBeamStack.state as BeamState)
               .pathPatternSegments
               .first,
           'home');
@@ -70,14 +70,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MainLocation extends StatefulWidget {
-  const MainLocation({Key? key}) : super(key: key);
+class MainStack extends StatefulWidget {
+  const MainStack({Key? key}) : super(key: key);
 
   @override
-  State<MainLocation> createState() => _MainLocationState();
+  State<MainStack> createState() => _MainStackState();
 }
 
-class _MainLocationState extends State<MainLocation> {
+class _MainStackState extends State<MainStack> {
   StreamSubscription? subscription;
 
   final routerDelegate = BeamerDelegate(
@@ -93,7 +93,7 @@ class _MainLocationState extends State<MainLocation> {
         '/login'
       },
       updateParent: false,
-      locationBuilder: RoutesLocationBuilder(routes: {
+      stackBuilder: RoutesStackBuilder(routes: {
         '/home': (context, state, data) =>
             const SomePage(key: ValueKey('home'), text: 'Home'),
         '/login': (context, state, data) =>

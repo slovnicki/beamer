@@ -4,18 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-import 'test_locations.dart';
+import 'test_stacks.dart';
 
 void main() {
-  final location2 = Location2(RouteInformation(uri: Uri.parse('/l2/1')));
+  final stack2 = Stack2(RouteInformation(uri: Uri.parse('/l2/1')));
 
   group('prepare', () {
-    test('BeamLocation can create valid URI', () {
-      location2.state = location2.state.copyWith(
+    test('BeamStack can create valid URI', () {
+      stack2.state = stack2.state.copyWith(
         pathParameters: {'id': '42'},
         queryParameters: {'q': 'xxx'},
       );
-      expect(location2.state.uri.toString(), '/l2/42?q=xxx');
+      expect(stack2.state.uri.toString(), '/l2/42?q=xxx');
     });
   });
 
@@ -39,7 +39,7 @@ void main() {
     });
   });
 
-  group('EmptyBeamLocation', () {
+  group('EmptyBeamStack', () {
     testWidgets('has "empty" function overrides', (tester) async {
       BuildContext? testContext;
       await tester.pumpWidget(
@@ -51,7 +51,7 @@ void main() {
         ),
       );
 
-      final notFound = EmptyBeamLocation();
+      final notFound = EmptyBeamStack();
       expect(notFound.pathPatterns, []);
       expect(notFound.buildPages(testContext!, BeamState()), []);
     });
@@ -59,27 +59,27 @@ void main() {
 
   group('State', () {
     test('updating state directly will add to history', () {
-      final beamLocation = Location1();
-      expect(beamLocation.history.length, 1);
-      expect(beamLocation.history[0].routeInformation.uri.path, '/');
+      final beamStack = Stack1();
+      expect(beamStack.history.length, 1);
+      expect(beamStack.history[0].routeInformation.uri.path, '/');
 
-      beamLocation.state = BeamState.fromUriString('/l1');
-      expect(beamLocation.history.length, 2);
-      expect(beamLocation.history[1].routeInformation.uri.path, '/l1');
+      beamStack.state = BeamState.fromUriString('/l1');
+      expect(beamStack.history.length, 2);
+      expect(beamStack.history[1].routeInformation.uri.path, '/l1');
     });
   });
 
   group('Listeners', () {
     testWidgets('are registered after beamBack', (tester) async {
-      final beamLocation1 = Location1();
-      final beamLocation2 = Location2();
+      final beamStack1 = Stack1();
+      final beamStack2 = Stack2();
 
       final beamerDelegate = BeamerDelegate(
         initialPath: '/l1',
-        locationBuilder: BeamerLocationBuilder(
-          beamLocations: [
-            beamLocation1,
-            beamLocation2,
+        stackBuilder: BeamerStackBuilder(
+          beamStacks: [
+            beamStack1,
+            beamStack2,
           ],
         ),
       );
@@ -90,23 +90,23 @@ void main() {
           routeInformationParser: BeamerParser(),
         ),
       );
-      expect(beamerDelegate.currentBeamLocation, isA<Location1>());
+      expect(beamerDelegate.currentBeamStack, isA<Stack1>());
       expect(
-        (beamerDelegate.currentBeamLocation as Location1).doesHaveListeners,
+        (beamerDelegate.currentBeamStack as Stack1).doesHaveListeners,
         true,
       );
 
       beamerDelegate.beamToNamed('/l2');
-      expect(beamerDelegate.currentBeamLocation, isA<Location2>());
+      expect(beamerDelegate.currentBeamStack, isA<Stack2>());
       expect(
-        (beamerDelegate.currentBeamLocation as Location2).doesHaveListeners,
+        (beamerDelegate.currentBeamStack as Stack2).doesHaveListeners,
         true,
       );
 
       beamerDelegate.beamBack();
-      expect(beamerDelegate.currentBeamLocation, isA<Location1>());
+      expect(beamerDelegate.currentBeamStack, isA<Stack1>());
       expect(
-        (beamerDelegate.currentBeamLocation as Location1).doesHaveListeners,
+        (beamerDelegate.currentBeamStack as Stack1).doesHaveListeners,
         true,
       );
     });
@@ -114,8 +114,8 @@ void main() {
 
   testWidgets('strict path patterns', (tester) async {
     final delegate = BeamerDelegate(
-      locationBuilder: BeamerLocationBuilder(
-        beamLocations: [StrictPatternsLocation()],
+      stackBuilder: BeamerStackBuilder(
+        beamStacks: [StrictPatternsStack()],
       ),
     );
 
@@ -126,16 +126,16 @@ void main() {
       ),
     );
 
-    expect(delegate.currentBeamLocation, isA<NotFound>());
+    expect(delegate.currentBeamStack, isA<NotFound>());
 
     delegate.beamToNamed('/strict');
-    expect(delegate.currentBeamLocation, isA<StrictPatternsLocation>());
+    expect(delegate.currentBeamStack, isA<StrictPatternsStack>());
 
     delegate.beamToNamed('/strict/deeper');
-    expect(delegate.currentBeamLocation, isA<StrictPatternsLocation>());
+    expect(delegate.currentBeamStack, isA<StrictPatternsStack>());
 
     delegate.beamToNamed('/');
-    expect(delegate.currentBeamLocation, isA<NotFound>());
+    expect(delegate.currentBeamStack, isA<NotFound>());
   });
 
   group('pattern matching', () {
@@ -146,7 +146,7 @@ void main() {
         bool shouldMatch,
       ) {
         expect(
-          RoutesBeamLocation.chooseRoutes(
+          RoutesBeamStack.chooseRoutes(
             RouteInformation(uri: Uri.parse(routeToBeMatched)),
             [routeMatcher],
           ),
@@ -182,8 +182,8 @@ void main() {
       final updateStateStub = UpdateStateStub();
 
       final delegate = BeamerDelegate(
-        locationBuilder: BeamerLocationBuilder(
-          beamLocations: [UpdateStateStubBeamLocation(updateStateStub)],
+        stackBuilder: BeamerStackBuilder(
+          beamStacks: [UpdateStateStubBeamStack(updateStateStub)],
         ),
       );
 

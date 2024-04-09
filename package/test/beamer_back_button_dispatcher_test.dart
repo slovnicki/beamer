@@ -7,7 +7,7 @@ void main() {
   group('Root dispatcher', () {
     testWidgets('back button pops', (tester) async {
       final delegate = BeamerDelegate(
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '/': (context, state, data) => Container(),
             '/test': (context, state, data) => Container(),
@@ -25,22 +25,22 @@ void main() {
       );
       delegate.beamToNamed('/test');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.uri.path,
-          '/test');
+      expect(
+          delegate.currentBeamStack.state.routeInformation.uri.path, '/test');
 
       await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pumpAndSettle();
-      expect(delegate.currentBeamLocation.state.routeInformation.uri.path, '/');
+      expect(delegate.currentBeamStack.state.routeInformation.uri.path, '/');
 
       await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pumpAndSettle();
-      expect(delegate.currentBeamLocation.state.routeInformation.uri.path, '/');
+      expect(delegate.currentBeamStack.state.routeInformation.uri.path, '/');
     });
 
     testWidgets('back button beams back if cannot pop', (tester) async {
       final delegate = BeamerDelegate(
         initialPath: '/test/deeper',
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '/': (context, state, data) => Container(),
             '/test': (context, state, data) => Container(),
@@ -59,11 +59,11 @@ void main() {
       );
       delegate.beamToNamed('/');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.uri.path, '/');
+      expect(delegate.currentBeamStack.state.routeInformation.uri.path, '/');
 
       await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.uri.path,
+      expect(delegate.currentBeamStack.state.routeInformation.uri.path,
           '/test/deeper');
     });
 
@@ -72,7 +72,7 @@ void main() {
         (tester) async {
       final delegate = BeamerDelegate(
         initialPath: '/test/deeper',
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '/': (context, state, data) => Container(),
             '/test': (context, state, data) => Container(),
@@ -93,18 +93,18 @@ void main() {
       );
       delegate.beamToNamed('/');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.uri.path, '/');
+      expect(delegate.currentBeamStack.state.routeInformation.uri.path, '/');
 
       final didBeamBack =
           await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pump();
       expect(didBeamBack, false);
-      expect(delegate.currentBeamLocation.state.routeInformation.uri.path, '/');
+      expect(delegate.currentBeamStack.state.routeInformation.uri.path, '/');
     });
 
     testWidgets('onBack has priority', (tester) async {
       final delegate = BeamerDelegate(
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '/': (context, state, data) => Container(),
             '/test': (context, state, data) => Container(),
@@ -124,18 +124,18 @@ void main() {
       );
       delegate.beamToNamed('/test');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.uri.path,
-          '/test');
+      expect(
+          delegate.currentBeamStack.state.routeInformation.uri.path, '/test');
 
       await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.uri.path,
-          '/test');
+      expect(
+          delegate.currentBeamStack.state.routeInformation.uri.path, '/test');
     });
 
     testWidgets('alwaysBeamBack will not pop', (tester) async {
       final delegate = BeamerDelegate(
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '/': (context, state, data) => Container(),
             '/test': (context, state, data) => Container(),
@@ -172,11 +172,11 @@ void main() {
     testWidgets('back button pops', (tester) async {
       late BeamerDelegate childDelegate;
       final delegate = BeamerDelegate(
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '*': (context, state, data) {
               childDelegate = BeamerDelegate(
-                locationBuilder: RoutesLocationBuilder(
+                stackBuilder: RoutesStackBuilder(
                   routes: {
                     '/': (context, state, data) => Container(),
                     '/test': (context, state, data) => Container(),
@@ -200,9 +200,9 @@ void main() {
       );
       delegate.beamToNamed('/test');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.uri.path,
-          '/test');
-      expect(childDelegate.currentBeamLocation.state.routeInformation.uri.path,
+      expect(
+          delegate.currentBeamStack.state.routeInformation.uri.path, '/test');
+      expect(childDelegate.currentBeamStack.state.routeInformation.uri.path,
           '/test');
 
       // final did =
@@ -210,8 +210,8 @@ void main() {
       // print('did: $did');
       // await tester.pump(Duration(seconds: 1));
       // await tester.pump();
-      // expect(delegate.currentBeamLocation.state.routeInformation.location, '/');
-      // expect(childDelegate.currentBeamLocation.state.routeInformation.location,
+      // expect(delegate.currentBeamStack.state.routeInformation.uri.toString(), '/');
+      // expect(childDelegate.currentBeamStack.state.routeInformation.uri.toString(),
       //     '/');
       // TODO
     });
@@ -219,11 +219,11 @@ void main() {
     testWidgets('back button beams back', (tester) async {
       late BeamerDelegate childDelegate;
       final delegate = BeamerDelegate(
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '*': (context, state, data) {
               childDelegate = BeamerDelegate(
-                locationBuilder: RoutesLocationBuilder(
+                stackBuilder: RoutesStackBuilder(
                   routes: {
                     '/': (context, state, data) => Container(),
                     '/test': (context, state, data) => Container(),
@@ -249,23 +249,23 @@ void main() {
       await tester.pump();
       childDelegate.beamToNamed('/');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.uri.path, '/');
+      expect(delegate.currentBeamStack.state.routeInformation.uri.path, '/');
 
       await backButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.uri.path,
-          '/test');
+      expect(
+          delegate.currentBeamStack.state.routeInformation.uri.path, '/test');
     });
 
     testWidgets('onBack has priority', (tester) async {
       late BeamerDelegate childDelegate;
       late BeamerBackButtonDispatcher rootBackButtonDispatcher;
       final delegate = BeamerDelegate(
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '*': (context, state, data) {
               childDelegate = BeamerDelegate(
-                locationBuilder: RoutesLocationBuilder(
+                stackBuilder: RoutesStackBuilder(
                   routes: {
                     '/': (context, state, data) => Container(),
                     '/test': (context, state, data) => Container(),
@@ -297,13 +297,13 @@ void main() {
       );
       delegate.beamToNamed('/test');
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.uri.path,
-          '/test');
+      expect(
+          delegate.currentBeamStack.state.routeInformation.uri.path, '/test');
 
       await rootBackButtonDispatcher.invokeCallback(Future.value(false));
       await tester.pump();
-      expect(delegate.currentBeamLocation.state.routeInformation.uri.path,
-          '/test');
+      expect(
+          delegate.currentBeamStack.state.routeInformation.uri.path, '/test');
       final value =
           await rootBackButtonDispatcher.invokeCallback(Future.value(false));
       expect(value, true);
@@ -313,11 +313,11 @@ void main() {
       late BeamerDelegate childDelegate;
       late BeamerBackButtonDispatcher rootBackButtonDispatcher;
       final delegate = BeamerDelegate(
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '*': (context, state, data) {
               childDelegate = BeamerDelegate(
-                locationBuilder: RoutesLocationBuilder(
+                stackBuilder: RoutesStackBuilder(
                   routes: {
                     '/': (context, state, data) => Container(),
                     '/test': (context, state, data) => Container(),
@@ -350,7 +350,7 @@ void main() {
       await tester.pump();
       childDelegate.active = false;
       await rootBackButtonDispatcher.invokeCallback(Future.value(false));
-      expect(delegate.currentBeamLocation.state.routeInformation.uri.path, '/');
+      expect(delegate.currentBeamStack.state.routeInformation.uri.path, '/');
     });
   });
 }

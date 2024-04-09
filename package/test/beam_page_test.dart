@@ -2,8 +2,8 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class TestLocation extends BeamLocation<BeamState> {
-  TestLocation([RouteInformation? routeInformation]) : super(routeInformation);
+class TestStack extends BeamStack<BeamState> {
+  TestStack([RouteInformation? routeInformation]) : super(routeInformation);
 
   @override
   List<String> get pathPatterns => ['/books/:bookId/details/buy'];
@@ -32,7 +32,7 @@ class TestLocation extends BeamLocation<BeamState> {
           BeamPage(
             key: ValueKey('book-${state.pathParameters['bookId']}-details'),
             onPopPage: (context, delegate, _, page) {
-              delegate.currentBeamLocation.update(
+              delegate.currentBeamStack.update(
                 (state) => (state as BeamState).copyWith(
                   pathPatternSegments: ['books'],
                   pathParameters: {},
@@ -98,7 +98,7 @@ void main() {
   group('Pops', () {
     testWidgets('path parameter is removed on pop', (tester) async {
       final delegate = BeamerDelegate(
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '/': (context, state, data) => Container(),
             '/:id': (context, state, data) => Container(),
@@ -114,19 +114,17 @@ void main() {
       delegate.beamToNamed('/my-id');
       await tester.pump();
       expect(
-          (delegate.currentBeamLocation.state as BeamState)
-              .pathParameters['id'],
+          (delegate.currentBeamStack.state as BeamState).pathParameters['id'],
           'my-id');
 
       delegate.navigator.pop();
       await tester.pump();
-      expect(
-          (delegate.currentBeamLocation.state as BeamState).pathParameters, {});
+      expect((delegate.currentBeamStack.state as BeamState).pathParameters, {});
     });
 
     final delegate = BeamerDelegate(
-      locationBuilder: BeamerLocationBuilder(
-        beamLocations: [TestLocation()],
+      stackBuilder: BeamerStackBuilder(
+        beamStacks: [TestStack()],
       ),
     );
 
@@ -183,8 +181,7 @@ void main() {
       expect(delegate.beamingHistory.last.history.length, 1);
     });
 
-    testWidgets('onPopPage that updates location pops correctly',
-        (tester) async {
+    testWidgets('onPopPage that updates stack pops correctly', (tester) async {
       await tester.pumpWidget(
         MaterialApp.router(
           routeInformationParser: BeamerParser(),
@@ -258,36 +255,36 @@ void main() {
       delegate.beamToNamed('/books/1/details?x=y');
       await tester.pump();
       expect(
-        (delegate.currentBeamLocation.state as BeamState).uri.path,
+        (delegate.currentBeamStack.state as BeamState).uri.path,
         equals('/books/1/details'),
       );
       expect(
-        (delegate.currentBeamLocation.state as BeamState).queryParameters,
+        (delegate.currentBeamStack.state as BeamState).queryParameters,
         equals({'x': 'y'}),
       );
 
       delegate.beamToNamed('/books/1/details/buy');
       await tester.pump();
       expect(
-        (delegate.currentBeamLocation.state as BeamState).uri.path,
+        (delegate.currentBeamStack.state as BeamState).uri.path,
         equals('/books/1/details/buy'),
       );
-      expect((delegate.currentBeamLocation.state as BeamState).queryParameters,
+      expect((delegate.currentBeamStack.state as BeamState).queryParameters,
           equals({}));
 
       delegate.navigator.pop();
       await tester.pump();
       expect(
-        (delegate.currentBeamLocation.state as BeamState).uri.path,
+        (delegate.currentBeamStack.state as BeamState).uri.path,
         equals('/books/1/details'),
       );
       expect(
-        (delegate.currentBeamLocation.state as BeamState).queryParameters,
+        (delegate.currentBeamStack.state as BeamState).queryParameters,
         equals({'x': 'y'}),
       );
     });
 
-    testWidgets('popBeamLocationOnPop does nothing in single location case',
+    testWidgets('popBeamStackOnPop does nothing in single stack case',
         (tester) async {
       await tester.pumpWidget(
         MaterialApp.router(
@@ -295,7 +292,7 @@ void main() {
           routerDelegate: delegate,
         ),
       );
-      delegate.beamToNamed('/books/1', popBeamLocationOnPop: true);
+      delegate.beamToNamed('/books/1', popBeamStackOnPop: true);
       await tester.pump();
       expect(delegate.currentPages.length, 3);
       expect(delegate.currentPages.last.key, const ValueKey('book-1'));
@@ -332,7 +329,7 @@ void main() {
 
     testWidgets('pop removes from beamStateHistory', (tester) async {
       final delegate = BeamerDelegate(
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '/': (context, state, data) => Container(),
             '/test': (context, state, data) => Container(),
@@ -350,68 +347,64 @@ void main() {
       );
       delegate.beamToNamed('/test');
       await tester.pump();
-      final lastBeamLocationHistory = delegate.beamingHistory.last.history;
-      expect(lastBeamLocationHistory.length, 2);
-      expect(lastBeamLocationHistory[0].routeInformation.uri.path, '/');
-      expect(lastBeamLocationHistory[1].routeInformation.uri.path, '/test');
-      expect(
-          (delegate.currentBeamLocation.state as BeamState).uri.path, '/test');
+      final lastBeamStackHistory = delegate.beamingHistory.last.history;
+      expect(lastBeamStackHistory.length, 2);
+      expect(lastBeamStackHistory[0].routeInformation.uri.path, '/');
+      expect(lastBeamStackHistory[1].routeInformation.uri.path, '/test');
+      expect((delegate.currentBeamStack.state as BeamState).uri.path, '/test');
 
       delegate.beamToNamed('/test/2');
       await tester.pump();
-      expect(lastBeamLocationHistory.length, 3);
-      expect(lastBeamLocationHistory[0].routeInformation.uri.path, '/');
-      expect(lastBeamLocationHistory[1].routeInformation.uri.path, '/test');
-      expect(lastBeamLocationHistory[2].routeInformation.uri.path, '/test/2');
-      expect((delegate.currentBeamLocation.state as BeamState).uri.path,
-          '/test/2');
+      expect(lastBeamStackHistory.length, 3);
+      expect(lastBeamStackHistory[0].routeInformation.uri.path, '/');
+      expect(lastBeamStackHistory[1].routeInformation.uri.path, '/test');
+      expect(lastBeamStackHistory[2].routeInformation.uri.path, '/test/2');
+      expect(
+          (delegate.currentBeamStack.state as BeamState).uri.path, '/test/2');
 
       delegate.navigator.pop();
       await tester.pump();
-      expect(lastBeamLocationHistory.length, 2);
-      expect(lastBeamLocationHistory[0].routeInformation.uri.path, '/');
-      expect(lastBeamLocationHistory[1].routeInformation.uri.path, '/test');
-      expect(
-          (delegate.currentBeamLocation.state as BeamState).uri.path, '/test');
+      expect(lastBeamStackHistory.length, 2);
+      expect(lastBeamStackHistory[0].routeInformation.uri.path, '/');
+      expect(lastBeamStackHistory[1].routeInformation.uri.path, '/test');
+      expect((delegate.currentBeamStack.state as BeamState).uri.path, '/test');
 
       delegate.beamToNamed('/xx');
       await tester.pump();
-      expect(lastBeamLocationHistory.length, 3);
-      expect(lastBeamLocationHistory[0].routeInformation.uri.path, '/');
-      expect(lastBeamLocationHistory[1].routeInformation.uri.path, '/test');
-      expect(lastBeamLocationHistory[2].routeInformation.uri.path, '/xx');
-      expect((delegate.currentBeamLocation.state as BeamState).uri.path, '/xx');
+      expect(lastBeamStackHistory.length, 3);
+      expect(lastBeamStackHistory[0].routeInformation.uri.path, '/');
+      expect(lastBeamStackHistory[1].routeInformation.uri.path, '/test');
+      expect(lastBeamStackHistory[2].routeInformation.uri.path, '/xx');
+      expect((delegate.currentBeamStack.state as BeamState).uri.path, '/xx');
 
       delegate.beamToNamed('/xx/2');
       await tester.pump();
-      expect(lastBeamLocationHistory.length, 4);
-      expect(lastBeamLocationHistory[0].routeInformation.uri.path, '/');
-      expect(lastBeamLocationHistory[1].routeInformation.uri.path, '/test');
-      expect(lastBeamLocationHistory[2].routeInformation.uri.path, '/xx');
-      expect(lastBeamLocationHistory[3].routeInformation.uri.path, '/xx/2');
-      expect(
-          (delegate.currentBeamLocation.state as BeamState).uri.path, '/xx/2');
+      expect(lastBeamStackHistory.length, 4);
+      expect(lastBeamStackHistory[0].routeInformation.uri.path, '/');
+      expect(lastBeamStackHistory[1].routeInformation.uri.path, '/test');
+      expect(lastBeamStackHistory[2].routeInformation.uri.path, '/xx');
+      expect(lastBeamStackHistory[3].routeInformation.uri.path, '/xx/2');
+      expect((delegate.currentBeamStack.state as BeamState).uri.path, '/xx/2');
 
       delegate.navigator.pop();
       await tester.pump();
-      expect(lastBeamLocationHistory.length, 3);
-      expect(lastBeamLocationHistory[0].routeInformation.uri.path, '/');
-      expect(lastBeamLocationHistory[1].routeInformation.uri.path, '/test');
-      expect(lastBeamLocationHistory[2].routeInformation.uri.path, '/xx');
-      expect((delegate.currentBeamLocation.state as BeamState).uri.path, '/xx');
+      expect(lastBeamStackHistory.length, 3);
+      expect(lastBeamStackHistory[0].routeInformation.uri.path, '/');
+      expect(lastBeamStackHistory[1].routeInformation.uri.path, '/test');
+      expect(lastBeamStackHistory[2].routeInformation.uri.path, '/xx');
+      expect((delegate.currentBeamStack.state as BeamState).uri.path, '/xx');
 
       delegate.beamBack();
-      expect(lastBeamLocationHistory.length, 2);
-      expect(lastBeamLocationHistory[0].routeInformation.uri.path, '/');
-      expect(lastBeamLocationHistory[1].routeInformation.uri.path, '/test');
-      expect(
-          (delegate.currentBeamLocation.state as BeamState).uri.path, '/test');
+      expect(lastBeamStackHistory.length, 2);
+      expect(lastBeamStackHistory[0].routeInformation.uri.path, '/');
+      expect(lastBeamStackHistory[1].routeInformation.uri.path, '/test');
+      expect((delegate.currentBeamStack.state as BeamState).uri.path, '/test');
     });
 
     testWidgets('pageles', (tester) async {
       final delegate = BeamerDelegate(
         transitionDelegate: const NoAnimationTransitionDelegate(),
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '/': (context, state, data) => const Scaffold(body: Text('0')),
             '/1': (context, state, data) => BeamPage(
@@ -451,7 +444,7 @@ void main() {
 
     testWidgets('routePop works', (tester) async {
       final delegate = BeamerDelegate(
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '/': (context, state, data) => Container(),
             '/test': (context, state, data) => Container(),
@@ -483,7 +476,7 @@ void main() {
 
   group('Transitions', () {
     final delegate = BeamerDelegate(
-      locationBuilder: RoutesLocationBuilder(
+      stackBuilder: RoutesStackBuilder(
         routes: {
           '/': (context, state, data) => const BeamPage(
                 key: ValueKey('/'),
@@ -625,7 +618,7 @@ void main() {
     testWidgets('pageless no animation transition', (tester) async {
       final delegate = BeamerDelegate(
         transitionDelegate: const NoAnimationTransitionDelegate(),
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '/': (context, state, data) => const Scaffold(body: Text('0')),
             '/1': (context, state, data) => BeamPage(
@@ -668,7 +661,7 @@ void main() {
     testWidgets('pageless reverse transition', (tester) async {
       final delegate = BeamerDelegate(
         transitionDelegate: const ReverseTransitionDelegate(),
-        locationBuilder: RoutesLocationBuilder(
+        stackBuilder: RoutesStackBuilder(
           routes: {
             '/': (context, state, data) => const Scaffold(body: Text('0')),
             '/1': (context, state, data) => BeamPage(
