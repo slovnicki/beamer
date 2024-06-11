@@ -80,6 +80,7 @@ class BeamGuard {
   /// `deepLink` holds the potential deep-link that was set manually via
   /// [BeamerDelegate.setDeepLink] or came from the platforms.
   final String Function(
+    BuildContext context,
     BeamStack? origin,
     BeamStack target,
     String? deepLink,
@@ -163,7 +164,7 @@ class BeamGuard {
     }
 
     if (beamToNamed != null) {
-      final redirectNamed = beamToNamed!(origin, target, deepLink);
+      final redirectNamed = beamToNamed!(context, origin, target, deepLink);
       if (redirectNamed == target.state.routeInformation.uri.toString()) {
         // just block if this will produce an immediate infinite loop
         return true;

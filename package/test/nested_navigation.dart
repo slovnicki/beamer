@@ -87,7 +87,7 @@ class _MainStackState extends State<MainStack> {
             guardNonMatching: true,
             check: (context, state) =>
                 AuthenticationNotifier.of(context).isUserAuthenticated,
-            beamToNamed: (origin, target, _) => '/login')
+            beamToNamed: (context, origin, target, _) => '/login')
       ],
       clearBeamingHistoryOn: {
         '/login'
