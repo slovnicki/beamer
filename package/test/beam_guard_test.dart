@@ -378,7 +378,7 @@ void main() {
             BeamGuard(
               pathPatterns: ['/l2'],
               check: (context, loc) => false,
-              beamToNamed: (_, __, ___) => '/l1',
+              beamToNamed: (context, _, __, ___) => '/l1',
             ),
           ],
         );
@@ -413,12 +413,12 @@ void main() {
           BeamGuard(
             pathPatterns: ['/2'],
             check: (_, __) => false,
-            beamToNamed: (_, __, ___) => '/3',
+            beamToNamed: (context, _, __, ___) => '/3',
           ),
           BeamGuard(
             pathPatterns: ['/3'],
             check: (_, __) => false,
-            beamToNamed: (_, __, ___) => '/1',
+            beamToNamed: (context, _, __, ___) => '/1',
           ),
         ],
       );
@@ -489,7 +489,7 @@ void main() {
           BeamGuard(
             pathPatterns: ['/2'],
             check: (context, stack) => false,
-            beamToNamed: (origin, target, _) {
+            beamToNamed: (context, origin, target, _) {
               final targetState = target.state as BeamState;
               final destinationUri =
                   Uri(path: '/1', queryParameters: targetState.queryParameters)
@@ -610,7 +610,7 @@ void main() {
       final guard = BeamGuard(
         pathPatterns: ['/guarded'],
         check: (_, __) => false,
-        beamToNamed: (_, __, ___) => '/allowed',
+        beamToNamed: (context, _, __, ___) => '/allowed',
         replaceCurrentStack: false,
       );
 
@@ -711,12 +711,12 @@ void main() {
             pathPatterns: <Pattern>['/x'],
             guardNonMatching: true,
             check: (_, __) => true,
-            beamToNamed: (_, __, ___) => '/s1',
+            beamToNamed: (context, _, __, ___) => '/s1',
           ),
           BeamGuard(
             pathPatterns: <Pattern>['/s1/s2'],
             check: (_, __) => false,
-            beamToNamed: (_, to, __) {
+            beamToNamed: (context, _, to, __) {
               return to.state.routeInformation.uri.path + '/s3';
             },
           ),
@@ -759,7 +759,7 @@ void main() {
             BeamGuard(
               pathPatterns: <Pattern>['/guarded'],
               check: (_, __) => false,
-              beamToNamed: (_, __, ___) => '/ok',
+              beamToNamed: (context, _, __, ___) => '/ok',
             ),
           ],
         );
@@ -796,7 +796,7 @@ void main() {
             BeamGuard(
               pathPatterns: <Pattern>['/guarded'],
               check: (_, __) => false,
-              beamToNamed: (_, __, ___) => '/ok',
+              beamToNamed: (context, _, __, ___) => '/ok',
             ),
           ],
         );
@@ -830,7 +830,7 @@ void main() {
             checkTriggered = true;
             return false;
           },
-          beamToNamed: (_, __, ___) => '/',
+          beamToNamed: (context, _, __, ___) => '/',
         ),
       ],
     );

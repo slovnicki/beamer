@@ -696,7 +696,7 @@ void main() {
         BeamGuard(
           pathPatterns: ['/r1'],
           check: (_, __) => guardCheck.value,
-          beamToNamed: (_, __, ___) => '/r2',
+          beamToNamed: (context, _, __, ___) => '/r2',
         ),
       ],
       updateListenable: guardCheck,
@@ -779,20 +779,21 @@ void main() {
           BeamGuard(
             pathPatterns: ['/splash'],
             check: (_, __) => isLoading,
-            beamToNamed: (_, __, deepLink) =>
+            beamToNamed: (context, _, __, deepLink) =>
                 isAuthenticated ? (deepLink ?? '/home') : '/login',
           ),
           BeamGuard(
             pathPatterns: ['/login'],
             check: (_, __) => !isAuthenticated && !isLoading,
-            beamToNamed: (_, __, deepLink) =>
+            beamToNamed: (context, _, __, deepLink) =>
                 isAuthenticated ? (deepLink ?? '/home') : '/splash',
           ),
           BeamGuard(
             pathPatterns: ['/splash', '/login'],
             guardNonMatching: true,
             check: (_, __) => isAuthenticated,
-            beamToNamed: (_, __, ___) => isLoading ? '/splash' : '/login',
+            beamToNamed: (context, _, __, ___) =>
+                isLoading ? '/splash' : '/login',
           ),
         ],
       );
