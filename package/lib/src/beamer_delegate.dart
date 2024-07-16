@@ -1,7 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:beamer/src/browser_tab_title_util_non_web.dart'
-  if (dart.library.html) 'package:beamer/src/browser_tab_title_util_web.dart'
-  as browser_tab_title_util;
+    if (dart.library.html) 'package:beamer/src/browser_tab_title_util_web.dart'
+    as browser_tab_title_util;
 import 'package:beamer/src/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +24,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     @Deprecated(
       'No longer used by this package, please remove any references to it. '
       'This feature was deprecated after v1.0.0.',
-    ) this.preferUpdate = true,
+    )
+    this.preferUpdate = true,
     this.removeDuplicateHistory = true,
     this.notFoundPage = BeamPage.notFound,
     this.notFoundRedirect,
@@ -240,7 +241,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   ///
   /// See [build] for details on how beamer handles [Navigator.onPopPage].
   bool Function(BuildContext context, Route<dynamic> route, dynamic result)?
-    onPopPage;
+      onPopPage;
 
   /// Whether the title attribute of [BeamPage] should
   /// be used to set and update the browser tab title.
@@ -495,7 +496,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   ///
   /// See [update] for more details.
   /// {@endtemplate}
-  void beamTo(BeamStack stack, {
+  void beamTo(
+      BeamStack stack, {
     Object? data,
     BeamStack? popTo,
     TransitionDelegate? transitionDelegate,
@@ -557,7 +559,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   ///
   /// See [update] for more details.
   /// {@endtemplate}
-  void beamToNamed(String uri, {
+  void beamToNamed(
+      String uri, {
     Object? routeState,
     Object? data,
     String? popToNamed,
@@ -585,7 +588,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   /// The same as [beamToNamed], but replaces the last state in history,
   /// i.e. removes it from the `beamingHistory.last.history` and then does [beamToNamed].
-  void beamToReplacementNamed(String uri, {
+  void beamToReplacementNamed(
+      String uri, {
     Object? routeState,
     Object? data,
     String? popToNamed,
@@ -615,7 +619,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   ///
   /// See [beamToNamed] for more details.
   /// {@endtemplate}
-  void popToNamed(String uri, {
+  void popToNamed(
+      String uri, {
     Object? routeState,
     Object? data,
     String? popToNamed,
@@ -740,7 +745,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   @override
   RouteInformation? get currentConfiguration {
     final response =
-    _parent == null && _initialConfigurationReady ? configuration : null;
+        _parent == null && _initialConfigurationReady ? configuration : null;
     if (response != null) {
       _lastReportedRouteInformation = response.copyWith();
     }
@@ -981,9 +986,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     } else {
       _currentPages = _currentBeamParameters.stacked
           ? currentBeamStack.buildPages(context, currentBeamStack.state)
-          : [currentBeamStack
-          .buildPages(context, currentBeamStack.state)
-          .last
+          : [currentBeamStack.buildPages(context, currentBeamStack.state).last
       ];
     }
   }
