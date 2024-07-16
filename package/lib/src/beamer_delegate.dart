@@ -1,7 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:beamer/src/browser_tab_title_util_non_web.dart'
-if (dart.library.html) 'package:beamer/src/browser_tab_title_util_web.dart'
-as browser_tab_title_util;
+  if (dart.library.html) 'package:beamer/src/browser_tab_title_util_web.dart'
+  as browser_tab_title_util;
 import 'package:beamer/src/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -23,9 +23,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     this.updateListenable,
     @Deprecated(
       'No longer used by this package, please remove any references to it. '
-          'This feature was deprecated after v1.0.0.',
-    )
-    this.preferUpdate = true,
+      'This feature was deprecated after v1.0.0.',
+    ) this.preferUpdate = true,
     this.removeDuplicateHistory = true,
     this.notFoundPage = BeamPage.notFound,
     this.notFoundRedirect,
@@ -188,7 +187,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   @Deprecated(
     'No longer used by this package, please remove any references to it. '
-        'This feature was deprecated after v1.0.0.',
+    'This feature was deprecated after v1.0.0.',
   )
   // ignore: public_member_api_docs
   final bool preferUpdate;
@@ -241,7 +240,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   ///
   /// See [build] for details on how beamer handles [Navigator.onPopPage].
   bool Function(BuildContext context, Route<dynamic> route, dynamic result)?
-  onPopPage;
+    onPopPage;
 
   /// Whether the title attribute of [BeamPage] should
   /// be used to set and update the browser tab title.
@@ -496,16 +495,15 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   ///
   /// See [update] for more details.
   /// {@endtemplate}
-  void beamTo(
-      BeamStack stack, {
-        Object? data,
-        BeamStack? popTo,
-        TransitionDelegate? transitionDelegate,
-        bool beamBackOnPop = false,
-        bool popBeamStackOnPop = false,
-        bool stacked = true,
-        bool replaceRouteInformation = false,
-      }) {
+  void beamTo(BeamStack stack, {
+    Object? data,
+    BeamStack? popTo,
+    TransitionDelegate? transitionDelegate,
+    bool beamBackOnPop = false,
+    bool popBeamStackOnPop = false,
+    bool stacked = true,
+    bool replaceRouteInformation = false,
+  }) {
     _beamStackCandidate = stack;
     update(
       configuration: stack.state.routeInformation,
@@ -524,15 +522,14 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   /// The same as [beamTo], but replaces the last state in history,
   /// i.e. removes it from the `beamingHistory.last.history` and then does [beamTo].
-  void beamToReplacement(
-      BeamStack stack, {
-        Object? data,
-        BeamStack? popTo,
-        TransitionDelegate? transitionDelegate,
-        bool beamBackOnPop = false,
-        bool popBeamStackOnPop = false,
-        bool stacked = true,
-      }) {
+  void beamToReplacement(BeamStack stack, {
+    Object? data,
+    BeamStack? popTo,
+    TransitionDelegate? transitionDelegate,
+    bool beamBackOnPop = false,
+    bool popBeamStackOnPop = false,
+    bool stacked = true,
+  }) {
     removeLastHistoryElement();
     beamTo(
       stack,
@@ -560,17 +557,16 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   ///
   /// See [update] for more details.
   /// {@endtemplate}
-  void beamToNamed(
-      String uri, {
-        Object? routeState,
-        Object? data,
-        String? popToNamed,
-        TransitionDelegate? transitionDelegate,
-        bool beamBackOnPop = false,
-        bool popBeamStackOnPop = false,
-        bool stacked = true,
-        bool replaceRouteInformation = false,
-      }) {
+  void beamToNamed(String uri, {
+    Object? routeState,
+    Object? data,
+    String? popToNamed,
+    TransitionDelegate? transitionDelegate,
+    bool beamBackOnPop = false,
+    bool popBeamStackOnPop = false,
+    bool stacked = true,
+    bool replaceRouteInformation = false,
+  }) {
     update(
       configuration: RouteInformation(uri: Uri.parse(uri), state: routeState),
       beamParameters: _currentBeamParameters.copyWith(
@@ -589,16 +585,15 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   /// The same as [beamToNamed], but replaces the last state in history,
   /// i.e. removes it from the `beamingHistory.last.history` and then does [beamToNamed].
-  void beamToReplacementNamed(
-      String uri, {
-        Object? routeState,
-        Object? data,
-        String? popToNamed,
-        TransitionDelegate? transitionDelegate,
-        bool beamBackOnPop = false,
-        bool popBeamStackOnPop = false,
-        bool stacked = true,
-      }) {
+  void beamToReplacementNamed(String uri, {
+    Object? routeState,
+    Object? data,
+    String? popToNamed,
+    TransitionDelegate? transitionDelegate,
+    bool beamBackOnPop = false,
+    bool popBeamStackOnPop = false,
+    bool stacked = true,
+  }) {
     removeLastHistoryElement();
     beamToNamed(
       uri,
@@ -620,16 +615,15 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   ///
   /// See [beamToNamed] for more details.
   /// {@endtemplate}
-  void popToNamed(
-      String uri, {
-        Object? routeState,
-        Object? data,
-        String? popToNamed,
-        bool beamBackOnPop = false,
-        bool popBeamStackOnPop = false,
-        bool stacked = true,
-        bool replaceRouteInformation = false,
-      }) {
+  void popToNamed(String uri, {
+    Object? routeState,
+    Object? data,
+    String? popToNamed,
+    bool beamBackOnPop = false,
+    bool popBeamStackOnPop = false,
+    bool stacked = true,
+    bool replaceRouteInformation = false,
+  }) {
     while (beamingHistory.isNotEmpty) {
       final index = beamingHistory.last.history.lastIndexWhere(
             (element) => element.routeInformation.uri == Uri.parse(uri),
@@ -888,7 +882,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     _disposeBeamStack(currentBeamStack);
     if (removeDuplicateHistory) {
       final index = beamingHistory.indexWhere(
-              (historyStack) => historyStack.runtimeType == beamStack.runtimeType);
+              (historyStack) =>
+          historyStack.runtimeType == beamStack.runtimeType);
       if (index != -1) {
         _disposeBeamStack(beamingHistory[index]);
         beamingHistory.removeAt(index);
@@ -986,7 +981,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     } else {
       _currentPages = _currentBeamParameters.stacked
           ? currentBeamStack.buildPages(context, currentBeamStack.state)
-          : [currentBeamStack.buildPages(context, currentBeamStack.state).last];
+          : [currentBeamStack
+          .buildPages(context, currentBeamStack.state)
+          .last
+      ];
     }
   }
 
