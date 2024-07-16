@@ -888,7 +888,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     _disposeBeamStack(currentBeamStack);
     if (removeDuplicateHistory) {
       final index = beamingHistory.indexWhere(
-              (historyStack) => historyStack.runtimeType == beamStack.runtimeType);
+          (historyStack) => historyStack.runtimeType == beamStack.runtimeType);
       if (index != -1) {
         _disposeBeamStack(beamingHistory[index]);
         beamingHistory.removeAt(index);
