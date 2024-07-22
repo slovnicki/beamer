@@ -29,7 +29,7 @@ class NoAnimationTransitionDelegate extends TransitionDelegate<void> {
         final pagelessRoutes = pageRouteToPagelessRoutes[exitingPageRoute];
         if (pagelessRoutes != null) {
           for (final pagelessRoute in pagelessRoutes) {
-            pagelessRoute.markForRemove();
+            if (pagelessRoute.isWaitingForExitingDecision) pagelessRoute.markForRemove();
           }
         }
       }
