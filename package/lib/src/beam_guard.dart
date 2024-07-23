@@ -211,7 +211,13 @@ class BeamGuard {
         }
       } else {
         final regexp = Utils.tryCastToRegExp(pathPattern);
-        return regexp.hasMatch(path);
+        final result = regexp.hasMatch(path);
+
+        if (result) {
+          return true;
+        } else {
+          continue;
+        }
       }
     }
     return false;

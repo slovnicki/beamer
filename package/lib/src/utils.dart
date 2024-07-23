@@ -99,7 +99,13 @@ abstract class Utils {
         }
       } else {
         final regexp = tryCastToRegExp(pathPattern);
-        return regexp.hasMatch(uri.toString());
+        final result = regexp.hasMatch(uri.toString());
+
+        if (result) {
+          return true;
+        } else {
+          continue;
+        }
       }
     }
     return false;
