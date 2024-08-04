@@ -372,10 +372,11 @@ abstract class BeamStack<T extends RouteInformationSerializable> extends ChangeN
         final regex = pathPattern.toRegExp;
         final hasMatch = regex.hasMatch(uri.toString());
 
-        if (hasMatch)
+        if (hasMatch) {
           return true;
-        else
+        } else {
           continue;
+        }
       }
     }
     return false;
@@ -396,10 +397,11 @@ abstract class BeamStack<T extends RouteInformationSerializable> extends ChangeN
         final regex = guardPathPattern.toRegExp;
         final hasMatch = regex.hasMatch(path);
 
-        if (hasMatch)
+        if (hasMatch) {
           return true;
-        else
+        } else {
           continue;
+        }
       }
 
       final asteriskIndex = guardPathPattern.indexOf('*');
