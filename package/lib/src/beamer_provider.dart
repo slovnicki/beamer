@@ -39,8 +39,7 @@ class BeamerProvider extends InheritedWidget {
   /// Obtain the nearest [BeamerProvider].
   ///
   /// See [BuildContext.dependOnInheritedWidgetOfExactType].
-  static BeamerProvider? of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<BeamerProvider>();
+  static BeamerProvider? of(BuildContext context) => context.dependOnInheritedWidgetOfExactType<BeamerProvider>();
 
   @override
   bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;

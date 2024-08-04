@@ -1,8 +1,6 @@
 import 'package:beamer/beamer.dart';
+import 'package:beamer/src/path_url_strategy_nonweb.dart' if (dart.library.html) 'path_url_strategy_web.dart' as url_strategy;
 import 'package:flutter/widgets.dart';
-
-import 'package:beamer/src/path_url_strategy_nonweb.dart'
-    if (dart.library.html) 'path_url_strategy_web.dart' as url_strategy;
 
 /// Represents a navigation area and is a wrapper for [Router].
 ///
@@ -42,9 +40,22 @@ class Beamer extends StatefulWidget {
       final delegate = Router.of(context).routerDelegate as BeamerDelegate;
       return root ? delegate.root : delegate;
     } catch (e) {
-      assert(BeamerProvider.of(context) != null,
-          'There was no Router nor BeamerProvider in current context. If using MaterialApp.builder, wrap the MaterialApp.router in BeamerProvider to which you pass the same routerDelegate as to MaterialApp.router.');
+      assert(BeamerProvider.of(context) != null, 'There was no Router nor BeamerProvider in current context. If using MaterialApp.builder, wrap the MaterialApp.router in BeamerProvider to which you pass the same routerDelegate as to MaterialApp.router.');
       return BeamerProvider.of(context)!.routerDelegate;
+    }
+  }
+
+  /// Access Beamer's [routerDelegate].
+  ///
+  /// Giving `true` to [root] gets the root beamer if the closest beamer is
+  /// nested under another beamer.
+  ///
+  /// This is the same as `Beamer.of(context, root: true)`. But returns `null` if no Beamer is found in the context.
+  static BeamerDelegate? maybeOf(BuildContext context, {bool root = false}) {
+    try {
+      return of(context, root: root);
+    } catch (e) {
+      return null;
     }
   }
 
@@ -80,11 +91,9 @@ class BeamerState extends State<Beamer> {
     // The parent will only be null, if this state is disposed and therefore
     // `build` cannot be called on it any more.
     final backButtonDispatcher = widget.backButtonDispatcher ??
-        ((parent!.backButtonDispatcher is BeamerBackButtonDispatcher &&
-                widget.createBackButtonDispatcher)
+        ((parent!.backButtonDispatcher is BeamerBackButtonDispatcher && widget.createBackButtonDispatcher)
             ? BeamerChildBackButtonDispatcher(
-                parent:
-                    parent!.backButtonDispatcher! as BeamerBackButtonDispatcher,
+                parent: parent!.backButtonDispatcher! as BeamerBackButtonDispatcher,
                 delegate: routerDelegate,
               )
             : null);

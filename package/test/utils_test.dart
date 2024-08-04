@@ -119,7 +119,7 @@ void main() {
 
   test('tryCastToRegExp throws', () {
     expect(
-      () => Utils.tryCastToRegExp('not-regexp'),
+      () => 'not-regexp'.toRegExp,
       throwsA(isA<FlutterError>()),
     );
   });
@@ -204,21 +204,15 @@ void main() {
     test('Merging with new routeState', () {
       final current = RouteInformation(uri: Uri.parse('/current'));
       expect(
-        Utils.mergeConfiguration(
-                current, RouteInformation(uri: Uri(), state: 42))
-            .state,
+        Utils.mergeConfiguration(current, RouteInformation(uri: Uri(), state: 42)).state,
         42,
       );
       expect(
-        Utils.mergeConfiguration(current,
-                RouteInformation(uri: Uri.parse('incoming'), state: 42))
-            .state,
+        Utils.mergeConfiguration(current, RouteInformation(uri: Uri.parse('incoming'), state: 42)).state,
         42,
       );
       expect(
-        Utils.mergeConfiguration(current,
-                RouteInformation(uri: Uri.parse('/incoming'), state: 42))
-            .state,
+        Utils.mergeConfiguration(current, RouteInformation(uri: Uri.parse('/incoming'), state: 42)).state,
         42,
       );
       expect(

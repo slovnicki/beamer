@@ -45,9 +45,7 @@ class BeamParameters {
   }) {
     return BeamParameters(
       transitionDelegate: transitionDelegate ?? this.transitionDelegate,
-      popConfiguration: resetPopConfiguration
-          ? null
-          : popConfiguration ?? this.popConfiguration,
+      popConfiguration: resetPopConfiguration ? null : popConfiguration ?? this.popConfiguration,
       beamBackOnPop: beamBackOnPop ?? this.beamBackOnPop,
       popBeamStackOnPop: popBeamStackOnPop ?? this.popBeamStackOnPop,
       stacked: stacked ?? this.stacked,
@@ -83,8 +81,7 @@ class HistoryElement {
 ///   * keeping a [state] that provides the link between the first 2
 ///
 /// Extend this class to define your stacks to which you can then beam to.
-abstract class BeamStack<T extends RouteInformationSerializable>
-    extends ChangeNotifier {
+abstract class BeamStack<T extends RouteInformationSerializable> extends ChangeNotifier {
   /// Creates a [BeamStack] with specified properties.
   ///
   /// All attributes can be null.
@@ -169,8 +166,7 @@ abstract class BeamStack<T extends RouteInformationSerializable>
   /// One should override this if using a custom state class.
   ///
   /// See [create].
-  T createState(RouteInformation routeInformation) =>
-      BeamState.fromRouteInformation(
+  T createState(RouteInformation routeInformation) => BeamState.fromRouteInformation(
         routeInformation,
         beamStack: this,
       ) as T;
@@ -283,8 +279,7 @@ abstract class BeamStack<T extends RouteInformationSerializable>
         history.removeRange(sameStateIndex, history.length);
       }
     }
-    if (history.isEmpty ||
-        routeInformation.uri != history.last.routeInformation.uri) {
+    if (history.isEmpty || routeInformation.uri != history.last.routeInformation.uri) {
       history.add(HistoryElement(routeInformation, beamParameters));
     }
   }
@@ -318,7 +313,104 @@ abstract class BeamStack<T extends RouteInformationSerializable>
   /// Can this handle the [uri] based on its [pathPatterns].
   ///
   /// Can be useful in a custom [BeamerDelegate.stackBuilder].
-  bool canHandle(Uri uri) => Utils.canBeamStackHandleUri(this, uri);
+  bool canHandle(Uri uri) {
+    for (final pathPattern in pathPatterns) {
+      if (pathPattern is String) {
+        // If it is an exact match or asterisk pattern
+        if (pathPattern == uri.path || pathPattern == '/*' || pathPattern == '*') {
+          return true;
+        }
+
+        // Clean URI path segments
+        final uriPathSegments = uri.pathSegments.toList();
+        if (uriPathSegments.length > 1 && uriPathSegments.last == '') {
+          uriPathSegments.removeLast();
+        }
+
+        final pathPatternSegments = Uri.parse(pathPattern).pathSegments;
+
+        // If we're in strict mode and URI has fewer segments than pattern,
+        // we don't have a match so can continue.
+        if (strictPathPatterns && uriPathSegments.length < pathPatternSegments.length) {
+          continue;
+        }
+
+        // If URI has more segments and pattern doesn't end with asterisk,
+        // we don't have a match so can continue.
+        if (uriPathSegments.length > pathPatternSegments.length && (pathPatternSegments.isEmpty || !pathPatternSegments.last.endsWith('*'))) {
+          continue;
+        }
+
+        var checksPassed = true;
+        // Iterating through URI segments
+        for (var i = 0; i < uriPathSegments.length; i++) {
+          // If all checks have passed up to i,
+          // if pattern has no more segments to traverse and it ended with asterisk,
+          // it is a match and we can break,
+          if (pathPatternSegments.length < i + 1 && pathPatternSegments.last.endsWith('*')) {
+            checksPassed = true;
+            break;
+          }
+
+          // If pattern has asterisk at i-th position,
+          // anything matches and we can continue.
+          if (pathPatternSegments[i] == '*') {
+            continue;
+          }
+          // If they are not the same and pattern doesn't expects path parameter,
+          // there's no match and we can break.
+          if (uriPathSegments[i] != pathPatternSegments[i] && !pathPatternSegments[i].startsWith(':')) {
+            checksPassed = false;
+            break;
+          }
+        }
+        // If no check failed, beamStack can handle this URI.
+        if (checksPassed) {
+          return true;
+        }
+      } else {
+        final regex = pathPattern.toRegExp;
+        final hasMatch = regex.hasMatch(uri.toString());
+
+        if (hasMatch)
+          return true;
+        else
+          continue;
+      }
+    }
+    return false;
+  }
+
+  /// Matches pathBlueprint to [pathPatterns].
+  ///
+  /// If asterisk is present, it is enough that the pre-asterisk substring is
+  /// contained within stack's pathPatterns.
+  /// Else, the path (i.e. the pre-query substring) of the stack's uri
+  /// must be equal to the pathPattern.
+  bool shouldCheckGuard(BeamGuard guard) {
+    for (final guardPathPattern in guard.pathPatterns) {
+      final uri = state.routeInformation.uri;
+      final path = uri.path;
+
+      if (guardPathPattern is! String) {
+        final regex = guardPathPattern.toRegExp;
+        final hasMatch = regex.hasMatch(path);
+
+        if (hasMatch)
+          return true;
+        else
+          continue;
+      }
+
+      final asteriskIndex = guardPathPattern.indexOf('*');
+
+      if (asteriskIndex == -1) return guardPathPattern == path;
+
+      return uri.toString().contains(guardPathPattern.substring(0, asteriskIndex));
+    }
+
+    return false;
+  }
 
   /// Gives the ability to wrap the [navigator].
   ///
@@ -360,7 +452,7 @@ abstract class BeamStack<T extends RouteInformationSerializable>
   /// If this is false (default), then a path pattern '/some/path' will match
   /// '/' and '/some' and '/some/path'.
   /// If this is true, then it will match just '/some/path'.
-  /// 
+  ///
   /// __This only applies if the pattern is of type STRING, not REGEXP__
   bool get strictPathPatterns => false;
 
@@ -432,8 +524,7 @@ class GuardShowPage extends BeamStack<BeamState> {
   final BeamPage beamPage;
 
   @override
-  List<BeamPage> buildPages(BuildContext context, BeamState state) =>
-      [beamPage];
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [beamPage];
 
   @override
   List<String> get pathPatterns => [routeInformation.uri.path];
@@ -487,10 +578,8 @@ class RoutesBeamStack extends BeamStack<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
     final filteredRoutes = chooseRoutes(state.routeInformation, routes.keys);
-    final routeBuilders = Map.of(routes)
-      ..removeWhere((key, value) => !filteredRoutes.containsKey(key));
-    final sortedRoutes = routeBuilders.keys.toList()
-      ..sort((a, b) => _compareKeys(a, b));
+    final routeBuilders = Map.of(routes)..removeWhere((key, value) => !filteredRoutes.containsKey(key));
+    final sortedRoutes = routeBuilders.keys.toList()..sort((a, b) => _compareKeys(a, b));
     final pages = sortedRoutes.map<BeamPage>((route) {
       final routeElement = routes[route]!(context, state, data);
       if (routeElement is BeamPage) {
@@ -579,10 +668,13 @@ class RoutesBeamStack extends BeamStack<BeamState> {
           matched[route] = createMatch(path, uri.queryParameters);
         }
       } else {
-        final regexp = Utils.tryCastToRegExp(route);
-        if (regexp.hasMatch(uri.toString())) {
-          final path = uri.toString();
-          matched[regexp] = createMatch(path, uri.queryParameters);
+        final regex = route.toRegExp;
+        final path = uri.toString();
+
+        final hasMatch = regex.hasMatch(path);
+
+        if (hasMatch) {
+          matched[regex] = createMatch(path, uri.queryParameters);
         }
       }
     }
