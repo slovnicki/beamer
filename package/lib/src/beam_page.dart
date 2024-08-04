@@ -54,6 +54,8 @@ class BeamPage extends Page {
     this.fullScreenDialog = false,
     this.opaque = true,
     this.keepQueryOnPop = false,
+    this.transitionDuration,
+    this.reverseTransitionDuration,
   }) : super(key: key, name: name);
 
   /// A [BeamPage] to be the default for [BeamerDelegate.notFoundPage].
@@ -83,15 +85,11 @@ class BeamPage extends Page {
     // Take the history element that is being popped and the one before
     // as they will be compared later on to fine-tune the pop experience.
     final poppedHistoryElement = delegate.removeLastHistoryElement()!;
-    final previousHistoryElement = delegate.beamingHistory.isNotEmpty
-        ? delegate.beamingHistory.last.history.last
-        : null;
+    final previousHistoryElement = delegate.beamingHistory.isNotEmpty ? delegate.beamingHistory.last.history.last : null;
 
     // Convert both to Uri as their path and query will be compared.
     final poppedUri = poppedHistoryElement.routeInformation.uri;
-    final previousUri = previousHistoryElement != null
-        ? previousHistoryElement.routeInformation.uri
-        : Uri.parse(delegate.initialPath);
+    final previousUri = previousHistoryElement != null ? previousHistoryElement.routeInformation.uri : Uri.parse(delegate.initialPath);
 
     final poppedPathSegments = poppedUri.pathSegments;
     final poppedQueryParameters = poppedUri.queryParameters;
@@ -122,8 +120,7 @@ class BeamPage extends Page {
     // Otherwise, find the route information with popPath in history.
     RouteInformation? lastRouteInformation;
     if (popPath == previousUri.path) {
-      lastRouteInformation =
-          delegate.removeLastHistoryElement()?.routeInformation;
+      lastRouteInformation = delegate.removeLastHistoryElement()?.routeInformation;
     } else {
       // find the last
       var found = false;
@@ -206,13 +203,26 @@ class BeamPage extends Page {
   /// See [BeamPageType] for available types.
   final BeamPageType type;
 
+  /// The transition duration for this [BeamPage].
+  ///
+  /// Defaults to `Duration(milliseconds: 300)`. (use flutter's default)
+  ///
+  /// This is not used when [type] is [BeamPageType.cupertino] or [BeamPageType.material].
+  final Duration? transitionDuration;
+
+  /// The reverse transition duration for this [BeamPage].
+  ///
+  /// Defaults to `Duration(milliseconds: 300)`. (use flutter's default)
+  ///
+  /// This is not used when [type] is [BeamPageType.cupertino] or [BeamPageType.material].
+  final Duration? reverseTransitionDuration;
+
   /// A builder for custom [Route] to use in [createRoute].
   ///
   /// `context` is the build context.
   /// `child` is the child of this [BeamPage]
   /// `settings` will be passed to [PageRoute] constructor.
-  final Route Function(
-      BuildContext context, RouteSettings settings, Widget child)? routeBuilder;
+  final Route Function(BuildContext context, RouteSettings settings, Widget child)? routeBuilder;
 
   /// Whether to present current [BeamPage] as a fullscreen dialog
   ///
@@ -249,6 +259,8 @@ class BeamPage extends Page {
           opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
+          transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
+          reverseTransitionDuration: reverseTransitionDuration ?? Duration(milliseconds: 300),
           transitionsBuilder: (_, animation, __, child) => FadeTransition(
             opacity: animation,
             child: child,
@@ -260,10 +272,10 @@ class BeamPage extends Page {
           opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
+          transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
+          reverseTransitionDuration: reverseTransitionDuration ?? Duration(milliseconds: 300),
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
-            position: animation.drive(
-                Tween(begin: const Offset(0, 1), end: const Offset(0, 0))
-                    .chain(CurveTween(curve: Curves.ease))),
+            position: animation.drive(Tween(begin: const Offset(0, 1), end: const Offset(0, 0)).chain(CurveTween(curve: Curves.ease))),
             child: child,
           ),
         );
@@ -273,10 +285,10 @@ class BeamPage extends Page {
           opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
+          transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
+          reverseTransitionDuration: reverseTransitionDuration ?? Duration(milliseconds: 300),
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
-            position: animation.drive(
-                Tween(begin: const Offset(1, 0), end: const Offset(0, 0))
-                    .chain(CurveTween(curve: Curves.ease))),
+            position: animation.drive(Tween(begin: const Offset(1, 0), end: const Offset(0, 0)).chain(CurveTween(curve: Curves.ease))),
             child: child,
           ),
         );
@@ -286,10 +298,10 @@ class BeamPage extends Page {
           opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
+          transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
+          reverseTransitionDuration: reverseTransitionDuration ?? Duration(milliseconds: 300),
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
-            position: animation.drive(
-                Tween(begin: const Offset(-1, 0), end: const Offset(0, 0))
-                    .chain(CurveTween(curve: Curves.ease))),
+            position: animation.drive(Tween(begin: const Offset(-1, 0), end: const Offset(0, 0)).chain(CurveTween(curve: Curves.ease))),
             child: child,
           ),
         );
@@ -299,10 +311,10 @@ class BeamPage extends Page {
           opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
+          transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
+          reverseTransitionDuration: reverseTransitionDuration ?? Duration(milliseconds: 300),
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
-            position: animation.drive(
-                Tween(begin: const Offset(0, -1), end: const Offset(0, 0))
-                    .chain(CurveTween(curve: Curves.ease))),
+            position: animation.drive(Tween(begin: const Offset(0, -1), end: const Offset(0, 0)).chain(CurveTween(curve: Curves.ease))),
             child: child,
           ),
         );
@@ -312,6 +324,8 @@ class BeamPage extends Page {
           opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
+          transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
+          reverseTransitionDuration: reverseTransitionDuration ?? Duration(milliseconds: 300),
           transitionsBuilder: (_, animation, __, child) => ScaleTransition(
             scale: animation,
             child: child,
@@ -322,6 +336,8 @@ class BeamPage extends Page {
           fullscreenDialog: fullScreenDialog,
           opaque: opaque,
           settings: this,
+          transitionDuration: transitionDuration ?? Duration.zero,
+          reverseTransitionDuration: reverseTransitionDuration ?? Duration.zero,
           pageBuilder: (context, animation, secondaryAnimation) => child,
         );
       default:

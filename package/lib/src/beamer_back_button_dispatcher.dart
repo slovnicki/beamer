@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
-
 import 'package:beamer/src/beamer_delegate.dart';
+import 'package:flutter/material.dart';
 
 /// Overrides default back button behavior in [RootBackButtonDispatcher]
 /// to do custom [onBack] or [BeamerDelegate.beamBack].
