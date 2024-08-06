@@ -9,7 +9,8 @@ class StackA extends BeamStack<BeamState> {
   List<Pattern> get pathPatterns => ['/a'];
 
   @override
-  List<BeamPage> buildPages(BuildContext context, BeamState state) => [BeamPage(key: const ValueKey('a'), child: Container())];
+  List<BeamPage> buildPages(BuildContext context, BeamState state) =>
+      [BeamPage(key: const ValueKey('a'), child: Container())];
 }
 
 class StackB extends BeamStack<BeamState> {
@@ -18,8 +19,10 @@ class StackB extends BeamStack<BeamState> {
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
-        if (state.pathPatternSegments.contains('b1')) BeamPage(key: const ValueKey('b1'), child: Container()),
-        if (state.pathPatternSegments.contains('b2')) BeamPage(key: const ValueKey('b2'), child: Container()),
+        if (state.pathPatternSegments.contains('b1'))
+          BeamPage(key: const ValueKey('b1'), child: Container()),
+        if (state.pathPatternSegments.contains('b2'))
+          BeamPage(key: const ValueKey('b2'), child: Container()),
       ];
 }
 
@@ -68,7 +71,9 @@ void main() {
       expect(delegate.beamingHistory[0], isA<Stack2>());
     });
 
-    test('beamToReplacement removes currentBeamStack from history before appending new', () {
+    test(
+        'beamToReplacement removes currentBeamStack from history before appending new',
+        () {
       delegate.beamToNamed('/l2');
       delegate.beamToNamed('/l1');
 
@@ -108,11 +113,14 @@ void main() {
       expect(delegate.beamingHistory[0], isA<Stack1>());
       expect(delegate.currentBeamStack, isA<Stack2>());
       expect(delegate.beamingHistory.last.history.length, 2);
-      expect(delegate.beamingHistory.last.history.last.routeInformation.uri.path, '/l2/y');
+      expect(
+          delegate.beamingHistory.last.history.last.routeInformation.uri.path,
+          '/l2/y');
       expect(delegate.beamingHistoryCompleteLength, 3);
     });
 
-    test('beamBack leads to previous beam state and all helpers are correct', () {
+    test('beamBack leads to previous beam state and all helpers are correct',
+        () {
       delegate.beamToNamed('/l1');
       delegate.beamToNamed('/l2');
 
@@ -131,7 +139,8 @@ void main() {
 
       expect(delegate.beamBack(), true);
       expect(delegate.currentBeamStack, isA<Stack1>());
-      expect((delegate.currentBeamStack.state as BeamState).uri.path, equals('/l1/one'));
+      expect((delegate.currentBeamStack.state as BeamState).uri.path,
+          equals('/l1/one'));
       expect(delegate.beamingHistoryCompleteLength, 2);
 
       expect(delegate.beamBack(), true);

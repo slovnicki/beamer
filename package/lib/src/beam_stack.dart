@@ -45,7 +45,9 @@ class BeamParameters {
   }) {
     return BeamParameters(
       transitionDelegate: transitionDelegate ?? this.transitionDelegate,
-      popConfiguration: resetPopConfiguration ? null : popConfiguration ?? this.popConfiguration,
+      popConfiguration: resetPopConfiguration
+          ? null
+          : popConfiguration ?? this.popConfiguration,
       beamBackOnPop: beamBackOnPop ?? this.beamBackOnPop,
       popBeamStackOnPop: popBeamStackOnPop ?? this.popBeamStackOnPop,
       stacked: stacked ?? this.stacked,
@@ -81,7 +83,8 @@ class HistoryElement {
 ///   * keeping a [state] that provides the link between the first 2
 ///
 /// Extend this class to define your stacks to which you can then beam to.
-abstract class BeamStack<T extends RouteInformationSerializable> extends ChangeNotifier {
+abstract class BeamStack<T extends RouteInformationSerializable>
+    extends ChangeNotifier {
   /// Creates a [BeamStack] with specified properties.
   ///
   /// All attributes can be null.
@@ -166,7 +169,8 @@ abstract class BeamStack<T extends RouteInformationSerializable> extends ChangeN
   /// One should override this if using a custom state class.
   ///
   /// See [create].
-  T createState(RouteInformation routeInformation) => BeamState.fromRouteInformation(
+  T createState(RouteInformation routeInformation) =>
+      BeamState.fromRouteInformation(
         routeInformation,
         beamStack: this,
       ) as T;
@@ -279,7 +283,8 @@ abstract class BeamStack<T extends RouteInformationSerializable> extends ChangeN
         history.removeRange(sameStateIndex, history.length);
       }
     }
-    if (history.isEmpty || routeInformation.uri != history.last.routeInformation.uri) {
+    if (history.isEmpty ||
+        routeInformation.uri != history.last.routeInformation.uri) {
       history.add(HistoryElement(routeInformation, beamParameters));
     }
   }
@@ -317,7 +322,9 @@ abstract class BeamStack<T extends RouteInformationSerializable> extends ChangeN
     for (final pathPattern in pathPatterns) {
       if (pathPattern is String) {
         // If it is an exact match or asterisk pattern
-        if (pathPattern == uri.path || pathPattern == '/*' || pathPattern == '*') {
+        if (pathPattern == uri.path ||
+            pathPattern == '/*' ||
+            pathPattern == '*') {
           return true;
         }
 
@@ -331,13 +338,16 @@ abstract class BeamStack<T extends RouteInformationSerializable> extends ChangeN
 
         // If we're in strict mode and URI has fewer segments than pattern,
         // we don't have a match so can continue.
-        if (strictPathPatterns && uriPathSegments.length < pathPatternSegments.length) {
+        if (strictPathPatterns &&
+            uriPathSegments.length < pathPatternSegments.length) {
           continue;
         }
 
         // If URI has more segments and pattern doesn't end with asterisk,
         // we don't have a match so can continue.
-        if (uriPathSegments.length > pathPatternSegments.length && (pathPatternSegments.isEmpty || !pathPatternSegments.last.endsWith('*'))) {
+        if (uriPathSegments.length > pathPatternSegments.length &&
+            (pathPatternSegments.isEmpty ||
+                !pathPatternSegments.last.endsWith('*'))) {
           continue;
         }
 
@@ -347,7 +357,8 @@ abstract class BeamStack<T extends RouteInformationSerializable> extends ChangeN
           // If all checks have passed up to i,
           // if pattern has no more segments to traverse and it ended with asterisk,
           // it is a match and we can break,
-          if (pathPatternSegments.length < i + 1 && pathPatternSegments.last.endsWith('*')) {
+          if (pathPatternSegments.length < i + 1 &&
+              pathPatternSegments.last.endsWith('*')) {
             checksPassed = true;
             break;
           }
@@ -359,7 +370,8 @@ abstract class BeamStack<T extends RouteInformationSerializable> extends ChangeN
           }
           // If they are not the same and pattern doesn't expects path parameter,
           // there's no match and we can break.
-          if (uriPathSegments[i] != pathPatternSegments[i] && !pathPatternSegments[i].startsWith(':')) {
+          if (uriPathSegments[i] != pathPatternSegments[i] &&
+              !pathPatternSegments[i].startsWith(':')) {
             checksPassed = false;
             break;
           }
@@ -408,7 +420,9 @@ abstract class BeamStack<T extends RouteInformationSerializable> extends ChangeN
 
       if (asteriskIndex == -1) return guardPathPattern == path;
 
-      return uri.toString().contains(guardPathPattern.substring(0, asteriskIndex));
+      return uri
+          .toString()
+          .contains(guardPathPattern.substring(0, asteriskIndex));
     }
 
     return false;
@@ -526,7 +540,8 @@ class GuardShowPage extends BeamStack<BeamState> {
   final BeamPage beamPage;
 
   @override
-  List<BeamPage> buildPages(BuildContext context, BeamState state) => [beamPage];
+  List<BeamPage> buildPages(BuildContext context, BeamState state) =>
+      [beamPage];
 
   @override
   List<String> get pathPatterns => [routeInformation.uri.path];
@@ -580,8 +595,10 @@ class RoutesBeamStack extends BeamStack<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
     final filteredRoutes = chooseRoutes(state.routeInformation, routes.keys);
-    final routeBuilders = Map.of(routes)..removeWhere((key, value) => !filteredRoutes.containsKey(key));
-    final sortedRoutes = routeBuilders.keys.toList()..sort((a, b) => _compareKeys(a, b));
+    final routeBuilders = Map.of(routes)
+      ..removeWhere((key, value) => !filteredRoutes.containsKey(key));
+    final sortedRoutes = routeBuilders.keys.toList()
+      ..sort((a, b) => _compareKeys(a, b));
     final pages = sortedRoutes.map<BeamPage>((route) {
       final routeElement = routes[route]!(context, state, data);
       if (routeElement is BeamPage) {

@@ -66,12 +66,16 @@ abstract class Utils {
         }
 
         final uriPathSegments = uri.pathSegments.toList();
-        if (uriPathSegments.length > 1 && uriPathSegments.last == '') uriPathSegments.removeLast();
+        if (uriPathSegments.length > 1 && uriPathSegments.last == '') {
+          uriPathSegments.removeLast();
+        }
 
-        final beamStackPathBlueprintSegments = Uri.parse(pathPattern).pathSegments;
+        final beamStackPathBlueprintSegments =
+            Uri.parse(pathPattern).pathSegments;
         var pathSegments = <String>[];
 
-        if (uriPathSegments.length > beamStackPathBlueprintSegments.length && !beamStackPathBlueprintSegments.contains('*')) continue;
+        if (uriPathSegments.length > beamStackPathBlueprintSegments.length &&
+            !beamStackPathBlueprintSegments.contains('*')) continue;
 
         var checksPassed = true;
 
@@ -82,11 +86,13 @@ abstract class Utils {
             break;
           }
 
-          if (uriPathSegments[i] != beamStackPathBlueprintSegments[i] && beamStackPathBlueprintSegments[i][0] != ':') {
+          if (uriPathSegments[i] != beamStackPathBlueprintSegments[i] &&
+              beamStackPathBlueprintSegments[i][0] != ':') {
             checksPassed = false;
             break;
           } else if (beamStackPathBlueprintSegments[i][0] == ':') {
-            pathParameters[beamStackPathBlueprintSegments[i].substring(1)] = uriPathSegments[i];
+            pathParameters[beamStackPathBlueprintSegments[i].substring(1)] =
+                uriPathSegments[i];
             pathSegments.add(beamStackPathBlueprintSegments[i]);
           } else {
             pathSegments.add(uriPathSegments[i]);
@@ -150,7 +156,8 @@ abstract class Utils {
   /// Else, return incoming URI.
   static Uri maybeAppend(Uri current, Uri incoming) {
     if (!incoming.hasAbsolutePath && !incoming.hasEmptyPath) {
-      String currentPath = current.path.endsWith('/') ? current.path : '${current.path}/';
+      String currentPath =
+          current.path.endsWith('/') ? current.path : '${current.path}/';
       return current.replace(
         path: currentPath + incoming.path,
         query: incoming.hasQuery ? incoming.query : null,
@@ -218,7 +225,12 @@ extension PatternExtension on Pattern {
     try {
       return this as RegExp;
     } on TypeError catch (_) {
-      throw FlutterError.fromParts([DiagnosticsNode.message('Path blueprint can either be:', level: DiagnosticLevel.summary), DiagnosticsNode.message('1. String'), DiagnosticsNode.message('2. RegExp instance')]);
+      throw FlutterError.fromParts([
+        DiagnosticsNode.message('Path blueprint can either be:',
+            level: DiagnosticLevel.summary),
+        DiagnosticsNode.message('1. String'),
+        DiagnosticsNode.message('2. RegExp instance')
+      ]);
     }
   }
 }

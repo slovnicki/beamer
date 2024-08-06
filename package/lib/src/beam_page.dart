@@ -85,11 +85,15 @@ class BeamPage extends Page {
     // Take the history element that is being popped and the one before
     // as they will be compared later on to fine-tune the pop experience.
     final poppedHistoryElement = delegate.removeLastHistoryElement()!;
-    final previousHistoryElement = delegate.beamingHistory.isNotEmpty ? delegate.beamingHistory.last.history.last : null;
+    final previousHistoryElement = delegate.beamingHistory.isNotEmpty
+        ? delegate.beamingHistory.last.history.last
+        : null;
 
     // Convert both to Uri as their path and query will be compared.
     final poppedUri = poppedHistoryElement.routeInformation.uri;
-    final previousUri = previousHistoryElement != null ? previousHistoryElement.routeInformation.uri : Uri.parse(delegate.initialPath);
+    final previousUri = previousHistoryElement != null
+        ? previousHistoryElement.routeInformation.uri
+        : Uri.parse(delegate.initialPath);
 
     final poppedPathSegments = poppedUri.pathSegments;
     final poppedQueryParameters = poppedUri.queryParameters;
@@ -120,7 +124,8 @@ class BeamPage extends Page {
     // Otherwise, find the route information with popPath in history.
     RouteInformation? lastRouteInformation;
     if (popPath == previousUri.path) {
-      lastRouteInformation = delegate.removeLastHistoryElement()?.routeInformation;
+      lastRouteInformation =
+          delegate.removeLastHistoryElement()?.routeInformation;
     } else {
       // find the last
       var found = false;
@@ -222,7 +227,8 @@ class BeamPage extends Page {
   /// `context` is the build context.
   /// `child` is the child of this [BeamPage]
   /// `settings` will be passed to [PageRoute] constructor.
-  final Route Function(BuildContext context, RouteSettings settings, Widget child)? routeBuilder;
+  final Route Function(
+      BuildContext context, RouteSettings settings, Widget child)? routeBuilder;
 
   /// Whether to present current [BeamPage] as a fullscreen dialog
   ///
@@ -260,7 +266,8 @@ class BeamPage extends Page {
           settings: this,
           pageBuilder: (_, __, ___) => child,
           transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
-          reverseTransitionDuration: reverseTransitionDuration ?? Duration(milliseconds: 300),
+          reverseTransitionDuration:
+              reverseTransitionDuration ?? Duration(milliseconds: 300),
           transitionsBuilder: (_, animation, __, child) => FadeTransition(
             opacity: animation,
             child: child,
@@ -273,9 +280,12 @@ class BeamPage extends Page {
           settings: this,
           pageBuilder: (_, __, ___) => child,
           transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
-          reverseTransitionDuration: reverseTransitionDuration ?? Duration(milliseconds: 300),
+          reverseTransitionDuration:
+              reverseTransitionDuration ?? Duration(milliseconds: 300),
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
-            position: animation.drive(Tween(begin: const Offset(0, 1), end: const Offset(0, 0)).chain(CurveTween(curve: Curves.ease))),
+            position: animation.drive(
+                Tween(begin: const Offset(0, 1), end: const Offset(0, 0))
+                    .chain(CurveTween(curve: Curves.ease))),
             child: child,
           ),
         );
@@ -286,9 +296,12 @@ class BeamPage extends Page {
           settings: this,
           pageBuilder: (_, __, ___) => child,
           transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
-          reverseTransitionDuration: reverseTransitionDuration ?? Duration(milliseconds: 300),
+          reverseTransitionDuration:
+              reverseTransitionDuration ?? Duration(milliseconds: 300),
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
-            position: animation.drive(Tween(begin: const Offset(1, 0), end: const Offset(0, 0)).chain(CurveTween(curve: Curves.ease))),
+            position: animation.drive(
+                Tween(begin: const Offset(1, 0), end: const Offset(0, 0))
+                    .chain(CurveTween(curve: Curves.ease))),
             child: child,
           ),
         );
@@ -299,9 +312,12 @@ class BeamPage extends Page {
           settings: this,
           pageBuilder: (_, __, ___) => child,
           transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
-          reverseTransitionDuration: reverseTransitionDuration ?? Duration(milliseconds: 300),
+          reverseTransitionDuration:
+              reverseTransitionDuration ?? Duration(milliseconds: 300),
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
-            position: animation.drive(Tween(begin: const Offset(-1, 0), end: const Offset(0, 0)).chain(CurveTween(curve: Curves.ease))),
+            position: animation.drive(
+                Tween(begin: const Offset(-1, 0), end: const Offset(0, 0))
+                    .chain(CurveTween(curve: Curves.ease))),
             child: child,
           ),
         );
@@ -312,9 +328,12 @@ class BeamPage extends Page {
           settings: this,
           pageBuilder: (_, __, ___) => child,
           transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
-          reverseTransitionDuration: reverseTransitionDuration ?? Duration(milliseconds: 300),
+          reverseTransitionDuration:
+              reverseTransitionDuration ?? Duration(milliseconds: 300),
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
-            position: animation.drive(Tween(begin: const Offset(0, -1), end: const Offset(0, 0)).chain(CurveTween(curve: Curves.ease))),
+            position: animation.drive(
+                Tween(begin: const Offset(0, -1), end: const Offset(0, 0))
+                    .chain(CurveTween(curve: Curves.ease))),
             child: child,
           ),
         );
@@ -325,7 +344,8 @@ class BeamPage extends Page {
           settings: this,
           pageBuilder: (_, __, ___) => child,
           transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
-          reverseTransitionDuration: reverseTransitionDuration ?? Duration(milliseconds: 300),
+          reverseTransitionDuration:
+              reverseTransitionDuration ?? Duration(milliseconds: 300),
           transitionsBuilder: (_, animation, __, child) => ScaleTransition(
             scale: animation,
             child: child,

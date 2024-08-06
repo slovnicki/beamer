@@ -64,7 +64,8 @@ void main() {
       expect(stack.data, {'x': 'y'});
     });
 
-    test('popBeamStack leads to previous stack and all helpers are correct', () {
+    test('popBeamStack leads to previous stack and all helpers are correct',
+        () {
       delegate.beamToNamed('/l1');
       delegate.beamToNamed('/l2');
 
@@ -78,7 +79,8 @@ void main() {
     });
   });
 
-  testWidgets('stacked beam takes just last page for currentPages', (tester) async {
+  testWidgets('stacked beam takes just last page for currentPages',
+      (tester) async {
     await tester.pumpWidget(
       MaterialApp.router(
         routeInformationParser: BeamerParser(),
@@ -109,9 +111,12 @@ void main() {
 
   test('custom state can be updated', () {
     delegate.beamToNamed('/custom/test');
-    expect((delegate.currentBeamStack as CustomStateStack).state.customVar, 'test');
-    (delegate.currentBeamStack as CustomStateStack).update((state) => CustomState(customVar: 'test-ok'));
-    expect((delegate.currentBeamStack as CustomStateStack).state.customVar, 'test-ok');
+    expect((delegate.currentBeamStack as CustomStateStack).state.customVar,
+        'test');
+    (delegate.currentBeamStack as CustomStateStack)
+        .update((state) => CustomState(customVar: 'test-ok'));
+    expect((delegate.currentBeamStack as CustomStateStack).state.customVar,
+        'test-ok');
   });
 
   test('beamTo works without setting the BeamState explicitly', () {
@@ -175,21 +180,24 @@ void main() {
     delegate.beamToNamed('/l2');
 
     expect(delegate.beamBack(), true);
-    expect(delegate.configuration.uri, delegate.currentBeamStack.state.routeInformation.uri);
+    expect(delegate.configuration.uri,
+        delegate.currentBeamStack.state.routeInformation.uri);
     expect(delegate.configuration.uri.path, '/l1');
     expect(delegate.currentBeamStack.data, {'x': 'y'});
 
     delegate.beamToNamed('/l2');
 
     expect(delegate.beamBack(), true);
-    expect(delegate.configuration.uri, delegate.currentBeamStack.state.routeInformation.uri);
+    expect(delegate.configuration.uri,
+        delegate.currentBeamStack.state.routeInformation.uri);
     expect(delegate.configuration.uri.path, '/l1');
     expect(delegate.currentBeamStack.data, {'x': 'y'});
 
     delegate.beamToNamed('/l2');
 
     expect(delegate.beamBack(data: {'xx': 'yy'}), true);
-    expect(delegate.configuration.uri, delegate.currentBeamStack.state.routeInformation.uri);
+    expect(delegate.configuration.uri,
+        delegate.currentBeamStack.state.routeInformation.uri);
     expect(delegate.configuration.uri.path, '/l1');
     expect(delegate.currentBeamStack.data, {'xx': 'yy'});
   });
@@ -307,7 +315,8 @@ void main() {
       );
       delegate.beamToNamed('/l1/one', data: {'x': 'y'});
       await tester.pump();
-      expect((delegate.currentBeamStack.state as BeamState).uri.path, '/l1/one');
+      expect(
+          (delegate.currentBeamStack.state as BeamState).uri.path, '/l1/one');
       expect(delegate.currentBeamStack.data, {'x': 'y'});
 
       delegate.navigatorKey.currentState!.pop();
@@ -391,7 +400,8 @@ void main() {
       expect(childDelegate.beamingHistory.last.history.length, 3);
     });
 
-    testWidgets("navigation on parent doesn't update nested Beamer", (tester) async {
+    testWidgets("navigation on parent doesn't update nested Beamer",
+        (tester) async {
       final childDelegate = BeamerDelegate(
         initializeFromParent: false,
         updateFromParent: false,
@@ -438,7 +448,8 @@ void main() {
   });
 
   group('update without rebuild', () {
-    test('no rebuild updates route information (configuration) to anything', () {
+    test('no rebuild updates route information (configuration) to anything',
+        () {
       final delegate = BeamerDelegate(
         stackBuilder: RoutesStackBuilder(
           routes: {
@@ -463,7 +474,9 @@ void main() {
       expect(delegate.configuration.uri.path, '/any');
     });
 
-    testWidgets('updating route information without updating parent or rebuilding', (tester) async {
+    testWidgets(
+        'updating route information without updating parent or rebuilding',
+        (tester) async {
       final childDelegate = BeamerDelegate(
         updateParent: false,
         stackBuilder: RoutesStackBuilder(
@@ -579,7 +592,8 @@ void main() {
       expect(delegate.beamingHistory.last.history.length, 1);
     });
 
-    testWidgets('history is cleared regardless, if option is set', (tester) async {
+    testWidgets('history is cleared regardless, if option is set',
+        (tester) async {
       final delegate = BeamerDelegate(
         clearBeamingHistoryOn: {'/'},
         stackBuilder: RoutesStackBuilder(
@@ -623,7 +637,8 @@ void main() {
       expect(delegate.beamingHistory.last.history.length, 1);
     });
 
-    testWidgets('history is cleared regardless, if option is set', (tester) async {
+    testWidgets('history is cleared regardless, if option is set',
+        (tester) async {
       final delegate = BeamerDelegate(
         clearBeamingHistoryOn: {'/test'},
         stackBuilder: RoutesStackBuilder(
@@ -701,7 +716,8 @@ void main() {
   });
 
   group('Relative beaming', () {
-    test('incoming configuration is appended when it does not start with /', () {
+    test('incoming configuration is appended when it does not start with /',
+        () {
       final delegate = BeamerDelegate(
         stackBuilder: RoutesStackBuilder(
           routes: {
@@ -718,7 +734,8 @@ void main() {
 
       delegate.beamToNamed('t2');
       expect(delegate.configuration.uri.path, '/t1/t2');
-      expect(delegate.currentBeamStack.state.routeInformation.uri.path, '/t1/t2');
+      expect(
+          delegate.currentBeamStack.state.routeInformation.uri.path, '/t1/t2');
     });
   });
 
@@ -738,11 +755,15 @@ void main() {
     delegate.beamToNamed('/t3');
     delegate.popToNamed('/t2');
 
-    expect(delegate.currentBeamStack.history.map((HistoryElement e) => e.routeInformation.uri.path), orderedEquals(<String>['/t1', '/t2']));
+    expect(
+        delegate.currentBeamStack.history
+            .map((HistoryElement e) => e.routeInformation.uri.path),
+        orderedEquals(<String>['/t1', '/t2']));
   });
 
   group('Deep Link', () {
-    testWidgets('Deep link is preserved throughout guarding flow', (tester) async {
+    testWidgets('Deep link is preserved throughout guarding flow',
+        (tester) async {
       var isLoading = true;
       var isAuthenticated = false;
       final delegate = BeamerDelegate(
@@ -758,18 +779,21 @@ void main() {
           BeamGuard(
             pathPatterns: ['/splash'],
             check: (_, __) => isLoading,
-            beamToNamed: (context, _, __, deepLink) => isAuthenticated ? (deepLink ?? '/home') : '/login',
+            beamToNamed: (context, _, __, deepLink) =>
+                isAuthenticated ? (deepLink ?? '/home') : '/login',
           ),
           BeamGuard(
             pathPatterns: ['/login'],
             check: (_, __) => !isAuthenticated && !isLoading,
-            beamToNamed: (context, _, __, deepLink) => isAuthenticated ? (deepLink ?? '/home') : '/splash',
+            beamToNamed: (context, _, __, deepLink) =>
+                isAuthenticated ? (deepLink ?? '/home') : '/splash',
           ),
           BeamGuard(
             pathPatterns: ['/splash', '/login'],
             guardNonMatching: true,
             check: (_, __) => isAuthenticated,
-            beamToNamed: (context, _, __, ___) => isLoading ? '/splash' : '/login',
+            beamToNamed: (context, _, __, ___) =>
+                isLoading ? '/splash' : '/login',
           ),
         ],
       );

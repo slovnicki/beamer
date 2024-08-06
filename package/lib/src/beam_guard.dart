@@ -122,7 +122,8 @@ class BeamGuard {
     onCheckFailed?.call(context, target);
 
     if (showPage != null) {
-      final redirectBeamStack = GuardShowPage(target.state.routeInformation, showPage!);
+      final redirectBeamStack =
+          GuardShowPage(target.state.routeInformation, showPage!);
       if (replaceCurrentStack) {
         delegate.beamToReplacement(redirectBeamStack);
       } else {
@@ -140,11 +141,13 @@ class BeamGuard {
 
     if (beamTo != null) {
       final redirectBeamStack = beamTo!(context, origin, target, deepLink);
-      if (redirectBeamStack.state.routeInformation.uri == target.state.routeInformation.uri) {
+      if (redirectBeamStack.state.routeInformation.uri ==
+          target.state.routeInformation.uri) {
         // just block if this will produce an immediate infinite loop
         return true;
       }
-      if (redirectBeamStack.state.routeInformation.uri == origin.state.routeInformation.uri) {
+      if (redirectBeamStack.state.routeInformation.uri ==
+          origin.state.routeInformation.uri) {
         // just block if redirect is the current route
         return true;
       }

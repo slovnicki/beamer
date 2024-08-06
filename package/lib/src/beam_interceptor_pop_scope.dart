@@ -37,7 +37,8 @@ class BeamInterceptorPopScope extends StatefulWidget {
   final BeamerDelegate? beamerDelegate;
 
   @override
-  State<BeamInterceptorPopScope> createState() => _BeamInterceptorPopScopeState();
+  State<BeamInterceptorPopScope> createState() =>
+      _BeamInterceptorPopScopeState();
 }
 
 class _BeamInterceptorPopScopeState extends State<BeamInterceptorPopScope> {
