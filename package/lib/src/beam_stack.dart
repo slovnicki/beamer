@@ -360,7 +360,7 @@ abstract class BeamStack<T extends RouteInformationSerializable>
   /// If this is false (default), then a path pattern '/some/path' will match
   /// '/' and '/some' and '/some/path'.
   /// If this is true, then it will match just '/some/path'.
-  /// 
+  ///
   /// __This only applies if the pattern is of type STRING, not REGEXP__
   bool get strictPathPatterns => false;
 
