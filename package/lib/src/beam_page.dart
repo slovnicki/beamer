@@ -321,6 +321,8 @@ class BeamPage extends Page {
           opaque: opaque,
           settings: this,
           pageBuilder: (context, animation, secondaryAnimation) => child,
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
         );
       default:
         return MaterialPageRoute(
