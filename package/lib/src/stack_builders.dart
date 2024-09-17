@@ -49,7 +49,16 @@ class RoutesStackBuilder {
   RoutesStackBuilder({required this.routes, this.builder});
 
   /// List of all routes this builder handles.
-  final Map<Pattern, dynamic Function(BuildContext, BeamState, Object?)> routes;
+  ///
+  /// isPinnacle is true when the route is the outer/last in the stack.
+  final Map<
+      Pattern,
+      dynamic Function(
+        BuildContext,
+        BeamState,
+        Object?,
+        bool isPinnacle,
+      )> routes;
 
   /// Used as a [BeamStack.builder].
   Widget Function(BuildContext context, Widget navigator)? builder;

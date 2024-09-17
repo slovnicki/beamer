@@ -453,7 +453,14 @@ class RoutesBeamStack extends BeamStack<BeamState> {
   }) : super(routeInformation, beamParameters);
 
   /// Map of all routes this stack handles.
-  Map<Pattern, dynamic Function(BuildContext, BeamState, Object? data)> routes;
+  Map<
+      Pattern,
+      dynamic Function(
+        BuildContext,
+        BeamState,
+        Object? data,
+        bool isPinnacle,
+      )> routes;
 
   /// A wrapper used as [BeamStack.builder].
   Widget Function(BuildContext context, Widget navigator)? navBuilder;
@@ -489,8 +496,12 @@ class RoutesBeamStack extends BeamStack<BeamState> {
       ..removeWhere((key, value) => !filteredRoutes.containsKey(key));
     final sortedRoutes = routeBuilders.keys.toList()
       ..sort((a, b) => _compareKeys(a, b));
-    final pages = sortedRoutes.map<BeamPage>((route) {
-      final routeElement = routes[route]!(context, state, data);
+    final sortedRoutesLength = sortedRoutes.length;
+    final pages = sortedRoutes.indexed.map<BeamPage>((indexedRoute) {
+      final index = indexedRoute.$1;
+      final route = indexedRoute.$2;
+      final routeElement =
+          routes[route]!(context, state, data, index == sortedRoutesLength - 1);
       if (routeElement is BeamPage) {
         return routeElement;
       } else {
