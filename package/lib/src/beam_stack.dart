@@ -458,12 +458,21 @@ class RoutesBeamStack extends BeamStack<BeamState> {
       dynamic Function(
         BuildContext,
         BeamState,
+        // BeamPageNotifier,
+        BeamPageNotifierReference,
         Object? data,
-        bool isPinnacle,
       )> routes;
 
   /// A wrapper used as [BeamStack.builder].
   Widget Function(BuildContext context, Widget navigator)? navBuilder;
+
+  /// They are regenerated on [buildPages],
+  /// so they are only valid for one build cycle.
+  ///
+  /// The reason for not making them persistent across build cycles is that
+  /// we can't know the [BeamPage.key] before creating them (see [buildPages]).
+  final Map<LocalKey, BeamPageNotifier> _pageNotifiers = {};
+  // final List<BeamPageNotifier> _pageNotifiers = [];
 
   @override
   Widget builder(BuildContext context, Widget navigator) {
@@ -496,20 +505,23 @@ class RoutesBeamStack extends BeamStack<BeamState> {
       ..removeWhere((key, value) => !filteredRoutes.containsKey(key));
     final sortedRoutes = routeBuilders.keys.toList()
       ..sort((a, b) => _compareKeys(a, b));
-    final sortedRoutesLength = sortedRoutes.length;
-    final pages = sortedRoutes.indexed.map<BeamPage>((indexedRoute) {
-      final index = indexedRoute.$1;
-      final route = indexedRoute.$2;
+    final pages = sortedRoutes.indexed.map<BeamPage>((value) {
+      final index = value.$1;
+      final route = value.$2;
+      final notifierReference = BeamPageNotifierReference();
       final routeElement =
-          routes[route]!(context, state, data, index == sortedRoutesLength - 1);
-      if (routeElement is BeamPage) {
-        return routeElement;
-      } else {
-        return BeamPage(
-          key: ValueKey(filteredRoutes[route]),
-          child: routeElement,
-        );
-      }
+          routes[route]!(context, state, notifierReference, data);
+      final page = routeElement is BeamPage
+          ? routeElement
+          : BeamPage(
+              key: ValueKey(filteredRoutes[route]),
+              child: routeElement,
+            );
+      print('Notifier exists: ${_pageNotifiers.containsKey(page.key)}');
+      final notifier = _pageNotifiers[page.key] ??= BeamPageNotifier(
+          BeamPageState(isPinnacle: index == sortedRoutes.length - 1));
+      notifierReference.getNotifier = () => notifier;
+      return page;
     }).toList();
     return pages;
   }
@@ -608,5 +620,29 @@ class RoutesBeamStack extends BeamStack<BeamState> {
     }
 
     return isNotFound ? {} : matched;
+  }
+
+  void notifyPages(List<BeamPage> pages) {
+    // Hidden pages
+    for (int i = 0; i < pages.length - 1; i++) {
+      print('Notifying page: ${pages[i].title} -- Is pinnacle: false');
+      _pageNotifiers[pages[i].key]!
+        ..value = BeamPageState(isPinnacle: false)
+        ..notify();
+    }
+
+    // Pinnacle page
+    print('Notifying page: ${pages.last.title} -- Is pinnacle: true');
+    _pageNotifiers[pages.last.key]!
+      ..value = BeamPageState(isPinnacle: true)
+      ..notify();
+  }
+
+  /// Returns current notifiers and clean them up.
+  List<BeamPageNotifier> getPageNotifiers() {
+    return [..._pageNotifiers.values];
+    // final notifiers = [..._pageNotifiers.values];
+    // _pageNotifiers.clear();
+    // return notifiers;
   }
 }

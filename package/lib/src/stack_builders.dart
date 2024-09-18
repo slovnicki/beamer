@@ -56,8 +56,9 @@ class RoutesStackBuilder {
       dynamic Function(
         BuildContext,
         BeamState,
+        // BeamPageNotifier,
+        BeamPageNotifierReference,
         Object?,
-        bool isPinnacle,
       )> routes;
 
   /// Used as a [BeamStack.builder].

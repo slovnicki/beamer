@@ -1,6 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:beamer/src/utils.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Types for how to route should be built.
@@ -230,6 +231,8 @@ class BeamPage extends Page {
   /// Defaults to `false`.
   final bool keepQueryOnPop;
 
+  LocalKey get key => super.key!;
+
   @override
   Route createRoute(BuildContext context) {
     if (routeBuilder != null) {
@@ -334,4 +337,78 @@ class BeamPage extends Page {
         );
     }
   }
+}
+
+/// Represents the [BeamPage] state inside a [BeamStack].
+///
+/// This is a volatile state, meaning it is not stored. On the contrary, it is
+/// regenerated on [BeamerDelegate.build].
+///
+/// Initialy created to inform a page whether is the last (the pinnacle)
+/// on the stack.
+class BeamPageState {
+  BeamPageState({
+    required this.isPinnacle,
+  });
+
+  final bool isPinnacle;
+
+  @override
+  bool operator ==(Object other) =>
+      other is BeamPageState && isPinnacle == other.isPinnacle;
+
+  @override
+  int get hashCode => isPinnacle.hashCode;
+}
+
+/// Utility to inform [BeamPageState] to his [BeamPage].
+class BeamPageNotifier extends ValueListenable<BeamPageState> {
+  BeamPageNotifier(this.value) {
+    print('BeamPageNotifier.constructor() -- $_debugLabel');
+  }
+
+  final _debugLabel = DateTime.now().millisecondsSinceEpoch.toString();
+
+  final _listeners = <VoidCallback>{};
+
+  BeamPageState value;
+
+  @override
+  void addListener(VoidCallback listener) {
+    _listeners.add(listener);
+    print(
+        'BeamPageNotifier.addListener() -- $_debugLabel -- Count: ${_listeners.length}');
+  }
+
+  @override
+  void removeListener(VoidCallback listener) {
+    _listeners.remove(listener);
+    print(
+        'BeamPageNotifier.removeListener() -- $_debugLabel -- Count: ${_listeners.length}');
+  }
+
+  void notify() {
+    for (final listener in _listeners) {
+      listener();
+    }
+
+    print(
+        'BeamPageNotifier.notify() -- $_debugLabel -- Count: ${_listeners.length}');
+  }
+}
+
+/// Utility to get a [BeamPageNotifier].
+///
+/// Needed because [BeamPage] is const and the notifier is not known until
+/// the page is created.
+// typedef BeamPageNotifierReference = BeamPageNotifier Function(LocalKey);
+// typedef BeamPageNotifierReference = BeamPageNotifier Function();
+class BeamPageNotifierReference {
+  BeamPageNotifierReference();
+
+  BeamPageNotifier? _notifier;
+
+  late final BeamPageNotifier Function() getNotifier;
+
+  BeamPageNotifier get notifier => _notifier ??= getNotifier();
 }

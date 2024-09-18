@@ -50,6 +50,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     updateListenable?.addListener(_update);
   }
 
+  bool _firstBuild = true;
+
   /// A state of this delegate. This is the `routeInformation` that goes into
   /// [stackBuilder] to build an appropriate [BeamStack].
   ///
@@ -59,6 +61,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   BeamerDelegate? _parent;
 
   final Set<BeamerDelegate> _children = {};
+
+  final _debugLabel = DateTime.now().millisecondsSinceEpoch.toString();
 
   /// Takes priority over all other siblings,
   /// i.e. sets itself as active and all other siblings as inactive.
@@ -754,6 +758,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   @override
   Widget build(BuildContext context) {
+    final isFirstBuild = this._firstBuild;
+    _firstBuild = false;
+
+    print(
+        'BeamerDelegate.build() -- $_debugLabel -- Is first build: $isFirstBuild');
+
     _buildInProgress = true;
     _context = context;
 
@@ -777,9 +787,21 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     final navigator = Builder(
       builder: (context) {
         _setCurrentPages(context);
+
+        // print(
+        //     'BeamerDelegate.build() -- $_debugLabel -- Builder page length: ${_currentPages.length}');
+
         _setBrowserTitle(context);
 
         buildListener?.call(context, this);
+
+        // Notifying pages
+        if (!isFirstBuild) {
+          final count = _notifyCurrentPages();
+          print(
+              'BeamerDelegate.build() -- $_debugLabel -- Notified pages: $count');
+        }
+
         return Navigator(
           key: navigatorKey,
           observers: navigatorObservers,
@@ -984,6 +1006,17 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
           ? currentBeamStack.buildPages(context, currentBeamStack.state)
           : [currentBeamStack.buildPages(context, currentBeamStack.state).last];
     }
+  }
+
+  int _notifyCurrentPages() {
+    final stack = currentBeamStack;
+
+    if (stack is! RoutesBeamStack) {
+      return 0;
+    }
+
+    stack.notifyPages(_currentPages);
+    return _currentPages.length;
   }
 
   void _setBrowserTitle(BuildContext context) {
