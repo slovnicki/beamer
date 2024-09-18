@@ -1,3 +1,7 @@
+# 1.6.2
+
+- **Fixed:** Transition durations for `BeamPageType.noTransition` ([busslina](https://github.com/busslina): [#676](https://github.com/slovnicki/beamer/pull/676))
+
 # 1.6.1
 
 - **Fixed:** Handling deep links after refactor to `Uri`s ([Bungeefan](https://github.com/Bungeefan): [#660](https://github.com/slovnicki/beamer/pull/660), [#654](https://github.com/slovnicki/beamer/issues/654))
