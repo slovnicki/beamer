@@ -46,7 +46,13 @@ class RoutesStackBuilder {
   /// Creates a [RoutesStackBuilder] with specified properties.
   ///
   /// [routes] are required to build pages from.
-  RoutesStackBuilder({required this.routes, this.builder});
+  RoutesStackBuilder({
+    required this.debugLabel,
+    required this.routes,
+    this.builder,
+  });
+
+  final String debugLabel;
 
   /// List of all routes this builder handles.
   ///
@@ -62,7 +68,7 @@ class RoutesStackBuilder {
       )> routes;
 
   /// Used as a [BeamStack.builder].
-  Widget Function(BuildContext context, Widget navigator)? builder;
+  final Widget Function(BuildContext context, Widget navigator)? builder;
 
   /// Makes this callable as [StackBuilder].
   ///
@@ -74,6 +80,7 @@ class RoutesStackBuilder {
     final matched = RoutesBeamStack.chooseRoutes(routeInformation, routes.keys);
     if (matched.isNotEmpty) {
       return RoutesBeamStack(
+        debugLabel: '$debugLabel -- ${DateTime.now().millisecondsSinceEpoch}',
         routeInformation: routeInformation,
         routes: routes,
         navBuilder: builder,

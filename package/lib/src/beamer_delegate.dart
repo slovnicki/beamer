@@ -17,6 +17,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// [stackBuilder] is required to process the incoming navigation request.
   BeamerDelegate({
     required this.stackBuilder,
+    required this.debugLabel,
     this.initialPath = '/',
     this.routeListener,
     this.buildListener,
@@ -41,6 +42,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     this.updateParent = true,
     this.clearBeamingHistoryOn = const <String>{},
   }) {
+    print('BeamerDelegate.constructor() -- $debugLabel');
+
     _currentBeamParameters = BeamParameters(
       transitionDelegate: transitionDelegate,
     );
@@ -62,7 +65,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   final Set<BeamerDelegate> _children = {};
 
-  final _debugLabel = DateTime.now().millisecondsSinceEpoch.toString();
+  final String debugLabel;
+
+  // final _debugLabel = DateTime.now().millisecondsSinceEpoch.toString();
 
   /// Takes priority over all other siblings,
   /// i.e. sets itself as active and all other siblings as inactive.
@@ -764,7 +769,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     final current = currentBeamStack;
 
     print(
-        'BeamerDelegate.build() -- I -- $_debugLabel -- ${current.debugLabel} -- Is first build: $isFirstBuild -- Type: ${current.runtimeType}');
+        'BeamerDelegate.build() -- I -- $debugLabel -- ${current.debugLabel} -- Is first build: $isFirstBuild -- Type: ${current.runtimeType}');
 
     _buildInProgress = true;
     _context = context;
@@ -791,7 +796,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         final current = currentBeamStack;
 
         print(
-            'BeamerDelegate.build() -- II -- $_debugLabel -- ${current.debugLabel} -- Is first build: $isFirstBuild -- Type: ${current.runtimeType}');
+            'BeamerDelegate.build() -- II -- $debugLabel -- ${current.debugLabel} -- Is first build: $isFirstBuild -- Type: ${current.runtimeType}');
 
         _setCurrentPages(context);
 
@@ -806,7 +811,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         if (!isFirstBuild) {
           final count = _notifyCurrentPages();
           print(
-              'BeamerDelegate.build() -- $_debugLabel -- Notified pages: $count');
+              'BeamerDelegate.build() -- $debugLabel -- Notified pages: $count');
         }
 
         return Navigator(

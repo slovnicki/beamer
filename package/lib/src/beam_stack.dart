@@ -88,14 +88,17 @@ abstract class BeamStack<T extends RouteInformationSerializable>
   /// Creates a [BeamStack] with specified properties.
   ///
   /// All attributes can be null.
-  BeamStack([
+  BeamStack(
+    this.debugLabel, [
     RouteInformation? routeInformation,
     BeamParameters? beamParameters,
   ]) {
     create(routeInformation, beamParameters);
   }
 
-  final debugLabel = DateTime.now().millisecondsSinceEpoch.toString();
+  // final debugLabel = DateTime.now().millisecondsSinceEpoch.toString();
+
+  final String debugLabel;
 
   late T _state;
 
@@ -263,7 +266,7 @@ abstract class BeamStack<T extends RouteInformationSerializable>
   }
 
   /// The history of beaming for this.
-  List<HistoryElement> history = [];
+  final List<HistoryElement> history = [];
 
   /// Adds another [HistoryElement] to [history] list.
   /// The history element is created from given [state] and [beamParameters].
@@ -396,7 +399,8 @@ abstract class BeamStack<T extends RouteInformationSerializable>
 class NotFound extends BeamStack<BeamState> {
   /// Creates a [NotFound] [BeamStack] with
   /// `RouteInformation(uri: Uri.parse(path)` as its state.
-  NotFound({String path = '/'}) : super(RouteInformation(uri: Uri.parse(path)));
+  NotFound({String path = '/'})
+      : super('NotFound', RouteInformation(uri: Uri.parse(path)));
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [];
@@ -409,6 +413,8 @@ class NotFound extends BeamStack<BeamState> {
 ///
 /// See [BeamerDelegate.currentBeamStack].
 class EmptyBeamStack extends BeamStack<BeamState> {
+  EmptyBeamStack() : super('EmptyBeamStack');
+
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [];
 
@@ -423,7 +429,7 @@ class GuardShowPage extends BeamStack<BeamState> {
   GuardShowPage(
     this.routeInformation,
     this.beamPage,
-  ) : super(routeInformation);
+  ) : super('GuardShowPage', routeInformation);
 
   /// [RouteInformation] to show in URL
   final RouteInformation routeInformation;
@@ -447,15 +453,18 @@ class RoutesBeamStack extends BeamStack<BeamState> {
   ///
   /// [routeInformation] and [routes] are required.
   RoutesBeamStack({
+    required String debugLabel,
     required RouteInformation routeInformation,
     Object? data,
     BeamParameters? beamParameters,
     required this.routes,
     this.navBuilder,
-  }) : super(routeInformation, beamParameters);
+  }) : super(debugLabel, routeInformation, beamParameters) {
+    print('RoutesBeamStack.constructor() -- $debugLabel');
+  }
 
   /// Map of all routes this stack handles.
-  Map<
+  final Map<
       Pattern,
       dynamic Function(
         BuildContext,
@@ -466,7 +475,7 @@ class RoutesBeamStack extends BeamStack<BeamState> {
       )> routes;
 
   /// A wrapper used as [BeamStack.builder].
-  Widget Function(BuildContext context, Widget navigator)? navBuilder;
+  final Widget Function(BuildContext context, Widget navigator)? navBuilder;
 
   /// They are regenerated on [buildPages],
   /// so they are only valid for one build cycle.
@@ -503,7 +512,7 @@ class RoutesBeamStack extends BeamStack<BeamState> {
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
-    _printCurrentPageNotifiers('buildPages');
+    // _printCurrentPageNotifiers('buildPages');
 
     final filteredRoutes = chooseRoutes(state.routeInformation, routes.keys);
     final routeBuilders = Map.of(routes)
@@ -630,7 +639,7 @@ class RoutesBeamStack extends BeamStack<BeamState> {
   }
 
   void notifyPages(List<BeamPage> pages) {
-    _printCurrentPageNotifiers('notifyPages');
+    // _printCurrentPageNotifiers('notifyPages');
 
     // Hidden pages
     for (int i = 0; i < pages.length - 1; i++) {
@@ -655,10 +664,10 @@ class RoutesBeamStack extends BeamStack<BeamState> {
     // return notifiers;
   }
 
-  void _printCurrentPageNotifiers(String debugLabel) {
-    print('_printCurrentPageNotifiers() -- ${this.debugLabel} -- $debugLabel');
-    for (final entry in _pageNotifiers.entries) {
-      print('LocalKey: ${entry.key}, Notifier: ${entry.value.fullDebugLabel}');
-    }
-  }
+  // void _printCurrentPageNotifiers(String debugLabel) {
+  //   print('_printCurrentPageNotifiers() -- ${this.debugLabel} -- $debugLabel');
+  //   for (final entry in _pageNotifiers.entries) {
+  //     print('LocalKey: ${entry.key}, Notifier: ${entry.value.fullDebugLabel}');
+  //   }
+  // }
 }
