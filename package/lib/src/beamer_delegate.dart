@@ -50,6 +50,11 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     updateListenable?.addListener(_update);
   }
 
+  /// They are regenerated on [buildPages],
+  /// so they are only valid for one build cycle.
+  ///
+  /// The reason for not making them persistent across build cycles is that
+  /// we can't know the [BeamPage.key] before creating them (see [buildPages]).
   final Map<LocalKey, BeamPageStateNotifier> pageNotifiers = {};
 
   bool _firstBuild = true;

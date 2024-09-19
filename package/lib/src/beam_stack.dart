@@ -462,15 +462,6 @@ class RoutesBeamStack extends BeamStack<BeamState> {
   /// A wrapper used as [BeamStack.builder].
   final Widget Function(BuildContext context, Widget navigator)? navBuilder;
 
-  /// They are regenerated on [buildPages],
-  /// so they are only valid for one build cycle.
-  ///
-  /// The reason for not making them persistent across build cycles is that
-  /// we can't know the [BeamPage.key] before creating them (see [buildPages]).
-  // final Map<LocalKey, BeamPageNotifier> _pageNotifiers = {};
-  // final List<BeamPageNotifier> _pageNotifiers = [];
-  // final Map<ValueKey, BeamPageNotifier> _pageNotifiers = {};
-
   @override
   Widget builder(BuildContext context, Widget navigator) {
     return navBuilder?.call(context, navigator) ?? navigator;
