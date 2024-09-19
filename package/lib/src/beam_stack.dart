@@ -456,13 +456,8 @@ class RoutesBeamStack extends BeamStack<BeamState> {
   final BeamerDelegate parent;
 
   /// Map of all routes this stack handles.
-  final Map<
-      Pattern,
-      dynamic Function(
-        BuildContext,
-        BeamState,
-        Object? data,
-      )> routes;
+  final Map<Pattern, dynamic Function(BuildContext, BeamState, Object? data)>
+      routes;
 
   /// A wrapper used as [BeamStack.builder].
   final Widget Function(BuildContext context, Widget navigator)? navBuilder;
