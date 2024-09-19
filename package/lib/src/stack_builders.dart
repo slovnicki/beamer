@@ -8,7 +8,6 @@ typedef StackBuilder = BeamStack Function(
   BeamerDelegate parent,
   RouteInformation,
   BeamParameters?,
-  String creationReason,
 );
 
 /// A pre-made builder to be used for [BeamerDelegate.stackBuilder].

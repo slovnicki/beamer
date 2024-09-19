@@ -431,7 +431,6 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         this,
         this.configuration.copyWith(),
         _currentBeamParameters,
-        'update',
       );
     }
 
@@ -988,7 +987,6 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         this,
         RouteInformation(uri: Uri.parse(notFoundRedirectNamed!)),
         _currentBeamParameters.copyWith(),
-        '_handleNotFoundRedirect',
       );
     }
     _updateFromBeamStackCandidate();
@@ -1099,7 +1097,6 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         this,
         parentConfiguration,
         _currentBeamParameters,
-        '_initializeChild',
       );
     }
 
@@ -1134,7 +1131,6 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       this,
       parentConfiguration,
       _currentBeamParameters,
-      '_updateFromParent',
     );
 
     if (beamStack is! NotFound) {
