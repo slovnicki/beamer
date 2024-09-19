@@ -64,7 +64,8 @@ class RoutesStackBuilder {
       dynamic Function(
         BuildContext,
         BeamState,
-        BeamPageNotifierReference,
+        // BeamPageNotifierReference,
+        // BeamPageStateNotifier,
         Object?,
       )> routes;
 

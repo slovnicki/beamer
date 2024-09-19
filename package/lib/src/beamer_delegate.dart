@@ -53,7 +53,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     updateListenable?.addListener(_update);
   }
 
-  final Map<LocalKey, BeamPageNotifier> pageNotifiers = {};
+  final Map<LocalKey, BeamPageStateNotifier> pageNotifiers = {};
 
   bool _firstBuild = true;
 
@@ -1042,20 +1042,20 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       print('Notifying page: ${_currentPages[i].title} -- Is pinnacle: false');
       pageNotifiers[_currentPages[i].key]!
         ..value = BeamPageState(isPinnacle: false)
-        ..notify();
+        ..notifyListeners();
     }
 
     // Pinnacle page
     print('Notifying page: ${_currentPages.last.title} -- Is pinnacle: true');
     pageNotifiers[_currentPages.last.key]!
       ..value = BeamPageState(isPinnacle: true)
-      ..notify();
+      ..notifyListeners();
   }
 
   void _printCurrentPageNotifiers() {
     print('_printCurrentPageNotifiers()');
     for (final entry in pageNotifiers.entries) {
-      print('LocalKey: ${entry.key}, Notifier: ${entry.value.fullDebugLabel}');
+      print('LocalKey: ${entry.key}');
     }
   }
 

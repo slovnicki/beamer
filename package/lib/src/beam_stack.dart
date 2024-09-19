@@ -474,7 +474,8 @@ class RoutesBeamStack extends BeamStack<BeamState> {
         BuildContext,
         BeamState,
         // BeamPageNotifier,
-        BeamPageNotifierReference,
+        // BeamPageNotifierReference,
+        // BeamPageStateNotifier,
         Object? data,
       )> routes;
 
@@ -524,9 +525,10 @@ class RoutesBeamStack extends BeamStack<BeamState> {
     final pages = sortedRoutes.indexed.map<BeamPage>((value) {
       final index = value.$1;
       final route = value.$2;
-      final notifierReference = BeamPageNotifierReference();
-      final routeElement =
-          routes[route]!(context, state, notifierReference, data);
+      // final notifierReference = BeamPageNotifierReference();
+      // final routeElement =
+      //     routes[route]!(context, state, notifierReference, data);
+      final routeElement = routes[route]!(context, state, data);
       final page = routeElement is BeamPage
           ? routeElement
           : BeamPage(
@@ -534,11 +536,17 @@ class RoutesBeamStack extends BeamStack<BeamState> {
               child: routeElement,
             );
       print('Notifier exists: ${parent.pageNotifiers.containsKey(page.key)}');
-      final notifier = parent.pageNotifiers[page.key] ??= BeamPageNotifier(
-        BeamPageState(isPinnacle: index == sortedRoutes.length - 1),
-        parentStackDebugLabel: debugLabel,
-      );
-      notifierReference.getNotifier = () => notifier;
+      final stateChangeNotifier = page.stateChangeNotifier;
+      if (stateChangeNotifier != null) {
+        parent.pageNotifiers[page.key] = stateChangeNotifier;
+        stateChangeNotifier.value =
+            BeamPageState(isPinnacle: index == sortedRoutes.length - 1);
+      }
+      // final notifier = parent.pageNotifiers[page.key] ??= BeamPageNotifier(
+      //   BeamPageState(isPinnacle: index == sortedRoutes.length - 1),
+      //   parentStackDebugLabel: debugLabel,
+      // );
+      // notifierReference.getNotifier = () => notifier;
       return page;
     }).toList();
 

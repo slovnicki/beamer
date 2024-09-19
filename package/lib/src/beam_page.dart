@@ -55,6 +55,7 @@ class BeamPage extends Page {
     this.fullScreenDialog = false,
     this.opaque = true,
     this.keepQueryOnPop = false,
+    this.stateChangeNotifier,
   }) : super(key: key, name: name);
 
   /// A [BeamPage] to be the default for [BeamerDelegate.notFoundPage].
@@ -233,6 +234,8 @@ class BeamPage extends Page {
 
   LocalKey get key => super.key!;
 
+  final BeamPageStateNotifier? stateChangeNotifier;
+
   @override
   Route createRoute(BuildContext context) {
     if (routeBuilder != null) {
@@ -361,47 +364,46 @@ class BeamPageState {
   int get hashCode => isPinnacle.hashCode;
 }
 
-/// Utility to inform [BeamPageState] to his [BeamPage].
-class BeamPageNotifier extends ValueListenable<BeamPageState> {
-  BeamPageNotifier(
-    this.value, {
-    required this.parentStackDebugLabel,
-  }) {
-    print('BeamPageNotifier.constructor() -- $_debugLabel');
-  }
+// class BeamPageNotifier extends ValueListenable<BeamPageState> {
+//   BeamPageNotifier(
+//     this.value, {
+//     required this.parentStackDebugLabel,
+//   }) {
+//     print('BeamPageNotifier.constructor() -- $_debugLabel');
+//   }
 
-  final String parentStackDebugLabel;
-  final _debugLabel = DateTime.now().millisecondsSinceEpoch.toString();
+//   final String parentStackDebugLabel;
+//   final _debugLabel = DateTime.now().millisecondsSinceEpoch.toString();
 
-  final _listeners = <VoidCallback>{};
+//   final _listeners = <VoidCallback>{};
 
-  BeamPageState value;
+//   BeamPageState value;
 
-  String get fullDebugLabel => '$parentStackDebugLabel-$_debugLabel';
+//   String get fullDebugLabel => '$parentStackDebugLabel-$_debugLabel';
 
-  @override
-  void addListener(VoidCallback listener) {
-    _listeners.add(listener);
-    print(
-        'BeamPageNotifier.addListener() -- $_debugLabel -- Count: ${_listeners.length}');
-  }
+//   @override
+//   void addListener(VoidCallback listener) {
+//     _listeners.add(listener);
+//     print(
+//         'BeamPageNotifier.addListener() -- $_debugLabel -- Count: ${_listeners.length}');
+//   }
 
-  @override
-  void removeListener(VoidCallback listener) {
-    _listeners.remove(listener);
-    print(
-        'BeamPageNotifier.removeListener() -- $_debugLabel -- Count: ${_listeners.length}');
-  }
+//   @override
+//   void removeListener(VoidCallback listener) {
+//     _listeners.remove(listener);
+//     print(
+//         'BeamPageNotifier.removeListener() -- $_debugLabel -- Count: ${_listeners.length}');
+//   }
 
-  void notify() {
-    for (final listener in _listeners) {
-      listener();
-    }
+//   void notify() {
+//     for (final listener in _listeners) {
+//       listener();
+//     }
 
-    print(
-        'BeamPageNotifier.notify() -- $_debugLabel -- Count: ${_listeners.length}');
-  }
-}
+//     print(
+//         'BeamPageNotifier.notify() -- $_debugLabel -- Count: ${_listeners.length}');
+//   }
+// }
 
 /// Utility to get a [BeamPageNotifier].
 ///
@@ -409,20 +411,21 @@ class BeamPageNotifier extends ValueListenable<BeamPageState> {
 /// the page is created.
 // typedef BeamPageNotifierReference = BeamPageNotifier Function(LocalKey);
 // typedef BeamPageNotifierReference = BeamPageNotifier Function();
-class BeamPageNotifierReference {
-  BeamPageNotifierReference();
+// class BeamPageNotifierReference {
+//   BeamPageNotifierReference();
 
-  BeamPageNotifier? _notifier;
+//   BeamPageNotifier? _notifier;
 
-  late final BeamPageNotifier Function() getNotifier;
+//   late final BeamPageNotifier Function() getNotifier;
 
-  BeamPageNotifier get notifier => _notifier ??= getNotifier();
-}
+//   BeamPageNotifier get notifier => _notifier ??= getNotifier();
+// }
 
-class BeamPageStateChangeNotifier extends ValueListenable<BeamPageState>
+/// Utility to inform [BeamPageState] to his [BeamPage].
+class BeamPageStateNotifier extends ValueListenable<BeamPageState>
     with ChangeNotifier {
-  BeamPageStateChangeNotifier(this.value);
+  BeamPageStateNotifier();
 
   @override
-  BeamPageState value;
+  late BeamPageState value;
 }
