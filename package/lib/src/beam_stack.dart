@@ -541,6 +541,7 @@ class RoutesBeamStack extends BeamStack<BeamState> {
       notifierReference.getNotifier = () => notifier;
       return page;
     }).toList();
+
     return pages;
   }
 

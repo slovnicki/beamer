@@ -418,3 +418,11 @@ class BeamPageNotifierReference {
 
   BeamPageNotifier get notifier => _notifier ??= getNotifier();
 }
+
+class BeamPageStateChangeNotifier extends ValueListenable<BeamPageState>
+    with ChangeNotifier {
+  BeamPageStateChangeNotifier(this.value);
+
+  @override
+  BeamPageState value;
+}

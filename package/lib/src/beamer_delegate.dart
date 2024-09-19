@@ -1012,11 +1012,22 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
     if (currentBeamStack is NotFound) {
       _currentPages = [notFoundPage];
+      pageNotifiers.clear();
     } else {
       _currentPages = _currentBeamParameters.stacked
           ? currentBeamStack.buildPages(context, currentBeamStack.state)
           : [currentBeamStack.buildPages(context, currentBeamStack.state).last];
+      _purgePageNotifiers();
     }
+  }
+
+  /// Purging outdated page notifiers.
+  void _purgePageNotifiers() {
+    final currentPagesKeys = _currentPages.map((page) => page.key);
+    print('_purgePageNotifiers() -- 1 -- ${pageNotifiers.length}');
+    pageNotifiers
+        .removeWhere((key, pageNotifier) => !currentPagesKeys.contains(key));
+    print('_purgePageNotifiers() -- 2 -- ${pageNotifiers.length}');
   }
 
   void _notifyCurrentPages() {
