@@ -761,8 +761,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     final isFirstBuild = this._firstBuild;
     _firstBuild = false;
 
+    final current = currentBeamStack;
+
     print(
-        'BeamerDelegate.build() -- $_debugLabel -- Is first build: $isFirstBuild');
+        'BeamerDelegate.build() -- I -- $_debugLabel -- ${current.debugLabel} -- Is first build: $isFirstBuild -- Type: ${current.runtimeType}');
 
     _buildInProgress = true;
     _context = context;
@@ -786,6 +788,11 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
     final navigator = Builder(
       builder: (context) {
+        final current = currentBeamStack;
+
+        print(
+            'BeamerDelegate.build() -- II -- $_debugLabel -- ${current.debugLabel} -- Is first build: $isFirstBuild -- Type: ${current.runtimeType}');
+
         _setCurrentPages(context);
 
         // print(
@@ -999,6 +1006,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   }
 
   void _setCurrentPages(BuildContext context) {
+    final currentBeamStack = this.currentBeamStack;
+
+    if (currentBeamStack is RoutesBeamStack) {
+      print('_setCurrentPages() -- ${currentBeamStack.debugLabel}');
+    }
+
     if (currentBeamStack is NotFound) {
       _currentPages = [notFoundPage];
     } else {

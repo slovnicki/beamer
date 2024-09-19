@@ -95,6 +95,8 @@ abstract class BeamStack<T extends RouteInformationSerializable>
     create(routeInformation, beamParameters);
   }
 
+  final debugLabel = DateTime.now().millisecondsSinceEpoch.toString();
+
   late T _state;
 
   /// A state of this [BeamStack].
@@ -473,6 +475,7 @@ class RoutesBeamStack extends BeamStack<BeamState> {
   /// we can't know the [BeamPage.key] before creating them (see [buildPages]).
   final Map<LocalKey, BeamPageNotifier> _pageNotifiers = {};
   // final List<BeamPageNotifier> _pageNotifiers = [];
+  // final Map<ValueKey, BeamPageNotifier> _pageNotifiers = {};
 
   @override
   Widget builder(BuildContext context, Widget navigator) {
@@ -500,6 +503,8 @@ class RoutesBeamStack extends BeamStack<BeamState> {
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
+    _printCurrentPageNotifiers('buildPages');
+
     final filteredRoutes = chooseRoutes(state.routeInformation, routes.keys);
     final routeBuilders = Map.of(routes)
       ..removeWhere((key, value) => !filteredRoutes.containsKey(key));
@@ -519,7 +524,9 @@ class RoutesBeamStack extends BeamStack<BeamState> {
             );
       print('Notifier exists: ${_pageNotifiers.containsKey(page.key)}');
       final notifier = _pageNotifiers[page.key] ??= BeamPageNotifier(
-          BeamPageState(isPinnacle: index == sortedRoutes.length - 1));
+        BeamPageState(isPinnacle: index == sortedRoutes.length - 1),
+        parentStackDebugLabel: debugLabel,
+      );
       notifierReference.getNotifier = () => notifier;
       return page;
     }).toList();
@@ -623,6 +630,8 @@ class RoutesBeamStack extends BeamStack<BeamState> {
   }
 
   void notifyPages(List<BeamPage> pages) {
+    _printCurrentPageNotifiers('notifyPages');
+
     // Hidden pages
     for (int i = 0; i < pages.length - 1; i++) {
       print('Notifying page: ${pages[i].title} -- Is pinnacle: false');
@@ -644,5 +653,12 @@ class RoutesBeamStack extends BeamStack<BeamState> {
     // final notifiers = [..._pageNotifiers.values];
     // _pageNotifiers.clear();
     // return notifiers;
+  }
+
+  void _printCurrentPageNotifiers(String debugLabel) {
+    print('_printCurrentPageNotifiers() -- ${this.debugLabel} -- $debugLabel');
+    for (final entry in _pageNotifiers.entries) {
+      print('LocalKey: ${entry.key}, Notifier: ${entry.value.fullDebugLabel}');
+    }
   }
 }

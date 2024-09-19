@@ -363,15 +363,21 @@ class BeamPageState {
 
 /// Utility to inform [BeamPageState] to his [BeamPage].
 class BeamPageNotifier extends ValueListenable<BeamPageState> {
-  BeamPageNotifier(this.value) {
+  BeamPageNotifier(
+    this.value, {
+    required this.parentStackDebugLabel,
+  }) {
     print('BeamPageNotifier.constructor() -- $_debugLabel');
   }
 
+  final String parentStackDebugLabel;
   final _debugLabel = DateTime.now().millisecondsSinceEpoch.toString();
 
   final _listeners = <VoidCallback>{};
 
   BeamPageState value;
+
+  String get fullDebugLabel => '$parentStackDebugLabel-$_debugLabel';
 
   @override
   void addListener(VoidCallback listener) {
