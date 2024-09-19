@@ -76,13 +76,11 @@ class RoutesStackBuilder {
     BeamerDelegate parent,
     RouteInformation routeInformation,
     BeamParameters? beamParameters,
-    String creationReason,
   ) {
     final matched = RoutesBeamStack.chooseRoutes(routeInformation, routes.keys);
     if (matched.isNotEmpty) {
       return RoutesBeamStack(
         parent: parent,
-        creationReason: creationReason,
         routeInformation: routeInformation,
         routes: routes,
         navBuilder: builder,

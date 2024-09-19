@@ -446,7 +446,6 @@ class RoutesBeamStack extends BeamStack<BeamState> {
   /// [routeInformation] and [routes] are required.
   RoutesBeamStack({
     required this.parent,
-    required String creationReason,
     required RouteInformation routeInformation,
     Object? data,
     BeamParameters? beamParameters,
