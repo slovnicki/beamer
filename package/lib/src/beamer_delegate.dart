@@ -785,7 +785,6 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     final navigator = Builder(
       builder: (context) {
         _setCurrentPages(context);
-
         _setBrowserTitle(context);
 
         buildListener?.call(context, this);
@@ -1093,11 +1092,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   void _initializeChild() {
     final parentConfiguration = _parent!.configuration.copyWith();
     if (initializeFromParent) {
-      _beamStackCandidate = stackBuilder(
-        this,
-        parentConfiguration,
-        _currentBeamParameters,
-      );
+      _beamStackCandidate =
+          stackBuilder(this, parentConfiguration, _currentBeamParameters);
     }
 
     // If this couldn't handle parents configuration,

@@ -47,30 +47,20 @@ class RoutesStackBuilder {
   /// Creates a [RoutesStackBuilder] with specified properties.
   ///
   /// [routes] are required to build pages from.
-  RoutesStackBuilder({
-    required this.routes,
-    this.builder,
-  });
+  RoutesStackBuilder({required this.routes, this.builder});
 
   /// List of all routes this builder handles.
   ///
   /// isPinnacle is true when the route is the outer/last in the stack.
-  final Map<
-      Pattern,
-      dynamic Function(
-        BuildContext,
-        BeamState,
-        // BeamPageNotifierReference,
-        // BeamPageStateNotifier,
-        Object?,
-      )> routes;
+  final Map<Pattern, dynamic Function(BuildContext, BeamState, Object?)> routes;
 
   /// Used as a [BeamStack.builder].
   final Widget Function(BuildContext context, Widget navigator)? builder;
 
   /// Makes this callable as [StackBuilder].
   ///
-  /// Returns [RoutesBeamStack] configured with chosen routes from [routes] or [NotFound].
+  /// Returns [RoutesBeamStack] configured with chosen routes from [routes]
+  /// or [NotFound].
   BeamStack call(
     BeamerDelegate parent,
     RouteInformation routeInformation,
