@@ -88,17 +88,12 @@ abstract class BeamStack<T extends RouteInformationSerializable>
   /// Creates a [BeamStack] with specified properties.
   ///
   /// All attributes can be null.
-  BeamStack(
-    this.debugLabel, [
+  BeamStack([
     RouteInformation? routeInformation,
     BeamParameters? beamParameters,
   ]) {
     create(routeInformation, beamParameters);
   }
-
-  // final debugLabel = DateTime.now().millisecondsSinceEpoch.toString();
-
-  final String debugLabel;
 
   late T _state;
 
@@ -399,8 +394,7 @@ abstract class BeamStack<T extends RouteInformationSerializable>
 class NotFound extends BeamStack<BeamState> {
   /// Creates a [NotFound] [BeamStack] with
   /// `RouteInformation(uri: Uri.parse(path)` as its state.
-  NotFound({String path = '/'})
-      : super('NotFound', RouteInformation(uri: Uri.parse(path)));
+  NotFound({String path = '/'}) : super(RouteInformation(uri: Uri.parse(path)));
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [];
@@ -413,8 +407,6 @@ class NotFound extends BeamStack<BeamState> {
 ///
 /// See [BeamerDelegate.currentBeamStack].
 class EmptyBeamStack extends BeamStack<BeamState> {
-  EmptyBeamStack() : super('EmptyBeamStack');
-
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [];
 
@@ -429,7 +421,7 @@ class GuardShowPage extends BeamStack<BeamState> {
   GuardShowPage(
     this.routeInformation,
     this.beamPage,
-  ) : super('GuardShowPage', routeInformation);
+  ) : super(routeInformation);
 
   /// [RouteInformation] to show in URL
   final RouteInformation routeInformation;
@@ -454,16 +446,13 @@ class RoutesBeamStack extends BeamStack<BeamState> {
   /// [routeInformation] and [routes] are required.
   RoutesBeamStack({
     required this.parent,
-    required String debugLabel,
     required String creationReason,
     required RouteInformation routeInformation,
     Object? data,
     BeamParameters? beamParameters,
     required this.routes,
     this.navBuilder,
-  }) : super(debugLabel, routeInformation, beamParameters) {
-    // print('RoutesBeamStack.constructor() -- $debugLabel -- $creationReason');
-  }
+  }) : super(routeInformation, beamParameters);
 
   final BeamerDelegate parent;
 
@@ -525,9 +514,6 @@ class RoutesBeamStack extends BeamStack<BeamState> {
     final pages = sortedRoutes.indexed.map<BeamPage>((value) {
       final index = value.$1;
       final route = value.$2;
-      // final notifierReference = BeamPageNotifierReference();
-      // final routeElement =
-      //     routes[route]!(context, state, notifierReference, data);
       final routeElement = routes[route]!(context, state, data);
       final page = routeElement is BeamPage
           ? routeElement
@@ -535,18 +521,15 @@ class RoutesBeamStack extends BeamStack<BeamState> {
               key: ValueKey(filteredRoutes[route]),
               child: routeElement,
             );
-      print('Notifier exists: ${parent.pageNotifiers.containsKey(page.key)}');
+
+      // Initializing page state
       final stateChangeNotifier = page.stateChangeNotifier;
       if (stateChangeNotifier != null) {
         parent.pageNotifiers[page.key] = stateChangeNotifier;
         stateChangeNotifier.value =
             BeamPageState(isPinnacle: index == sortedRoutes.length - 1);
       }
-      // final notifier = parent.pageNotifiers[page.key] ??= BeamPageNotifier(
-      //   BeamPageState(isPinnacle: index == sortedRoutes.length - 1),
-      //   parentStackDebugLabel: debugLabel,
-      // );
-      // notifierReference.getNotifier = () => notifier;
+
       return page;
     }).toList();
 

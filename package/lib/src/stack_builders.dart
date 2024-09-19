@@ -49,12 +49,9 @@ class RoutesStackBuilder {
   ///
   /// [routes] are required to build pages from.
   RoutesStackBuilder({
-    required this.debugLabel,
     required this.routes,
     this.builder,
   });
-
-  final String debugLabel;
 
   /// List of all routes this builder handles.
   ///
@@ -85,7 +82,6 @@ class RoutesStackBuilder {
     if (matched.isNotEmpty) {
       return RoutesBeamStack(
         parent: parent,
-        debugLabel: '$debugLabel -- ${DateTime.now().millisecondsSinceEpoch}',
         creationReason: creationReason,
         routeInformation: routeInformation,
         routes: routes,

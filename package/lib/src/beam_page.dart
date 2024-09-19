@@ -364,63 +364,6 @@ class BeamPageState {
   int get hashCode => isPinnacle.hashCode;
 }
 
-// class BeamPageNotifier extends ValueListenable<BeamPageState> {
-//   BeamPageNotifier(
-//     this.value, {
-//     required this.parentStackDebugLabel,
-//   }) {
-//     print('BeamPageNotifier.constructor() -- $_debugLabel');
-//   }
-
-//   final String parentStackDebugLabel;
-//   final _debugLabel = DateTime.now().millisecondsSinceEpoch.toString();
-
-//   final _listeners = <VoidCallback>{};
-
-//   BeamPageState value;
-
-//   String get fullDebugLabel => '$parentStackDebugLabel-$_debugLabel';
-
-//   @override
-//   void addListener(VoidCallback listener) {
-//     _listeners.add(listener);
-//     print(
-//         'BeamPageNotifier.addListener() -- $_debugLabel -- Count: ${_listeners.length}');
-//   }
-
-//   @override
-//   void removeListener(VoidCallback listener) {
-//     _listeners.remove(listener);
-//     print(
-//         'BeamPageNotifier.removeListener() -- $_debugLabel -- Count: ${_listeners.length}');
-//   }
-
-//   void notify() {
-//     for (final listener in _listeners) {
-//       listener();
-//     }
-
-//     print(
-//         'BeamPageNotifier.notify() -- $_debugLabel -- Count: ${_listeners.length}');
-//   }
-// }
-
-/// Utility to get a [BeamPageNotifier].
-///
-/// Needed because [BeamPage] is const and the notifier is not known until
-/// the page is created.
-// typedef BeamPageNotifierReference = BeamPageNotifier Function(LocalKey);
-// typedef BeamPageNotifierReference = BeamPageNotifier Function();
-// class BeamPageNotifierReference {
-//   BeamPageNotifierReference();
-
-//   BeamPageNotifier? _notifier;
-
-//   late final BeamPageNotifier Function() getNotifier;
-
-//   BeamPageNotifier get notifier => _notifier ??= getNotifier();
-// }
-
 /// Utility to inform [BeamPageState] to his [BeamPage].
 class BeamPageStateNotifier extends ValueListenable<BeamPageState>
     with ChangeNotifier {

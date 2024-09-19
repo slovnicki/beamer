@@ -17,7 +17,6 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// [stackBuilder] is required to process the incoming navigation request.
   BeamerDelegate({
     required this.stackBuilder,
-    required this.debugLabel,
     this.initialPath = '/',
     this.routeListener,
     this.buildListener,
@@ -42,8 +41,6 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     this.updateParent = true,
     this.clearBeamingHistoryOn = const <String>{},
   }) {
-    // print('BeamerDelegate.constructor() -- $debugLabel');
-
     _currentBeamParameters = BeamParameters(
       transitionDelegate: transitionDelegate,
     );
@@ -66,10 +63,6 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   BeamerDelegate? _parent;
 
   final Set<BeamerDelegate> _children = {};
-
-  final String debugLabel;
-
-  // final _debugLabel = DateTime.now().millisecondsSinceEpoch.toString();
 
   /// Takes priority over all other siblings,
   /// i.e. sets itself as active and all other siblings as inactive.
@@ -798,8 +791,6 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
         buildListener?.call(context, this);
 
-        _printCurrentPageNotifiers();
-
         // Notifying pages
         if (!isFirstBuild) {
           _notifyCurrentPages();
@@ -1006,10 +997,6 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   void _setCurrentPages(BuildContext context) {
     final currentBeamStack = this.currentBeamStack;
 
-    if (currentBeamStack is RoutesBeamStack) {
-      print('_setCurrentPages() -- ${currentBeamStack.debugLabel}');
-    }
-
     if (currentBeamStack is NotFound) {
       _currentPages = [notFoundPage];
       pageNotifiers.clear();
@@ -1017,17 +1004,15 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       _currentPages = _currentBeamParameters.stacked
           ? currentBeamStack.buildPages(context, currentBeamStack.state)
           : [currentBeamStack.buildPages(context, currentBeamStack.state).last];
-      _purgePageNotifiers();
+      _purgePageStateNotifiers();
     }
   }
 
-  /// Purging outdated page notifiers.
-  void _purgePageNotifiers() {
+  /// Purges outdated page state notifiers.
+  void _purgePageStateNotifiers() {
     final currentPagesKeys = _currentPages.map((page) => page.key);
-    print('_purgePageNotifiers() -- 1 -- ${pageNotifiers.length}');
     pageNotifiers
         .removeWhere((key, pageNotifier) => !currentPagesKeys.contains(key));
-    print('_purgePageNotifiers() -- 2 -- ${pageNotifiers.length}');
   }
 
   void _notifyCurrentPages() {
@@ -1039,24 +1024,15 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
     // Hidden pages
     for (int i = 0; i < _currentPages.length - 1; i++) {
-      print('Notifying page: ${_currentPages[i].title} -- Is pinnacle: false');
       pageNotifiers[_currentPages[i].key]!
         ..value = BeamPageState(isPinnacle: false)
         ..notifyListeners();
     }
 
     // Pinnacle page
-    print('Notifying page: ${_currentPages.last.title} -- Is pinnacle: true');
     pageNotifiers[_currentPages.last.key]!
       ..value = BeamPageState(isPinnacle: true)
       ..notifyListeners();
-  }
-
-  void _printCurrentPageNotifiers() {
-    print('_printCurrentPageNotifiers()');
-    for (final entry in pageNotifiers.entries) {
-      print('LocalKey: ${entry.key}');
-    }
   }
 
   void _setBrowserTitle(BuildContext context) {
