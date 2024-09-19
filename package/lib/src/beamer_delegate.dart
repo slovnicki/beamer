@@ -435,6 +435,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       _beamStackCandidate = stackBuilder(
         this.configuration.copyWith(),
         _currentBeamParameters,
+        'update',
       );
     }
 
@@ -1005,6 +1006,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       _beamStackCandidate = stackBuilder(
         RouteInformation(uri: Uri.parse(notFoundRedirectNamed!)),
         _currentBeamParameters.copyWith(),
+        '_handleNotFoundRedirect',
       );
     }
     _updateFromBeamStackCandidate();
@@ -1097,8 +1099,11 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   void _initializeChild() {
     final parentConfiguration = _parent!.configuration.copyWith();
     if (initializeFromParent) {
-      _beamStackCandidate =
-          stackBuilder(parentConfiguration, _currentBeamParameters);
+      _beamStackCandidate = stackBuilder(
+        parentConfiguration,
+        _currentBeamParameters,
+        '_initializeChild',
+      );
     }
 
     // If this couldn't handle parents configuration,
@@ -1128,7 +1133,11 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   // Updates only if it can handle the configuration
   void _updateFromParent({bool rebuild = true}) {
     final parentConfiguration = _parent!.configuration.copyWith();
-    final beamStack = stackBuilder(parentConfiguration, _currentBeamParameters);
+    final beamStack = stackBuilder(
+      parentConfiguration,
+      _currentBeamParameters,
+      '_updateFromParent',
+    );
 
     if (beamStack is! NotFound) {
       update(

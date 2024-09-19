@@ -7,6 +7,7 @@ import 'package:beamer/src/utils.dart';
 typedef StackBuilder = BeamStack Function(
   RouteInformation,
   BeamParameters?,
+  String creationReason,
 );
 
 /// A pre-made builder to be used for [BeamerDelegate.stackBuilder].
@@ -76,11 +77,13 @@ class RoutesStackBuilder {
   BeamStack call(
     RouteInformation routeInformation,
     BeamParameters? beamParameters,
+    String creationReason,
   ) {
     final matched = RoutesBeamStack.chooseRoutes(routeInformation, routes.keys);
     if (matched.isNotEmpty) {
       return RoutesBeamStack(
         debugLabel: '$debugLabel -- ${DateTime.now().millisecondsSinceEpoch}',
+        creationReason: creationReason,
         routeInformation: routeInformation,
         routes: routes,
         navBuilder: builder,

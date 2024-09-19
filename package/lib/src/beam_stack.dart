@@ -454,13 +454,14 @@ class RoutesBeamStack extends BeamStack<BeamState> {
   /// [routeInformation] and [routes] are required.
   RoutesBeamStack({
     required String debugLabel,
+    required String creationReason,
     required RouteInformation routeInformation,
     Object? data,
     BeamParameters? beamParameters,
     required this.routes,
     this.navBuilder,
   }) : super(debugLabel, routeInformation, beamParameters) {
-    print('RoutesBeamStack.constructor() -- $debugLabel');
+    print('RoutesBeamStack.constructor() -- $debugLabel -- $creationReason');
   }
 
   /// Map of all routes this stack handles.
