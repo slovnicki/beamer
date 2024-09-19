@@ -461,9 +461,6 @@ class RoutesBeamStack extends BeamStack<BeamState> {
       dynamic Function(
         BuildContext,
         BeamState,
-        // BeamPageNotifier,
-        // BeamPageNotifierReference,
-        // BeamPageStateNotifier,
         Object? data,
       )> routes;
 
