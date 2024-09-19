@@ -770,11 +770,6 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     final isFirstBuild = this._firstBuild;
     _firstBuild = false;
 
-    // final current = currentBeamStack;
-
-    // print(
-    //     'BeamerDelegate.build() -- I -- $debugLabel -- ${current.debugLabel} -- Is first build: $isFirstBuild -- Type: ${current.runtimeType}');
-
     _buildInProgress = true;
     _context = context;
 
@@ -797,25 +792,17 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
     final navigator = Builder(
       builder: (context) {
-        // final current = currentBeamStack;
-
-        // print(
-        //     'BeamerDelegate.build() -- II -- $debugLabel -- ${current.debugLabel} -- Is first build: $isFirstBuild -- Type: ${current.runtimeType}');
-
         _setCurrentPages(context);
-
-        // print(
-        //     'BeamerDelegate.build() -- $_debugLabel -- Builder page length: ${_currentPages.length}');
 
         _setBrowserTitle(context);
 
         buildListener?.call(context, this);
 
+        _printCurrentPageNotifiers();
+
         // Notifying pages
         if (!isFirstBuild) {
-          final count = _notifyCurrentPages();
-          // print(
-          //     'BeamerDelegate.build() -- $debugLabel -- Notified pages: $count');
+          _notifyCurrentPages();
         }
 
         return Navigator(
@@ -1032,15 +1019,33 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     }
   }
 
-  int _notifyCurrentPages() {
+  void _notifyCurrentPages() {
     final stack = currentBeamStack;
 
     if (stack is! RoutesBeamStack) {
-      return 0;
+      return;
     }
 
-    stack.notifyPages(_currentPages);
-    return _currentPages.length;
+    // Hidden pages
+    for (int i = 0; i < _currentPages.length - 1; i++) {
+      print('Notifying page: ${_currentPages[i].title} -- Is pinnacle: false');
+      pageNotifiers[_currentPages[i].key]!
+        ..value = BeamPageState(isPinnacle: false)
+        ..notify();
+    }
+
+    // Pinnacle page
+    print('Notifying page: ${_currentPages.last.title} -- Is pinnacle: true');
+    pageNotifiers[_currentPages.last.key]!
+      ..value = BeamPageState(isPinnacle: true)
+      ..notify();
+  }
+
+  void _printCurrentPageNotifiers() {
+    print('_printCurrentPageNotifiers()');
+    for (final entry in pageNotifiers.entries) {
+      print('LocalKey: ${entry.key}, Notifier: ${entry.value.fullDebugLabel}');
+    }
   }
 
   void _setBrowserTitle(BuildContext context) {

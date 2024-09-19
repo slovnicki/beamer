@@ -516,8 +516,6 @@ class RoutesBeamStack extends BeamStack<BeamState> {
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
-    // _printCurrentPageNotifiers('buildPages');
-
     final filteredRoutes = chooseRoutes(state.routeInformation, routes.keys);
     final routeBuilders = Map.of(routes)
       ..removeWhere((key, value) => !filteredRoutes.containsKey(key));
@@ -641,37 +639,4 @@ class RoutesBeamStack extends BeamStack<BeamState> {
 
     return isNotFound ? {} : matched;
   }
-
-  void notifyPages(List<BeamPage> pages) {
-    // _printCurrentPageNotifiers('notifyPages');
-
-    // Hidden pages
-    for (int i = 0; i < pages.length - 1; i++) {
-      print('Notifying page: ${pages[i].title} -- Is pinnacle: false');
-      parent.pageNotifiers[pages[i].key]!
-        ..value = BeamPageState(isPinnacle: false)
-        ..notify();
-    }
-
-    // Pinnacle page
-    print('Notifying page: ${pages.last.title} -- Is pinnacle: true');
-    parent.pageNotifiers[pages.last.key]!
-      ..value = BeamPageState(isPinnacle: true)
-      ..notify();
-  }
-
-  /// Returns current notifiers and clean them up.
-  List<BeamPageNotifier> getPageNotifiers() {
-    return [...parent.pageNotifiers.values];
-    // final notifiers = [..._pageNotifiers.values];
-    // _pageNotifiers.clear();
-    // return notifiers;
-  }
-
-  // void _printCurrentPageNotifiers(String debugLabel) {
-  //   print('_printCurrentPageNotifiers() -- ${this.debugLabel} -- $debugLabel');
-  //   for (final entry in _pageNotifiers.entries) {
-  //     print('LocalKey: ${entry.key}, Notifier: ${entry.value.fullDebugLabel}');
-  //   }
-  // }
 }
