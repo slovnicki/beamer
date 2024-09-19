@@ -42,7 +42,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     this.updateParent = true,
     this.clearBeamingHistoryOn = const <String>{},
   }) {
-    print('BeamerDelegate.constructor() -- $debugLabel');
+    // print('BeamerDelegate.constructor() -- $debugLabel');
 
     _currentBeamParameters = BeamParameters(
       transitionDelegate: transitionDelegate,
@@ -52,6 +52,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
     updateListenable?.addListener(_update);
   }
+
+  final Map<LocalKey, BeamPageNotifier> pageNotifiers = {};
 
   bool _firstBuild = true;
 
@@ -433,6 +435,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     if (buildBeamStack) {
       // build a BeamStack from configuration
       _beamStackCandidate = stackBuilder(
+        this,
         this.configuration.copyWith(),
         _currentBeamParameters,
         'update',
@@ -767,10 +770,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     final isFirstBuild = this._firstBuild;
     _firstBuild = false;
 
-    final current = currentBeamStack;
+    // final current = currentBeamStack;
 
-    print(
-        'BeamerDelegate.build() -- I -- $debugLabel -- ${current.debugLabel} -- Is first build: $isFirstBuild -- Type: ${current.runtimeType}');
+    // print(
+    //     'BeamerDelegate.build() -- I -- $debugLabel -- ${current.debugLabel} -- Is first build: $isFirstBuild -- Type: ${current.runtimeType}');
 
     _buildInProgress = true;
     _context = context;
@@ -794,10 +797,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
     final navigator = Builder(
       builder: (context) {
-        final current = currentBeamStack;
+        // final current = currentBeamStack;
 
-        print(
-            'BeamerDelegate.build() -- II -- $debugLabel -- ${current.debugLabel} -- Is first build: $isFirstBuild -- Type: ${current.runtimeType}');
+        // print(
+        //     'BeamerDelegate.build() -- II -- $debugLabel -- ${current.debugLabel} -- Is first build: $isFirstBuild -- Type: ${current.runtimeType}');
 
         _setCurrentPages(context);
 
@@ -811,8 +814,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         // Notifying pages
         if (!isFirstBuild) {
           final count = _notifyCurrentPages();
-          print(
-              'BeamerDelegate.build() -- $debugLabel -- Notified pages: $count');
+          // print(
+          //     'BeamerDelegate.build() -- $debugLabel -- Notified pages: $count');
         }
 
         return Navigator(
@@ -1004,6 +1007,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       _beamStackCandidate = notFoundRedirect!;
     } else if (notFoundRedirectNamed != null) {
       _beamStackCandidate = stackBuilder(
+        this,
         RouteInformation(uri: Uri.parse(notFoundRedirectNamed!)),
         _currentBeamParameters.copyWith(),
         '_handleNotFoundRedirect',
@@ -1100,6 +1104,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     final parentConfiguration = _parent!.configuration.copyWith();
     if (initializeFromParent) {
       _beamStackCandidate = stackBuilder(
+        this,
         parentConfiguration,
         _currentBeamParameters,
         '_initializeChild',
@@ -1134,6 +1139,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   void _updateFromParent({bool rebuild = true}) {
     final parentConfiguration = _parent!.configuration.copyWith();
     final beamStack = stackBuilder(
+      this,
       parentConfiguration,
       _currentBeamParameters,
       '_updateFromParent',

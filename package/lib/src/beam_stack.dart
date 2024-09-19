@@ -453,6 +453,7 @@ class RoutesBeamStack extends BeamStack<BeamState> {
   ///
   /// [routeInformation] and [routes] are required.
   RoutesBeamStack({
+    required this.parent,
     required String debugLabel,
     required String creationReason,
     required RouteInformation routeInformation,
@@ -461,8 +462,10 @@ class RoutesBeamStack extends BeamStack<BeamState> {
     required this.routes,
     this.navBuilder,
   }) : super(debugLabel, routeInformation, beamParameters) {
-    print('RoutesBeamStack.constructor() -- $debugLabel -- $creationReason');
+    // print('RoutesBeamStack.constructor() -- $debugLabel -- $creationReason');
   }
+
+  final BeamerDelegate parent;
 
   /// Map of all routes this stack handles.
   final Map<
@@ -483,7 +486,7 @@ class RoutesBeamStack extends BeamStack<BeamState> {
   ///
   /// The reason for not making them persistent across build cycles is that
   /// we can't know the [BeamPage.key] before creating them (see [buildPages]).
-  final Map<LocalKey, BeamPageNotifier> _pageNotifiers = {};
+  // final Map<LocalKey, BeamPageNotifier> _pageNotifiers = {};
   // final List<BeamPageNotifier> _pageNotifiers = [];
   // final Map<ValueKey, BeamPageNotifier> _pageNotifiers = {};
 
@@ -532,8 +535,8 @@ class RoutesBeamStack extends BeamStack<BeamState> {
               key: ValueKey(filteredRoutes[route]),
               child: routeElement,
             );
-      print('Notifier exists: ${_pageNotifiers.containsKey(page.key)}');
-      final notifier = _pageNotifiers[page.key] ??= BeamPageNotifier(
+      print('Notifier exists: ${parent.pageNotifiers.containsKey(page.key)}');
+      final notifier = parent.pageNotifiers[page.key] ??= BeamPageNotifier(
         BeamPageState(isPinnacle: index == sortedRoutes.length - 1),
         parentStackDebugLabel: debugLabel,
       );
@@ -645,21 +648,21 @@ class RoutesBeamStack extends BeamStack<BeamState> {
     // Hidden pages
     for (int i = 0; i < pages.length - 1; i++) {
       print('Notifying page: ${pages[i].title} -- Is pinnacle: false');
-      _pageNotifiers[pages[i].key]!
+      parent.pageNotifiers[pages[i].key]!
         ..value = BeamPageState(isPinnacle: false)
         ..notify();
     }
 
     // Pinnacle page
     print('Notifying page: ${pages.last.title} -- Is pinnacle: true');
-    _pageNotifiers[pages.last.key]!
+    parent.pageNotifiers[pages.last.key]!
       ..value = BeamPageState(isPinnacle: true)
       ..notify();
   }
 
   /// Returns current notifiers and clean them up.
   List<BeamPageNotifier> getPageNotifiers() {
-    return [..._pageNotifiers.values];
+    return [...parent.pageNotifiers.values];
     // final notifiers = [..._pageNotifiers.values];
     // _pageNotifiers.clear();
     // return notifiers;
