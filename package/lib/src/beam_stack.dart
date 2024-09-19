@@ -507,9 +507,8 @@ class RoutesBeamStack extends BeamStack<BeamState> {
       // Initializing page state
       final stateChangeNotifier = page.stateChangeNotifier;
       if (stateChangeNotifier != null) {
-        parent.pageNotifiers[page.key] = stateChangeNotifier;
-        stateChangeNotifier.value =
-            BeamPageState(isPinnacle: index == sortedRoutes.length - 1);
+        parent.pageNotifiers[page.key] = stateChangeNotifier
+          ..value = BeamPageState(isPinnacle: index == sortedRoutes.length - 1);
       }
 
       return page;
