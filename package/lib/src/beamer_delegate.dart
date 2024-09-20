@@ -359,10 +359,6 @@ class BeamerDelegate<T extends BeamPageInfo>
 
   final pinnaclePageInfoNotifier = BeamPageInfoNotifier<T>();
 
-  // T? _pinnaclePageInfo;
-
-  // T? get pinnaclePageInfo => _pinnaclePageInfo;
-
   /// Main method to update the [configuration] of this delegate and its
   /// [currentBeamStack].
   ///
