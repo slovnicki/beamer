@@ -10,7 +10,8 @@ import 'package:flutter/services.dart';
 /// A delegate that is used by the [Router] to build the [Navigator].
 ///
 /// This is "the beamer", the one that does the actual beaming.
-class BeamerDelegate extends RouterDelegate<RouteInformation>
+class BeamerDelegate<T extends BeamPageInfo>
+    extends RouterDelegate<RouteInformation>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<RouteInformation> {
   /// Creates a [BeamerDelegate] with specified properties.
   ///
@@ -355,6 +356,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// This is important for first build, i.e. [setInitialRoutePath],
   /// to avoid setting URL when the guards have not been run yet.
   bool _initialConfigurationReady = false;
+
+  final pinnaclePageInfoNotifier = BeamPageInfoNotifier<T>();
+
+  T? _pinnaclePageInfo;
+
+  T? get pinnaclePageInfo => _pinnaclePageInfo;
 
   /// Main method to update the [configuration] of this delegate and its
   /// [currentBeamStack].
@@ -997,12 +1004,18 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     if (currentBeamStack is NotFound) {
       _currentPages = [notFoundPage];
       pageNotifiers.clear();
+      _pinnaclePageInfo = null;
     } else {
       _currentPages = _currentBeamParameters.stacked
           ? currentBeamStack.buildPages(context, currentBeamStack.state)
           : [currentBeamStack.buildPages(context, currentBeamStack.state).last];
       _purgePageStateNotifiers();
+      _pinnaclePageInfo = _currentPages.lastOrNull?.info as T?;
     }
+
+    pinnaclePageInfoNotifier
+      ..value = _pinnaclePageInfo
+      ..notifyListeners();
   }
 
   /// Purges outdated page state notifiers.

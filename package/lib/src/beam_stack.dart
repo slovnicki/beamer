@@ -83,8 +83,8 @@ class HistoryElement {
 ///   * keeping a [state] that provides the link between the first 2
 ///
 /// Extend this class to define your stacks to which you can then beam to.
-abstract class BeamStack<T extends RouteInformationSerializable>
-    extends ChangeNotifier {
+abstract class BeamStack<T extends RouteInformationSerializable,
+    K extends BeamPageInfo> extends ChangeNotifier {
   /// Creates a [BeamStack] with specified properties.
   ///
   /// All attributes can be null.
@@ -367,7 +367,7 @@ abstract class BeamStack<T extends RouteInformationSerializable>
   ///
   /// [context] can be useful while building the pages.
   /// It will also contain anything injected via [builder].
-  List<BeamPage> buildPages(BuildContext context, T state);
+  List<BeamPage<K>> buildPages(BuildContext context, T state);
 
   /// Guards that will be executing [BeamGuard.check] when this gets beamed to.
   ///
@@ -391,7 +391,7 @@ abstract class BeamStack<T extends RouteInformationSerializable>
 }
 
 /// Default stack to choose if requested URI doesn't parse to any stack.
-class NotFound extends BeamStack<BeamState> {
+class NotFound extends BeamStack<BeamState, BeamPageInfo> {
   /// Creates a [NotFound] [BeamStack] with
   /// `RouteInformation(uri: Uri.parse(path)` as its state.
   NotFound({String path = '/'}) : super(RouteInformation(uri: Uri.parse(path)));
@@ -406,7 +406,7 @@ class NotFound extends BeamStack<BeamState> {
 /// Empty stack used to initialize a non-nullable BeamStack variable.
 ///
 /// See [BeamerDelegate.currentBeamStack].
-class EmptyBeamStack extends BeamStack<BeamState> {
+class EmptyBeamStack extends BeamStack<BeamState, BeamPageInfo> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [];
 
@@ -415,7 +415,7 @@ class EmptyBeamStack extends BeamStack<BeamState> {
 }
 
 /// A specific single-page [BeamStack] for [BeamGuard.showPage]
-class GuardShowPage extends BeamStack<BeamState> {
+class GuardShowPage extends BeamStack<BeamState, BeamPageInfo> {
   /// Creates a [GuardShowPage] [BeamStack] with
   /// `RouteInformation(uri: Uri.parse(path)` as its state.
   GuardShowPage(
@@ -440,7 +440,7 @@ class GuardShowPage extends BeamStack<BeamState> {
 /// A beam stack for [RoutesStackBuilder], but can be used freely.
 ///
 /// Useful when needing a simple beam stack with a single or few pages.
-class RoutesBeamStack extends BeamStack<BeamState> {
+class RoutesBeamStack<T extends BeamPageInfo> extends BeamStack<BeamState, T> {
   /// Creates a [RoutesBeamStack] with specified properties.
   ///
   /// [routeInformation] and [routes] are required.
@@ -453,7 +453,7 @@ class RoutesBeamStack extends BeamStack<BeamState> {
     this.navBuilder,
   }) : super(routeInformation, beamParameters);
 
-  final BeamerDelegate parent;
+  final BeamerDelegate<T> parent;
 
   /// Map of all routes this stack handles.
   final Map<Pattern, dynamic Function(BuildContext, BeamState, Object? data)>
@@ -487,19 +487,19 @@ class RoutesBeamStack extends BeamStack<BeamState> {
   List<Pattern> get pathPatterns => routes.keys.toList();
 
   @override
-  List<BeamPage> buildPages(BuildContext context, BeamState state) {
+  List<BeamPage<T>> buildPages(BuildContext context, BeamState state) {
     final filteredRoutes = chooseRoutes(state.routeInformation, routes.keys);
     final routeBuilders = Map.of(routes)
       ..removeWhere((key, value) => !filteredRoutes.containsKey(key));
     final sortedRoutes = routeBuilders.keys.toList()
       ..sort((a, b) => _compareKeys(a, b));
-    final pages = sortedRoutes.indexed.map<BeamPage>((value) {
+    final pages = sortedRoutes.indexed.map<BeamPage<T>>((value) {
       final index = value.$1;
       final route = value.$2;
       final routeElement = routes[route]!(context, state, data);
-      final page = routeElement is BeamPage
-          ? routeElement
-          : BeamPage(
+      final BeamPage<T> page = routeElement is BeamPage
+          ? routeElement as BeamPage<T>
+          : BeamPage<T>(
               key: ValueKey(filteredRoutes[route]),
               child: routeElement,
             );

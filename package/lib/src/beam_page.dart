@@ -37,7 +37,7 @@ enum BeamPageType {
 }
 
 /// A wrapper for screens in a navigation stack.
-class BeamPage extends Page {
+class BeamPage<T extends BeamPageInfo> extends Page {
   /// Creates a [BeamPage] with specified properties.
   ///
   /// [child] is required and typically represents a screen of the app.
@@ -56,6 +56,7 @@ class BeamPage extends Page {
     this.opaque = true,
     this.keepQueryOnPop = false,
     this.stateChangeNotifier,
+    this.info,
   }) : super(key: key, name: name);
 
   /// A [BeamPage] to be the default for [BeamerDelegate.notFoundPage].
@@ -236,6 +237,8 @@ class BeamPage extends Page {
 
   final BeamPageStateNotifier? stateChangeNotifier;
 
+  final T? info;
+
   @override
   Route createRoute(BuildContext context) {
     if (routeBuilder != null) {
@@ -371,4 +374,20 @@ class BeamPageStateNotifier extends ValueListenable<BeamPageState>
 
   @override
   late BeamPageState value;
+}
+
+/// Represents specific page related information.
+///
+/// Not represents state.
+mixin class BeamPageInfo {
+  const BeamPageInfo();
+}
+
+/// Utility to inform the current [BeamPageInfo] of [BeamerDelegate].
+class BeamPageInfoNotifier<T extends BeamPageInfo> extends ValueListenable<T?>
+    with ChangeNotifier {
+  BeamPageInfoNotifier();
+
+  @override
+  late T? value;
 }
