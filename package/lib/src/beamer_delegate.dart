@@ -51,7 +51,7 @@ class BeamerDelegate<T extends BeamPageInfo>
     updateListenable?.addListener(_update);
   }
 
-  final Map<LocalKey, BeamPageStateNotifier> pageNotifiers = {};
+  final Map<LocalKey, BeamPageStateNotifier> pageStateNotifiers = {};
 
   bool _firstBuild = true;
 
@@ -359,9 +359,9 @@ class BeamerDelegate<T extends BeamPageInfo>
 
   final pinnaclePageInfoNotifier = BeamPageInfoNotifier<T>();
 
-  T? _pinnaclePageInfo;
+  // T? _pinnaclePageInfo;
 
-  T? get pinnaclePageInfo => _pinnaclePageInfo;
+  // T? get pinnaclePageInfo => _pinnaclePageInfo;
 
   /// Main method to update the [configuration] of this delegate and its
   /// [currentBeamStack].
@@ -796,10 +796,11 @@ class BeamerDelegate<T extends BeamPageInfo>
 
         buildListener?.call(context, this);
 
-        // Notifying pages
-        if (!isFirstBuild) {
-          _notifyCurrentPages();
-        }
+        // Notifying pinnacle page info
+        pinnaclePageInfoNotifier.notifyListeners();
+
+        // Notifying pages states
+        _notifyCurrentPagesStates(isFirstBuild: isFirstBuild);
 
         return Navigator(
           key: navigatorKey,
@@ -1003,29 +1004,26 @@ class BeamerDelegate<T extends BeamPageInfo>
 
     if (currentBeamStack is NotFound) {
       _currentPages = [notFoundPage];
-      pageNotifiers.clear();
-      _pinnaclePageInfo = null;
+      pageStateNotifiers.clear();
+      pinnaclePageInfoNotifier.value = null;
     } else {
       _currentPages = _currentBeamParameters.stacked
           ? currentBeamStack.buildPages(context, currentBeamStack.state)
           : [currentBeamStack.buildPages(context, currentBeamStack.state).last];
       _purgePageStateNotifiers();
-      _pinnaclePageInfo = _currentPages.lastOrNull?.info as T?;
+      pinnaclePageInfoNotifier.value = _currentPages.lastOrNull?.info as T?;
     }
-
-    pinnaclePageInfoNotifier
-      ..value = _pinnaclePageInfo
-      ..notifyListeners();
   }
 
   /// Purges outdated page state notifiers.
   void _purgePageStateNotifiers() {
     final currentPagesKeys = _currentPages.map((page) => page.key);
-    pageNotifiers
+    pageStateNotifiers
         .removeWhere((key, pageNotifier) => !currentPagesKeys.contains(key));
   }
 
-  void _notifyCurrentPages() {
+  /// Notifies current pages [BeamPageState]'s.
+  void _notifyCurrentPagesStates({required bool isFirstBuild}) {
     final stack = currentBeamStack;
 
     if (stack is! RoutesBeamStack) {
@@ -1034,15 +1032,15 @@ class BeamerDelegate<T extends BeamPageInfo>
 
     // Hidden pages
     for (int i = 0; i < _currentPages.length - 1; i++) {
-      pageNotifiers[_currentPages[i].key]!
+      pageStateNotifiers[_currentPages[i].key]!
         ..value = BeamPageState(isPinnacle: false)
-        ..notifyListeners();
+        ..notifyListeners(ignore: isFirstBuild);
     }
 
     // Pinnacle page
-    pageNotifiers[_currentPages.last.key]!
+    pageStateNotifiers[_currentPages.last.key]!
       ..value = BeamPageState(isPinnacle: true)
-      ..notifyListeners();
+      ..notifyListeners(ignore: isFirstBuild);
   }
 
   void _setBrowserTitle(BuildContext context) {

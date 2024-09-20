@@ -494,7 +494,7 @@ class RoutesBeamStack<T extends BeamPageInfo> extends BeamStack<BeamState, T> {
     final sortedRoutes = routeBuilders.keys.toList()
       ..sort((a, b) => _compareKeys(a, b));
     final pages = sortedRoutes.indexed.map<BeamPage<T>>((value) {
-      final index = value.$1;
+      // final index = value.$1;
       final route = value.$2;
       final routeElement = routes[route]!(context, state, data);
       final BeamPage<T> page = routeElement is BeamPage
@@ -504,11 +504,10 @@ class RoutesBeamStack<T extends BeamPageInfo> extends BeamStack<BeamState, T> {
               child: routeElement,
             );
 
-      // Initializing page state
+      // Storing page state notifier
       final stateChangeNotifier = page.stateChangeNotifier;
       if (stateChangeNotifier != null) {
-        parent.pageNotifiers[page.key] = stateChangeNotifier
-          ..value = BeamPageState(isPinnacle: index == sortedRoutes.length - 1);
+        parent.pageStateNotifiers[page.key] = stateChangeNotifier;
       }
 
       return page;

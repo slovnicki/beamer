@@ -374,6 +374,15 @@ class BeamPageStateNotifier extends ValueListenable<BeamPageState>
 
   @override
   late BeamPageState value;
+
+  @override
+  void notifyListeners({bool ignore = false}) {
+    if (ignore) {
+      return;
+    }
+
+    super.notifyListeners();
+  }
 }
 
 /// Represents specific page related information.
