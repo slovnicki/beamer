@@ -388,9 +388,7 @@ class BeamPageStateNotifier extends ValueListenable<BeamPageState>
 /// Represents specific page related information.
 ///
 /// Not represents state.
-mixin class BeamPageInfo {
-  const BeamPageInfo();
-}
+mixin BeamPageInfo {}
 
 /// Utility to inform the current [BeamPageInfo] of [BeamerDelegate].
 class BeamPageInfoNotifier<T extends BeamPageInfo> extends ValueListenable<T?>
