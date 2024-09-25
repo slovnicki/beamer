@@ -17,6 +17,7 @@ class BeamerDelegate<T extends BeamPageInfo>
   ///
   /// [stackBuilder] is required to process the incoming navigation request.
   BeamerDelegate({
+    required this.debugLabel,
     required this.stackBuilder,
     this.initialPath = '/',
     this.routeListener,
@@ -50,6 +51,8 @@ class BeamerDelegate<T extends BeamPageInfo>
 
     updateListenable?.addListener(_update);
   }
+
+  final String debugLabel;
 
   final Map<LocalKey, BeamPageStateNotifier> pageStateNotifiers = {};
 
