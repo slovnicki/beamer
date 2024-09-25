@@ -1028,15 +1028,21 @@ class BeamerDelegate<T extends BeamPageInfo>
 
     // Hidden pages
     for (int i = 0; i < _currentPages.length - 1; i++) {
-      pageStateNotifiers[_currentPages[i].key]!
-        ..value = BeamPageState(isPinnacle: false)
-        ..notifyListeners(ignore: isFirstBuild);
+      final notifier = pageStateNotifiers[_currentPages[i].key];
+      if (notifier != null) {
+        notifier
+          ..value = BeamPageState(isPinnacle: false)
+          ..notifyListeners(ignore: isFirstBuild);
+      }
     }
 
     // Pinnacle page
-    pageStateNotifiers[_currentPages.last.key]!
-      ..value = BeamPageState(isPinnacle: true)
-      ..notifyListeners(ignore: isFirstBuild);
+    final notifier = pageStateNotifiers[_currentPages.last.key];
+    if (notifier != null) {
+      notifier
+        ..value = BeamPageState(isPinnacle: true)
+        ..notifyListeners(ignore: isFirstBuild);
+    }
   }
 
   void _setBrowserTitle(BuildContext context) {
