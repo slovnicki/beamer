@@ -1,0 +1,35 @@
+---
+title: Simple route stack
+description: Start using beamer with just a few lines of code.
+---
+
+import RoutesStackBuilderExample from '../../../../components/quick-start/routes-stack-builder/RoutesStackBuilderExample.astro';
+
+For most navigation scenarios, using the __RoutesStackBuilder__ is a great choice which yields the least amount of code. This is concidered the simpelst way of navigation using beamer.
+
+<RoutesStackBuilderExample />
+
+After setting up our App like this, we can start navigating with:
+
+```dart
+Beamer.of(context).beamToNamed('/home');
+```
+
+#### _RoutesStackBuilder_ will pick and sort routes based on their paths:
+
+For example:
+
+- Navigating to `/books/1` will match all 3 entries from routes and stack them on top of each other.
+- Navigating to `/books` will match the first 2 entries from routes.
+
+The corresponding pages are put into `Navigator.pages` and __BeamerDelegate__ (re)builds the Navigator, showing the selected stack of pages on the screen.
+
+#### Why do we have a _StackBuilder_ and what is a _BeamStack_?
+
+__BeamStack__ is an entity which, based on its state, decides what pages should go into `Navigator.pages`. 
+
+`StackBuilder` chooses the appropriate __BeamStack__ that should further handle the incoming __RouteInformation__. This is most commonly achieved by examining `BeamStack.pathPatterns`.
+
+__RoutesStackBuilder__ returns a special type of __BeamStack__ - __RoutesBeamStack__, that has opinionated implementation for most common navigation use-cases.
+
+If __RoutesStackBuilder__ doesn't provide desired behavior or enough customization, one can extend __BeamStack__ to define and organize the behavior for any number of page stacks that can go into `Navigator.pages`.

@@ -1,0 +1,48 @@
+---
+title: Beam Guard
+description: Beam Guard
+---
+
+import BeamGuardExample from '../../../../components/concepts/BeamGuardExample.astro';
+import BeamGuardNonMatchingFalseExample from '../../../../components/concepts/BeamGuardNonMatchingFalseExample.astro';
+
+To guard specific routes, e.g. from un-authenticated users, global beamguard's can be set up via the `Guards` property on a __BeamerDelegate__.
+
+BeamGuards are commenly used to navigate if an auth state changes.
+
+The following properties are available:
+
+| Property | Type | Description | Required |
+| --- | --- | --- | --- |
+| check | bool Function | The function provides: `context` `location`.<br />You need to return __true__, If the guard should be __allowed__.<br />If allowed nothing happens, if not allowed it navigates to `beamToNamed` | Yes |
+| beamToNamed | String | The name of the route to navigate to if the `check` is __false__. | Yes |
+| pathPatterns | List\<String\> | The list of path patterns to guard. | Yes |
+| guardNonMatching | bool | Whether to guard non-matching paths. Defaults to __false__. | No |
+
+
+##### Example
+
+<BeamGuardExample />
+
+:::caution
+The usage of `guardNonMatching` in this example.
+
+This is important because guards (there can be many of them, each guarding different aspects) will run in recursion on the output of previously applied guard until a "safe" route is reached.
+
+A common mistake is to setup a guard with `pathBluePrints: ['*']` to guard everything, but everything also includes `/login` (which should be a "safe" route) and this leads to an infinite loop:
+
+- check `/login`
+- _user not authenticated_
+- beam to `/login`
+- check `/login`
+- _user not authenticated_
+- beam to `/login`
+- check `/login`
+- _user not authenticated_
+- beam to `/login`
+- ...
+:::
+
+Sometimes we wish to guard just a few routes that can be specified explicitly. Here is an example of a guard that has the same role as above, implemented with `guardNonMatching: false` (default).
+
+<BeamGuardNonMatchingFalseExample />

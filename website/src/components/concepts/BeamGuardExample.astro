@@ -1,0 +1,17 @@
+---
+import { Code } from '@astrojs/starlight/components';
+const code = `
+BeamGuard(
+  // on which path patterns (from incoming routes) to perform the check
+  pathPatterns: ['/login'],
+  // perform the check on all patterns that **don't** have a match in pathPatterns
+  guardNonMatching: true,
+  // return false to redirect
+  check: (context, location) => context.isUserAuthenticated(),
+  // where to redirect on a false check
+  beamToNamed: (origin, target) => '/login',
+)
+`;
+---
+
+<Code code={code} lang="dart" />

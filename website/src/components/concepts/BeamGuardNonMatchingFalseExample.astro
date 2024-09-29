@@ -1,0 +1,12 @@
+---
+import { Code } from '@astrojs/starlight/components';
+const code = `
+BeamGuard(
+  pathBlueprints: ['/profile/*', '/orders/*'],
+  check: (context, location) => context.isUserAuthenticated(),
+  beamToNamed: (origin, target) => '/login',
+)
+`;
+---
+
+<Code code={code} lang="dart" />

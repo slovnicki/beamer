@@ -1,0 +1,12 @@
+---
+import { Code } from '@astrojs/starlight/components';
+const code = `
+final BeamInterceptor allowNavigatingInterceptor = BeamInterceptor(
+  name: 'allow', // unique name
+  intercept: (context, delegate, currentPages, origin, target, deepLink) => false, // allow navigating
+  enabled: true, // (default)
+);
+`;
+---
+
+<Code code={code} lang="dart" title='Allow Navigation'/>

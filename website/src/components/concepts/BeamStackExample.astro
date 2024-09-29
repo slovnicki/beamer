@@ -1,0 +1,38 @@
+---
+import { Code } from '@astrojs/starlight/components';
+const code = `
+class BooksLocation extends BeamLocation<BeamState> {
+  @override
+  List<Pattern> get pathPatterns => [
+      '/books',
+      '/books/:bookId',
+    ];
+
+  @override
+  bool get strictPatterns => true;
+
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) {
+  final bookIdParameter = state.pathParameters['bookId'];
+  final bookId = int.tryParse(bookIdParameter);
+
+    return [
+      //Home page that is always shown
+      const BeamPage(
+        key: ValueKey('home'),
+        child: HomeScreen(),
+      ),
+
+      //Books page that is shown when a bookId is provided
+      if (bookId != null)
+        const BeamPage(
+          key: ValueKey('books'),
+          child: BooksScreen(),
+        ),
+    ];
+  }
+}
+`;
+---
+
+<Code code={code} lang="dart" />

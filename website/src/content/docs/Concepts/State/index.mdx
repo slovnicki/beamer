@@ -1,0 +1,27 @@
+---
+title: Beam State
+discription: Beam State
+---
+
+import CustomBeamStateExample from '../../../../components/concepts/CustomBeamStateExample.astro';
+
+### Predefined State (Easy)
+__BeamState__ is a pre-made state that can be used for custom classes that extend __BeamLocation__.
+
+It keeps various URI attributes such as:
+
+-   __pathParameters__
+-   __queryParameters__
+-   __pathPatternSegments__
+    -  The segments of chosen path pattern, as each __Location__ supports many of those.
+
+<hr/>
+
+### Custom State (Harder)
+
+Any class can be used as __BeamState__ for a __BeamLocation__ even ChangeNotifier.
+The only requirement is that a your class Needs to implement __RouteInformationSerializable__
+
+##### Example
+
+<CustomBeamStateExample />

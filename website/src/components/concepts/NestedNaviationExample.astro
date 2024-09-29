@@ -1,0 +1,52 @@
+---
+import { Code } from '@astrojs/starlight/components';
+const code = `
+class HomeScreen extends StatelessWidget {
+  HomeScreen({Key? key}) : super(key: key);
+
+  final _beamerKey = GlobalKey<BeamerState>();
+  final _routerDelegate = BeamerDelegate(
+    locationBuilder: BeamerLocationBuilder(
+      beamLocations: [
+        BooksLocation(),
+        ArticlesLocation(),
+      ],
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Beamer(
+        key: _beamerKey,
+        routerDelegate: _routerDelegate,
+      ),
+      bottomNavigationBar: BottomNavigationBarWidget(
+        beamerKey: _beamerKey,
+      ),
+    );
+  }
+}
+
+class MyApp extends StatelessWidget {
+  final routerDelegate = BeamerDelegate(
+    initialPath: '/books',
+    locationBuilder: RoutesLocationBuilder(
+      routes: {
+        '*': (context, state, data) => HomeScreen(),
+      },
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routerDelegate: routerDelegate,
+      routeInformationParser: BeamerParser(),
+    );
+  }
+}
+`;
+---
+
+<Code code={code} lang="dart" />

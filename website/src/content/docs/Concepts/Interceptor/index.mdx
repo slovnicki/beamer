@@ -1,0 +1,24 @@
+---
+title: Beam Interceptor
+description: Beam Interceptor
+---
+
+import BeamAllowInterceptorExample from '../../../../components/concepts/BeamAllowInterceptorExample.astro';
+import BeamBlockInterceptorExample from '../../../../components/concepts/BeamBlockInterceptorExample.astro';
+
+BeamInterceptors can be used to intercept navigation. 
+
+This means that they can be used to block navigation or to allow navigation.
+
+The following properties are available:
+
+| Property | Type | Description | Required |
+| --- | --- | --- | --- |
+| name | String | The unique name of the interceptor. | Yes |
+| intercept | bool Function | The function provides: `context` `delegate` `currentPages` `origin` `target` `deepLink` and you need to return if the navigation should be __intercepted__. | Yes |
+| enabled | bool | Whether the interceptor is enabled. Defaults to `true`. | No |
+
+##### Example
+
+<BeamAllowInterceptorExample />
+<BeamBlockInterceptorExample />

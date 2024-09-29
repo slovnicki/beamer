@@ -1,0 +1,21 @@
+---
+title: Nested Navigation
+discription: Nested Navigation
+---
+
+import NestedNaviationExample from '../../../../components/concepts/NestedNaviationExample.astro';
+
+When nested navigation (i.e. nested `Navigator`) is needed, one can just put `Beamer` anywhere in the Widget tree where this nested navigation will take place. There is no limit on how many `BottomNavigationBar` should not be affected by navigation transitions, i.e. all the navigation is happening above it, inside another `Beamer`.
+
+Here are some examples for nested navigation:
+- [Bottom Navigation](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation)
+- [Bottom Navigation: 2](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation_2)
+- [Bottom Navigation: Multiple Beamers](https://github.com/slovnicki/beamer/tree/master/examples/bottom_navigation_multiple_beamers)
+- [Bottom Navigation: Nested Navigation Drawers](https://github.com/slovnicki/beamer/tree/master/examples/nested_navigation)
+- [Bottom Navigation: Sibling Beamers](https://github.com/slovnicki/beamer/tree/master/examples/multiple_beamers)
+
+<hr />
+
+In the snippet below, we also use a `Key` on `Beamer` so that a `BottomNavigationBar` can manipulate just the navigation within that `Beamer`.
+
+<NestedNaviationExample />

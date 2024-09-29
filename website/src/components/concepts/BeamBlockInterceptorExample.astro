@@ -1,0 +1,11 @@
+---
+import { Code } from '@astrojs/starlight/components';
+const code = `
+final BeamInterceptor blockNavigatingInterceptor = BeamInterceptor(
+  name: 'block',
+  intercept: (context, delegate, currentPages, origin, target, deepLink) => true, // block navigating
+);
+`;
+---
+
+<Code code={code} lang="dart" title='Block Navigation'/>

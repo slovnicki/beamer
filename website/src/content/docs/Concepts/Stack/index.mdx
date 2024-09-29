@@ -1,0 +1,28 @@
+---
+title: Beam Stack
+discription: Beam Stack
+---
+
+import BeamStackExample from '../../../../components/concepts/BeamStackExample.astro';
+
+The most important construct in Beamer is a **BeamStack** which represents a state of a stack of one or more pages.
+
+A BeamStack has 3 important rules:
+
+-   Know which URIs it can handle: **pathPatterns**
+-   Know how to build a stack of pages: **buildPages**
+-   A **State** object that holds the relation of the first 2
+
+BeamStack is a abstract class that needs to be extended to use. The purpose of having multiple Stack's is to architecturally separate unrelated _places_ in an application.
+
+| Stack             | Description                     |
+| -------------------- | ------------------------------- |
+| **BooksStack**    | Everything related to books.    |
+| **ArticleStack**  | Everything related to articles. |
+| **CustomerStack** | Everything related to customer. |
+| **SettingStack**  | Everything related to settings. |
+| **AuthStack**     | Everything related to auth.     |
+
+#### Example
+
+<BeamStackExample />

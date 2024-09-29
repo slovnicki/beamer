@@ -1,0 +1,59 @@
+---
+import { Code } from '@astrojs/starlight/components';
+
+const code = `
+class MyApp extends StatelessWidget {
+  // The beamer delegate of your Myapp.
+  late final BeamerDelegate delegate;
+
+  @override
+  void initState() {
+    super.initState();
+    _initState();
+  }
+
+  void _initState() {
+    delegate = BeamerDelegate(
+      stackBuilder: RoutesStackBuilder(
+        routes: {
+          '/': (context, state, data) => HomeScreen(),
+          '/books': (context, state, data) => BooksScreen(),
+          '/books/:bookId': (context, state, data) {
+
+            // Get the path parameter 'bookId' from the pathParameters.
+            final bookId = state.pathParameters['bookId'];
+
+            if(bookId.isEmpty) {
+              return NoBookIdProvidedScreen();
+            }
+
+            // Collect arbitrary data that persists throughout navigation. This is not available when you navigate thro the browser url directly.
+            final info = (data as MyObject).info;
+
+            // Use BeamPage to define custom behavior
+            return BeamPage(
+              key: ValueKey('book-$bookId'),
+              title: 'A Book #$bookId',
+              popToNamed: '/', // When you pop the page, go back to the home page.
+              type: BeamPageType.scaleTransition,
+              child: BookDetailsScreen(bookId, info),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Inject the beamer delegate into the MaterialApp.router. Here you go... ;-)
+    return MaterialApp.router(
+      routeInformationParser: BeamerParser(),
+      routerDelegate: routerDelegate,
+    );
+  }
+}
+`;
+---
+
+<Code code={code} lang="dart" />
