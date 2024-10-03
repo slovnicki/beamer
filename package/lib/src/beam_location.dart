@@ -496,6 +496,7 @@ class RoutesBeamLocation extends BeamLocation<BeamState> {
       } else {
         return BeamPage(
           key: ValueKey(filteredRoutes[route]),
+          path: filteredRoutes[route],
           child: routeElement,
         );
       }
