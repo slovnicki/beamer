@@ -606,6 +606,7 @@ class RoutesBeamStack extends BeamStack<BeamState> {
       } else {
         return BeamPage(
           key: ValueKey(filteredRoutes[route]),
+          path: filteredRoutes[route],
           child: routeElement,
         );
       }
