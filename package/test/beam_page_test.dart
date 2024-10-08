@@ -6,48 +6,61 @@ class TestLocation extends BeamLocation<BeamState> {
   TestLocation([RouteInformation? routeInformation]) : super(routeInformation);
 
   @override
-  List<String> get pathPatterns => ['/books/:bookId/details/buy'];
+  List<String> get pathPatterns => [
+        '/books/:bookId/details/buy',
+        '/books/:bookId/author/:authorId',
+      ];
 
   @override
-  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
+  List<BeamPage> buildPages(BuildContext context, BeamState state) {
+    final bookId = state.pathParameters['bookId'];
+    final authorId = state.pathParameters['authorId'];
+    return [
+      BeamPage(
+        key: const ValueKey('home'),
+        child: Container(),
+      ),
+      if (state.pathPatternSegments.contains('books'))
         BeamPage(
-          key: const ValueKey('home'),
+          key: const ValueKey('books'),
+          onPopPage: (context, delegate, _, page) {
+            return false;
+          },
           child: Container(),
         ),
-        if (state.pathPatternSegments.contains('books'))
-          BeamPage(
-            key: const ValueKey('books'),
-            onPopPage: (context, delegate, _, page) {
-              return false;
-            },
-            child: Container(),
-          ),
-        if (state.pathParameters.containsKey('bookId'))
-          BeamPage(
-            key: ValueKey('book-${state.pathParameters['bookId']}'),
-            popToNamed: '/',
-            child: Container(),
-          ),
-        if (state.pathPatternSegments.contains('details'))
-          BeamPage(
-            key: ValueKey('book-${state.pathParameters['bookId']}-details'),
-            onPopPage: (context, delegate, _, page) {
-              delegate.currentBeamLocation.update(
-                (state) => (state as BeamState).copyWith(
-                  pathPatternSegments: ['books'],
-                  pathParameters: {},
-                ),
-              );
-              return true;
-            },
-            child: Container(),
-          ),
-        if (state.pathPatternSegments.contains('buy'))
-          BeamPage(
-            key: ValueKey('book-${state.pathParameters['bookId']}-buy'),
-            child: Container(),
-          ),
-      ];
+      if (bookId != null)
+        BeamPage(
+          key: ValueKey('book-$bookId'),
+          path: '/books/$bookId',
+          popToNamed: '/',
+          child: Container(),
+        ),
+      if (authorId != null)
+        BeamPage(
+          key: ValueKey('author-$authorId'),
+          child: Container(),
+        ),
+      if (state.pathPatternSegments.contains('details'))
+        BeamPage(
+          key: ValueKey('book-$bookId-details'),
+          onPopPage: (context, delegate, _, page) {
+            delegate.currentBeamLocation.update(
+              (state) => (state as BeamState).copyWith(
+                pathPatternSegments: ['books'],
+                pathParameters: {},
+              ),
+            );
+            return true;
+          },
+          child: Container(),
+        ),
+      if (state.pathPatternSegments.contains('buy'))
+        BeamPage(
+          key: ValueKey('book-$bookId-buy'),
+          child: Container(),
+        ),
+    ];
+  }
 }
 
 void main() {
@@ -408,7 +421,7 @@ void main() {
           (delegate.currentBeamLocation.state as BeamState).uri.path, '/test');
     });
 
-    testWidgets('pageles', (tester) async {
+    testWidgets('pageless', (tester) async {
       final delegate = BeamerDelegate(
         transitionDelegate: const NoAnimationTransitionDelegate(),
         locationBuilder: RoutesLocationBuilder(
@@ -476,6 +489,54 @@ void main() {
 
       delegate.navigator.pop();
       await tester.pump();
+      expect(delegate.configuration.uri.path, '/');
+    });
+
+    testWidgets('path of previous page is popped to in BeamLocation',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: delegate,
+        ),
+      );
+      delegate.beamToNamed('/books/1/author/2');
+      await tester.pump();
+      expect(delegate.currentPages.length, 4);
+      expect(delegate.currentPages.last.key, const ValueKey('author-2'));
+
+      delegate.navigator.pop();
+      await tester.pump();
+      expect(delegate.currentPages.length, 3);
+      expect(delegate.currentPages.last.key, const ValueKey('book-1'));
+      expect(delegate.configuration.uri.path, '/books/1');
+    });
+
+    testWidgets('path of previous page is popped to in RoutesLocationBuilder',
+        (tester) async {
+      final delegate = BeamerDelegate(
+        locationBuilder: RoutesLocationBuilder(
+          routes: {
+            '/': (context, state, data) => Container(),
+            '/books/1': (context, state, data) => Container(),
+          },
+        ),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: BeamerParser(),
+          routerDelegate: delegate,
+        ),
+      );
+      delegate.beamToNamed('/books/1');
+      await tester.pump();
+      expect(delegate.currentPages.length, 2);
+      expect(delegate.configuration.uri.path, '/books/1');
+
+      delegate.navigator.pop();
+      await tester.pump();
+      expect(delegate.currentPages.length, 1);
       expect(delegate.configuration.uri.path, '/');
     });
   });

@@ -43,16 +43,17 @@ class BeamPage extends Page {
   const BeamPage({
     LocalKey? key,
     String? name,
+    this.path,
     required this.child,
     this.title,
-    this.onPopPage = pathSegmentPop,
+    this.onPopPage = _onPopPage,
     this.popToNamed,
     this.type = BeamPageType.material,
     this.routeBuilder,
     this.fullScreenDialog = false,
     this.opaque = true,
     this.keepQueryOnPop = false,
-  }) : super(key: key, name: name);
+  }) : super(key: key, name: name ?? path);
 
   /// A [BeamPage] to be the default for [BeamerDelegate.notFoundPage].
   static const notFound = BeamPage(
@@ -61,8 +62,49 @@ class BeamPage extends Page {
     child: Scaffold(body: Center(child: Text('Not found'))),
   );
 
-  /// The default pop behavior for [BeamPage].
+  /// The pop behavior for [BeamPage] if [popToNamed] is not specified.
+  static bool _onPopPage(
+    BuildContext context,
+    BeamerDelegate delegate,
+    RouteInformationSerializable state,
+    BeamPage poppedPage,
+  ) {
+    final success = previousPagePathPop(context, delegate, state, poppedPage);
+    if (success) {
+      return true;
+    }
+
+    return pathSegmentPop(context, delegate, state, poppedPage);
+  }
+
+  /// The default pop behavior for [BeamPage] if [popToNamed] is not specified.
   ///
+  /// Calls [BeamerDelegate.popToNamed] with the [path] of previous [BeamPage],
+  /// the one below this [BeamPage] on the stack.
+  static bool previousPagePathPop(
+    BuildContext context,
+    BeamerDelegate delegate,
+    RouteInformationSerializable state,
+    BeamPage poppedPage,
+  ) {
+    final currentPages = delegate.currentPages;
+    if (currentPages.length < 2) {
+      return false;
+    }
+
+    final previousPage = currentPages[currentPages.length - 2];
+    if (previousPage.path == null) {
+      return false;
+    }
+
+    delegate.update(
+      configuration: RouteInformation(
+        uri: Uri.parse(previousPage.path!),
+      ),
+    );
+    return true;
+  }
+
   /// Pops the last path segment from URI and calls [BeamerDelegate.update].
   static bool pathSegmentPop(
     BuildContext context,
@@ -171,6 +213,14 @@ class BeamPage extends Page {
 
     return true;
   }
+
+  /// The path of this [BeamPage] and corresponding [Route].
+  ///
+  /// This will be used when popping this [BeamPage] from the stack,
+  /// as a more natural way to define the pop behavior than [popToNamed].
+  ///
+  /// This will most likely become required in v2.
+  final String? path;
 
   /// The concrete Widget representing app's screen.
   final Widget child;
