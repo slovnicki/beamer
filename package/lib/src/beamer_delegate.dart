@@ -432,6 +432,10 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     // run guards on _beamStackCandidate
     final context = _context;
     if (context != null) {
+      if (configuration != null) {
+        _setBrowserTitle(context,
+            fixTitle: configuration.uri.pathSegments.last);
+      }
       final didApply = _runGuards(context, _beamStackCandidate);
       _didRunGuards = true;
       if (didApply) {
@@ -986,10 +990,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     }
   }
 
-  void _setBrowserTitle(BuildContext context) {
+  void _setBrowserTitle(BuildContext context, {String? fixTitle}) {
     if (active && setBrowserTabTitle) {
       final String title = _currentPages.last.title ??
           currentBeamStack.state.routeInformation.uri.path;
+      final String title = fixTitle ?? _currentPages.last.title ??
+          currentBeamLocation.state.routeInformation.uri.path;
       browser_tab_title_util.setTabTitle(title);
     }
   }
