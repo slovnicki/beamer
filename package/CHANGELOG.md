@@ -1,3 +1,7 @@
+# 1.7.0
+
+- **Added:** Optional `path` to `BeamPage` to offer more natural pop control than `popToNamed`. This will most likely become required in v2
+
 # 1.6.2
 
 - **Fixed:** Transition durations for `BeamPageType.noTransition` ([busslina](https://github.com/busslina): [#676](https://github.com/slovnicki/beamer/pull/676))
