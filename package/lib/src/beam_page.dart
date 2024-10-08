@@ -1,6 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:beamer/src/utils.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Types for how to route should be built.
@@ -36,7 +37,7 @@ enum BeamPageType {
 }
 
 /// A wrapper for screens in a navigation stack.
-class BeamPage extends Page {
+class BeamPage<T extends BeamPageInfo> extends Page {
   /// Creates a [BeamPage] with specified properties.
   ///
   /// [child] is required and typically represents a screen of the app.
@@ -54,6 +55,8 @@ class BeamPage extends Page {
     this.fullScreenDialog = false,
     this.opaque = true,
     this.keepQueryOnPop = false,
+    this.stateChangeNotifier,
+    this.info,
   }) : super(key: key, name: name);
 
   /// A [BeamPage] to be the default for [BeamerDelegate.notFoundPage].
@@ -230,6 +233,12 @@ class BeamPage extends Page {
   /// Defaults to `false`.
   final bool keepQueryOnPop;
 
+  LocalKey get key => super.key!;
+
+  final BeamPageStateNotifier? stateChangeNotifier;
+
+  final T? info;
+
   @override
   Route createRoute(BuildContext context) {
     if (routeBuilder != null) {
@@ -334,4 +343,58 @@ class BeamPage extends Page {
         );
     }
   }
+}
+
+/// Represents the [BeamPage] state inside a [BeamStack].
+///
+/// This is a volatile state, meaning it is not stored. On the contrary, it is
+/// regenerated on [BeamerDelegate.build].
+///
+/// Initialy created to inform a page whether is the last (the pinnacle)
+/// on the stack.
+class BeamPageState {
+  BeamPageState({
+    required this.isPinnacle,
+  });
+
+  final bool isPinnacle;
+
+  @override
+  bool operator ==(Object other) =>
+      other is BeamPageState && isPinnacle == other.isPinnacle;
+
+  @override
+  int get hashCode => isPinnacle.hashCode;
+}
+
+/// Utility to inform [BeamPageState] to his [BeamPage].
+class BeamPageStateNotifier extends ValueListenable<BeamPageState>
+    with ChangeNotifier {
+  BeamPageStateNotifier();
+
+  @override
+  late BeamPageState value;
+
+  @override
+  void notifyListeners({bool ignore = false}) {
+    if (ignore) {
+      return;
+    }
+
+    super.notifyListeners();
+  }
+}
+
+/// Represents specific page related information.
+///
+/// Not represents state.
+mixin BeamPageInfo {}
+
+/// Utility to inform the current [BeamPageInfo] of [BeamerDelegate].
+class BeamPageInfoNotifier<T extends BeamPageInfo> extends ValueListenable<T?>
+    with ChangeNotifier {
+  BeamPageInfoNotifier();
+
+  @override
+  late T? value;
 }

@@ -5,6 +5,7 @@ import 'package:beamer/src/utils.dart';
 
 /// A convenience typedef for [BeamerDelegate.stackBuilder].
 typedef StackBuilder = BeamStack Function(
+  BeamerDelegate parent,
   RouteInformation,
   BeamParameters?,
 );
@@ -52,18 +53,21 @@ class RoutesStackBuilder {
   final Map<Pattern, dynamic Function(BuildContext, BeamState, Object?)> routes;
 
   /// Used as a [BeamStack.builder].
-  Widget Function(BuildContext context, Widget navigator)? builder;
+  final Widget Function(BuildContext context, Widget navigator)? builder;
 
   /// Makes this callable as [StackBuilder].
   ///
-  /// Returns [RoutesBeamStack] configured with chosen routes from [routes] or [NotFound].
+  /// Returns [RoutesBeamStack] configured with chosen routes from [routes]
+  /// or [NotFound].
   BeamStack call(
+    BeamerDelegate parent,
     RouteInformation routeInformation,
     BeamParameters? beamParameters,
   ) {
     final matched = RoutesBeamStack.chooseRoutes(routeInformation, routes.keys);
     if (matched.isNotEmpty) {
       return RoutesBeamStack(
+        parent: parent,
         routeInformation: routeInformation,
         routes: routes,
         navBuilder: builder,

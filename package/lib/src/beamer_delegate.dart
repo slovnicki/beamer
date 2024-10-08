@@ -10,12 +10,14 @@ import 'package:flutter/services.dart';
 /// A delegate that is used by the [Router] to build the [Navigator].
 ///
 /// This is "the beamer", the one that does the actual beaming.
-class BeamerDelegate extends RouterDelegate<RouteInformation>
+class BeamerDelegate<T extends BeamPageInfo>
+    extends RouterDelegate<RouteInformation>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<RouteInformation> {
   /// Creates a [BeamerDelegate] with specified properties.
   ///
   /// [stackBuilder] is required to process the incoming navigation request.
   BeamerDelegate({
+    required this.debugLabel,
     required this.stackBuilder,
     this.initialPath = '/',
     this.routeListener,
@@ -49,6 +51,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
     updateListenable?.addListener(_update);
   }
+
+  final String debugLabel;
+
+  final Map<LocalKey, BeamPageStateNotifier> pageStateNotifiers = {};
+
+  bool _firstBuild = true;
 
   /// A state of this delegate. This is the `routeInformation` that goes into
   /// [stackBuilder] to build an appropriate [BeamStack].
@@ -352,6 +360,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// to avoid setting URL when the guards have not been run yet.
   bool _initialConfigurationReady = false;
 
+  final pinnaclePageInfoNotifier = BeamPageInfoNotifier<T>();
+
   /// Main method to update the [configuration] of this delegate and its
   /// [currentBeamStack].
   ///
@@ -424,6 +434,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     if (buildBeamStack) {
       // build a BeamStack from configuration
       _beamStackCandidate = stackBuilder(
+        this,
         this.configuration.copyWith(),
         _currentBeamParameters,
       );
@@ -754,6 +765,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
 
   @override
   Widget build(BuildContext context) {
+    final isFirstBuild = this._firstBuild;
+    _firstBuild = false;
+
     _buildInProgress = true;
     _context = context;
 
@@ -780,6 +794,13 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         _setBrowserTitle(context);
 
         buildListener?.call(context, this);
+
+        // Notifying pinnacle page info
+        pinnaclePageInfoNotifier.notifyListeners();
+
+        // Notifying pages states
+        _notifyCurrentPagesStates(isFirstBuild: isFirstBuild);
+
         return Navigator(
           key: navigatorKey,
           observers: navigatorObservers,
@@ -969,6 +990,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       _beamStackCandidate = notFoundRedirect!;
     } else if (notFoundRedirectNamed != null) {
       _beamStackCandidate = stackBuilder(
+        this,
         RouteInformation(uri: Uri.parse(notFoundRedirectNamed!)),
         _currentBeamParameters.copyWith(),
       );
@@ -977,12 +999,52 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   }
 
   void _setCurrentPages(BuildContext context) {
+    final currentBeamStack = this.currentBeamStack;
+
     if (currentBeamStack is NotFound) {
       _currentPages = [notFoundPage];
+      pageStateNotifiers.clear();
+      pinnaclePageInfoNotifier.value = null;
     } else {
       _currentPages = _currentBeamParameters.stacked
           ? currentBeamStack.buildPages(context, currentBeamStack.state)
           : [currentBeamStack.buildPages(context, currentBeamStack.state).last];
+      _purgePageStateNotifiers();
+      pinnaclePageInfoNotifier.value = _currentPages.lastOrNull?.info as T?;
+    }
+  }
+
+  /// Purges outdated page state notifiers.
+  void _purgePageStateNotifiers() {
+    final currentPagesKeys = _currentPages.map((page) => page.key);
+    pageStateNotifiers
+        .removeWhere((key, pageNotifier) => !currentPagesKeys.contains(key));
+  }
+
+  /// Notifies current pages [BeamPageState]'s.
+  void _notifyCurrentPagesStates({required bool isFirstBuild}) {
+    final stack = currentBeamStack;
+
+    if (stack is! RoutesBeamStack) {
+      return;
+    }
+
+    // Hidden pages
+    for (int i = 0; i < _currentPages.length - 1; i++) {
+      final notifier = pageStateNotifiers[_currentPages[i].key];
+      if (notifier != null) {
+        notifier
+          ..value = BeamPageState(isPinnacle: false)
+          ..notifyListeners(ignore: isFirstBuild);
+      }
+    }
+
+    // Pinnacle page
+    final notifier = pageStateNotifiers[_currentPages.last.key];
+    if (notifier != null) {
+      notifier
+        ..value = BeamPageState(isPinnacle: true)
+        ..notifyListeners(ignore: isFirstBuild);
     }
   }
 
@@ -1047,7 +1109,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     final parentConfiguration = _parent!.configuration.copyWith();
     if (initializeFromParent) {
       _beamStackCandidate =
-          stackBuilder(parentConfiguration, _currentBeamParameters);
+          stackBuilder(this, parentConfiguration, _currentBeamParameters);
     }
 
     // If this couldn't handle parents configuration,
@@ -1077,7 +1139,11 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   // Updates only if it can handle the configuration
   void _updateFromParent({bool rebuild = true}) {
     final parentConfiguration = _parent!.configuration.copyWith();
-    final beamStack = stackBuilder(parentConfiguration, _currentBeamParameters);
+    final beamStack = stackBuilder(
+      this,
+      parentConfiguration,
+      _currentBeamParameters,
+    );
 
     if (beamStack is! NotFound) {
       update(
