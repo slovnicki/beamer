@@ -359,6 +359,8 @@ class BeamPage extends Page {
           transitionDuration: transitionDuration ?? Duration.zero,
           reverseTransitionDuration: reverseTransitionDuration ?? Duration.zero,
           pageBuilder: (context, animation, secondaryAnimation) => child,
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
         );
       default:
         return MaterialPageRoute(
