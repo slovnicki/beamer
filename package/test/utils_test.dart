@@ -119,7 +119,7 @@ void main() {
 
   test('tryCastToRegExp throws', () {
     expect(
-      () => Utils.tryCastToRegExp('not-regexp'),
+      () => 'not-regexp'.toRegExp,
       throwsA(isA<FlutterError>()),
     );
   });
