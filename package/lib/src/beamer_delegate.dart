@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:beamer/beamer.dart';
 import 'package:beamer/src/browser_tab_title_util_non_web.dart'
     if (dart.library.html) 'package:beamer/src/browser_tab_title_util_web.dart'
@@ -40,7 +42,9 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     this.updateFromParent = true,
     this.updateParent = true,
     this.clearBeamingHistoryOn = const <String>{},
+    List<BeamInterceptor>? interceptors,
   }) {
+    this.interceptors = interceptors ?? [];
     _currentBeamParameters = BeamParameters(
       transitionDelegate: transitionDelegate,
     );
@@ -215,6 +219,8 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   /// When some guard returns `false`, stack candidate will not be accepted
   /// and stack of pages will be updated as is configured in [BeamGuard].
   final List<BeamGuard> guards;
+
+  late final List<BeamInterceptor> interceptors;
 
   /// The list of observers for the [Navigator].
   final List<NavigatorObserver> navigatorObservers;
@@ -432,12 +438,21 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     // run guards on _beamStackCandidate
     final context = _context;
     if (context != null) {
-      final didApply = _runGuards(context, _beamStackCandidate);
+      final didGuardsBlock = _runGuards(context, _beamStackCandidate);
+
       _didRunGuards = true;
-      if (didApply) {
+
+      if (didGuardsBlock) {
         return;
       } else {
         // TODO revert configuration if guard just blocked navigation
+      }
+
+      // run interceptors on _beamStackCandidate
+      final isIntercepted = _isIntercepted(context, _beamStackCandidate);
+
+      if (isIntercepted) {
+        return;
       }
     }
 
@@ -758,7 +773,7 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
     _context = context;
 
     if (!_didRunGuards) {
-      _runGuards(_context!, _beamStackCandidate);
+      _runGuards(context, _beamStackCandidate);
       _addToBeamingHistory(_beamStackCandidate);
     }
     if (!_initialConfigurationReady && active && parent != null) {
@@ -848,7 +863,12 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
   }
 
   bool _runGuards(BuildContext context, BeamStack targetBeamStack) {
-    final allGuards = (parent?.guards ?? []) + guards + targetBeamStack.guards;
+    final allGuards = [
+      ...?parent?.guards,
+      ...guards,
+      ...targetBeamStack.guards
+    ];
+
     for (final guard in allGuards) {
       if (guard.shouldGuard(targetBeamStack)) {
         final wasApplied = guard.apply(
@@ -864,6 +884,29 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
         if (wasApplied) {
           return true;
         }
+      }
+    }
+    return false;
+  }
+
+  bool _isIntercepted(BuildContext context, BeamStack targetBeamStack) {
+    final allInterceptors = [...?parent?.interceptors, ...interceptors];
+
+    for (var i = 0; i < allInterceptors.length; i++) {
+      final interceptor = allInterceptors[i];
+      final isIntercepted = interceptor.enabled &&
+          interceptor.intercept(
+            context,
+            this,
+            _currentPages,
+            currentBeamStack,
+            targetBeamStack,
+            _deepLink,
+          );
+
+      // If any interceptor was intercepted, return true
+      if (isIntercepted) {
+        return true;
       }
     }
     return false;
@@ -1071,6 +1114,20 @@ class BeamerDelegate extends RouterDelegate<RouteInformation>
       );
     }
   }
+
+  FutureOr<void> addInterceptor(BeamInterceptor interceptor) async {
+    if (interceptors.contains(interceptor)) return;
+
+    interceptors.add(interceptor);
+  }
+
+  FutureOr<void> removeInterceptor(BeamInterceptor interceptor) async {
+    if (interceptors.contains(interceptor) == false) return;
+
+    interceptors.remove(interceptor);
+  }
+
+  void removeAllInterceptors() => interceptors.clear();
 
   void _update() => update();
 

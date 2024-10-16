@@ -1,0 +1,22 @@
+name: interceptors
+description: Interceptors example app.
+
+publish_to: 'none'
+
+version: 1.0.0
+
+environment:
+    sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+    flutter:
+        sdk: flutter
+    beamer:
+        path: ../../package
+
+dev_dependencies:
+    flutter_test:
+        sdk: flutter
+
+flutter:
+    uses-material-design: true

@@ -1,9 +1,7 @@
-import 'package:beamer/src/utils.dart';
-import 'package:flutter/widgets.dart';
-
-import 'package:beamer/src/beamer_delegate.dart';
-import 'package:beamer/src/beam_stack.dart';
 import 'package:beamer/src/beam_page.dart';
+import 'package:beamer/src/beam_stack.dart';
+import 'package:beamer/src/beamer_delegate.dart';
+import 'package:flutter/widgets.dart';
 
 /// Checks whether current [BeamStack] is allowed to be beamed to
 /// and provides steps to be executed following a failed check.
@@ -37,7 +35,7 @@ class BeamGuard {
   /// but will not match '/books'. To match '/books' and everything after it,
   /// use '/books*'.
   ///
-  /// See [_hasMatch] for more details.
+  /// See [BeamStack.shouldCheckGuard] for more details.
   ///
   /// For RegExp:
   /// You can use RegExp instances and the delegate will check for a match using [RegExp.hasMatch]
@@ -102,7 +100,8 @@ class BeamGuard {
 
   /// Whether or not the guard should [check] the [stack].
   bool shouldGuard(BeamStack stack) {
-    return guardNonMatching ? !_hasMatch(stack) : _hasMatch(stack);
+    final shouldCheckGuard = stack.shouldCheckGuard(this);
+    return guardNonMatching ? shouldCheckGuard == false : shouldCheckGuard;
   }
 
   /// Applies the guard.
@@ -184,36 +183,6 @@ class BeamGuard {
       return true;
     }
 
-    return false;
-  }
-
-  /// Matches [stack]'s pathBlueprint to [pathPatterns].
-  ///
-  /// If asterisk is present, it is enough that the pre-asterisk substring is
-  /// contained within stack's pathPatterns.
-  /// Else, the path (i.e. the pre-query substring) of the stack's uri
-  /// must be equal to the pathPattern.
-  bool _hasMatch(BeamStack stack) {
-    for (final pathPattern in pathPatterns) {
-      final path = stack.state.routeInformation.uri.path;
-      if (pathPattern is String) {
-        final asteriskIndex = pathPattern.indexOf('*');
-        if (asteriskIndex != -1) {
-          if (stack.state.routeInformation.uri
-              .toString()
-              .contains(pathPattern.substring(0, asteriskIndex))) {
-            return true;
-          }
-        } else {
-          if (pathPattern == path) {
-            return true;
-          }
-        }
-      } else {
-        final regexp = Utils.tryCastToRegExp(pathPattern);
-        return regexp.hasMatch(path);
-      }
-    }
     return false;
   }
 }

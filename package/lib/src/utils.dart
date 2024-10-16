@@ -19,7 +19,7 @@ abstract class Utils {
     BeamParameters? beamParameters,
   }) {
     for (final beamStack in beamStacks) {
-      if (canBeamStackHandleUri(beamStack, uri)) {
+      if (beamStack.canHandle(uri)) {
         final routeInformation = RouteInformation(uri: uri, state: routeState);
         if (!beamStack.isCurrent) {
           beamStack.create(routeInformation, beamParameters);
@@ -32,79 +32,6 @@ abstract class Utils {
     return NotFound(path: uri.path);
   }
 
-  /// Can a [beamStack], depending on its `pathPatterns`, handle the [uri].
-  ///
-  /// Used in [BeamStack.canHandle] and [chooseBeamStack].
-  static bool canBeamStackHandleUri(BeamStack beamStack, Uri uri) {
-    for (final pathPattern in beamStack.pathPatterns) {
-      if (pathPattern is String) {
-        // If it is an exact match or asterisk pattern
-        if (pathPattern == uri.path ||
-            pathPattern == '/*' ||
-            pathPattern == '*') {
-          return true;
-        }
-
-        // Clean URI path segments
-        final uriPathSegments = uri.pathSegments.toList();
-        if (uriPathSegments.length > 1 && uriPathSegments.last == '') {
-          uriPathSegments.removeLast();
-        }
-
-        final pathPatternSegments = Uri.parse(pathPattern).pathSegments;
-
-        // If we're in strict mode and URI has fewer segments than pattern,
-        // we don't have a match so can continue.
-        if (beamStack.strictPathPatterns &&
-            uriPathSegments.length < pathPatternSegments.length) {
-          continue;
-        }
-
-        // If URI has more segments and pattern doesn't end with asterisk,
-        // we don't have a match so can continue.
-        if (uriPathSegments.length > pathPatternSegments.length &&
-            (pathPatternSegments.isEmpty ||
-                !pathPatternSegments.last.endsWith('*'))) {
-          continue;
-        }
-
-        var checksPassed = true;
-        // Iterating through URI segments
-        for (var i = 0; i < uriPathSegments.length; i++) {
-          // If all checks have passed up to i,
-          // if pattern has no more segments to traverse and it ended with asterisk,
-          // it is a match and we can break,
-          if (pathPatternSegments.length < i + 1 &&
-              pathPatternSegments.last.endsWith('*')) {
-            checksPassed = true;
-            break;
-          }
-
-          // If pattern has asterisk at i-th position,
-          // anything matches and we can continue.
-          if (pathPatternSegments[i] == '*') {
-            continue;
-          }
-          // If they are not the same and pattern doesn't expects path parameter,
-          // there's no match and we can break.
-          if (uriPathSegments[i] != pathPatternSegments[i] &&
-              !pathPatternSegments[i].startsWith(':')) {
-            checksPassed = false;
-            break;
-          }
-        }
-        // If no check failed, beamStack can handle this URI.
-        if (checksPassed) {
-          return true;
-        }
-      } else {
-        final regexp = tryCastToRegExp(pathPattern);
-        return regexp.hasMatch(uri.toString());
-      }
-    }
-    return false;
-  }
-
   /// Creates a state for [BeamStack] based on incoming [uri].
   ///
   /// Used in [BeamState.copyForStack].
@@ -113,80 +40,79 @@ abstract class Utils {
     BeamStack? beamStack,
     Object? routeState,
   }) {
-    if (beamStack != null) {
-      // TODO: abstract this and reuse in canBeamStackHandleUri
-      for (final pathBlueprint in beamStack.pathPatterns) {
-        if (pathBlueprint is String) {
-          if (pathBlueprint == uri.path || pathBlueprint == '/*') {
-            BeamState(
-              pathPatternSegments: uri.pathSegments,
-              queryParameters: uri.queryParameters,
-              routeState: routeState,
-            );
-          }
-          final uriPathSegments = uri.pathSegments.toList();
-          if (uriPathSegments.length > 1 && uriPathSegments.last == '') {
-            uriPathSegments.removeLast();
-          }
-          final beamStackPathBlueprintSegments =
-              Uri.parse(pathBlueprint).pathSegments;
-          var pathSegments = <String>[];
-          final pathParameters = <String, String>{};
-          if (uriPathSegments.length > beamStackPathBlueprintSegments.length &&
-              !beamStackPathBlueprintSegments.contains('*')) {
-            continue;
-          }
-          var checksPassed = true;
-          for (var i = 0; i < uriPathSegments.length; i++) {
-            if (beamStackPathBlueprintSegments[i] == '*') {
-              pathSegments = uriPathSegments.toList();
-              checksPassed = true;
-              break;
-            }
-            if (uriPathSegments[i] != beamStackPathBlueprintSegments[i] &&
-                beamStackPathBlueprintSegments[i][0] != ':') {
-              checksPassed = false;
-              break;
-            } else if (beamStackPathBlueprintSegments[i][0] == ':') {
-              pathParameters[beamStackPathBlueprintSegments[i].substring(1)] =
-                  uriPathSegments[i];
-              pathSegments.add(beamStackPathBlueprintSegments[i]);
-            } else {
-              pathSegments.add(uriPathSegments[i]);
-            }
-          }
-          if (checksPassed) {
-            return BeamState(
-              pathPatternSegments: pathSegments,
-              pathParameters: pathParameters,
-              queryParameters: uri.queryParameters,
-              routeState: routeState,
-            );
-          }
-        } else {
-          final regexp = tryCastToRegExp(pathBlueprint);
-          final pathParameters = <String, String>{};
-          final url = uri.toString();
+    final pathParameters = <String, String>{};
 
-          if (regexp.hasMatch(url)) {
-            regexp.allMatches(url).forEach((match) {
-              for (final groupName in match.groupNames) {
-                pathParameters[groupName] = match.namedGroup(groupName) ?? '';
-              }
-            });
-            return BeamState(
-              pathPatternSegments: uri.pathSegments,
-              pathParameters: pathParameters,
-              queryParameters: uri.queryParameters,
-              routeState: routeState,
-            );
+    for (final pathPattern in [...?beamStack?.pathPatterns]) {
+      if (pathPattern is! String) {
+        final pathPatternRegex = pathPattern.toRegExp;
+        final url = uri.toString();
+
+        if (pathPatternRegex.hasMatch(url)) {
+          final matches = pathPatternRegex.allMatches(url);
+
+          for (final match in matches) {
+            for (final groupName in match.groupNames) {
+              pathParameters[groupName] = match.namedGroup(groupName) ?? '';
+            }
           }
+        }
+      } else {
+        if (pathPattern == uri.path || pathPattern == '/*') {
+          return BeamState(
+            pathPatternSegments: uri.pathSegments,
+            queryParameters: uri.queryParameters,
+            routeState: routeState,
+          );
+        }
+
+        final uriPathSegments = uri.pathSegments.toList();
+        if (uriPathSegments.length > 1 && uriPathSegments.last == '') {
+          uriPathSegments.removeLast();
+        }
+
+        final beamStackPathBlueprintSegments =
+            Uri.parse(pathPattern).pathSegments;
+        var pathSegments = <String>[];
+
+        if (uriPathSegments.length > beamStackPathBlueprintSegments.length &&
+            !beamStackPathBlueprintSegments.contains('*')) continue;
+
+        var checksPassed = true;
+
+        for (var i = 0; i < uriPathSegments.length; i++) {
+          if (beamStackPathBlueprintSegments[i] == '*') {
+            pathSegments = uriPathSegments.toList();
+            checksPassed = true;
+            break;
+          }
+
+          if (uriPathSegments[i] != beamStackPathBlueprintSegments[i] &&
+              beamStackPathBlueprintSegments[i][0] != ':') {
+            checksPassed = false;
+            break;
+          } else if (beamStackPathBlueprintSegments[i][0] == ':') {
+            pathParameters[beamStackPathBlueprintSegments[i].substring(1)] =
+                uriPathSegments[i];
+            pathSegments.add(beamStackPathBlueprintSegments[i]);
+          } else {
+            pathSegments.add(uriPathSegments[i]);
+          }
+        }
+        if (checksPassed) {
+          return BeamState(
+            pathPatternSegments: pathSegments,
+            pathParameters: pathParameters,
+            queryParameters: uri.queryParameters,
+            routeState: routeState,
+          );
         }
       }
     }
+
     return BeamState(
       pathPatternSegments: uri.pathSegments,
       queryParameters: uri.queryParameters,
+      pathParameters: pathParameters,
       routeState: routeState,
     );
   }
@@ -210,23 +136,8 @@ abstract class Utils {
       }
       return true;
     } else {
-      final regExpPattern = tryCastToRegExp(pattern);
+      final regExpPattern = pattern.toRegExp;
       return regExpPattern.hasMatch(exact.toString());
-    }
-  }
-
-  /// Wraps the casting of pathBlueprint to RegExp inside a try-catch
-  /// and throws a nice FlutterError.
-  static RegExp tryCastToRegExp(Pattern pathBlueprint) {
-    try {
-      return pathBlueprint as RegExp;
-    } on TypeError catch (_) {
-      throw FlutterError.fromParts([
-        DiagnosticsNode.message('Path blueprint can either be:',
-            level: DiagnosticLevel.summary),
-        DiagnosticsNode.message('1. String'),
-        DiagnosticsNode.message('2. RegExp instance')
-      ]);
     }
   }
 
@@ -303,5 +214,23 @@ extension BeamerRouteInformationExtension on RouteInformation {
       return false;
     }
     return uri == other.uri && state == other.state;
+  }
+}
+
+/// Some convenient extension methods on [Pattern].
+extension PatternExtension on Pattern {
+  /// Wraps the casting of this pattern to RegExp inside a try-catch
+  /// and throws a nice FlutterError.
+  RegExp get toRegExp {
+    try {
+      return this as RegExp;
+    } on TypeError catch (_) {
+      throw FlutterError.fromParts([
+        DiagnosticsNode.message('Path blueprint can either be:',
+            level: DiagnosticLevel.summary),
+        DiagnosticsNode.message('1. String'),
+        DiagnosticsNode.message('2. RegExp instance')
+      ]);
+    }
   }
 }

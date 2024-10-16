@@ -54,6 +54,8 @@ class BeamPage extends Page {
     this.fullScreenDialog = false,
     this.opaque = true,
     this.keepQueryOnPop = false,
+    this.transitionDuration,
+    this.reverseTransitionDuration,
   }) : super(key: key, name: name);
 
   /// A [BeamPage] to be the default for [BeamerDelegate.notFoundPage].
@@ -206,6 +208,20 @@ class BeamPage extends Page {
   /// See [BeamPageType] for available types.
   final BeamPageType type;
 
+  /// The transition duration for this [BeamPage].
+  ///
+  /// Defaults to `Duration(milliseconds: 300)`. (use flutter's default)
+  ///
+  /// This is not used when [type] is [BeamPageType.cupertino] or [BeamPageType.material].
+  final Duration? transitionDuration;
+
+  /// The reverse transition duration for this [BeamPage].
+  ///
+  /// Defaults to `Duration(milliseconds: 300)`. (use flutter's default)
+  ///
+  /// This is not used when [type] is [BeamPageType.cupertino] or [BeamPageType.material].
+  final Duration? reverseTransitionDuration;
+
   /// A builder for custom [Route] to use in [createRoute].
   ///
   /// `context` is the build context.
@@ -249,6 +265,9 @@ class BeamPage extends Page {
           opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
+          transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
+          reverseTransitionDuration:
+              reverseTransitionDuration ?? Duration(milliseconds: 300),
           transitionsBuilder: (_, animation, __, child) => FadeTransition(
             opacity: animation,
             child: child,
@@ -260,6 +279,9 @@ class BeamPage extends Page {
           opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
+          transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
+          reverseTransitionDuration:
+              reverseTransitionDuration ?? Duration(milliseconds: 300),
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
             position: animation.drive(
                 Tween(begin: const Offset(0, 1), end: const Offset(0, 0))
@@ -273,6 +295,9 @@ class BeamPage extends Page {
           opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
+          transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
+          reverseTransitionDuration:
+              reverseTransitionDuration ?? Duration(milliseconds: 300),
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
             position: animation.drive(
                 Tween(begin: const Offset(1, 0), end: const Offset(0, 0))
@@ -286,6 +311,9 @@ class BeamPage extends Page {
           opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
+          transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
+          reverseTransitionDuration:
+              reverseTransitionDuration ?? Duration(milliseconds: 300),
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
             position: animation.drive(
                 Tween(begin: const Offset(-1, 0), end: const Offset(0, 0))
@@ -299,6 +327,9 @@ class BeamPage extends Page {
           opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
+          transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
+          reverseTransitionDuration:
+              reverseTransitionDuration ?? Duration(milliseconds: 300),
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
             position: animation.drive(
                 Tween(begin: const Offset(0, -1), end: const Offset(0, 0))
@@ -312,6 +343,9 @@ class BeamPage extends Page {
           opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
+          transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
+          reverseTransitionDuration:
+              reverseTransitionDuration ?? Duration(milliseconds: 300),
           transitionsBuilder: (_, animation, __, child) => ScaleTransition(
             scale: animation,
             child: child,
@@ -322,6 +356,8 @@ class BeamPage extends Page {
           fullscreenDialog: fullScreenDialog,
           opaque: opaque,
           settings: this,
+          transitionDuration: transitionDuration ?? Duration.zero,
+          reverseTransitionDuration: reverseTransitionDuration ?? Duration.zero,
           pageBuilder: (context, animation, secondaryAnimation) => child,
         );
       default:
