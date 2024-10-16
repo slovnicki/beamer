@@ -301,6 +301,7 @@ class BeamPage extends Page {
     if (routeBuilder != null) {
       return routeBuilder!(context, this, child);
     }
+    const kDefaultTransitionDuration = const Duration(milliseconds: 300);
     switch (type) {
       case BeamPageType.cupertino:
         return CupertinoPageRoute(
@@ -315,9 +316,9 @@ class BeamPage extends Page {
           opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
-          transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
+          transitionDuration: transitionDuration ?? kDefaultTransitionDuration,
           reverseTransitionDuration:
-              reverseTransitionDuration ?? Duration(milliseconds: 300),
+              reverseTransitionDuration ?? kDefaultTransitionDuration,
           transitionsBuilder: (_, animation, __, child) => FadeTransition(
             opacity: animation,
             child: child,
@@ -329,9 +330,9 @@ class BeamPage extends Page {
           opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
-          transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
+          transitionDuration: transitionDuration ?? kDefaultTransitionDuration,
           reverseTransitionDuration:
-              reverseTransitionDuration ?? Duration(milliseconds: 300),
+              reverseTransitionDuration ?? kDefaultTransitionDuration,
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
             position: animation.drive(
                 Tween(begin: const Offset(0, 1), end: const Offset(0, 0))
@@ -345,9 +346,9 @@ class BeamPage extends Page {
           opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
-          transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
+          transitionDuration: transitionDuration ?? kDefaultTransitionDuration,
           reverseTransitionDuration:
-              reverseTransitionDuration ?? Duration(milliseconds: 300),
+              reverseTransitionDuration ?? kDefaultTransitionDuration,
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
             position: animation.drive(
                 Tween(begin: const Offset(1, 0), end: const Offset(0, 0))
@@ -361,9 +362,9 @@ class BeamPage extends Page {
           opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
-          transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
+          transitionDuration: transitionDuration ?? kDefaultTransitionDuration,
           reverseTransitionDuration:
-              reverseTransitionDuration ?? Duration(milliseconds: 300),
+              reverseTransitionDuration ?? kDefaultTransitionDuration,
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
             position: animation.drive(
                 Tween(begin: const Offset(-1, 0), end: const Offset(0, 0))
@@ -377,9 +378,9 @@ class BeamPage extends Page {
           opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
-          transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
+          transitionDuration: transitionDuration ?? kDefaultTransitionDuration,
           reverseTransitionDuration:
-              reverseTransitionDuration ?? Duration(milliseconds: 300),
+              reverseTransitionDuration ?? kDefaultTransitionDuration,
           transitionsBuilder: (_, animation, __, child) => SlideTransition(
             position: animation.drive(
                 Tween(begin: const Offset(0, -1), end: const Offset(0, 0))
@@ -393,9 +394,9 @@ class BeamPage extends Page {
           opaque: opaque,
           settings: this,
           pageBuilder: (_, __, ___) => child,
-          transitionDuration: transitionDuration ?? Duration(milliseconds: 300),
+          transitionDuration: transitionDuration ?? kDefaultTransitionDuration,
           reverseTransitionDuration:
-              reverseTransitionDuration ?? Duration(milliseconds: 300),
+              reverseTransitionDuration ?? kDefaultTransitionDuration,
           transitionsBuilder: (_, animation, __, child) => ScaleTransition(
             scale: animation,
             child: child,
