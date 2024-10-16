@@ -1,16 +1,16 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - "package/**"
+  # push:
+  #   branches:
+  #     - master
+  #   paths:
+  #     - 'package/**'
   pull_request:
     branches:
       - master
     paths:
-      - "package/**"
+      - 'package/**'
 
 jobs:
   test:
