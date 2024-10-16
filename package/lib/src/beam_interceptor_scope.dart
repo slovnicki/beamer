@@ -7,10 +7,10 @@ import 'package:flutter/widgets.dart';
 ///
 /// If any of the interceptors return true, the pop will not be invoked.
 ///
-/// This works on Navigator.maybePop as well as all the Beamer.beamTo, Beamer.beamToNamed, Beamer.beamBack... operations.
+/// This works on Navigator.pop as well as all the Beamer's beaming functions.
 ///
 /// ```dart
-/// BeamInterceptorPopScope(
+/// BeamInterceptorScope(
 ///   interceptors: [BeamInterceptor(...), ...],
 ///   child: Center(
 ///     child: ElevatedButton(
@@ -20,8 +20,8 @@ import 'package:flutter/widgets.dart';
 ///   ),
 /// );
 /// ```
-class BeamInterceptorPopScope extends StatefulWidget {
-  const BeamInterceptorPopScope({
+class BeamInterceptorScope extends StatefulWidget {
+  const BeamInterceptorScope({
     required this.child,
     required this.interceptors,
     this.beamerDelegate,
@@ -30,18 +30,17 @@ class BeamInterceptorPopScope extends StatefulWidget {
 
   final Widget child;
 
-  /// The interceptors to check when a maybePop, or beamTo, beamToNamed, beamBack... is triggered.
+  /// The interceptors to check upon any beaming or popping.
   final List<BeamInterceptor> interceptors;
 
-  /// The beamerDelegate to apply the interceptors to.
+  /// The [BeamerDelegate] to apply the interceptors to.
   final BeamerDelegate? beamerDelegate;
 
   @override
-  State<BeamInterceptorPopScope> createState() =>
-      _BeamInterceptorPopScopeState();
+  State<BeamInterceptorScope> createState() => _BeamInterceptorScopeState();
 }
 
-class _BeamInterceptorPopScopeState extends State<BeamInterceptorPopScope> {
+class _BeamInterceptorScopeState extends State<BeamInterceptorScope> {
   late BeamerDelegate beamerDelegate;
 
   @override

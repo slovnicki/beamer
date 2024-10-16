@@ -2,7 +2,7 @@ library beamer;
 
 export 'src/beam_guard.dart';
 export 'src/beam_interceptor.dart';
-export 'src/beam_interceptor_pop_scope.dart';
+export 'src/beam_interceptor_scope.dart';
 export 'src/beam_page.dart';
 export 'src/beam_stack.dart';
 export 'src/beam_state.dart';

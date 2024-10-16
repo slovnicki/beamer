@@ -1,19 +1,22 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/widgets.dart';
 
-/// IDK LOL
 class BeamInterceptor {
   /// Creates a [BeamInterceptor] with defined properties.
   ///
-  /// [pathPatterns] and [intercept] must not be null.
+  /// [name] and [intercept] must not be null.
   const BeamInterceptor({
     this.enabled = true,
     required this.name,
     required this.intercept,
   });
 
+  /// A name of the interceptor.
+  ///
+  /// It is used to compare interceptors.
   final String name;
 
+  /// Whether the interceptor is enabled.
   final bool enabled;
 
   /// The interceptor function.

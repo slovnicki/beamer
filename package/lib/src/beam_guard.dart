@@ -35,7 +35,7 @@ class BeamGuard {
   /// but will not match '/books'. To match '/books' and everything after it,
   /// use '/books*'.
   ///
-  /// See [canHandleGuard] for more details.
+  /// See [BeamStack.shouldCheckGuard] for more details.
   ///
   /// For RegExp:
   /// You can use RegExp instances and the delegate will check for a match using [RegExp.hasMatch]
